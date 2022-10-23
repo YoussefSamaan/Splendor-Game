@@ -124,4 +124,7 @@ $RECYCLE.BIN/
 # remove .idea
 .idea
 
+# _pycache_
+__pycache__
+
 # End of https://www.toptal.com/developers/gitignore/api/linux,windows,macos,java,vim
