@@ -1,10 +1,13 @@
 from distutils.dist import Distribution
 import sys
+from time import sleep
 import pygame, sys
 from pygame.locals import *
 from win32api import GetSystemMetrics
 import os
 from board import Board
+from cost import Cost
+from noble import Noble
 from deck import BlueDeck, GreenDeck, YellowDeck
 
 os.chdir(os.path.dirname(os.path.abspath(__file__))) # to make image imports start from current directory
@@ -26,15 +29,18 @@ def initialize_board():
 
 def initialize_cards():
     BlueDeck.instance().draw(DISPLAYSURF)
-    GreenDeck.instance().draw(DISPLAYSURF)
-    YellowDeck.instance().draw(DISPLAYSURF)
-
+    # GreenDeck.instance().draw(DISPLAYSURF)
+    # YellowDeck.instance().draw(DISPLAYSURF)
 
 def initialize_tokens():
     pass
 
 def initialize_nobles():
-    pass
+    for i in range(4):
+        noble = Noble.instance(i + 1, prestigePoints=3, cost = Cost(3, 3, 3, 3, 3))
+        noble.draw(DISPLAYSURF)
+        pygame.display.update()
+        sleep(1)
 
 def main():
     initialize_game()
