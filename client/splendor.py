@@ -22,8 +22,6 @@ def initialize_game():
     initialize_tokens()
     initialize_nobles()
 
-    
-    
 def initialize_board():
     Board.instance(WIDTH, HEIGHT)
 

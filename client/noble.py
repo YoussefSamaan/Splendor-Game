@@ -1,4 +1,3 @@
-from time import sleep
 from board import Board
 from flyweight import Flyweight
 import pygame
