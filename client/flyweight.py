@@ -23,6 +23,5 @@ class Flyweight:
     def __instancecheck__(self, inst):
         return isinstance(inst, self._decorated)
 
-    # method to get the class of the flyweight
-    def getClass(self):
-        return self._decorated
+    def __getattr__(self, name):
+        return getattr(self._decorated, name)

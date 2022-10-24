@@ -80,7 +80,7 @@ class Deck:
         Returns the position of the next card to be drawn
         """
         if self.color == Color.RED:
-            x = self.getDeckX(board) - (self.posToDrawAt + 1) * self.xDistanceBetweenCardStartToNextStart(board) - Card.getClass().getCardSize(board)[0]
+            x = self.getDeckX(board) - (self.posToDrawAt + 1) * self.xDistanceBetweenCardStartToNextStart(board) - Card.getCardSize(board)[0]
         else:
             x = self.getDeckX(board) + (self.posToDrawAt + 1) * self.xDistanceBetweenCardStartToNextStart(board)
         y = self.getDeckY(board)
@@ -91,7 +91,7 @@ class Deck:
         """
         Returns the size of the deck cover based on the size of the board
         """
-        return Card.getClass().getCardSize(board)
+        return Card.getCardSize(board)
 
     def getDeckPos(self, board):
         """
@@ -142,13 +142,13 @@ class Deck:
         """
         Returns the distance between the start of the first card, and start of second card on the x-axis
         """
-        return self.xDistanceBetweenCards(board) + Card.getClass().getCardSize(board)[0]
+        return self.xDistanceBetweenCards(board) + Card.getCardSize(board)[0]
 
     def yDistanceBetweenCardStartToNextStart(self, board):
         """
         Returns the distance between the start of the first card, and start of second card on the y-axis
         """
-        return self.yDistanceBetweenCards(board) + Card.getClass().getCardSize(board)[1]
+        return self.yDistanceBetweenCards(board) + Card.getCardSize(board)[1]
 
 @Singleton
 class BlueDeck(Deck):

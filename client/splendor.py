@@ -36,7 +36,7 @@ def initialize_tokens():
     Token.initialize(screen = DISPLAYSURF)
 
 def initialize_nobles():
-    Noble.getClass().initialize(n = 4, screen = DISPLAYSURF)
+    Noble.initialize(n = 4, screen = DISPLAYSURF)
 
 def main():
     initialize_game()

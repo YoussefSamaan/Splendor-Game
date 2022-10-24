@@ -21,7 +21,7 @@ class Card:
 
     def draw(self, screen, x, y):
         board = Board.instance()
-        width, height = Card.getClass().getCardSize(board)
+        width, height = Card.getCardSize(board)
         image = pygame.transform.scale(self._image, (int(width), int(height)))
         screen.blit(image, (x, y))
     
@@ -48,8 +48,8 @@ class Card:
         self._image.get_rect().center = self.pos
 
     def getCardSize(board):
-        width = board.getWidth() * Card.getClass().x_ratio
-        height = board.getHeight() * Card.getClass().y_ratio
+        width = board.getWidth() * Card.x_ratio
+        height = board.getHeight() * Card.y_ratio
         return (width, height)
 
     def getImage(self):
