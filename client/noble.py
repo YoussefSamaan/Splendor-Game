@@ -20,13 +20,16 @@ class Noble:
         self._image = pygame.image.load('sprites/nobles/{}.png'.format(id))
         self._pos = len(Noble._flyweights) # The slot position of the noble
 
-    def draw(self, screen):
+    def draw(self, screen, x, y):
+        screen.blit(pygame.transform.scale(self._image, Noble.getClass().getCardSize()), (x, y))
+
+    def defaultPosition(self):
         board = Board.instance()
         x = board.getWidth()*self.x_MarginToBoardSizeRatio + (self._pos) * Noble.getClass().getDistanceBetweenCards(board)
         x += board.getX()
         y = board.getHeight()*self.y_MarginToBoardSizeRatio
         y += board.getY()
-        screen.blit(pygame.transform.scale(self._image, Noble.getClass().getCardSize(board)), (x, y))
+        return (x, y)
 
     def getRect(self):
         return self._image.get_rect()
@@ -40,21 +43,22 @@ class Noble:
     def getId(self):
         return self._id
 
-    def getCardSize(board):
+    def getCardSize():
+        board = Board.instance()
         width = board.getWidth() * Noble.getClass().x_ratio
         height = board.getHeight() * Noble.getClass().y_ratio
         return (width, height)
     
     def getDistanceBetweenCards(board):
-        return (board.getWidth() * Noble.getClass().x_DistanceBetweenCardsToBoardWidthRatio + Noble.getClass().getCardSize(board)[0])
+        return (board.getWidth() * Noble.getClass().x_DistanceBetweenCardsToBoardWidthRatio + Noble.getClass().getCardSize()[0])
 
     @staticmethod
     def initialize(n, screen):
         ids = random.sample(range(1, 11), n)
         # Create n nobles with the chosen ids
         for id in ids:
-            Noble.instance(prestigePoints = 3, cost = Cost(1,1,1,1,1), id = id)
-            Noble.instance(id).draw(screen)
+            noble = Noble.instance(prestigePoints = 3, cost = Cost(1,1,1,1,1), id = id)
+            noble.draw(screen, *noble.defaultPosition())
             pygame.display.update()
             sleep(0.5)
 
