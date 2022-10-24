@@ -1,7 +1,9 @@
+from time import sleep
 from board import Board
 from flyweight import Flyweight
 import pygame
 from cost import Cost
+import random
 
 @Flyweight
 class Noble:
@@ -16,10 +18,11 @@ class Noble:
         self._cost = cost
         self._id = id # 1 -> 4
         self._image = pygame.image.load('sprites/nobles/{}.png'.format(id))
+        self._pos = len(Noble._flyweights) # The slot position of the noble
 
     def draw(self, screen):
         board = Board.instance()
-        x = board.getWidth()*self.x_MarginToBoardSizeRatio + (self._id) * Noble.getClass().getDistanceBetweenCards(board)
+        x = board.getWidth()*self.x_MarginToBoardSizeRatio + (self._pos) * Noble.getClass().getDistanceBetweenCards(board)
         x += board.getX()
         y = board.getHeight()*self.y_MarginToBoardSizeRatio
         y += board.getY()
@@ -44,3 +47,14 @@ class Noble:
     
     def getDistanceBetweenCards(board):
         return (board.getWidth() * Noble.getClass().x_DistanceBetweenCardsToBoardWidthRatio + Noble.getClass().getCardSize(board)[0])
+
+    @staticmethod
+    def initialize(n, screen):
+        ids = random.sample(range(1, 11), n)
+        # Create n nobles with the chosen ids
+        for id in ids:
+            Noble.instance(prestigePoints = 3, cost = Cost(1,1,1,1,1), id = id)
+            Noble.instance(id).draw(screen)
+            pygame.display.update()
+            sleep(0.5)
+

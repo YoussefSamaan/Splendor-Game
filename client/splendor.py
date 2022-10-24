@@ -29,18 +29,14 @@ def initialize_board():
 
 def initialize_cards():
     BlueDeck.instance().draw(DISPLAYSURF)
-    # GreenDeck.instance().draw(DISPLAYSURF)
-    # YellowDeck.instance().draw(DISPLAYSURF)
+    YellowDeck.instance().draw(DISPLAYSURF)
+    GreenDeck.instance().draw(DISPLAYSURF)
 
 def initialize_tokens():
     pass
 
 def initialize_nobles():
-    for i in range(4):
-        noble = Noble.instance(i + 1, prestigePoints=3, cost = Cost(3, 3, 3, 3, 3))
-        noble.draw(DISPLAYSURF)
-        pygame.display.update()
-        sleep(1)
+    Noble.getClass().initialize(n = 4, screen = DISPLAYSURF)
 
 def main():
     initialize_game()
