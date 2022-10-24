@@ -22,8 +22,8 @@ class Card:
     def draw(self, screen, x, y):
         board = Board.instance()
         width, height = Card.getClass().getCardSize(board)
-        self._image = pygame.transform.scale(self._image, (int(width), int(height)))
-        screen.blit(self._image, (x, y))
+        image = pygame.transform.scale(self._image, (int(width), int(height)))
+        screen.blit(image, (x, y))
     
     def getRect(self):
         return self._image.get_rect()

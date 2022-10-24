@@ -1,14 +1,11 @@
-from distutils.dist import Distribution
-import sys
-from time import sleep
 import pygame, sys
 from pygame.locals import *
 from win32api import GetSystemMetrics
 import os
 from board import Board
-from cost import Cost
 from noble import Noble
 from deck import BlueDeck, GreenDeck, YellowDeck
+from token import Token
 
 os.chdir(os.path.dirname(os.path.abspath(__file__))) # to make image imports start from current directory
 WIDTH, HEIGHT = GetSystemMetrics(0), GetSystemMetrics(1)
@@ -33,7 +30,7 @@ def initialize_cards():
     GreenDeck.instance().draw(DISPLAYSURF)
 
 def initialize_tokens():
-    pass
+    Token.initialize(screen = DISPLAYSURF)
 
 def initialize_nobles():
     Noble.getClass().initialize(n = 4, screen = DISPLAYSURF)

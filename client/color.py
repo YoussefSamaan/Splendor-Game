@@ -7,3 +7,4 @@ class Color(Enum):
     YELLOW = 4
     BROWN = 5
     WHITE = 6
+    GOLD = 7
