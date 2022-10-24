@@ -116,7 +116,7 @@ class BlueDeck(Deck):
 @Singleton
 class GreenDeck(Deck):
     _NUMBER_OF_CARDS = 40
-    _ID_START = 1 # 1- 40
+    _ID_START = 1  # 1- 40
 
     def __init__(self):
         super().__init__(level=1, color=Color.GREEN)
@@ -129,7 +129,7 @@ class GreenDeck(Deck):
 @Singleton
 class YellowDeck(Deck):
     _NUMBER_OF_CARDS = 30
-    _ID_START = 41 # 41-70
+    _ID_START = 41  # 41-70
 
     def __init__(self):
         super().__init__(level=2, color=Color.YELLOW)
