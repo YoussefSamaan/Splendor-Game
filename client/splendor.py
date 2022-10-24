@@ -4,7 +4,7 @@ from win32api import GetSystemMetrics
 import os
 from board import Board
 from noble import Noble
-from deck import BlueDeck, GreenDeck, YellowDeck
+from deck import *
 from token import Token
 
 os.chdir(os.path.dirname(os.path.abspath(__file__))) # to make image imports start from current directory
@@ -26,8 +26,11 @@ def initialize_board():
 
 def initialize_cards():
     BlueDeck.instance().draw(DISPLAYSURF)
+    RedDeck3.instance().draw(DISPLAYSURF)
     YellowDeck.instance().draw(DISPLAYSURF)
+    RedDeck2.instance().draw(DISPLAYSURF)
     GreenDeck.instance().draw(DISPLAYSURF)
+    RedDeck1.instance().draw(DISPLAYSURF)
 
 def initialize_tokens():
     Token.initialize(screen = DISPLAYSURF)

@@ -19,12 +19,11 @@ class Deck:
         """
         Initializes the deck
         """
-        self.posToDrawAt = 0 # The card slot to draw at (1-4)
+        self.posToDrawAt = 0 # The card slot to draw at (1-cardSlots)
         self.cardSlots = 4
         self.level = level
         self.color = color
-        self.image = pygame.image.load('sprites/cards/{}/back.png'.format(color.name.lower()))
-        # self.image = pygame.transform.scale(self.image, (self.width, self.height))
+        self.image = self.getImage()
         self.rect = self.image.get_rect()
         self.cards = []
         self.initDeck()
@@ -55,13 +54,16 @@ class Deck:
         """
         board = Board.instance()
         width, height = Deck.getDeckDisplaySize(board)
-        x = board.getX() + board.getWidth() * self.x_MarginToBoardWidthRatio
-        y = board.getY() + (board.getHeight() * self.y_MarginToBoardHeightRatio) + (3 - self.level) * (height + board.getHeight() * self.y_DistanceBetweenCardsToBoardHeightRatio)
-        self.image = pygame.transform.scale(self.image, (int(width), int(height)))
-        screen.blit(self.image, (x, y))
+        x = self.getDeckX(board)
+        if self.color == Color.RED:
+            x -= width
+        y = self.getDeckY(board)
+        image = pygame.transform.scale(self.image, (int(width), int(height)))
+        screen.blit(image, (x, y))
+        pygame.display.update()
+        sleep(0.5)
         for _ in range(self.cardSlots):
-            card = self.cards.pop()
-            self.drawCardToBoard(card, screen)
+            self.drawCard(screen)
             pygame.display.update()
             sleep(0.5)
 
@@ -70,10 +72,19 @@ class Deck:
         Draws a card on the board surface
         """
         board = Board.instance()
-        x = self.getDeckX(board) + (self.posToDrawAt + 1) * (board.getWidth() * self.x_DistanceBetweenCardsToBoardWidthRatio + Card.getClass().getCardSize(board)[0])
-        y = self.getDeckY(board)
-        card.draw(screen, x, y)
+        card.draw(screen, *self.getPosOfNextCard(board))
         self.posToDrawAt = (self.posToDrawAt + 1) % (self.cardSlots)
+
+    def getPosOfNextCard(self, board):
+        """
+        Returns the position of the next card to be drawn
+        """
+        if self.color == Color.RED:
+            x = self.getDeckX(board) - (self.posToDrawAt + 1) * self.xDistanceBetweenCardStartToNextStart(board) - Card.getClass().getCardSize(board)[0]
+        else:
+            x = self.getDeckX(board) + (self.posToDrawAt + 1) * self.xDistanceBetweenCardStartToNextStart(board)
+        y = self.getDeckY(board)
+        return (x, y)
 
     @staticmethod
     def getDeckDisplaySize(board):
@@ -90,16 +101,55 @@ class Deck:
     
     def getDeckX(self, board):
         """
-        Returns the x-coordinate of the deck cover based on the size of the board
+        Returns the x-coordinate of the side of the deck nearest to the board based on the size of the board
         """
+        if self.color == Color.RED:
+            return board.getX() + board.getWidth()*(1 - self.x_MarginToBoardWidthRatio) # Red deck is on the right side of the board
+
         return board.getX() + board.getWidth() * self.x_MarginToBoardWidthRatio
 
     def getDeckY(self, board):
         """
         Returns the y-coordinate of the deck cover based on the size of the board
         """
-        height = Deck.getDeckDisplaySize(board)[1]
-        return board.getY() + (board.getHeight() * self.y_MarginToBoardHeightRatio) + (3 - self.level) * (height + board.getHeight() * self.y_DistanceBetweenCardsToBoardHeightRatio)
+        distanceFromTop = (3 - self.level) * self.yDistanceBetweenCardStartToNextStart(board) # based on the deck level
+        return board.getY() + (board.getHeight() * self.y_MarginToBoardHeightRatio) + distanceFromTop
+
+    def getImage(self):
+        """
+        Returns the image of the deck cover
+        """
+        if hasattr(self, 'image'):
+            return self.image
+        if self.color == Color.RED:
+            return pygame.image.load('sprites/cards/red{}/back.png'.format(str(self.level)))
+        else:
+            return pygame.image.load('sprites/cards/{}/back.png'.format(self.color.name.lower()))
+
+    def xDistanceBetweenCards(self, board):
+        """
+        Returns the distance between the end of the first card, and start of second card on the x-axis
+        """
+        return board.getWidth() * self.x_DistanceBetweenCardsToBoardWidthRatio
+
+    def yDistanceBetweenCards(self, board):
+        """
+        Returns the distance between the end of the first card, and start of second card on the y-axis
+        """
+        return board.getHeight() * self.y_DistanceBetweenCardsToBoardHeightRatio
+
+    def xDistanceBetweenCardStartToNextStart(self, board):
+        """
+        Returns the distance between the start of the first card, and start of second card on the x-axis
+        """
+        return self.xDistanceBetweenCards(board) + Card.getClass().getCardSize(board)[0]
+
+    def yDistanceBetweenCardStartToNextStart(self, board):
+        """
+        Returns the distance between the start of the first card, and start of second card on the y-axis
+        """
+        return self.yDistanceBetweenCards(board) + Card.getClass().getCardSize(board)[1]
+
 @Singleton
 class BlueDeck(Deck):
     _NUMBER_OF_CARDS = 20
@@ -137,4 +187,46 @@ class YellowDeck(Deck):
     def initDeck(self):
         for i in range(self._NUMBER_OF_CARDS):
             card = Card.instance(id=self._ID_START + i, prestigePoints=3, cost=Cost(0, 0, 0, 0, 0), bonus=Bonus(0, 0, 0, 0, 0), color=Color.YELLOW)
+            self.cards.append(card)
+
+@Singleton
+class RedDeck1(Deck):
+    _NUMBER_OF_CARDS = 10
+    _ID_START = 91
+
+    def __init__(self):
+        super().__init__(level=1, color=Color.RED)
+        self.cardSlots = 2
+
+    def initDeck(self):
+        for i in range(self._NUMBER_OF_CARDS):
+            card = Card.instance(id=self._ID_START + i, prestigePoints=3, cost=Cost(0, 0, 0, 0, 0), bonus=Bonus(0, 0, 0, 0, 0), color=Color.RED)
+            self.cards.append(card)
+
+@Singleton
+class RedDeck2(Deck):
+    _NUMBER_OF_CARDS = 10
+    _ID_START = 101
+
+    def __init__(self):
+        super().__init__(level=2, color=Color.RED)
+        self.cardSlots = 2
+
+    def initDeck(self):
+        for i in range(self._NUMBER_OF_CARDS):
+            card = Card.instance(id=self._ID_START + i, prestigePoints=3, cost=Cost(0, 0, 0, 0, 0), bonus=Bonus(0, 0, 0, 0, 0), color=Color.RED)
+            self.cards.append(card)
+
+@Singleton
+class RedDeck3(Deck):
+    _NUMBER_OF_CARDS = 10
+    _ID_START = 111
+
+    def __init__(self):
+        super().__init__(level=3, color=Color.RED)
+        self.cardSlots = 2
+
+    def initDeck(self):
+        for i in range(self._NUMBER_OF_CARDS):
+            card = Card.instance(id=self._ID_START + i, prestigePoints=3, cost=Cost(0, 0, 0, 0, 0), bonus=Bonus(0, 0, 0, 0, 0), color=Color.RED)
             self.cards.append(card)

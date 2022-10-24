@@ -16,7 +16,7 @@ class Card:
         self._bonus = bonus
         self._color = color
         self._id = id
-        self._image = pygame.image.load('sprites/cards/{}/{}.png'.format(color.name.lower(), id))
+        self._image = self.getImage()
         # self._image = pygame.transform.scale(self._image, (self.width, self.height))
 
     def draw(self, screen, x, y):
@@ -51,3 +51,14 @@ class Card:
         width = board.getWidth() * Card.getClass().x_ratio
         height = board.getHeight() * Card.getClass().y_ratio
         return (width, height)
+
+    def getImage(self):
+        if self._color == Color.RED:
+            # Look inside all the red card folders
+            for i in range(1, 4):
+                try:
+                    return pygame.image.load('sprites/cards/red{}/{}.png'.format(i, self._id))
+                except:
+                    pass
+        
+        return pygame.image.load('sprites/cards/{}/{}.png'.format(self._color.name.lower(), self._id))
