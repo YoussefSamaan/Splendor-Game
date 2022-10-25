@@ -20,16 +20,21 @@ class Noble:
         self._pos = len(Noble._flyweights) # The slot position of the noble
         self.isOnDisplay = True
 
+    @staticmethod
+    def initialize(n):
+        ids = random.sample(range(1, 11), n)
+        # Create n nobles with the chosen ids
+        for id in ids:
+            Noble.instance(prestigePoints = 3, cost = Cost(1,1,1,1,1), id = id)
+
+    @staticmethod
+    def displayAll(screen):
+        for noble in Noble._flyweights.values():
+            if noble.isOnDisplay:
+                noble.draw(screen, *noble._defaultPosition())
+
     def draw(self, screen, x, y):
         screen.blit(pygame.transform.scale(self._image, Noble.getCardSize()), (x, y))
-
-    def defaultPosition(self):
-        board = Board.instance()
-        x = board.getWidth()*self.x_MarginToBoardSizeRatio + (self._pos) * Noble.getDistanceBetweenCards(board)
-        x += board.getX()
-        y = board.getHeight()*self.y_MarginToBoardSizeRatio
-        y += board.getY()
-        return (x, y)
 
     def getRect(self):
         return self._image.get_rect()
@@ -52,15 +57,10 @@ class Noble:
     def getDistanceBetweenCards(board):
         return (board.getWidth() * Noble.x_DistanceBetweenCardsToBoardWidthRatio + Noble.getCardSize()[0])
 
-    @staticmethod
-    def initialize(n):
-        ids = random.sample(range(1, 11), n)
-        # Create n nobles with the chosen ids
-        for id in ids:
-            Noble.instance(prestigePoints = 3, cost = Cost(1,1,1,1,1), id = id)
-
-    @staticmethod
-    def displayAll(screen):
-        for noble in Noble._flyweights.values():
-            if noble.isOnDisplay:
-                noble.draw(screen, *noble.defaultPosition())
+    def _defaultPosition(self):
+        board = Board.instance()
+        x = board.getWidth()*self.x_MarginToBoardSizeRatio + (self._pos) * Noble.getDistanceBetweenCards(board)
+        x += board.getX()
+        y = board.getHeight()*self.y_MarginToBoardSizeRatio
+        y += board.getY()
+        return (x, y)

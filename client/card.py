@@ -16,7 +16,7 @@ class Card:
         self._bonus = bonus
         self._color = color
         self._id = id
-        self._image = self.getImage()
+        self._image = self._getImage()
         self.pos = None
 
     def draw(self, screen, x, y):
@@ -53,7 +53,7 @@ class Card:
         height = board.getHeight() * Card.y_ratio
         return (width, height)
 
-    def getImage(self):
+    def _getImage(self):
         if self._color == Color.RED:
             # Look inside all the red card folders
             for i in range(1, 4):

@@ -36,17 +36,23 @@ class Token:
         self._id = id # Separates tokens with same color
         self.isOnDisplay = True
 
+    @staticmethod
+    def initialize():
+        id = 1
+        for color in Token.positions.keys(): # for token color
+            for _ in range(Token.multiplicities[color]): # for number of tokens
+                Token.instance(color = color, id = id)
+                id += 1
+
+    @staticmethod
+    def displayAll(screen):
+        for token in Token._flyweights.values():
+            if token.isOnDisplay: # can be improved by not drawing same color tokens on top of each other
+                token.draw(screen, *token._defaultPosition())
     
     def draw(self, screen, x, y):
         image = pygame.transform.scale(self.image, self.getSize())
         screen.blit(image, (x, y))
-    
-    def defaultPosition(self):
-        board = Board.instance()
-        width, height = self.getSize()
-        x = board.getX() + board.getWidth() * self.xMargin + self.positions[self._color] * (width + board.getWidth() * self.xSeperationRatio)
-        y = board.getY() + board.getHeight() * self.yMargin
-        return (x, y)
 
     def getSize(self):
         board = Board.instance()
@@ -63,16 +69,9 @@ class Token:
     def isClicked(self, mousePos):
         return self.getRect().collidepoint(mousePos)
 
-    @staticmethod
-    def initialize():
-        id = 1
-        for color in Token.positions.keys(): # for token color
-            for _ in range(Token.multiplicities[color]): # for number of tokens
-                Token.instance(color = color, id = id)
-                id += 1
-
-    @staticmethod
-    def displayAll(screen):
-        for token in Token._flyweights.values():
-            if token.isOnDisplay: # can be improved by not drawing same color tokens on top of each other
-                token.draw(screen, *token.defaultPosition())
+    def _defaultPosition(self):
+        board = Board.instance()
+        width, height = self.getSize()
+        x = board.getX() + board.getWidth() * self.xMargin + self.positions[self._color] * (width + board.getWidth() * self.xSeperationRatio)
+        y = board.getY() + board.getHeight() * self.yMargin
+        return (x, y)
