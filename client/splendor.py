@@ -77,7 +77,9 @@ def getClickedObject(pos):
     token = Token.getClickedToken(pos)
     if token is not None:
         return token
-    # TODO: add nobles
+    noble = Noble.getClickedNoble(pos)
+    if noble is not None:
+        return noble
     return None
 
 def performAction(obj):
@@ -88,6 +90,8 @@ def performAction(obj):
         deck.takeCard(obj)
     elif isinstance(obj, Token):
         obj.takeToken()
+    elif isinstance(obj, Noble):
+        obj.takeNoble()
 
 def main():
     initialize_game()

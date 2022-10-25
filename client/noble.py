@@ -17,7 +17,8 @@ class Noble:
         self._cost = cost
         self._id = id # 1 -> 4
         self._image = pygame.image.load('sprites/nobles/{}.png'.format(id))
-        self._pos = len(Noble._flyweights) # The slot position of the noble
+        self.slot = len(Noble._flyweights) # The slot position of the noble
+        self.pos = self._defaultPosition()
         self.isOnDisplay = True
 
     @staticmethod
@@ -32,6 +33,19 @@ class Noble:
         for noble in Noble._flyweights.values():
             if noble.isOnDisplay:
                 noble.draw(screen, *noble._defaultPosition())
+
+    @staticmethod
+    def getClickedNoble(mousePos):
+        """
+        Returns the noble that is clicked. Returns None if no noble is clicked.
+        """
+        for noble in Noble._flyweights.values():
+            if noble.isClicked(mousePos):
+                return noble
+        return None
+
+    def takeNoble(self):
+        self.isOnDisplay = False
 
     def draw(self, screen, x, y):
         screen.blit(pygame.transform.scale(self._image, Noble.getCardSize()), (x, y))
@@ -59,8 +73,19 @@ class Noble:
 
     def _defaultPosition(self):
         board = Board.instance()
-        x = board.getWidth()*self.x_MarginToBoardSizeRatio + (self._pos) * Noble.getDistanceBetweenCards(board)
+        x = board.getWidth()*self.x_MarginToBoardSizeRatio + (self.slot) * Noble.getDistanceBetweenCards(board)
         x += board.getX()
         y = board.getHeight()*self.y_MarginToBoardSizeRatio
         y += board.getY()
         return (x, y)
+
+    def isClicked(self, mousePos):
+        """
+        Returns True if the noble is clicked.
+        :pre: self.pos is not None. This means that draw has to be called before this method.
+        """
+        xStart = self.pos[0]
+        yStart = self.pos[1]
+        xEnd = xStart + Noble.getCardSize()[0]
+        yEnd = yStart + Noble.getCardSize()[1]
+        return xStart <= mousePos[0] <= xEnd and yStart <= mousePos[1] <= yEnd

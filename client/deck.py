@@ -42,6 +42,12 @@ class Deck:
         """
         return Card.getCardSize(board)
 
+    def isEmpty(self):
+        """
+        Returns whether the deck is empty
+        """
+        return len(self.cards) == 0
+    
     def drawCard(self) -> Card:
         """
         Draws a card from the deck
@@ -49,7 +55,7 @@ class Deck:
         :pre: The deck is not empty
         :return: The card that was drawn
         """
-        assert len(self.cards) > 0, "Deck is empty"
+        assert not self.isEmpty(), "Deck is empty"
         card = self.cards.pop()
         self._addCardToDisplay(card)
         return card
@@ -72,7 +78,8 @@ class Deck:
         for slotPos, cardOnDisplay in self.cardsOnDisplay.items():
             if cardOnDisplay == card:
                 self.cardsOnDisplay.pop(slotPos)
-                self.drawCard()
+                if not self.isEmpty():
+                    self.drawCard()
                 return True
         return False
 
