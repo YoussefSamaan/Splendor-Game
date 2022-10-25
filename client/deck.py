@@ -1,6 +1,7 @@
 from random import shuffle
 from time import sleep
 from typing import Dict
+from xmlrpc.client import boolean
 
 import pygame
 
@@ -18,11 +19,11 @@ class Deck:
     x_MarginToBoardWidthRatio = 1/60 # The margin between the left side of the board and the left side of the deck cover
     y_MarginToBoardHeightRatio = 0.44 # First deck starts at 0.44 * board height y-coordinate
 
-    def __init__(self, level: int, color: Color):
+    def __init__(self, level: int, color: Color, cardSlots: int = 4):
         """
         Initializes the deck
         """
-        self.cardSlots = 4
+        self.cardSlots = cardSlots
         self.level = level
         self.color = color
         self.image = self._getImage()
@@ -48,6 +49,7 @@ class Deck:
         :pre: The deck is not empty
         :return: The card that was drawn
         """
+        assert len(self.cards) > 0, "Deck is empty"
         card = self.cards.pop()
         self._addCardToDisplay(card)
         return card
@@ -59,6 +61,33 @@ class Deck:
         self._displayDeckCover(screen)
         for slotPos, card in self.cardsOnDisplay.items():
             self._drawCardToBoard(screen, card, slotPos)
+
+    def takeCard(self, card) -> boolean:
+        """
+        Takes a card from the deck
+
+        :pre: The card is on display
+        :return: The card that was taken
+        """
+        for slotPos, cardOnDisplay in self.cardsOnDisplay.items():
+            if cardOnDisplay == card:
+                self.cardsOnDisplay.pop(slotPos)
+                self.drawCard()
+                return True
+        return False
+
+    def getClickedCard(self, mousePos):
+        """
+        Returns the card that was clicked on, if any
+
+        :param: mousePos: The position of the mouse click
+        :return: The card that was clicked on, if any
+        """
+        # FIXME: improve algorithm by not checking all cards.
+        for card in self.cardsOnDisplay.values():
+            if card.isClicked(mousePos):
+                return card
+        return None
 
     def _shuffle(self):
         """
@@ -187,7 +216,7 @@ class BlueDeck(Deck):
 
     def _initDeck(self):
         for i in range(self._NUMBER_OF_CARDS):
-            card = Card.instance(id=self._ID_START + i, prestigePoints=3, cost=Cost(0, 0, 0, 0, 0), bonus=Bonus(0, 0, 0, 0, 0), color=Color.BLUE)
+            card = Card.instance(id=self._ID_START + i, prestigePoints=3, cost=Cost(0, 0, 0, 0, 0), bonus=Bonus(0, 0, 0, 0, 0), color=Color.BLUE, deck = self)
             self.cards.append(card)
 
 @Singleton
@@ -200,7 +229,7 @@ class GreenDeck(Deck):
 
     def _initDeck(self):
         for i in range(self._NUMBER_OF_CARDS):
-            card = Card.instance(id=self._ID_START + i, prestigePoints=3, cost=Cost(0, 0, 0, 0, 0), bonus=Bonus(0, 0, 0, 0, 0), color=Color.GREEN)
+            card = Card.instance(id=self._ID_START + i, prestigePoints=3, cost=Cost(0, 0, 0, 0, 0), bonus=Bonus(0, 0, 0, 0, 0), color=Color.GREEN, deck = self)
             self.cards.append(card)
 
 @Singleton
@@ -213,7 +242,7 @@ class YellowDeck(Deck):
 
     def _initDeck(self):
         for i in range(self._NUMBER_OF_CARDS):
-            card = Card.instance(id=self._ID_START + i, prestigePoints=3, cost=Cost(0, 0, 0, 0, 0), bonus=Bonus(0, 0, 0, 0, 0), color=Color.YELLOW)
+            card = Card.instance(id=self._ID_START + i, prestigePoints=3, cost=Cost(0, 0, 0, 0, 0), bonus=Bonus(0, 0, 0, 0, 0), color=Color.YELLOW, deck = self)
             self.cards.append(card)
 
 @Singleton
@@ -222,12 +251,11 @@ class RedDeck1(Deck):
     _ID_START = 91
 
     def __init__(self):
-        super().__init__(level=1, color=Color.RED)
-        self.cardSlots = 2
+        super().__init__(level=1, color=Color.RED, cardSlots = 2)
 
     def _initDeck(self):
         for i in range(self._NUMBER_OF_CARDS):
-            card = Card.instance(id=self._ID_START + i, prestigePoints=3, cost=Cost(0, 0, 0, 0, 0), bonus=Bonus(0, 0, 0, 0, 0), color=Color.RED)
+            card = Card.instance(id=self._ID_START + i, prestigePoints=3, cost=Cost(0, 0, 0, 0, 0), bonus=Bonus(0, 0, 0, 0, 0), color=Color.RED, deck = self)
             self.cards.append(card)
 
 @Singleton
@@ -236,12 +264,11 @@ class RedDeck2(Deck):
     _ID_START = 101
 
     def __init__(self):
-        super().__init__(level=2, color=Color.RED)
-        self.cardSlots = 2
+        super().__init__(level=2, color=Color.RED, cardSlots = 2)
 
     def _initDeck(self):
         for i in range(self._NUMBER_OF_CARDS):
-            card = Card.instance(id=self._ID_START + i, prestigePoints=3, cost=Cost(0, 0, 0, 0, 0), bonus=Bonus(0, 0, 0, 0, 0), color=Color.RED)
+            card = Card.instance(id=self._ID_START + i, prestigePoints=3, cost=Cost(0, 0, 0, 0, 0), bonus=Bonus(0, 0, 0, 0, 0), color=Color.RED, deck = self)
             self.cards.append(card)
 
 @Singleton
@@ -250,10 +277,9 @@ class RedDeck3(Deck):
     _ID_START = 111
 
     def __init__(self):
-        super().__init__(level=3, color=Color.RED)
-        self.cardSlots = 2
+        super().__init__(level=3, color=Color.RED, cardSlots = 2)
 
     def _initDeck(self):
         for i in range(self._NUMBER_OF_CARDS):
-            card = Card.instance(id=self._ID_START + i, prestigePoints=3, cost=Cost(0, 0, 0, 0, 0), bonus=Bonus(0, 0, 0, 0, 0), color=Color.RED)
+            card = Card.instance(id=self._ID_START + i, prestigePoints=3, cost=Cost(0, 0, 0, 0, 0), bonus=Bonus(0, 0, 0, 0, 0), color=Color.RED, deck = self)
             self.cards.append(card)

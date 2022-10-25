@@ -4,7 +4,7 @@ from singleton import Singleton
 @Singleton
 class Board:
     def __init__(self, screenWidth, screenHeight):
-        # self.boardImage = pygame.image.load('sprites/board.png')
+        self.boardImage = pygame.image.load('sprites/board.png')
         self.width = min(screenWidth, 1000)
         self.height = min(screenHeight, 800)
         # self.boardImage = pygame.transform.scale(self.boardImage, (self.width, self.height))
@@ -12,10 +12,11 @@ class Board:
         self.boardRect.center = (screenWidth / 2, screenHeight / 2)
 
     def display(self, screen):
-        # screen.blit(self.boardImage, self.boardRect)
+        image = pygame.transform.scale(self.boardImage, (self.width, self.height))
+        screen.blit(image, self.boardRect)
         
         # draw black background
-        pygame.draw.rect(screen, (0, 0, 0), self.boardRect)
+        # pygame.draw.rect(screen, (0, 0, 0), self.boardRect)
     
     def getRect(self):
         return self.boardRect

@@ -10,7 +10,7 @@ class Card:
     x_ratio = 0.09 # ratio of card width to board width
     y_ratio = 0.12 # ratio of card height to board height
 
-    def __init__(self, prestigePoints: int, cost: Cost, bonus: Bonus, color: Color, id: int):
+    def __init__(self, prestigePoints: int, cost: Cost, bonus: Bonus, color: Color, id: int, deck):
         self._prestigePoints = prestigePoints
         self._cost = cost
         self._bonus = bonus
@@ -18,6 +18,13 @@ class Card:
         self._id = id
         self._image = self._getImage()
         self.pos = None
+        self.deck = deck
+
+    @staticmethod
+    def getCardSize(board):
+        width = board.getWidth() * Card.x_ratio
+        height = board.getHeight() * Card.y_ratio
+        return (width, height)
 
     def draw(self, screen, x, y):
         board = Board.instance()
@@ -25,6 +32,17 @@ class Card:
         image = pygame.transform.scale(self._image, (int(width), int(height)))
         screen.blit(image, (x, y))
         self.pos = (x, y)
+
+    def isClicked(self, mousePos):
+        """
+        Returns True if the card is clicked.
+        :pre: self.pos is not None. This means that draw has to be called before this method.
+        """
+        xStart = self.pos[0]
+        yStart = self.pos[1]
+        xEnd = xStart + Card.getCardSize(Board.instance())[0]
+        yEnd = yStart + Card.getCardSize(Board.instance())[1]
+        return xStart <= mousePos[0] <= xEnd and yStart <= mousePos[1] <= yEnd
 
     def getRect(self):
         return self._image.get_rect()
@@ -44,14 +62,12 @@ class Card:
     def getId(self):
         return self._id
 
+    def getDeck(self):
+        return self.deck
+
     def setPos(self, x, y):
         self.pos = (x, y)
         self._image.get_rect().center = self.pos
-
-    def getCardSize(board):
-        width = board.getWidth() * Card.x_ratio
-        height = board.getHeight() * Card.y_ratio
-        return (width, height)
 
     def _getImage(self):
         if self._color == Color.RED:

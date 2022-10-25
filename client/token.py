@@ -1,4 +1,3 @@
-from time import sleep
 from board import Board
 from flyweight import Flyweight
 from color import Color
@@ -35,6 +34,17 @@ class Token:
         self.image = pygame.image.load('sprites/tokens/{}.png'.format(color.name.lower()))
         self._id = id # Separates tokens with same color
         self.isOnDisplay = True
+        self.pos = self._defaultPosition()
+
+    @staticmethod
+    def xStart():
+        board = Board.instance()
+        return  board.getX() + board.getWidth() * Token.xMargin
+
+    @staticmethod
+    def yStart():
+        board = Board.instance()
+        return board.getY() + board.getHeight() * Token.yMargin
 
     @staticmethod
     def initialize():
@@ -45,19 +55,64 @@ class Token:
                 id += 1
 
     @staticmethod
+    def isWithinRange(mousePos):
+        """
+        Returns true if the mouse is within the range of the token display
+        """
+        range = Token.tokensRange()
+        return range[0][0] <= mousePos[0] <= range[1][0] and range[0][1] <= mousePos[1] <= range[1][1]
+
+    @staticmethod
+    def tokensRange():
+        """
+        Returns the range of tokens
+        """
+        xStart = Token.xStart()
+        yStart = Token.yStart()
+        xEnd = xStart + len(Token.positions) * Token.distanceBetweenTokens()
+        yEnd = yStart + Token.getSize()[1]
+        return (xStart, yStart), (xEnd, yEnd)
+
+    @staticmethod
+    def distanceBetweenTokens():
+        """
+        Returns the distance between the start of one token and the start of the next token
+        """
+        board = Board.instance()
+        width, height = Token.getSize()
+        return width + board.getWidth() * Token.xSeperationRatio
+
+    @staticmethod
     def displayAll(screen):
         for token in Token._flyweights.values():
             if token.isOnDisplay: # can be improved by not drawing same color tokens on top of each other
-                token.draw(screen, *token._defaultPosition())
+                token.draw(screen, *token.pos)
+
+    @staticmethod
+    def getClickedToken(mousePos):
+        if not Token.isWithinRange(mousePos):
+            return None
+        # FIXME: Only look at tokens that are on display, and one of each color
+        for token in Token._flyweights.values():
+            if token.isOnDisplay and token.isClicked(mousePos):
+                return token
+
+    def takeToken(self):
+        """
+        Takes a token from the display
+        """
+        print('Taking token')
+        self.isOnDisplay = False
     
     def draw(self, screen, x, y):
-        image = pygame.transform.scale(self.image, self.getSize())
+        image = pygame.transform.scale(self.image, Token.getSize())
         screen.blit(image, (x, y))
 
-    def getSize(self):
+    @staticmethod
+    def getSize():
         board = Board.instance()
-        width = board.getWidth() * self.xRatio
-        height = board.getHeight() * self.yRatio
+        width = board.getWidth() * Token.xRatio
+        height = board.getHeight() * Token.yRatio
         return (width, height)
 
     def getColor(self):
@@ -67,11 +122,15 @@ class Token:
         return self.image.get_rect()
 
     def isClicked(self, mousePos):
-        return self.getRect().collidepoint(mousePos)
+        """
+        Returns true if the mouse is within the range of the token
+        """
+        x, y = self.pos
+        width, height = Token.getSize()
+        return x <= mousePos[0] <= x + width and y <= mousePos[1] <= y + height
+
 
     def _defaultPosition(self):
-        board = Board.instance()
-        width, height = self.getSize()
-        x = board.getX() + board.getWidth() * self.xMargin + self.positions[self._color] * (width + board.getWidth() * self.xSeperationRatio)
-        y = board.getY() + board.getHeight() * self.yMargin
+        x = self.xStart() + self.positions[self._color] * Token.distanceBetweenTokens()
+        y = self.yStart()
         return (x, y)
