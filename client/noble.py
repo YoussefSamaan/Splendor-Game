@@ -19,6 +19,7 @@ class Noble:
         self._id = id # 1 -> 4
         self._image = pygame.image.load('sprites/nobles/{}.png'.format(id))
         self._pos = len(Noble._flyweights) # The slot position of the noble
+        self.isOnDisplay = True
 
     def draw(self, screen, x, y):
         screen.blit(pygame.transform.scale(self._image, Noble.getCardSize()), (x, y))
@@ -53,12 +54,14 @@ class Noble:
         return (board.getWidth() * Noble.x_DistanceBetweenCardsToBoardWidthRatio + Noble.getCardSize()[0])
 
     @staticmethod
-    def initialize(n, screen):
+    def initialize(n):
         ids = random.sample(range(1, 11), n)
         # Create n nobles with the chosen ids
         for id in ids:
-            noble = Noble.instance(prestigePoints = 3, cost = Cost(1,1,1,1,1), id = id)
-            noble.draw(screen, *noble.defaultPosition())
-            pygame.display.update()
-            sleep(0.5)
+            Noble.instance(prestigePoints = 3, cost = Cost(1,1,1,1,1), id = id)
 
+    @staticmethod
+    def displayAll(screen):
+        for noble in Noble._flyweights.values():
+            if noble.isOnDisplay:
+                noble.draw(screen, *noble.defaultPosition())

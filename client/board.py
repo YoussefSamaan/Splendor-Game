@@ -11,7 +11,7 @@ class Board:
         self.boardRect = pygame.Rect(0, 0, self.width, self.height)
         self.boardRect.center = (screenWidth / 2, screenHeight / 2)
 
-    def draw(self, screen):
+    def display(self, screen):
         # screen.blit(self.boardImage, self.boardRect)
         
         # draw black background

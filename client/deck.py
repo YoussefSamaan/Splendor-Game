@@ -1,5 +1,6 @@
 from random import shuffle
 from time import sleep
+from typing import Dict
 from board import Board
 from singleton import Singleton
 from color import Color
@@ -19,15 +20,18 @@ class Deck:
         """
         Initializes the deck
         """
-        self.posToDrawAt = 0 # The card slot to draw at (1-cardSlots)
         self.cardSlots = 4
         self.level = level
         self.color = color
         self.image = self.getImage()
         self.rect = self.image.get_rect()
         self.cards = []
+        self.cardsOnDisplay: Dict[int, Card] = {}
+        self.board = Board.instance()
         self.initDeck()
         self.shuffle()
+        self.fillEmptySlots()
+
 
     def shuffle(self):
         """
@@ -35,55 +39,75 @@ class Deck:
         """
         shuffle(self.cards)
 
-
-    def drawCard(self, screen) -> Card:
+    def fillEmptySlots(self):
         """
-        Draws a card from the deck, displays it on the board, and returns it
+        Fills the empty slots in the deck with cards
+        """
+        while len(self.cardsOnDisplay) < self.cardSlots:
+            self.drawCard()
+
+    def drawCard(self) -> Card:
+        """
+        Draws a card from the deck
 
         :pre: The deck is not empty
         :return: The card that was drawn
         """
         card = self.cards.pop()
-        self.drawCardToBoard(card, screen)
+        self._addCardToDisplay(card)
         return card
 
-    def draw(self, screen):
+    def _addCardToDisplay(self, card: Card):
         """
-        Draws the deck cover to the board surface.
-        Fills the slots for the deck with cards
+        Adds a card to the cards on display. The card is added to the first empty slot
+
+        :param: card: The card to add to the display
+        :pre: There is an empty slot in the deck
         """
-        board = Board.instance()
-        width, height = Deck.getDeckDisplaySize(board)
-        x = self.getDeckX(board)
+        for i in range(1, self.cardSlots+1):
+            if i not in self.cardsOnDisplay.keys():
+                self.cardsOnDisplay[i] = card
+                return
+
+    def display(self, screen):
+        """
+        Displays the cards on the board, and the deck cover
+        """
+        self.displayDeckCover(screen)
+        for slotPos, card in self.cardsOnDisplay.items():
+            self.drawCardToBoard(screen, card, slotPos)
+
+    def displayDeckCover(self, screen):
+        """
+        Displays the deck cover on the board surface
+        """
+        width, height = Deck.getDeckDisplaySize(self.board)
+        x = self.getDeckX()
         if self.color == Color.RED:
             x -= width
-        y = self.getDeckY(board)
+        y = self.getDeckY()
         image = pygame.transform.scale(self.image, (int(width), int(height)))
         screen.blit(image, (x, y))
-        pygame.display.update()
-        sleep(0.5)
-        for _ in range(self.cardSlots):
-            self.drawCard(screen)
-            pygame.display.update()
-            sleep(0.5)
 
-    def drawCardToBoard(self, card, screen):
+    def drawCardToBoard(self, screen, card, slotPos):
         """
         Draws a card on the board surface
-        """
-        board = Board.instance()
-        card.draw(screen, *self.getPosOfNextCard(board))
-        self.posToDrawAt = (self.posToDrawAt + 1) % (self.cardSlots)
 
-    def getPosOfNextCard(self, board):
+        :param: screen: The screen to draw the card on
+        :param: card: The card to draw
+        :param: slotPos: The position of the card slot to draw the card to
+        """
+        card.draw(screen, *self.getCardCoords(slotPos))
+
+    def getCardCoords(self, slotPos):
         """
         Returns the position of the next card to be drawn
         """
         if self.color == Color.RED:
-            x = self.getDeckX(board) - (self.posToDrawAt + 1) * self.xDistanceBetweenCardStartToNextStart(board) - Card.getCardSize(board)[0]
+            x = self.getDeckX() - slotPos * self.xDistanceBetweenCardStartToNextStart() - Card.getCardSize(self.board)[0]
         else:
-            x = self.getDeckX(board) + (self.posToDrawAt + 1) * self.xDistanceBetweenCardStartToNextStart(board)
-        y = self.getDeckY(board)
+            x = self.getDeckX() + slotPos * self.xDistanceBetweenCardStartToNextStart()
+        y = self.getDeckY()
         return (x, y)
 
     @staticmethod
@@ -93,26 +117,28 @@ class Deck:
         """
         return Card.getCardSize(board)
 
-    def getDeckPos(self, board):
+    def getDeckPos(self):
         """
         Returns the position of the deck cover based on the size of the board
         """
-        return (self.getDeckX(board), self.getDeckY(board))
+        return (self.getDeckX(), self.getDeckY())
     
-    def getDeckX(self, board):
+    def getDeckX(self):
         """
         Returns the x-coordinate of the side of the deck nearest to the board based on the size of the board
         """
+        board = self.board
         if self.color == Color.RED:
             return board.getX() + board.getWidth()*(1 - self.x_MarginToBoardWidthRatio) # Red deck is on the right side of the board
 
         return board.getX() + board.getWidth() * self.x_MarginToBoardWidthRatio
 
-    def getDeckY(self, board):
+    def getDeckY(self):
         """
         Returns the y-coordinate of the deck cover based on the size of the board
         """
-        distanceFromTop = (3 - self.level) * self.yDistanceBetweenCardStartToNextStart(board) # based on the deck level
+        board = self.board
+        distanceFromTop = (3 - self.level) * self.yDistanceBetweenCardStartToNextStart() # based on the deck level
         return board.getY() + (board.getHeight() * self.y_MarginToBoardHeightRatio) + distanceFromTop
 
     def getImage(self):
@@ -126,29 +152,29 @@ class Deck:
         else:
             return pygame.image.load('sprites/cards/{}/back.png'.format(self.color.name.lower()))
 
-    def xDistanceBetweenCards(self, board):
+    def xDistanceBetweenCards(self):
         """
         Returns the distance between the end of the first card, and start of second card on the x-axis
         """
-        return board.getWidth() * self.x_DistanceBetweenCardsToBoardWidthRatio
+        return self.board.getWidth() * self.x_DistanceBetweenCardsToBoardWidthRatio
 
-    def yDistanceBetweenCards(self, board):
+    def yDistanceBetweenCards(self):
         """
         Returns the distance between the end of the first card, and start of second card on the y-axis
         """
-        return board.getHeight() * self.y_DistanceBetweenCardsToBoardHeightRatio
+        return self.board.getHeight() * self.y_DistanceBetweenCardsToBoardHeightRatio
 
-    def xDistanceBetweenCardStartToNextStart(self, board):
+    def xDistanceBetweenCardStartToNextStart(self):
         """
         Returns the distance between the start of the first card, and start of second card on the x-axis
         """
-        return self.xDistanceBetweenCards(board) + Card.getCardSize(board)[0]
+        return self.xDistanceBetweenCards() + Card.getCardSize(self.board)[0]
 
-    def yDistanceBetweenCardStartToNextStart(self, board):
+    def yDistanceBetweenCardStartToNextStart(self):
         """
         Returns the distance between the start of the first card, and start of second card on the y-axis
         """
-        return self.yDistanceBetweenCards(board) + Card.getCardSize(board)[1]
+        return self.yDistanceBetweenCards() + Card.getCardSize(self.board)[1]
 
 @Singleton
 class BlueDeck(Deck):
