@@ -108,7 +108,6 @@ def main():
                     sys.exit()
             elif event.type == MOUSEBUTTONDOWN:
                 obj = getClickedObject(pygame.mouse.get_pos())
-                print("Clicked on", obj)
                 performAction(obj)
                 display()
             

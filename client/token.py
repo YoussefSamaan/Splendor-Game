@@ -101,7 +101,6 @@ class Token:
         """
         Takes a token from the display
         """
-        print('Taking token')
         self.isOnDisplay = False
     
     def draw(self, screen, x, y):
