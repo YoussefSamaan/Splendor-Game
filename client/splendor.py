@@ -97,7 +97,7 @@ def main():
     initialize_game()
     display()
     while True:
-        # display()
+        display()
         for event in pygame.event.get():
             if event.type == QUIT:
                 pygame.quit()
