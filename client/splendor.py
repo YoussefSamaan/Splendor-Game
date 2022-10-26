@@ -4,10 +4,12 @@ import sys
 import pygame
 from pygame.locals import *
 from win32api import GetSystemMetrics
+from utils import *
 
 from deck import *
 from noble import Noble
 from splendorToken import Token
+from action import Action
 
 os.chdir(os.path.dirname(os.path.abspath(__file__)))  # to make image imports start from current directory
 WIDTH, HEIGHT = GetSystemMetrics(0), GetSystemMetrics(1)
@@ -18,7 +20,8 @@ DISPLAYSURF = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
 pygame.display.set_caption('Splendor')
 fullScreen = True
 DECKS = [BlueDeck, RedDeck3, YellowDeck, RedDeck2, GreenDeck, RedDeck1]
-
+FLASH_MESSAGE = None
+FLASH_TIMER = 0
 
 def initialize_game():
     initialize_board()
@@ -48,6 +51,14 @@ def initialize_nobles():
     Noble.initialize(n=4)
 
 
+def show_flash_message():
+    global FLASH_TIMER, FLASH_MESSAGE
+    if FLASH_MESSAGE is None or FLASH_TIMER <= 0:
+        return
+    FLASH_TIMER -= 1
+    flash_message(DISPLAYSURF, FLASH_MESSAGE)
+
+
 def display():
     # reset the display and re-display everything
     DISPLAYSURF.fill((0, 0, 0))
@@ -55,6 +66,7 @@ def display():
     display_decks()
     display_tokens()
     display_nobles()
+    show_flash_message()  # last so it's on top
     pygame.display.update()
 
 
@@ -96,16 +108,36 @@ def get_clicked_object(pos):
     return None
 
 
+def get_user_card_selection(card):
+    """
+    Get the user's selection of cards to reserve or buy
+    :param card:
+    :return:
+    """
+    dim_screen(DISPLAYSURF)
+    action = card.get_user_selection(DISPLAYSURF)
+    if action == Action.RESERVE:
+        card.reserve()
+    elif action == Action.BUY:
+        card.buy()
+    elif action == Action.CANCEL:
+        return
+    else:
+        raise ValueError('Invalid action')
+
+
 def perform_action(obj):
     if obj is None:
         return
     if isinstance(obj, Card):
-        deck = obj.get_deck()
-        deck.take_card(obj)
+        get_user_card_selection(obj)
     elif isinstance(obj, Token):
         obj.take_token()
     elif isinstance(obj, Noble):
         obj.take_noble()
+    global FLASH_MESSAGE, FLASH_TIMER
+    FLASH_TIMER = 200
+    FLASH_MESSAGE = 'Success'
 
 
 def main():

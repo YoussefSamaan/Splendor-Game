@@ -1,7 +1,34 @@
+import time
+
+from action import Action
 from board import Board
-from flyweight import Flyweight
-import pygame
+from bonus import Bonus
 from color import Color
+from cost import Cost
+from flyweight import Flyweight
+from utils import *
+
+
+def draw_reserve_button(screen, selection_box: pygame.Rect):
+    reserve_button = button('Reserve', width=selection_box.width / 4, height=selection_box.height / 4, color=RED)
+    x = selection_box.x + selection_box.width / 2 + 10
+    y = selection_box.y + selection_box.height - reserve_button.get_height() * 1.5
+    screen.blit(reserve_button, (x, y))
+    button_rect = reserve_button.get_rect()
+    button_rect.x = x
+    button_rect.y = y
+    return button_rect
+
+
+def draw_buy_button(screen, selection_box: pygame.Rect):
+    buy_button = button('Buy', width=selection_box.width / 4, height=selection_box.height / 4, color=GREEN)
+    x = selection_box.x + selection_box.width / 2 - buy_button.get_width() * 1.5 - 10
+    y = selection_box.y + selection_box.height - buy_button.get_height() * 1.5
+    screen.blit(buy_button, (x, y))
+    button_rect = buy_button.get_rect()
+    button_rect.x = x
+    button_rect.y = y
+    return button_rect
 
 
 @Flyweight
@@ -9,8 +36,12 @@ class Card:
     x_ratio = 0.09  # ratio of card width to board width
     y_ratio = 0.12  # ratio of card height to board height
 
-    def __init__(self, id: int, deck):
+    def __init__(self, id: int, deck, prestige_points=1, cost=Cost(1, 1, 1, 1, 1),
+                 bonus=Bonus(1, 1, 1, 1, 1)):
         self._id = id
+        self._presetge_points = prestige_points
+        self._cost = cost
+        self._bonus = bonus
         self._color = deck.get_color()
         self.deck = deck
         self._image = self._get_image()
@@ -66,3 +97,47 @@ class Card:
                     pass
 
         return pygame.image.load('sprites/cards/{}/{}.png'.format(self._color.name.lower(), self._id))
+
+    def get_user_selection(self, screen) -> Action:
+        """
+        Shows a box to the user with all the card's information.
+        Allows user to choose whether to buy or reserve the card.
+        """
+        rect = draw_selection_box(screen, color=WHITE)
+        pygame.display.update()
+        # draw the card's prestige points on the left side of the rect
+        font = pygame.font.SysFont('comicsans', 40)
+        text = font.render(str(self._presetge_points), 1, (0, 0, 0))
+        screen.blit(text, (rect.x + 10, rect.y + 10))
+        # # draw the card's cost on the right side of the rect
+        # self._cost.draw(screen, rect.x + rect.width - 10, rect.y + 10)
+        # # draw the card's bonus on the bottom of the rect
+        self.draw(screen, rect.x + rect.width / 2 - Card.get_card_size(Board.instance())[0] / 2,
+                  rect.y + rect.height / 2 - Card.get_card_size(Board.instance())[1] / 2)
+        # draw the reserve button
+        reserve_button = draw_reserve_button(screen, rect)
+        # draw the buy button
+        buy_button = draw_buy_button(screen, rect)
+        pygame.display.update()
+        # wait for user to click on a button
+        while True:
+            for event in pygame.event.get():
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if reserve_button.collidepoint(event.pos):
+                        return Action.RESERVE
+                    elif buy_button.collidepoint(event.pos):
+                        return Action.BUY
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        return Action.CANCEL
+                elif event.type == pygame.QUIT:
+                    pygame.quit()
+                    quit()
+
+    def buy(self):
+        # FIXME: Implement this to put card in player inventory
+        self.deck.take_card(self)
+
+    def reserve(self):
+        # FIXME: Implement this to put card in player inventory
+        self.deck.take_card(self)
