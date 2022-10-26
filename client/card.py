@@ -1,14 +1,13 @@
 from board import Board
 from flyweight import Flyweight
 import pygame
-from cost import Cost
-from bonus import Bonus
 from color import Color
+
 
 @Flyweight
 class Card:
-    x_ratio = 0.09 # ratio of card width to board width
-    y_ratio = 0.12 # ratio of card height to board height
+    x_ratio = 0.09  # ratio of card width to board width
+    y_ratio = 0.12  # ratio of card height to board height
 
     def __init__(self, id: int, deck):
         self._id = id
@@ -44,15 +43,6 @@ class Card:
     def get_rect(self):
         return self._image.get_rect()
 
-    def get_prestige_points(self):
-        return self._prestige_points
-
-    def get_cost(self):
-        return self._cost
-    
-    def get_bonus(self):
-        return self._bonus
-
     def get_color(self):
         return self._color
 
@@ -74,5 +64,5 @@ class Card:
                     return pygame.image.load('sprites/cards/red{}/{}.png'.format(i, self._id))
                 except:
                     pass
-        
+
         return pygame.image.load('sprites/cards/{}/{}.png'.format(self._color.name.lower(), self._id))

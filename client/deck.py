@@ -5,10 +5,8 @@ from xmlrpc.client import boolean
 import pygame
 
 from board import Board
-from bonus import Bonus
 from card import Card
 from color import Color
-from cost import Cost
 from singleton import Singleton
 
 

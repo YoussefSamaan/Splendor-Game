@@ -13,9 +13,7 @@ class Noble:
     x_ratio = 1 / 12  # ratio of card width to board width 
     y_ratio = 1 / 12  # ratio of card height to board height
 
-    def __init__(self, prestige_points, cost: Cost, id: int):
-        self._prestige_points = prestige_points
-        self._cost = cost
+    def __init__(self, id: int):
         self._id = id  # 1 -> 4
         self._image = pygame.image.load('sprites/nobles/{}.png'.format(id))
         self.slot = len(Noble.flyweights)  # The slot position of the noble
@@ -27,7 +25,7 @@ class Noble:
         ids = random.sample(range(1, 11), n)
         # Create n nobles with the chosen ids
         for id in ids:
-            Noble.instance(prestige_points=3, cost=Cost(1, 1, 1, 1, 1), id=id)
+            Noble.instance(id=id)
 
     @staticmethod
     def display_all(screen):
@@ -53,12 +51,6 @@ class Noble:
 
     def get_rect(self):
         return self._image.get_rect()
-
-    def get_prestige_points(self):
-        return self._prestige_points
-
-    def get_cost(self):
-        return self._cost
 
     def get_id(self):
         return self._id

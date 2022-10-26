@@ -1,7 +1,9 @@
-from board import Board
-from flyweight import Flyweight
-from color import Color
 import pygame
+
+from board import Board
+from color import Color
+from flyweight import Flyweight
+
 
 @Flyweight
 class Token:
@@ -23,16 +25,16 @@ class Token:
         Color.GOLD: 5,
     }
 
-    yMargin = 31/33
-    xMargin = 1/10
-    xRatio =  1/15
-    yRatio = 2/33
+    yMargin = 31 / 33
+    xMargin = 1 / 10
+    xRatio = 1 / 15
+    yRatio = 2 / 33
     xSeparationRatio = 1 / 20
 
     def __init__(self, color: Color, id: int):
         self._color = color
         self.image = pygame.image.load('sprites/tokens/{}.png'.format(color.name.lower()))
-        self._id = id # Separates tokens with same color
+        self._id = id  # Separates tokens with same color
         self.isOnDisplay = True
         self.pos = self._default_position()
 
@@ -49,9 +51,9 @@ class Token:
     @staticmethod
     def initialize():
         id = 1
-        for color in Token.positions.keys(): # for token color
-            for _ in range(Token.multiplicities[color]): # for number of tokens
-                Token.instance(color = color, id = id)
+        for color in Token.positions.keys():  # for token color
+            for _ in range(Token.multiplicities[color]):  # for number of tokens
+                Token.instance(color=color, id=id)
                 id += 1
 
     @staticmethod
@@ -85,7 +87,7 @@ class Token:
     @staticmethod
     def display_all(screen):
         for token in Token._flyweights.values():
-            if token.isOnDisplay: # can be improved by not drawing same color tokens on top of each other
+            if token.isOnDisplay:  # can be improved by not drawing same color tokens on top of each other
                 token.draw(screen, *token.pos)
 
     @staticmethod
@@ -102,7 +104,7 @@ class Token:
         Takes a token from the display
         """
         self.isOnDisplay = False
-    
+
     def draw(self, screen, x, y):
         image = pygame.transform.scale(self.image, Token.get_size())
         screen.blit(image, (x, y))
@@ -116,7 +118,7 @@ class Token:
 
     def get_color(self):
         return self._color
-    
+
     def get_rect(self):
         return self.image.get_rect()
 
@@ -127,7 +129,6 @@ class Token:
         x, y = self.pos
         width, height = Token.get_size()
         return x <= mouse_pos[0] <= x + width and y <= mouse_pos[1] <= y + height
-
 
     def _default_position(self):
         x = self.get_x_start() + self.positions[self._color] * Token.distance_between_tokens()
