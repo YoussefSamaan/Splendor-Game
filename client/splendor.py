@@ -1,6 +1,7 @@
 import os
 import sys
 
+import pygame
 from pygame.locals import *
 from win32api import GetSystemMetrics
 
@@ -13,7 +14,7 @@ WIDTH, HEIGHT = GetSystemMetrics(0), GetSystemMetrics(1)
 FPS = 60
 FPSCLOCK = pygame.time.Clock()
 pygame.init()
-DISPLAYSURF = pygame.display.set_mode((0, 0), pygame.RESIZABLE)
+DISPLAYSURF = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
 pygame.display.set_caption('Splendor')
 fullScreen = True
 DECKS = [BlueDeck, RedDeck3, YellowDeck, RedDeck2, GreenDeck, RedDeck1]
