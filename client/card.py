@@ -10,15 +10,12 @@ class Card:
     x_ratio = 0.09 # ratio of card width to board width
     y_ratio = 0.12 # ratio of card height to board height
 
-    def __init__(self, prestige_points: int, cost: Cost, bonus: Bonus, color: Color, id: int, deck):
-        self._prestige_points = prestige_points
-        self._cost = cost
-        self._bonus = bonus
-        self._color = color
+    def __init__(self, id: int, deck):
         self._id = id
+        self._color = deck.get_color()
+        self.deck = deck
         self._image = self._get_image()
         self.pos = None
-        self.deck = deck
 
     @staticmethod
     def get_card_size(board):
@@ -40,9 +37,9 @@ class Card:
         """
         x_start = self.pos[0]
         y_start = self.pos[1]
-        xEnd = x_start + Card.get_card_size(Board.instance())[0]
-        yEnd = y_start + Card.get_card_size(Board.instance())[1]
-        return x_start <= mousePos[0] <= xEnd and y_start <= mousePos[1] <= yEnd
+        x_end = x_start + Card.get_card_size(Board.instance())[0]
+        y_end = y_start + Card.get_card_size(Board.instance())[1]
+        return x_start <= mousePos[0] <= x_end and y_start <= mousePos[1] <= y_end
 
     def get_rect(self):
         return self._image.get_rect()
