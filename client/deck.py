@@ -1,5 +1,4 @@
 from random import shuffle
-from time import sleep
 from typing import Dict
 from xmlrpc.client import boolean
 
@@ -26,64 +25,64 @@ class Deck:
         self.cardSlots = cardSlots
         self.level = level
         self.color = color
-        self.image = self._getImage()
+        self.image = self._get_image()
         self.rect = self.image.get_rect()
         self.cards = []
         self.cardsOnDisplay: Dict[int, Card] = {}
         self.board = Board.instance()
-        self._initDeck()
+        self._init_deck()
         self._shuffle()
-        self._fillEmptySlots()
+        self._fill_empty_slots()
 
     @staticmethod
-    def getDeckDisplaySize(board):
+    def get_deck_display_size(board):
         """
         Returns the size of the deck cover based on the size of the board
         """
-        return Card.getCardSize(board)
+        return Card.get_card_size(board)
 
-    def isEmpty(self):
+    def is_empty(self):
         """
         Returns whether the deck is empty
         """
         return len(self.cards) == 0
     
-    def drawCard(self) -> Card:
+    def draw_card(self) -> Card:
         """
         Draws a card from the deck
 
         :pre: The deck is not empty
         :return: The card that was drawn
         """
-        assert not self.isEmpty(), "Deck is empty"
+        assert not self.is_empty(), "Deck is empty"
         card = self.cards.pop()
-        self._addCardToDisplay(card)
+        self._add_card_to_display(card)
         return card
 
     def display(self, screen):
         """
         Displays the cards on the board, and the deck cover
         """
-        self._displayDeckCover(screen)
-        for slotPos, card in self.cardsOnDisplay.items():
-            self._drawCardToBoard(screen, card, slotPos)
+        self._display_deck_cover(screen)
+        for slot_pos, card in self.cardsOnDisplay.items():
+            self._draw_card_to_board(screen, card, slot_pos)
 
-    def takeCard(self, card) -> boolean:
+    def take_card(self, card) -> boolean:
         """
         Takes a card from the deck
 
         :pre: The card is on display
         :return: The card that was taken
         """
-        for slotPos, cardOnDisplay in self.cardsOnDisplay.items():
+        for slot_pos, cardOnDisplay in self.cardsOnDisplay.items():
             if cardOnDisplay == card:
-                self.cardsOnDisplay.pop(slotPos)
-                if not self.isEmpty():
-                    self.drawCard()
+                self.cardsOnDisplay.pop(slot_pos)
+                if not self.is_empty():
+                    self.draw_card()
                 return True
         return False
 
-    def getClickedCard(self, mousePos):
+    def get_clicked_card(self, mouse_pos):
         """
         Returns the card that was clicked on, if any
 
@@ -92,7 +91,7 @@ class Deck:
         """
         # FIXME: improve algorithm by not checking all cards.
         for card in self.cardsOnDisplay.values():
-            if card.isClicked(mousePos):
+            if card.is_clicked(mouse_pos):
                 return card
         return None
 
@@ -102,14 +101,14 @@ class Deck:
         """
         shuffle(self.cards)
 
-    def _fillEmptySlots(self):
+    def _fill_empty_slots(self):
         """
         Fills the empty slots in the deck with cards
         """
         while len(self.cardsOnDisplay) < self.cardSlots:
-            self.drawCard()
+            self.draw_card()
 
-    def _addCardToDisplay(self, card: Card):
+    def _add_card_to_display(self, card: Card):
         """
         Adds a card to the cards on display. The card is added to the first empty slot
 
@@ -121,64 +120,64 @@ class Deck:
                 self.cardsOnDisplay[i] = card
                 return
 
-    def _displayDeckCover(self, screen):
+    def _display_deck_cover(self, screen):
         """
         Displays the deck cover on the board surface
         """
-        width, height = Deck.getDeckDisplaySize(self.board)
-        x = self._getDeckX()
+        width, height = Deck.get_deck_display_size(self.board)
+        x = self._get_deck_x()
         if self.color == Color.RED:
             x -= width
-        y = self._getDeckY()
+        y = self._get_deck_y()
         image = pygame.transform.scale(self.image, (int(width), int(height)))
         screen.blit(image, (x, y))
 
-    def _drawCardToBoard(self, screen, card, slotPos):
+    def _draw_card_to_board(self, screen, card, slot_pos):
         """
         Draws a card on the board surface
 
         :param: screen: The screen to draw the card on
         :param: card: The card to draw
-        :param: slotPos: The position of the card slot to draw the card to
+        :param: slot_pos: The position of the card slot to draw the card to
         """
-        card.draw(screen, *self._getCardCoords(slotPos))
+        card.draw(screen, *self._get_card_coords(slot_pos))
 
-    def _getCardCoords(self, slotPos):
+    def _get_card_coords(self, slot_pos):
         """
         Returns the position of the next card to be drawn
         """
         if self.color == Color.RED:
-            x = self._getDeckX() - slotPos * self._xDistanceBetweenCardstartToNextStart() - Card.getCardSize(self.board)[0]
+            x = self._get_deck_x() - slot_pos * self._x_distance_between_card_start_to_next_start() - Card.get_card_size(self.board)[0]
         else:
-            x = self._getDeckX() + slotPos * self._xDistanceBetweenCardstartToNextStart()
-        y = self._getDeckY()
+            x = self._get_deck_x() + slot_pos * self._x_distance_between_card_start_to_next_start()
+        y = self._get_deck_y()
         return (x, y)
 
-    def _getDeckPos(self):
+    def _get_deck_pos(self):
         """
         Returns the position of the deck cover based on the size of the board
         """
-        return (self._getDeckX(), self._getDeckY())
+        return (self._get_deck_x(), self._get_deck_y())
     
-    def _getDeckX(self):
+    def _get_deck_x(self):
         """
         Returns the x-coordinate of the side of the deck nearest to the board based on the size of the board
         """
         board = self.board
         if self.color == Color.RED:
-            return board.getX() + board.getWidth()*(1 - self.x_MarginToBoardWidthRatio) # Red deck is on the right side of the board
+            return board.get_x() + board.get_width() * (1 - self.x_MarginToBoardWidthRatio) # Red deck is on the right side of the board
 
-        return board.getX() + board.getWidth() * self.x_MarginToBoardWidthRatio
+        return board.get_x() + board.get_width() * self.x_MarginToBoardWidthRatio
 
-    def _getDeckY(self):
+    def _get_deck_y(self):
         """
         Returns the y-coordinate of the deck cover based on the size of the board
         """
         board = self.board
-        distanceFromTop = (3 - self.level) * self._yDistanceBetweenCardstartToNextStart() # based on the deck level
-        return board.getY() + (board.getHeight() * self.y_MarginToBoardHeightRatio) + distanceFromTop
+        distanceFromTop = (3 - self.level) * self._y_distance_between_card_start_to_next_start() # based on the deck level
+        return board.get_y() + (board.get_height() * self.y_MarginToBoardHeightRatio) + distanceFromTop
 
-    def _getImage(self):
+    def _get_image(self):
         """
         Returns the image of the deck cover
         """
@@ -189,29 +188,33 @@ class Deck:
         else:
             return pygame.image.load('sprites/cards/{}/back.png'.format(self.color.name.lower()))
 
-    def _xDistanceBetweenCards(self):
+    def _x_distance_between_cards(self):
         """
         Returns the distance between the end of the first card, and start of second card on the x-axis
         """
-        return self.board.getWidth() * self.x_DistanceBetweenCardsToBoardWidthRatio
+        return self.board.get_width() * self.x_DistanceBetweenCardsToBoardWidthRatio
 
-    def _yDistanceBetweenCards(self):
+    def _y_distance_between_cards(self):
         """
         Returns the distance between the end of the first card, and start of second card on the y-axis
         """
-        return self.board.getHeight() * self.y_DistanceBetweenCardsToBoardHeightRatio
+        return self.board.get_height() * self.y_DistanceBetweenCardsToBoardHeightRatio
 
-    def _xDistanceBetweenCardstartToNextStart(self):
+    def _x_distance_between_card_start_to_next_start(self):
         """
         Returns the distance between the start of the first card, and start of second card on the x-axis
         """
-        return self._xDistanceBetweenCards() + Card.getCardSize(self.board)[0]
+        return self._x_distance_between_cards() + Card.get_card_size(self.board)[0]
 
-    def _yDistanceBetweenCardstartToNextStart(self):
+    def _y_distance_between_card_start_to_next_start(self):
         """
         Returns the distance between the start of the first card, and start of second card on the y-axis
         """
-        return self._yDistanceBetweenCards() + Card.getCardSize(self.board)[1]
+        return self._y_distance_between_cards() + Card.get_card_size(self.board)[1]
+
+    def _init_deck(self):
+        pass
+
 
 @Singleton
 class BlueDeck(Deck):
@@ -221,9 +224,9 @@ class BlueDeck(Deck):
     def __init__(self):
         super().__init__(level=3, color=Color.BLUE)
 
-    def _initDeck(self):
+    def _init_deck(self):
         for i in range(self._NUMBER_OF_CARDS):
-            card = Card.instance(id=self._ID_START + i, prestigePoints=3, cost=Cost(0, 0, 0, 0, 0), bonus=Bonus(0, 0, 0, 0, 0), color=Color.BLUE, deck = self)
+            card = Card.instance(id=self._ID_START + i, prestige_points=3, cost=Cost(0, 0, 0, 0, 0), bonus=Bonus(0, 0, 0, 0, 0), color=Color.BLUE, deck = self)
             self.cards.append(card)
 
 @Singleton
@@ -234,9 +237,9 @@ class GreenDeck(Deck):
     def __init__(self):
         super().__init__(level=1, color=Color.GREEN)
 
-    def _initDeck(self):
+    def _init_deck(self):
         for i in range(self._NUMBER_OF_CARDS):
-            card = Card.instance(id=self._ID_START + i, prestigePoints=3, cost=Cost(0, 0, 0, 0, 0), bonus=Bonus(0, 0, 0, 0, 0), color=Color.GREEN, deck = self)
+            card = Card.instance(id=self._ID_START + i, prestige_points=3, cost=Cost(0, 0, 0, 0, 0), bonus=Bonus(0, 0, 0, 0, 0), color=Color.GREEN, deck = self)
             self.cards.append(card)
 
 @Singleton
@@ -247,9 +250,9 @@ class YellowDeck(Deck):
     def __init__(self):
         super().__init__(level=2, color=Color.YELLOW)
 
-    def _initDeck(self):
+    def _init_deck(self):
         for i in range(self._NUMBER_OF_CARDS):
-            card = Card.instance(id=self._ID_START + i, prestigePoints=3, cost=Cost(0, 0, 0, 0, 0), bonus=Bonus(0, 0, 0, 0, 0), color=Color.YELLOW, deck = self)
+            card = Card.instance(id=self._ID_START + i, prestige_points=3, cost=Cost(0, 0, 0, 0, 0), bonus=Bonus(0, 0, 0, 0, 0), color=Color.YELLOW, deck = self)
             self.cards.append(card)
 
 @Singleton
@@ -260,9 +263,9 @@ class RedDeck1(Deck):
     def __init__(self):
         super().__init__(level=1, color=Color.RED, cardSlots = 2)
 
-    def _initDeck(self):
+    def _init_deck(self):
         for i in range(self._NUMBER_OF_CARDS):
-            card = Card.instance(id=self._ID_START + i, prestigePoints=3, cost=Cost(0, 0, 0, 0, 0), bonus=Bonus(0, 0, 0, 0, 0), color=Color.RED, deck = self)
+            card = Card.instance(id=self._ID_START + i, prestige_points=3, cost=Cost(0, 0, 0, 0, 0), bonus=Bonus(0, 0, 0, 0, 0), color=Color.RED, deck = self)
             self.cards.append(card)
 
 @Singleton
@@ -273,9 +276,9 @@ class RedDeck2(Deck):
     def __init__(self):
         super().__init__(level=2, color=Color.RED, cardSlots = 2)
 
-    def _initDeck(self):
+    def _init_deck(self):
         for i in range(self._NUMBER_OF_CARDS):
-            card = Card.instance(id=self._ID_START + i, prestigePoints=3, cost=Cost(0, 0, 0, 0, 0), bonus=Bonus(0, 0, 0, 0, 0), color=Color.RED, deck = self)
+            card = Card.instance(id=self._ID_START + i, prestige_points=3, cost=Cost(0, 0, 0, 0, 0), bonus=Bonus(0, 0, 0, 0, 0), color=Color.RED, deck = self)
             self.cards.append(card)
 
 @Singleton
@@ -286,7 +289,7 @@ class RedDeck3(Deck):
     def __init__(self):
         super().__init__(level=3, color=Color.RED, cardSlots = 2)
 
-    def _initDeck(self):
+    def _init_deck(self):
         for i in range(self._NUMBER_OF_CARDS):
-            card = Card.instance(id=self._ID_START + i, prestigePoints=3, cost=Cost(0, 0, 0, 0, 0), bonus=Bonus(0, 0, 0, 0, 0), color=Color.RED, deck = self)
+            card = Card.instance(id=self._ID_START + i, prestige_points=3, cost=Cost(0, 0, 0, 0, 0), bonus=Bonus(0, 0, 0, 0, 0), color=Color.RED, deck = self)
             self.cards.append(card)

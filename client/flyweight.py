@@ -25,3 +25,7 @@ class Flyweight:
 
     def __getattr__(self, name):
         return getattr(self._decorated, name)
+
+    @property
+    def flyweights(self):
+        return self._flyweights

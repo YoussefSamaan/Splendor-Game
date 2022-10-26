@@ -10,66 +10,66 @@ class Card:
     x_ratio = 0.09 # ratio of card width to board width
     y_ratio = 0.12 # ratio of card height to board height
 
-    def __init__(self, prestigePoints: int, cost: Cost, bonus: Bonus, color: Color, id: int, deck):
-        self._prestigePoints = prestigePoints
+    def __init__(self, prestige_points: int, cost: Cost, bonus: Bonus, color: Color, id: int, deck):
+        self._prestige_points = prestige_points
         self._cost = cost
         self._bonus = bonus
         self._color = color
         self._id = id
-        self._image = self._getImage()
+        self._image = self._get_image()
         self.pos = None
         self.deck = deck
 
     @staticmethod
-    def getCardSize(board):
-        width = board.getWidth() * Card.x_ratio
-        height = board.getHeight() * Card.y_ratio
-        return (width, height)
+    def get_card_size(board):
+        width = board.get_width() * Card.x_ratio
+        height = board.get_height() * Card.y_ratio
+        return width, height
 
     def draw(self, screen, x, y):
         board = Board.instance()
-        width, height = Card.getCardSize(board)
+        width, height = Card.get_card_size(board)
         image = pygame.transform.scale(self._image, (int(width), int(height)))
         screen.blit(image, (x, y))
         self.pos = (x, y)
 
-    def isClicked(self, mousePos):
+    def is_clicked(self, mousePos):
         """
         Returns True if the card is clicked.
         :pre: self.pos is not None. This means that draw has to be called before this method.
         """
-        xStart = self.pos[0]
-        yStart = self.pos[1]
-        xEnd = xStart + Card.getCardSize(Board.instance())[0]
-        yEnd = yStart + Card.getCardSize(Board.instance())[1]
-        return xStart <= mousePos[0] <= xEnd and yStart <= mousePos[1] <= yEnd
+        x_start = self.pos[0]
+        y_start = self.pos[1]
+        xEnd = x_start + Card.get_card_size(Board.instance())[0]
+        yEnd = y_start + Card.get_card_size(Board.instance())[1]
+        return x_start <= mousePos[0] <= xEnd and y_start <= mousePos[1] <= yEnd
 
-    def getRect(self):
+    def get_rect(self):
         return self._image.get_rect()
 
-    def getPrestigePoints(self):
-        return self._prestigePoints
+    def get_prestige_points(self):
+        return self._prestige_points
 
-    def getCost(self):
+    def get_cost(self):
         return self._cost
     
-    def getBonus(self):
+    def get_bonus(self):
         return self._bonus
 
-    def getColor(self):
+    def get_color(self):
         return self._color
 
-    def getId(self):
+    def get_id(self):
         return self._id
 
-    def getDeck(self):
+    def get_deck(self):
         return self.deck
 
-    def setPos(self, x, y):
+    def set_pos(self, x, y):
         self.pos = (x, y)
         self._image.get_rect().center = self.pos
 
-    def _getImage(self):
+    def _get_image(self):
         if self._color == Color.RED:
             # Look inside all the red card folders
             for i in range(1, 4):
