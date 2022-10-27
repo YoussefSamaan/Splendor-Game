@@ -1,5 +1,6 @@
 import pygame, sys
 from login import login
+import os
 
 HEIGHT = 750
 WIDTH = 900
@@ -10,13 +11,14 @@ LIGHT_BLUE = "lightskyblue3"
 GREEN = (0, 204, 0)
 FPS = 60
 
+os.chdir(os.path.dirname(os.path.abspath(__file__))) 
 pygame.init()
 pygame.display.set_caption('Splendor')
 
 clock = pygame.time.Clock()
 screen = pygame.display.set_mode((WIDTH, HEIGHT)) # , pygame.FULLSCREEN
 
-splendor_text = pygame.image.load('client\sprites\splendor-title.png')
+splendor_text = pygame.image.load('..\sprites\splendor-title.png')
 splendor_text = pygame.transform.scale(splendor_text, (500,200))
 
 base_font = pygame.font.Font(None, 28) # font, size
