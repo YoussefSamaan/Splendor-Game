@@ -51,15 +51,17 @@ def button(text, width, height, color):
     return button
 
 
-def flash_message(screen, text, color=GREEN):
+def flash_message(screen, text, color=GREEN, opacity=255):
     """
-    Display a message in a box of color for 2 seconds.
+    Display a message
     :param color: the color of the box
     :param screen: the screen to display the message on
     :param text: the text to display
     :param: color: the color of the text
+    :param opacity: the opacity of the box
     """
     box = pygame.Surface((screen.get_width() / 4, screen.get_height() / 10))
+    box.set_alpha(opacity)
     box.fill(color)
     write_to_rect(text, box)
     screen.blit(box, (screen.get_width() / 2 - box.get_width() / 2, 0))

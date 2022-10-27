@@ -57,8 +57,12 @@ def show_flash_message():
     if FLASH_MESSAGE is None or FLASH_TIMER <= 0:
         return
     FLASH_TIMER -= 1
-    flash_message(DISPLAYSURF, FLASH_MESSAGE)
+    flash_message(DISPLAYSURF, FLASH_MESSAGE, opacity=min(255, FLASH_TIMER * 2))
 
+
+def set_flash_message(text, timer=60):
+    global FLASH_MESSAGE, FLASH_TIMER
+    FLASH_MESSAGE, FLASH_TIMER = text, timer
 
 def display():
     # reset the display and re-display everything
@@ -120,20 +124,14 @@ def get_user_card_selection(card):
     global FLASH_MESSAGE, FLASH_TIMER
     if action == Action.RESERVE:
         card.reserve()
-        FLASH_MESSAGE = 'Reserved card'
-        FLASH_TIMER = 60
+        set_flash_message('Reserved a card')
     elif action == Action.BUY:
         card.buy()
-        FLASH_MESSAGE = 'You bought a card!'
-        FLASH_TIMER = 60
+        set_flash_message('Bought a card')
     elif action == Action.CANCEL:
         return
     else:
         raise ValueError('Invalid action')
-
-
-def display_flash_message(action):
-    pass
 
 
 def perform_action(obj):
@@ -143,9 +141,10 @@ def perform_action(obj):
         get_user_card_selection(obj)
     elif isinstance(obj, Token):
         obj.take_token()
+        set_flash_message('Took a token')
     elif isinstance(obj, Noble):
         obj.take_noble()
-    global FLASH_MESSAGE, FLASH_TIMER
+        set_flash_message('Took a noble')
 
 
 def main():
