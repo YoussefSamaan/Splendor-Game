@@ -91,7 +91,7 @@ while True:
 
     screen.fill(GREY)
 
-    screen.blit(splendor_text, ((WIDTH - splendor_text.get_width())//3 * 2, 70))
+    screen.blit(splendor_text, (200, 70))
     
     pygame.draw.rect(screen, username_color, username_input_rect, 3) 
     pygame.draw.rect(screen, password_color, password_input_rect, 3)
