@@ -3,8 +3,8 @@ import pygame
 GREEN = (0, 255, 0)
 RED = (255, 0, 0)
 WHITE = (255, 255, 255)
-
-
+# BACKGROUND_COLOR = (158, 58, 64)
+BACKGROUND_COLOR = (113, 155, 158)
 def dim_screen(screen, color=(0, 0, 0), alpha=128):
     """
     Dim the screen with a color and alpha value
@@ -15,14 +15,13 @@ def dim_screen(screen, color=(0, 0, 0), alpha=128):
     screen.blit(dim, (0, 0))
 
 
-def get_selection_box(screen: pygame.Surface, width=0.5, height=0.5, color=(255, 255, 255), thickness=2):
+def get_selection_box(screen: pygame.Surface, width=0.5, height=0.5, color=BACKGROUND_COLOR):
     """
     Creates a selection box on the screen. Centered by default.
     :param screen: used for relative positioning
     :param width: the width of the box relative to the screen size
     :param height: the height of the box relative to the screen size
     :param color: the color of the box
-    :param thickness: the thickness of the box
     :return: The surface of the selection box, and the rect of the selection box
     """
     x = screen.get_width() * (1 - width) / 2

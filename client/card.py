@@ -115,7 +115,7 @@ class Card:
         Shows a box to the user with all the card's information.
         Allows user to choose whether to buy or reserve the card.
         """
-        selection_box, selection_box_rect = get_selection_box(screen, color=WHITE)
+        selection_box, selection_box_rect = get_selection_box(screen)
         # draw the card's prestige points on the left side of the rect
         font = pygame.font.SysFont('comicsans', 40)
         text = font.render(str(self._presetge_points), 1, (0, 0, 0))
