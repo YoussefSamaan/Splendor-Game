@@ -6,6 +6,7 @@ from board import Board
 from noble import Noble
 from deck import *
 from token import Token
+from sidebar import Sidebar
 
 os.chdir(os.path.dirname(os.path.abspath(__file__))) # to make image imports start from current directory
 WIDTH, HEIGHT = GetSystemMetrics(0), GetSystemMetrics(1)
@@ -18,6 +19,7 @@ fullScreen = True
 
 def initialize_game():
     initialize_board()
+    initialize_sidebar()
     initialize_cards()
     initialize_tokens()
     initialize_nobles()
@@ -26,6 +28,9 @@ def initialize_game():
     
 def initialize_board():
     Board.instance(WIDTH, HEIGHT)
+
+def initialize_sidebar():
+    Sidebar.instance(WIDTH, HEIGHT)
 
 def initialize_cards():
     BlueDeck.instance()
@@ -43,7 +48,10 @@ def initialize_nobles():
 
 def getClickedObject(pos):
     board = Board.instance()
-    if (not board.isClicked(pos)):
+    sidebar = Sidebar.instance()
+    if sidebar.isClicked(pos):
+        return None
+    elif (not board.isClicked(pos)):
         return None
 
 def display():
@@ -53,7 +61,11 @@ def display():
     displayDecks()
     displayTokens()
     displayNobles()
+    displaySidebar()
     pygame.display.update()
+
+def displaySidebar():
+    Sidebar.instance().display(DISPLAYSURF)
 
 def displayBoard():
     Board.instance().display(DISPLAYSURF)
@@ -86,6 +98,8 @@ def main():
                     sys.exit()
             elif event.type == MOUSEBUTTONDOWN:
                 getClickedObject(pygame.mouse.get_pos())
+                # add scrollable sidebar
+
                 
             
         pygame.display.update()
