@@ -1,5 +1,7 @@
 import time
 
+import pygame
+
 from action import Action
 from board import Board
 from bonus import Bonus
@@ -9,22 +11,32 @@ from flyweight import Flyweight
 from utils import *
 
 
-def draw_reserve_button(screen, selection_box: pygame.Rect):
-    reserve_button = button('Reserve', width=selection_box.width / 4, height=selection_box.height / 4, color=RED)
-    x = selection_box.x + selection_box.width / 2 + 10
-    y = selection_box.y + selection_box.height - reserve_button.get_height() * 1.5
-    screen.blit(reserve_button, (x, y))
+def draw_reserve_button(surface: pygame.Surface):
+    """
+    The x and y coordinates returned are relative to the surface.
+    :param surface:
+    :return:
+    """
+    reserve_button = button('Reserve', width=surface.get_width() / 6, height=surface.get_height() / 8, color=RED)
+    x = surface.get_width() / 2 + 10
+    y = surface.get_height() - reserve_button.get_height() * 1.5
+    surface.blit(reserve_button, (x, y))
     button_rect = reserve_button.get_rect()
     button_rect.x = x
     button_rect.y = y
     return button_rect
 
 
-def draw_buy_button(screen, selection_box: pygame.Rect):
-    buy_button = button('Buy', width=selection_box.width / 4, height=selection_box.height / 4, color=GREEN)
-    x = selection_box.x + selection_box.width / 2 - buy_button.get_width() * 1.5 - 10
-    y = selection_box.y + selection_box.height - buy_button.get_height() * 1.5
-    screen.blit(buy_button, (x, y))
+def draw_buy_button(surface: pygame.Surface):
+    """
+    The x and y coordinates returned are relative to the surface.
+    :param surface:
+    :return:
+    """
+    buy_button = button('Buy', width=surface.get_width() / 6, height=surface.get_height() / 8, color=GREEN)
+    x = surface.get_width() / 2 - buy_button.get_width() * 1.5 - 10
+    y = surface.get_height() - buy_button.get_height() * 1.5
+    surface.blit(buy_button, (x, y))
     button_rect = buy_button.get_rect()
     button_rect.x = x
     button_rect.y = y
@@ -103,21 +115,29 @@ class Card:
         Shows a box to the user with all the card's information.
         Allows user to choose whether to buy or reserve the card.
         """
-        rect = draw_selection_box(screen, color=WHITE)
-        pygame.display.update()
+        selection_box, selection_box_rect = get_selection_box(screen, color=WHITE)
         # draw the card's prestige points on the left side of the rect
         font = pygame.font.SysFont('comicsans', 40)
         text = font.render(str(self._presetge_points), 1, (0, 0, 0))
-        screen.blit(text, (rect.x + 10, rect.y + 10))
+        selection_box.blit(text, (selection_box_rect.x + 10, selection_box_rect.y + 10))
         # # draw the card's cost on the right side of the rect
         # self._cost.draw(screen, rect.x + rect.width - 10, rect.y + 10)
         # # draw the card's bonus on the bottom of the rect
-        self.draw(screen, rect.x + rect.width / 2 - Card.get_card_size(Board.instance())[0] / 2,
-                  rect.y + rect.height / 2 - Card.get_card_size(Board.instance())[1] / 2)
+        self.draw(selection_box, selection_box_rect.width / 2 - Card.get_card_size(Board.instance())[0] / 2,
+                  selection_box_rect.height / 2 - Card.get_card_size(Board.instance())[1] / 2)
+
         # draw the reserve button
-        reserve_button = draw_reserve_button(screen, rect)
+        reserve_button = draw_reserve_button(selection_box)
+        # get the true position of the button
+        reserve_button.x += selection_box_rect.x
+        reserve_button.y += selection_box_rect.y
         # draw the buy button
-        buy_button = draw_buy_button(screen, rect)
+        buy_button = draw_buy_button(selection_box)
+        # get the true position of the button
+        buy_button.x += selection_box_rect.x
+        buy_button.y += selection_box_rect.y
+
+        screen.blit(selection_box, selection_box_rect)
         pygame.display.update()
         # wait for user to click on a button
         while True:
@@ -127,6 +147,8 @@ class Card:
                         return Action.RESERVE
                     elif buy_button.collidepoint(event.pos):
                         return Action.BUY
+                    else:
+                        return Action.CANCEL
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
                         return Action.CANCEL

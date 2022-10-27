@@ -15,26 +15,24 @@ def dim_screen(screen, color=(0, 0, 0), alpha=128):
     screen.blit(dim, (0, 0))
 
 
-def draw_selection_box(screen: pygame.Surface, width=0.5, height=0.5, color=(255, 255, 255), thickness=2):
+def get_selection_box(screen: pygame.Surface, width=0.5, height=0.5, color=(255, 255, 255), thickness=2):
     """
-    Draw a selection box on the screen. Centered by default.
-    :param screen: the screen to draw on
+    Creates a selection box on the screen. Centered by default.
+    :param screen: used for relative positioning
     :param width: the width of the box relative to the screen size
     :param height: the height of the box relative to the screen size
     :param color: the color of the box
     :param thickness: the thickness of the box
-    :return: The rect of the selection box
+    :return: The surface of the selection box, and the rect of the selection box
     """
     x = screen.get_width() * (1 - width) / 2
     y = screen.get_height() * (1 - height) / 2
     width = screen.get_width() * width
     height = screen.get_height() * height
-    rect = pygame.Rect(x, y, width, height)
     box = pygame.Surface((width, height))
     box.fill(color)
-    screen.blit(box, (x, y))
-
-    return rect
+    rect = pygame.Rect(x, y, width, height)
+    return box, rect
 
 
 def button(text, width, height, color):
@@ -46,10 +44,10 @@ def button(text, width, height, color):
     :param color: the color of the button
     :return: the button
     """
-    button = pygame.Surface((width, height))
-    button.fill(color)
+    # create a transparent surface
+    button = pygame.Surface((width, height), pygame.SRCALPHA)
+    pygame.draw.rect(button, color, (0, 0, width, height), border_radius=10)
     write_to_rect(text, button)
-    pygame.draw.rect(button, color, (0, 0, width, height), 5, border_radius=50)
     return button
 
 
@@ -72,11 +70,9 @@ def write_to_rect(text, surface):
     Write text to a surface
     :param text: the text to write
     :param surface: the rect to write to
-    :return: the text surface
     """
     font = pygame.font.SysFont('Arial', 20)
     text = font.render(text, True, (0, 0, 0))
     text_rect = text.get_rect()
     text_rect.center = (surface.get_width() / 2, surface.get_height() / 2)
     surface.blit(text, text_rect)
-    return text

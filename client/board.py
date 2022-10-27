@@ -4,7 +4,7 @@ from singleton import Singleton
 @Singleton
 class Board:
     def __init__(self, screen_width, screen_height):
-        self.boardImage = pygame.image.load('sprites/board.png')
+        self.boardImage = pygame.image.load('sprites/board.jpg')
         self.width = min(screen_width, 1000)
         self.height = min(screen_height, 800)
         # self.boardImage = pygame.transform.scale(self.boardImage, (self.width, self.height))

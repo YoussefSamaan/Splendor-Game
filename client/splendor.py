@@ -16,12 +16,13 @@ WIDTH, HEIGHT = GetSystemMetrics(0), GetSystemMetrics(1)
 FPS = 60
 FPSCLOCK = pygame.time.Clock()
 pygame.init()
-DISPLAYSURF = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
+DISPLAYSURF = pygame.display.set_mode((WIDTH, HEIGHT), pygame.FULLSCREEN)
 pygame.display.set_caption('Splendor')
 fullScreen = True
 DECKS = [BlueDeck, RedDeck3, YellowDeck, RedDeck2, GreenDeck, RedDeck1]
 FLASH_MESSAGE = None
 FLASH_TIMER = 0
+
 
 def initialize_game():
     initialize_board()
@@ -116,14 +117,23 @@ def get_user_card_selection(card):
     """
     dim_screen(DISPLAYSURF)
     action = card.get_user_selection(DISPLAYSURF)
+    global FLASH_MESSAGE, FLASH_TIMER
     if action == Action.RESERVE:
         card.reserve()
+        FLASH_MESSAGE = 'Reserved card'
+        FLASH_TIMER = 60
     elif action == Action.BUY:
         card.buy()
+        FLASH_MESSAGE = 'You bought a card!'
+        FLASH_TIMER = 60
     elif action == Action.CANCEL:
         return
     else:
         raise ValueError('Invalid action')
+
+
+def display_flash_message(action):
+    pass
 
 
 def perform_action(obj):
@@ -136,8 +146,6 @@ def perform_action(obj):
     elif isinstance(obj, Noble):
         obj.take_noble()
     global FLASH_MESSAGE, FLASH_TIMER
-    FLASH_TIMER = 200
-    FLASH_MESSAGE = 'Success'
 
 
 def main():
@@ -153,6 +161,12 @@ def main():
                 if event.key == K_ESCAPE:
                     pygame.quit()
                     sys.exit()
+                if event.key == K_m:
+                    # minimize the window
+                    # FIXME: Is there a better way to do this?
+                    pygame.display.set_mode((1, 1))
+                if event.key == K_f:
+                    pygame.display.set_mode((WIDTH, HEIGHT), pygame.FULLSCREEN)
             elif event.type == MOUSEBUTTONDOWN:
                 obj = get_clicked_object(pygame.mouse.get_pos())
                 perform_action(obj)
