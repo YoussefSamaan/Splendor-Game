@@ -15,6 +15,21 @@ class Sidebar:
         
         # draw dummy color background
         pygame.draw.rect(screen, (50, 50, 50), self.sidebarRect)
+
+    def add_noble(self, noble):
+        pass
+
+    def add_card(self, card):
+        pass
+
+    def reserve_card(self, card):
+        pass
+    
+    def add_token(self, token):
+        pass
+
+    def scroll_sidebar(self, direction):
+        pass
     
     def getRect(self):
         return self.sidebarRect

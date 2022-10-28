@@ -3,6 +3,7 @@ from flyweight import Flyweight
 import pygame
 from cost import Cost
 import random
+from sidebar import Sidebar
 
 
 @Flyweight
@@ -44,7 +45,9 @@ class Noble:
         return None
 
     def take_noble(self):
+        sidebar = Sidebar.instance()
         self.isOnDisplay = False
+        sidebar.add_noble(self)
 
     def draw(self, screen, x, y):
         screen.blit(pygame.transform.scale(self._image, Noble.get_card_size()), (x, y))

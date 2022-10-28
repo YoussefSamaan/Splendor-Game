@@ -8,7 +8,6 @@ import os
 from board import Board
 from noble import Noble
 from deck import *
-from token import Token
 from sidebar import Sidebar
 from splendorToken import Token
 
@@ -61,11 +60,15 @@ def display():
     display_decks()
     display_tokens()
     display_nobles()
+    display_sidebar()
     pygame.display.update()
 
 
 def display_board():
     Board.instance().display(DISPLAYSURF)
+
+def display_sidebar():
+    Sidebar.instance().display(DISPLAYSURF)
 
 
 def display_decks():
@@ -112,6 +115,8 @@ def perform_action(obj):
         obj.take_token()
     elif isinstance(obj, Noble):
         obj.take_noble()
+    elif isinstance(obj, Sidebar):
+        obj.scroll_sidebar()
 
 
 def main():
