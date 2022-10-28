@@ -4,20 +4,24 @@ import sys
 import pygame
 from pygame.locals import *
 from win32api import GetSystemMetrics
+from utils import *
 
 from deck import *
 from noble import Noble
 from splendorToken import Token
+from action import Action
 
 os.chdir(os.path.dirname(os.path.abspath(__file__)))  # to make image imports start from current directory
 WIDTH, HEIGHT = GetSystemMetrics(0), GetSystemMetrics(1)
 FPS = 60
 FPSCLOCK = pygame.time.Clock()
 pygame.init()
-DISPLAYSURF = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
+DISPLAYSURF = pygame.display.set_mode((WIDTH, HEIGHT), pygame.FULLSCREEN)
 pygame.display.set_caption('Splendor')
 fullScreen = True
 DECKS = [BlueDeck, RedDeck3, YellowDeck, RedDeck2, GreenDeck, RedDeck1]
+FLASH_MESSAGE = None
+FLASH_TIMER = 0
 
 
 def initialize_game():
@@ -48,6 +52,18 @@ def initialize_nobles():
     Noble.initialize(n=4)
 
 
+def show_flash_message():
+    global FLASH_TIMER, FLASH_MESSAGE
+    if FLASH_MESSAGE is None or FLASH_TIMER <= 0:
+        return
+    FLASH_TIMER -= 1
+    flash_message(DISPLAYSURF, FLASH_MESSAGE, opacity=min(255, FLASH_TIMER * 2))
+
+
+def set_flash_message(text, timer=60):
+    global FLASH_MESSAGE, FLASH_TIMER
+    FLASH_MESSAGE, FLASH_TIMER = text, timer
+
 def display():
     # reset the display and re-display everything
     DISPLAYSURF.fill((0, 0, 0))
@@ -55,6 +71,7 @@ def display():
     display_decks()
     display_tokens()
     display_nobles()
+    show_flash_message()  # last so it's on top
     pygame.display.update()
 
 
@@ -96,16 +113,38 @@ def get_clicked_object(pos):
     return None
 
 
+def get_user_card_selection(card):
+    """
+    Get the user's selection of cards to reserve or buy
+    :param card:
+    :return:
+    """
+    dim_screen(DISPLAYSURF)
+    action = card.get_user_selection(DISPLAYSURF)
+    global FLASH_MESSAGE, FLASH_TIMER
+    if action == Action.RESERVE:
+        card.reserve()
+        set_flash_message('Reserved a card')
+    elif action == Action.BUY:
+        card.buy()
+        set_flash_message('Bought a card')
+    elif action == Action.CANCEL:
+        return
+    else:
+        raise ValueError('Invalid action')
+
+
 def perform_action(obj):
     if obj is None:
         return
     if isinstance(obj, Card):
-        deck = obj.get_deck()
-        deck.take_card(obj)
+        get_user_card_selection(obj)
     elif isinstance(obj, Token):
         obj.take_token()
+        set_flash_message('Took a token')
     elif isinstance(obj, Noble):
         obj.take_noble()
+        set_flash_message('Took a noble')
 
 
 def main():
@@ -121,6 +160,12 @@ def main():
                 if event.key == K_ESCAPE:
                     pygame.quit()
                     sys.exit()
+                if event.key == K_m:
+                    # minimize the window
+                    # FIXME: Is there a better way to do this?
+                    pygame.display.set_mode((1, 1))
+                if event.key == K_f:
+                    pygame.display.set_mode((WIDTH, HEIGHT), pygame.FULLSCREEN)
             elif event.type == MOUSEBUTTONDOWN:
                 obj = get_clicked_object(pygame.mouse.get_pos())
                 perform_action(obj)
