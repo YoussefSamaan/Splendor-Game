@@ -3,6 +3,7 @@ import pygame
 GREEN = (0, 255, 0)
 RED = (255, 0, 0)
 WHITE = (255, 255, 255)
+BLACK = (0, 0, 0)
 # BACKGROUND_COLOR = (158, 58, 64)
 BACKGROUND_COLOR = (113, 155, 158)
 def dim_screen(screen, color=(0, 0, 0), alpha=128):
@@ -46,7 +47,7 @@ def button(text, width, height, color):
     # create a transparent surface
     button = pygame.Surface((width, height), pygame.SRCALPHA)
     pygame.draw.rect(button, color, (0, 0, width, height), border_radius=10)
-    write_to_rect(text, button)
+    write_on(button, text)
     return button
 
 
@@ -62,18 +63,21 @@ def flash_message(screen, text, color=GREEN, opacity=255):
     box = pygame.Surface((screen.get_width() / 4, screen.get_height() / 10))
     box.set_alpha(opacity)
     box.fill(color)
-    write_to_rect(text, box)
+    write_on(box, text)
     screen.blit(box, (screen.get_width() / 2 - box.get_width() / 2, 0))
 
 
-def write_to_rect(text, surface):
+def write_on(surface, text, color=BLACK, font='Arial', font_size=20):
     """
     Write text to a surface
     :param text: the text to write
     :param surface: the rect to write to
+    :param color: the color of the text
+    :param font: the font of the text
+    :param font_size: the size of the font
     """
-    font = pygame.font.SysFont('Arial', 20)
-    text = font.render(text, True, (0, 0, 0))
+    font = pygame.font.SysFont(font, font_size)
+    text = font.render(text, True, color)
     text_rect = text.get_rect()
     text_rect.center = (surface.get_width() / 2, surface.get_height() / 2)
     surface.blit(text, text_rect)
