@@ -1,67 +1,86 @@
-from time import sleep
 from board import Board
 from flyweight import Flyweight
 import pygame
 from cost import Cost
 import random
 
+
 @Flyweight
 class Noble:
     x_MarginToBoardSizeRatio = 0.2
     y_MarginToBoardSizeRatio = 0.3
     x_DistanceBetweenCardsToBoardWidthRatio = 1 / 30
-    x_ratio = 1/12 # ratio of card width to board width 
-    y_ratio = 1/12 # ratio of card height to board height
+    x_ratio = 1 / 12  # ratio of card width to board width 
+    y_ratio = 1 / 12  # ratio of card height to board height
 
-    def __init__(self, prestigePoints, cost: Cost, id: int):
-        self._prestigePoints = prestigePoints
-        self._cost = cost
-        self._id = id # 1 -> 4
+    def __init__(self, id: int):
+        self._id = id  # 1 -> 4
         self._image = pygame.image.load('sprites/nobles/{}.png'.format(id))
-        self._pos = len(Noble._flyweights) # The slot position of the noble
+        self.slot = len(Noble.flyweights)  # The slot position of the noble
+        self.pos = self._default_position()
         self.isOnDisplay = True
-
-    def draw(self, screen, x, y):
-        screen.blit(pygame.transform.scale(self._image, Noble.getCardSize()), (x, y))
-
-    def defaultPosition(self):
-        board = Board.instance()
-        x = board.getWidth()*self.x_MarginToBoardSizeRatio + (self._pos) * Noble.getDistanceBetweenCards(board)
-        x += board.getX()
-        y = board.getHeight()*self.y_MarginToBoardSizeRatio
-        y += board.getY()
-        return (x, y)
-
-    def getRect(self):
-        return self._image.get_rect()
-
-    def getPrestigePoints(self):
-        return self._prestigePoints
-
-    def getCost(self):
-        return self._cost
-
-    def getId(self):
-        return self._id
-
-    def getCardSize():
-        board = Board.instance()
-        width = board.getWidth() * Noble.x_ratio
-        height = board.getHeight() * Noble.y_ratio
-        return (width, height)
-    
-    def getDistanceBetweenCards(board):
-        return (board.getWidth() * Noble.x_DistanceBetweenCardsToBoardWidthRatio + Noble.getCardSize()[0])
 
     @staticmethod
     def initialize(n):
         ids = random.sample(range(1, 11), n)
         # Create n nobles with the chosen ids
         for id in ids:
-            Noble.instance(prestigePoints = 3, cost = Cost(1,1,1,1,1), id = id)
+            Noble.instance(id=id)
 
     @staticmethod
-    def displayAll(screen):
-        for noble in Noble._flyweights.values():
+    def display_all(screen):
+        for noble in Noble.flyweights.values():
             if noble.isOnDisplay:
-                noble.draw(screen, *noble.defaultPosition())
+                noble.draw(screen, *noble._default_position())
+
+    @staticmethod
+    def get_clicked_noble(mouse_pos):
+        """
+        Returns the noble that is clicked. Returns None if no noble is clicked.
+        """
+        for noble in Noble.flyweights.values():
+            if noble.isOnDisplay and noble.is_clicked(mouse_pos):
+                return noble
+        return None
+
+    def take_noble(self):
+        self.isOnDisplay = False
+
+    def draw(self, screen, x, y):
+        screen.blit(pygame.transform.scale(self._image, Noble.get_card_size()), (x, y))
+
+    def get_rect(self):
+        return self._image.get_rect()
+
+    def get_id(self):
+        return self._id
+
+    @staticmethod
+    def get_card_size():
+        board = Board.instance()
+        width = board.get_width() * Noble.x_ratio
+        height = board.get_height() * Noble.y_ratio
+        return width, height
+
+    @staticmethod
+    def get_distance_between_cards(board):
+        return board.get_width() * Noble.x_DistanceBetweenCardsToBoardWidthRatio + Noble.get_card_size()[0]
+
+    def _default_position(self):
+        board = Board.instance()
+        x = board.get_width() * self.x_MarginToBoardSizeRatio + self.slot * Noble.get_distance_between_cards(board)
+        x += board.get_x()
+        y = board.get_height() * self.y_MarginToBoardSizeRatio
+        y += board.get_y()
+        return x, y
+
+    def is_clicked(self, mouse_pos):
+        """
+        Returns True if the noble is clicked.
+        :pre: self.pos is not None. This means that draw has to be called before this method.
+        """
+        x_start = self.pos[0]
+        y_start = self.pos[1]
+        x_end = x_start + Noble.get_card_size()[0]
+        y_end = y_start + Noble.get_card_size()[1]
+        return x_start <= mouse_pos[0] <= x_end and y_start <= mouse_pos[1] <= y_end

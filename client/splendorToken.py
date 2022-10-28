@@ -1,0 +1,136 @@
+import pygame
+
+from board import Board
+from color import Color
+from flyweight import Flyweight
+
+
+@Flyweight
+class Token:
+    positions = {
+        Color.WHITE: 0,
+        Color.BLUE: 1,
+        Color.GREEN: 2,
+        Color.RED: 3,
+        Color.BROWN: 4,
+        Color.GOLD: 5,
+    }
+
+    multiplicities = {
+        Color.WHITE: 7,
+        Color.BLUE: 7,
+        Color.GREEN: 7,
+        Color.RED: 7,
+        Color.BROWN: 7,
+        Color.GOLD: 5,
+    }
+
+    yMargin = 31 / 33
+    xMargin = 1 / 10
+    xRatio = 1 / 15
+    yRatio = 2 / 33
+    xSeparationRatio = 1 / 20
+
+    def __init__(self, color: Color, id: int):
+        self._color = color
+        self.image = pygame.image.load('sprites/tokens/{}.png'.format(color.name.lower()))
+        self._id = id  # Separates tokens with same color
+        self.isOnDisplay = True
+        self.pos = self._default_position()
+
+    @staticmethod
+    def get_x_start():
+        board = Board.instance()
+        return board.get_x() + board.get_width() * Token.xMargin
+
+    @staticmethod
+    def get_y_start():
+        board = Board.instance()
+        return board.get_y() + board.get_height() * Token.yMargin
+
+    @staticmethod
+    def initialize():
+        id = 1
+        for color in Token.positions.keys():  # for token color
+            for _ in range(Token.multiplicities[color]):  # for number of tokens
+                Token.instance(color=color, id=id)
+                id += 1
+
+    @staticmethod
+    def is_within_range(mouse_pos):
+        """
+        Returns true if the mouse is within the range of the token display
+        """
+        r = Token.tokens_range()
+        return r[0][0] <= mouse_pos[0] <= r[1][0] and r[0][1] <= mouse_pos[1] <= r[1][1]
+
+    @staticmethod
+    def tokens_range():
+        """
+        Returns the range of tokens
+        """
+        x_start = Token.get_x_start()
+        y_start = Token.get_y_start()
+        x_end = x_start + len(Token.positions) * Token.distance_between_tokens()
+        y_end = y_start + Token.get_size()[1]
+        return (x_start, y_start), (x_end, y_end)
+
+    @staticmethod
+    def distance_between_tokens():
+        """
+        Returns the distance between the start of one token and the start of the next token
+        """
+        board = Board.instance()
+        width, height = Token.get_size()
+        return width + board.get_width() * Token.xSeparationRatio
+
+    @staticmethod
+    def display_all(screen):
+        for token in Token._flyweights.values():
+            if token.isOnDisplay:  # can be improved by not drawing same color tokens on top of each other
+                token.draw(screen, *token.pos)
+
+    @staticmethod
+    def get_clicked_token(mouse_pos):
+        if not Token.is_within_range(mouse_pos):
+            return None
+        # FIXME: Only look at tokens that are on display, and one of each color
+        for token in Token._flyweights.values():
+            if token.isOnDisplay and token.is_clicked(mouse_pos):
+                return token
+
+    def take_token(self):
+        """
+        Takes a token from the display
+        """
+        self.isOnDisplay = False
+
+    def draw(self, screen, x, y):
+        image = pygame.transform.scale(self.image, Token.get_size())
+        screen.blit(image, (x, y))
+
+    @staticmethod
+    def get_size():
+        board = Board.instance()
+        width = board.get_width() * Token.xRatio
+        height = board.get_height() * Token.yRatio
+        return width, height
+
+    def get_color(self):
+        return self._color
+
+    def get_rect(self):
+        return self.image.get_rect()
+
+    def is_clicked(self, mouse_pos):
+        """
+        Returns true if the mouse is within the range of the token
+        """
+        x, y = self.pos
+        width, height = Token.get_size()
+        return x <= mouse_pos[0] <= x + width and y <= mouse_pos[1] <= y + height
+
+    def _default_position(self):
+        x = self.get_x_start() + self.positions[self._color] * Token.distance_between_tokens()
+        y = self.get_y_start()
+        return x, y

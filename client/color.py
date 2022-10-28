@@ -1,5 +1,6 @@
 from enum import Enum
 
+
 class Color(Enum):
     BLUE = 1
     GREEN = 2
