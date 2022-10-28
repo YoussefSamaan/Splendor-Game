@@ -59,7 +59,7 @@ def login():
     password_active = False
 
     wrong_credentials = False
-    
+
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -73,7 +73,7 @@ def login():
                         return
                     else:
                         wrong_credentials = True
-                        
+
                 if username_input_rect.collidepoint(event.pos):
                     username_active = True
                     username_color = color_active
@@ -93,7 +93,6 @@ def login():
                         username_color = color_passive   
                     username_active = False
                     password_active = False
-
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     pygame.quit()
