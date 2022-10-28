@@ -188,9 +188,9 @@ class Deck:
         if hasattr(self, 'image'):
             return self.image
         if self.color == Color.RED:
-            return pygame.image.load('sprites/cards/red{}/back.png'.format(str(self.level)))
+            return pygame.image.load('../sprites/cards/red{}/back.png'.format(str(self.level)))
         else:
-            return pygame.image.load('sprites/cards/{}/back.png'.format(self.color.name.lower()))
+            return pygame.image.load('../sprites/cards/{}/back.png'.format(self.color.name.lower()))
 
     def _x_distance_between_cards(self):
         """

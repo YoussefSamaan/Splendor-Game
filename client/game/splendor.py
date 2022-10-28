@@ -1,7 +1,6 @@
 import os
 import sys
 
-import pygame
 from pygame.locals import *
 from win32api import GetSystemMetrics
 from utils import *
@@ -63,6 +62,7 @@ def show_flash_message():
 def set_flash_message(text, timer=60):
     global FLASH_MESSAGE, FLASH_TIMER
     FLASH_MESSAGE, FLASH_TIMER = text, timer
+
 
 def display():
     # reset the display and re-display everything
@@ -147,7 +147,7 @@ def perform_action(obj):
         set_flash_message('Took a noble')
 
 
-def main():
+def play():
     initialize_game()
     display()
     while True:
@@ -176,4 +176,4 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    play()

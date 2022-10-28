@@ -104,11 +104,11 @@ class Card:
             # Look inside all the red card folders
             for i in range(1, 4):
                 try:
-                    return pygame.image.load('sprites/cards/red{}/{}.png'.format(i, self._id))
+                    return pygame.image.load('../sprites/cards/red{}/{}.png'.format(i, self._id))
                 except:
                     pass
 
-        return pygame.image.load('sprites/cards/{}/{}.png'.format(self._color.name.lower(), self._id))
+        return pygame.image.load('../sprites/cards/{}/{}.png'.format(self._color.name.lower(), self._id))
 
     def get_user_selection(self, screen) -> Action:
         """

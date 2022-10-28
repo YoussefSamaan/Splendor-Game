@@ -6,13 +6,12 @@ class Board:
     def __init__(self, screen_width, screen_height):
         self.height_offset = 150
         self.width_offset = 300
-        self.boardImage = pygame.image.load('sprites/board.jpg')
+        self.boardImage = pygame.image.load('../sprites/board.jpg')
         self.width = screen_width - self.width_offset
         self.height = screen_height - self.height_offset
-        # self.boardImage = pygame.transform.scale(self.boardImage, (self.width, self.height))
         self.boardRect = pygame.Rect(0, 0, self.width, self.height)
         self.boardRect.center = (screen_width / 2 + self.height_offset,        
-                                screen_height / 2 - int(self.width_offset/2.5))
+                                 screen_height / 2 - int(self.width_offset/2.5))
 
     def display(self, screen):
         image = pygame.transform.scale(self.boardImage, (self.width, self.height))

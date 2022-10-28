@@ -33,7 +33,7 @@ class Token:
 
     def __init__(self, color: Color, id: int):
         self._color = color
-        self.image = pygame.image.load('sprites/tokens/{}.png'.format(color.name.lower()))
+        self.image = pygame.image.load('../sprites/tokens/{}.png'.format(color.name.lower()))
         self._id = id  # Separates tokens with same color
         self.isOnDisplay = True
         self.pos = self._default_position()
