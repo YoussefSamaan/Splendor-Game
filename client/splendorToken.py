@@ -25,7 +25,7 @@ class Token:
         Color.GOLD: 5,
     }
 
-    yMargin = 31 / 33
+    yMargin = 30 / 33
     xMargin = 1 / 10
     xRatio = 1 / 15
     yRatio = 2 / 33
