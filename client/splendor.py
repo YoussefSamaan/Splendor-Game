@@ -176,15 +176,20 @@ def main():
                     pygame.display.set_mode((1, 1))
                 if event.key == K_f:
                     pygame.display.set_mode((WIDTH, HEIGHT), pygame.FULLSCREEN)
-                if event.key == pygame.K_UP:
+                if event.key == pygame.K_UP :
                     Sidebar.instance().scroll_sidebar(-50)
                 elif event.key == pygame.K_DOWN:
                     Sidebar.instance().scroll_sidebar(50)
             elif event.type == MOUSEBUTTONDOWN:
-                obj = get_clicked_object(pygame.mouse.get_pos())
-                perform_action(obj)
+                if event.button == 4:
+                    Sidebar.instance().scroll_sidebar(50)
+                elif event.button == 5:
+                    Sidebar.instance().scroll_sidebar(-50)
+                else:
+                    obj = get_clicked_object(pygame.mouse.get_pos())
+                    perform_action(obj)
 
-                display()
+                    display()
 
         pygame.display.update()
         FPSCLOCK.tick(FPS)
