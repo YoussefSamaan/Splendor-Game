@@ -30,8 +30,11 @@ class Sidebar:
         
         # draw dummy color background
         pygame.draw.rect(screen, (50, 50, 50), self.sidebarRect)
+        
         for card in self.cards:
-            card.draw(screen, *card.pos)
+            card.draw(screen, self.cards[card][0], self.cards[card][1])
+            
+            
         # for card in self.reservedCards:
         #     card.draw(screen, *card.pos)
         # for token in self.tokens:
