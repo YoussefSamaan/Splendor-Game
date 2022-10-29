@@ -1,6 +1,7 @@
 import pygame
 from singleton import Singleton
 from card import Card
+from noble import Noble
 from board import Board
 
 @Singleton
@@ -14,15 +15,16 @@ class Sidebar:
         # centered on the right side of the screen
         self.sidebarRect.center = (screenWidth / 8, screenHeight / 2)
         self.cards = {}
-        self.reservedCards = {}
+        self.reserved_cards = {}
         self.tokens = []
         self.nobles = {}
 
         self.card_size = Card.get_card_size(Board.instance())
+        self.noble_size = Noble.get_card_size()
 
         self.last_position_card = (0,0)
-        self.last_position_noble = (0,0)
-        self.last_position_reserved = (0,0)
+        self.last_position_noble = (self.card_size[0],0)
+        self.last_position_reserved = (self.card_size[0]+self.noble_size[0],0)
         
 
     def display(self, screen):
@@ -33,6 +35,8 @@ class Sidebar:
         
         for card in self.cards:
             card.draw(screen, self.cards[card][0], self.cards[card][1])
+        for noble in self.nobles:
+            noble.draw(screen, self.nobles[noble][0], self.nobles[noble][1])
             
             
         # for card in self.reservedCards:
@@ -45,13 +49,15 @@ class Sidebar:
 
     def add_noble(self, noble):
         self.nobles[noble] = self.last_position_noble
+        self.last_position_noble = (self.last_position_noble[0], self.last_position_noble[1]+self.noble_size[1])
 
     def add_card(self, card):
         self.cards[card] = self.last_position_card
         self.last_position_card = (self.last_position_card[0], self.last_position_card[1]+self.card_size[1])
 
     def reserve_card(self, reserved):
-        self.nobles[reserved] = self.last_position_reserved
+        self.reserved_cards[reserved] = self.last_position_reserved
+        
     
     def add_token(self, token):
         self.tokens.append(token)
