@@ -8,6 +8,7 @@ from board import Board
 from card import Card
 from color import Color
 from singleton import Singleton
+from sidebar import Sidebar
 
 
 class Deck:
@@ -77,7 +78,9 @@ class Deck:
         """
         for slot_pos, cardOnDisplay in self.cardsOnDisplay.items():
             if cardOnDisplay == card:
+                sidebar = Sidebar.instance()
                 self.cardsOnDisplay.pop(slot_pos)
+                sidebar.add_card(card)
                 if not self.is_empty():
                     self.draw_card()
                 return True
