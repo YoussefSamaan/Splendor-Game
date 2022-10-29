@@ -57,6 +57,7 @@ class Sidebar:
 
     def reserve_card(self, reserved):
         self.reserved_cards[reserved] = self.last_position_reserved
+        self.last_position_card = (self.last_position_reserved[0], self.last_position_reserved[1]+self.card_size[1])
         
     
     def add_token(self, token):
