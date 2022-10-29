@@ -21,7 +21,6 @@ class Sidebar:
         self.reserved_cards = {}
         self.nobles = {}
 
-
         self.last_position_card = (0,0)
         self.last_position_noble = (self.card_size[0],0)
         self.last_position_reserved = (self.card_size[0]+self.noble_size[0],0)
@@ -55,9 +54,26 @@ class Sidebar:
     
     def add_token(self, token):
         self.tokens.append(token)
+    def update_positions(self, amount):
+        # updating the last valuse for new cards
+        self.last_position_card += amount
+        self.last_position_noble += amount
+        self.last_position_reserved += amount
+        # updating values of cards in dict
+        for item in self.cards:
+            self.cards[item] += amount
+        for item in self.nobles:
+            self.nobles[item] += amount
+        for item in self.reserved_cards:
+            self.reserved_cards[item] += amount
+
 
     def scroll_sidebar(self, direction):
-        pass
+        #print("scrolling")
+        # update last positions
+        # update positions in dicts
+        self.update_positions(direction)
+        self.sidebarRect.move_ip(0, direction)
     
     def getRect(self):
         return self.sidebarRect

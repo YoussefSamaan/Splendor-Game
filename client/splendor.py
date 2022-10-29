@@ -176,11 +176,15 @@ def main():
                     pygame.display.set_mode((1, 1))
                 if event.key == K_f:
                     pygame.display.set_mode((WIDTH, HEIGHT), pygame.FULLSCREEN)
+                if event.key == pygame.K_UP:
+                    Sidebar.instance().scroll_sidebar(-50)
+                elif event.key == pygame.K_DOWN:
+                    Sidebar.instance().scroll_sidebar(50)
             elif event.type == MOUSEBUTTONDOWN:
                 obj = get_clicked_object(pygame.mouse.get_pos())
                 perform_action(obj)
+
                 display()
-                # add schoolable sidebar
 
         pygame.display.update()
         FPSCLOCK.tick(FPS)
