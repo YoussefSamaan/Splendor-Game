@@ -14,7 +14,7 @@ class Deck:
     x_DistanceBetweenCardsToBoardWidthRatio = 1 / 30  # The ratio of the distance between cards on the x-axis to the width of the board
     y_DistanceBetweenCardsToBoardHeightRatio = 1 / 22  # The ratio of the distance between cards on the y-axis to the height of the board
     x_MarginToBoardWidthRatio = 1 / 60  # The margin between the left side of the board and the left side of the deck cover
-    y_MarginToBoardHeightRatio = 0.44  # First deck starts at 0.44 * board height y-coordinate
+    y_MarginToBoardHeightRatio = 0.25  # First deck starts at 0.44 * board height y-coordinate
     _ID_START = 0
     _NUMBER_OF_CARDS = 0
 
