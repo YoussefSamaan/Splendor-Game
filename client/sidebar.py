@@ -1,5 +1,8 @@
 import pygame
 from singleton import Singleton
+from card import Card
+from board import Board
+
 @Singleton
 class Sidebar:
     def __init__(self, screenWidth, screenHeight):
@@ -10,10 +13,17 @@ class Sidebar:
         self.sidebarRect = pygame.Rect(0, 0, self.width, self.height)
         # centered on the right side of the screen
         self.sidebarRect.center = (screenWidth / 8, screenHeight / 2)
-        self.cards = []
-        self.reservedCards = []
+        self.cards = {}
+        self.reservedCards = {}
         self.tokens = []
-        self.nobles = []
+        self.nobles = {}
+
+        self.card_size = Card.get_card_size(Board.instance())
+
+        self.last_position_card = (0,0)
+        self.last_position_noble = (0,0)
+        self.last_position_reserved = (0,0)
+        
 
     def display(self, screen):
         # screen.blit(self.sidebarImage, self.sidebarRect)
@@ -31,13 +41,14 @@ class Sidebar:
 
 
     def add_noble(self, noble):
-        self.nobles.append(noble)
+        self.nobles[noble] = self.last_position_noble
 
     def add_card(self, card):
-        self.cards.append(card)
+        self.cards[card] = self.last_position_card
+        self.last_position_card = (self.last_position_card[0], self.last_position_card[1]+self.card_size[1])
 
-    def reserve_card(self, card):
-        self.reservedCards.append(card)
+    def reserve_card(self, reserved):
+        self.nobles[reserved] = self.last_position_reserved
     
     def add_token(self, token):
         self.tokens.append(token)
