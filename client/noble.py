@@ -5,7 +5,6 @@ from cost import Cost
 import random
 from sidebar import Sidebar
 
-
 @Flyweight
 class Noble:
     x_MarginToBoardSizeRatio = 0.2

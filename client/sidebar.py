@@ -10,23 +10,37 @@ class Sidebar:
         self.sidebarRect = pygame.Rect(0, 0, self.width, self.height)
         # centered on the right side of the screen
         self.sidebarRect.center = (screenWidth / 8, screenHeight / 2)
+        self.cards = []
+        self.reservedCards = []
+        self.tokens = []
+        self.nobles = []
+
     def display(self, screen):
         # screen.blit(self.sidebarImage, self.sidebarRect)
         
         # draw dummy color background
         pygame.draw.rect(screen, (50, 50, 50), self.sidebarRect)
+        for card in self.cards:
+            card.draw(screen, *card.pos)
+        # for card in self.reservedCards:
+        #     card.draw(screen, *card.pos)
+        # for token in self.tokens:
+        #     token.draw(screen, *token.pos)
+        # for noble in self.nobles:
+        #     noble.draw(screen, *noble.pos)
+
 
     def add_noble(self, noble):
-        pass
+        self.nobles += noble
 
     def add_card(self, card):
-        pass
+        self.cards += card
 
     def reserve_card(self, card):
-        pass
+        self.reservedCards += card
     
     def add_token(self, token):
-        pass
+        self.tokens += token
 
     def scroll_sidebar(self, direction):
         pass
