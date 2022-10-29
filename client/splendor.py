@@ -114,7 +114,7 @@ def perform_action(obj):
     elif isinstance(obj, Token):
         obj.take_token()
     elif isinstance(obj, Noble):
-        obj.take_noble()
+        obj.take_noble(Sidebar.instance())
     elif isinstance(obj, Sidebar):
         obj.scroll_sidebar()
 
