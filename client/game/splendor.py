@@ -1,6 +1,9 @@
 import os
 import sys
 
+# FIXME: I don't think we should have to do this, but it's the only way I could get the imports to work
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+
 from pygame.locals import *
 from win32api import GetSystemMetrics
 from utils import *
@@ -150,6 +153,7 @@ def perform_action(obj):
 def play():
     initialize_game()
     display()
+    pygame.display.set_mode((WIDTH, HEIGHT), pygame.FULLSCREEN)
     while True:
         display()
         for event in pygame.event.get():

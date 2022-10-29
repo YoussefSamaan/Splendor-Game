@@ -1,10 +1,6 @@
-import os
-
-from login import login
 from game import *
-
-os.chdir(os.path.dirname(os.path.abspath(__file__)))  # to make image imports start from current directory
+from login import login
 
 if __name__ == '__main__':
-    # login.login()
+    login.login()
     splendor.play()
