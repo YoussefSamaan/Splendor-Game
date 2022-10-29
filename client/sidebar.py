@@ -7,20 +7,20 @@ from board import Board
 @Singleton
 class Sidebar:
     def __init__(self, screenWidth, screenHeight):
+                # [0] is width, [1] is height
+        self.card_size = Card.get_card_size(Board.instance())
+        self.noble_size = Noble.get_card_size()
         # self.sidebarImage = pygame.image.load('sprites/sidebar.png')
-        self.width = min(screenWidth/4, 400)
+        self.width = min(screenWidth/2, 2*self.card_size[0]+self.noble_size[0])
         self.height = min(screenHeight, 800)
         # self.sidebarImage = pygame.transform.scale(self.sidebarImage, (self.width, self.height))
         self.sidebarRect = pygame.Rect(0, 0, self.width, self.height)
         # centered on the right side of the screen
-        self.sidebarRect.center = (screenWidth / 8, screenHeight / 2)
+        self.sidebarRect.center = (self.card_size[0]+self.noble_size[0]/2, screenHeight / 2)
         self.cards = {}
         self.reserved_cards = {}
-        self.tokens = []
         self.nobles = {}
 
-        self.card_size = Card.get_card_size(Board.instance())
-        self.noble_size = Noble.get_card_size()
 
         self.last_position_card = (0,0)
         self.last_position_noble = (self.card_size[0],0)
@@ -37,16 +37,9 @@ class Sidebar:
             card.draw(screen, self.cards[card][0], self.cards[card][1])
         for noble in self.nobles:
             noble.draw(screen, self.nobles[noble][0], self.nobles[noble][1])
+        for reserve_card in self.reserved_cards:
+            reserve_card.draw(screen, self.reserved_cards[reserve_card][0], self.reserved_cards[reserve_card][1])   
             
-            
-        # for card in self.reservedCards:
-        #     card.draw(screen, *card.pos)
-        # for token in self.tokens:
-        #     token.draw(screen, *token.pos)
-        # for noble in self.nobles:
-        #     noble.draw(screen, *noble.pos)
-
-
     def add_noble(self, noble):
         self.nobles[noble] = self.last_position_noble
         self.last_position_noble = (self.last_position_noble[0], self.last_position_noble[1]+self.noble_size[1])
@@ -57,7 +50,7 @@ class Sidebar:
 
     def reserve_card(self, reserved):
         self.reserved_cards[reserved] = self.last_position_reserved
-        self.last_position_card = (self.last_position_reserved[0], self.last_position_reserved[1]+self.card_size[1])
+        self.last_position_reserved = (self.last_position_reserved[0], self.last_position_reserved[1]+self.card_size[1])
         
     
     def add_token(self, token):

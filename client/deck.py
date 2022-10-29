@@ -78,9 +78,9 @@ class Deck:
         """
         for slot_pos, cardOnDisplay in self.cardsOnDisplay.items():
             if cardOnDisplay == card:
-                sidebar = Sidebar.instance()
+                
                 self.cardsOnDisplay.pop(slot_pos)
-                sidebar.add_card(card)
+                
                 if not self.is_empty():
                     self.draw_card()
                 return True
@@ -225,6 +225,13 @@ class Deck:
 
     def get_color(self):
         return self.color
+
+    def add_card_to_sidebar(self, card):
+        sidebar = Sidebar.instance()
+        sidebar.add_card(card)
+    def add_reserved_to_sidebar(self, card):
+        sidebar = Sidebar.instance()
+        sidebar.reserve_card(card)
 
 
 @Singleton
