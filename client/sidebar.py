@@ -12,7 +12,7 @@ class Sidebar:
         self.noble_size = Noble.get_card_size()
         # self.sidebarImage = pygame.image.load('sprites/sidebar.png')
         self.width = min(screenWidth/2, 2*self.card_size[0]+self.noble_size[0])
-        self.height = min(screenHeight, 800)
+        self.height = 10000 #min(screenHeight, 800)
         # self.sidebarImage = pygame.transform.scale(self.sidebarImage, (self.width, self.height))
         self.sidebarRect = pygame.Rect(0, 0, self.width, self.height)
         # centered on the right side of the screen
