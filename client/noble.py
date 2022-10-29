@@ -3,7 +3,6 @@ from flyweight import Flyweight
 import pygame
 from cost import Cost
 import random
-from sidebar import Sidebar
 
 @Flyweight
 class Noble:
@@ -43,8 +42,8 @@ class Noble:
                 return noble
         return None
 
-    def take_noble(self):
-        sidebar = Sidebar.instance()
+    def take_noble(self, sidebar):
+        #sidebar = Sidebar.instance()
         self.isOnDisplay = False
         sidebar.add_noble(self)
 
