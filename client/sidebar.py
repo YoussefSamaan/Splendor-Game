@@ -31,16 +31,16 @@ class Sidebar:
 
 
     def add_noble(self, noble):
-        self.nobles += noble
+        self.nobles.append(noble)
 
     def add_card(self, card):
-        self.cards += card
+        self.cards.append(card)
 
     def reserve_card(self, card):
-        self.reservedCards += card
+        self.reservedCards.append(card)
     
     def add_token(self, token):
-        self.tokens += token
+        self.tokens.append(token)
 
     def scroll_sidebar(self, direction):
         pass
