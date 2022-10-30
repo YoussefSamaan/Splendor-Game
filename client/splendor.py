@@ -9,7 +9,7 @@ from utils import *
 from board import Board
 from noble import Noble
 from deck import *
-from sidebar import Sidebar
+from sidebar import *
 from splendorToken import Token
 from action import Action
 
@@ -72,11 +72,12 @@ def set_flash_message(text, timer=60):
 def display():
     # reset the display and re-display everything
     DISPLAYSURF.fill((0, 0, 0))
+    display_sidebar()
     display_board()
     display_decks()
     display_tokens()
     display_nobles()
-    display_sidebar()
+
     show_flash_message()  # last so it's on top
     pygame.display.update()
 
@@ -85,6 +86,7 @@ def display_board():
     Board.instance().display(DISPLAYSURF)
 
 def display_sidebar():
+    # 0 = card, 1 = noble, 2 = reserve
     Sidebar.instance().display(DISPLAYSURF)
 
 
@@ -154,8 +156,14 @@ def perform_action(obj):
     elif isinstance(obj, Noble):
         obj.take_noble(Sidebar.instance())
         set_flash_message('Took a noble')
-    elif isinstance(obj, Sidebar):
-        obj.scroll_sidebar()
+
+def check_toggle(mouse_pos):
+    sidebar = Sidebar.instance()
+    if sidebar.isClickedToggle(mouse_pos) == 1:
+        sidebar.toggle1()
+    elif sidebar.isClickedToggle(mouse_pos) == 2:
+        sidebar.toggle2()
+
 
 def main():
     initialize_game()
@@ -186,7 +194,10 @@ def main():
                 elif event.button == 5:
                     Sidebar.instance().scroll_sidebar(-50)
                 else:
-                    obj = get_clicked_object(pygame.mouse.get_pos())
+                    # check if it's the sidebar toggle
+                    position = pygame.mouse.get_pos()
+                    check_toggle(position)
+                    obj = get_clicked_object(position)
                     perform_action(obj)
 
                     display()
