@@ -11,6 +11,7 @@ WHITE = (255, 255, 255)
 LIGHT_GREY = (99, 99, 99)
 LIGHT_BLUE = "lightskyblue3"
 GREEN = (0, 204, 0)
+RED = (255, 0, 0)
 FPS = 60
 
 
@@ -49,6 +50,7 @@ def login():
 
     color_active = pygame.Color(LIGHT_BLUE)
     color_passive = pygame.Color(LIGHT_GREY)
+    color_error = pygame.Color(RED)
 
     username_color = color_passive
     password_color = color_passive
@@ -56,6 +58,8 @@ def login():
     username_active = False
     password_active = False
 
+    wrong_credentials = False
+    
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -63,13 +67,13 @@ def login():
                 sys.exit()
 
             if event.type == pygame.MOUSEBUTTONDOWN:
+                wrong_credentials = False
                 if login_rect.collidepoint(event.pos):
                     if validate_credentials(username_text, password_text):
-                        print("got in")
                         return
                     else:
-                        print("not in")
-
+                        wrong_credentials = True
+                        
                 if username_input_rect.collidepoint(event.pos):
                     username_active = True
                     username_color = color_active
@@ -81,10 +85,14 @@ def login():
                     username_active = False
                     username_color = color_passive
                 else:
+                    if wrong_credentials:
+                        username_color = color_error
+                        password_color = color_error
+                    else:
+                        password_color = color_passive
+                        username_color = color_passive   
                     username_active = False
-                    username_color = color_passive
                     password_active = False
-                    password_color = color_passive
 
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
