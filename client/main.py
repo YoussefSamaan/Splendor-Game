@@ -1,4 +1,4 @@
-from game import *
+from game import splendor
 from login import login
 
 if __name__ == '__main__':
