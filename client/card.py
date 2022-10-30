@@ -159,9 +159,7 @@ class Card:
     def buy(self):
         # FIXME: Implement this to put card in player inventory
         self.deck.take_card(self)
-        self.deck.add_card_to_sidebar(self)
 
     def reserve(self):
         # FIXME: Implement this to put card in player inventory
         self.deck.take_card(self)
-        self.deck.add_reserved_to_sidebar(self)

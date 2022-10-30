@@ -8,7 +8,6 @@ from board import Board
 from card import Card
 from color import Color
 from singleton import Singleton
-from sidebar import Sidebar
 from utils import write_on
 
 
@@ -232,13 +231,6 @@ class Deck:
     def get_color(self):
         return self.color
 
-    def add_card_to_sidebar(self, card):
-        sidebar = Sidebar.instance()
-        sidebar.add_card(card)
-    def add_reserved_to_sidebar(self, card):
-        sidebar = Sidebar.instance()
-        sidebar.reserve_card(card)
-        
     def draw_empty_slot(self, screen, slot_pos):
         """
         Draws an empty slot on the board surface

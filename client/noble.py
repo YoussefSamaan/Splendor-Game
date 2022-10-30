@@ -4,6 +4,7 @@ import pygame
 from cost import Cost
 import random
 
+
 @Flyweight
 class Noble:
     x_MarginToBoardSizeRatio = 0.2
@@ -42,10 +43,8 @@ class Noble:
                 return noble
         return None
 
-    def take_noble(self, sidebar):
-        #sidebar = Sidebar.instance()
+    def take_noble(self):
         self.isOnDisplay = False
-        sidebar.add_noble(self)
 
     def draw(self, screen, x, y):
         screen.blit(pygame.transform.scale(self._image, Noble.get_card_size()), (x, y))

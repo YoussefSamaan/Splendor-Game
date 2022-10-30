@@ -4,12 +4,10 @@ import sys
 import pygame
 from pygame.locals import *
 from win32api import GetSystemMetrics
-import os
 from utils import *
-from board import Board
-from noble import Noble
+
 from deck import *
-from sidebar import Sidebar
+from noble import Noble
 from splendorToken import Token
 from action import Action
 
@@ -28,7 +26,6 @@ FLASH_TIMER = 0
 
 def initialize_game():
     initialize_board()
-    initialize_sidebar()
     initialize_cards()
     initialize_tokens()
     initialize_nobles()
@@ -37,8 +34,6 @@ def initialize_game():
 def initialize_board():
     Board.instance(WIDTH, HEIGHT)
 
-def initialize_sidebar():
-    Sidebar.instance(WIDTH, HEIGHT)
 
 def initialize_cards():
     BlueDeck.instance()
@@ -76,16 +71,12 @@ def display():
     display_decks()
     display_tokens()
     display_nobles()
-    display_sidebar()
     show_flash_message()  # last so it's on top
     pygame.display.update()
 
 
 def display_board():
     Board.instance().display(DISPLAYSURF)
-
-def display_sidebar():
-    Sidebar.instance().display(DISPLAYSURF)
 
 
 def display_decks():
@@ -152,10 +143,9 @@ def perform_action(obj):
         obj.take_token()
         set_flash_message('Took a token')
     elif isinstance(obj, Noble):
-        obj.take_noble(Sidebar.instance())
+        obj.take_noble()
         set_flash_message('Took a noble')
-    elif isinstance(obj, Sidebar):
-        obj.scroll_sidebar()
+
 
 def main():
     initialize_game()
@@ -176,20 +166,10 @@ def main():
                     pygame.display.set_mode((1, 1))
                 if event.key == K_f:
                     pygame.display.set_mode((WIDTH, HEIGHT), pygame.FULLSCREEN)
-                if event.key == pygame.K_UP :
-                    Sidebar.instance().scroll_sidebar(-50)
-                elif event.key == pygame.K_DOWN:
-                    Sidebar.instance().scroll_sidebar(50)
             elif event.type == MOUSEBUTTONDOWN:
-                if event.button == 4:
-                    Sidebar.instance().scroll_sidebar(50)
-                elif event.button == 5:
-                    Sidebar.instance().scroll_sidebar(-50)
-                else:
-                    obj = get_clicked_object(pygame.mouse.get_pos())
-                    perform_action(obj)
-
-                    display()
+                obj = get_clicked_object(pygame.mouse.get_pos())
+                perform_action(obj)
+                display()
 
         pygame.display.update()
         FPSCLOCK.tick(FPS)
