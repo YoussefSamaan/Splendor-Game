@@ -12,8 +12,8 @@ class Sidebar:
         self.card_size = Card.get_card_size(Board.instance())
         self.noble_size = Noble.get_card_size()
         # self.sidebarImage = pygame.image.load('sprites/sidebar.png')
-        #self.width = min(screenWidth/2, 3*self.card_size[0])
-        self.width = min(screenWidth/2, self.card_size[0])
+        self.width = screenWidth - Board.instance().get_rect().width
+        #self.width = min(screenWidth/2, self.card_size[0])
         self.height = 10000 #min(screenHeight, 800)
         # self.sidebarImage = pygame.transform.scale(self.sidebarImage, (self.width, self.height))
         self.sidebarRect = pygame.Rect(0, 0, self.width, self.height)
@@ -32,8 +32,8 @@ class Sidebar:
         self.last_position_reserved = (0,self.card_size[0])
         
         self.currentDisplay = 0
-        self.buttonRect1 = pygame.Rect(0, 0, self.card_size[0]/2, self.card_size[1] / 4)
-        self.buttonRect2 = pygame.Rect( self.card_size[0]/2, 0, self.card_size[0]/2, self.card_size[1] / 4)
+        self.buttonRect1 = pygame.Rect(0, 0,self.width/2, self.card_size[1] / 4)
+        self.buttonRect2 = pygame.Rect( self.width/2, 0, self.width/2, self.card_size[1] / 4)
         
 
     def toggle1(self):
@@ -80,7 +80,7 @@ class Sidebar:
         :param surface:
         :return:
         """
-        buy_button = button('Nobles', width=self.card_size[0]/2, height=self.card_size[1] / 4, color=GREEN)
+        buy_button = button('Nobles', width=self.width/2, height=self.card_size[1] / 4, color=GREEN)
         x = 0
         y =  0
         surface.blit(buy_button, (x, y))
@@ -96,8 +96,8 @@ class Sidebar:
         :return:
         """
         # this is a toggle button that switches between bought and reserved
-        buy_button = button('Reserved', width=self.card_size[0]/2, height=self.card_size[1] / 4, color=GREEN)
-        x = self.card_size[0]/2
+        buy_button = button('Reserved', width=self.width/2, height=self.card_size[1] / 4, color=GREEN)
+        x = self.width/2
         y = 0
         surface.blit(buy_button, (x, y))
         button_rect = buy_button.get_rect()
@@ -112,8 +112,8 @@ class Sidebar:
         :return:
         """
         # this is a toggle button that switches between bought and reserved
-        buy_button = button('Bought', width=self.card_size[0]/2, height=self.card_size[1] / 4, color=GREEN)
-        x = self.card_size[0]/2
+        buy_button = button('Bought', width=self.width/2, height=self.card_size[1] / 4, color=GREEN)
+        x = self.width/2
         y =  0
         surface.blit(buy_button, (x, y))
         button_rect = buy_button.get_rect()
@@ -128,7 +128,7 @@ class Sidebar:
         :return:
         """
         # this is a toggle button that switches between bought and reserved
-        buy_button = button('Bought', width=self.card_size[0]/2, height=self.card_size[1] / 4, color=GREEN)
+        buy_button = button('Bought', width=self.width/2, height=self.card_size[1] / 4, color=GREEN)
         x = 0
         y =  0
         surface.blit(buy_button, (x, y))
