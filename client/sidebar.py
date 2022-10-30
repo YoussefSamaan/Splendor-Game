@@ -46,13 +46,13 @@ class Sidebar:
         pygame.draw.rect(screen, (0,0,0,0), self.sidebar_rect)
         if self.current_display == 0:
             for card in self.cards:
-                card.draw(screen, self.cards[card][0], self.cards[card][1])
+                card.draw_for_sidebar(screen, self.cards[card][0]*1.5, self.cards[card][1]*1.5)
         elif self.current_display == 1:
             for noble in self.nobles:
-                noble.draw(screen, self.nobles[noble][0], self.nobles[noble][1])
+                noble.draw_for_sidebar(screen, self.nobles[noble][0]*1.5, self.nobles[noble][1]*1.5)
         else:
             for reserve_card in self.reserved_cards:
-                reserve_card.draw(screen, self.reserved_cards[reserve_card][0], self.reserved_cards[reserve_card][1])   
+                reserve_card.draw_for_sidebar(screen, self.reserved_cards[reserve_card][0]*1.5, self.reserved_cards[reserve_card][1]*1.5)   
 
         self.draw_buttons(screen)
 
