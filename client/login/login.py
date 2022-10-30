@@ -2,7 +2,7 @@ import os
 
 import pygame
 import sys
-
+from .credential_validator import validate_credentials
 
 HEIGHT = 750
 WIDTH = 900
@@ -15,11 +15,8 @@ RED = (255, 0, 0)
 FPS = 60
 
 
-def validate_credentials(username, password):
-    if username == "u" and password == "u":
-        return True
-    else:
-        return False
+def validate(username, password):
+    return validate_credentials(username, password)
 
 
 def login():
@@ -69,7 +66,7 @@ def login():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 wrong_credentials = False
                 if login_rect.collidepoint(event.pos):
-                    if validate_credentials(username_text, password_text):
+                    if validate(username_text, password_text):
                         return
                     else:
                         wrong_credentials = True
@@ -90,7 +87,7 @@ def login():
                         password_color = color_error
                     else:
                         password_color = color_passive
-                        username_color = color_passive   
+                        username_color = color_passive
                     username_active = False
                     password_active = False
             if event.type == pygame.KEYDOWN:
