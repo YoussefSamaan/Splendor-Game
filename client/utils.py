@@ -4,6 +4,8 @@ GREEN = (0, 255, 0)
 RED = (255, 0, 0)
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
+GREY = (57, 57, 57)
+LIGHT_GREY = (99, 99, 99)
 # BACKGROUND_COLOR = (158, 58, 64)
 BACKGROUND_COLOR = (113, 155, 158)
 def dim_screen(screen, color=(0, 0, 0), alpha=128):
@@ -35,7 +37,7 @@ def get_selection_box(screen: pygame.Surface, width=0.5, height=0.5, color=BACKG
     return box, rect
 
 
-def button(text, width, height, color):
+def button(text, width, height, color, border_radius=10):
     """
     Create a green button with the given text.
     :param text: the text to display on the button
@@ -46,7 +48,7 @@ def button(text, width, height, color):
     """
     # create a transparent surface
     button = pygame.Surface((width, height), pygame.SRCALPHA)
-    pygame.draw.rect(button, color, (0, 0, width, height), border_radius=10)
+    pygame.draw.rect(button, color, (0, 0, width, height), border_radius=border_radius)
     write_on(button, text)
     return button
 
