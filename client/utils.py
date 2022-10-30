@@ -6,6 +6,7 @@ WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 GREY = (57, 57, 57)
 LIGHT_GREY = (99, 99, 99)
+LIGHT_BLUE = (141,182,205)
 # BACKGROUND_COLOR = (158, 58, 64)
 BACKGROUND_COLOR = (113, 155, 158)
 def dim_screen(screen, color=(0, 0, 0), alpha=128):
