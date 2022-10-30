@@ -54,7 +54,7 @@ class Sidebar:
         # screen.blit(self.sidebarImage, self.sidebarRect)
         
         # draw dummy color background
-        pygame.draw.rect(screen, (50, 50, 50), self.sidebarRect)
+        pygame.draw.rect(screen, (0,0,0,0), self.sidebarRect)
         if self.currentDisplay == 0:
 
             for card in self.cards:
@@ -167,6 +167,14 @@ class Sidebar:
         #print("scrolling")
         # update last positions
         # update positions in dicts
+        # getting the first value of the dict and its y position
+        # if (direction < 0 and list(self.cards.items())[0][1][1] < 50) :
+        #     pass
+        # elif (direction > 0 and self.last_position_card[1] > Board.instance().height):
+        #     pass
+        # else:
+        #     self.update_positions(direction)
+        #     self.sidebarRect.move_ip(0, direction)
         self.update_positions(direction)
         self.sidebarRect.move_ip(0, direction)
     
