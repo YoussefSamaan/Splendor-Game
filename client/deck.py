@@ -98,7 +98,7 @@ class Deck:
         """
         # FIXME: improve algorithm by not checking all cards.
         for card in self.cardsOnDisplay.values():
-            if card.is_clicked(mouse_pos):
+            if card is not None and card.is_clicked(mouse_pos):
                 return card
         return None
 
