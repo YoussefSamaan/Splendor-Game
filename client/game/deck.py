@@ -9,6 +9,7 @@ from card import Card
 from color import Color
 from singleton import Singleton
 from utils import write_on
+from sidebar import Sidebar
 
 
 class Deck:
@@ -230,6 +231,13 @@ class Deck:
 
     def get_color(self):
         return self.color
+
+    def add_card_to_sidebar(self, card):
+        sidebar = Sidebar.instance()
+        sidebar.add_card(card)
+    def add_reserved_to_sidebar(self, card):
+        sidebar = Sidebar.instance()
+        sidebar.reserve_card(card)
 
     def draw_empty_slot(self, screen, slot_pos):
         """

@@ -7,6 +7,8 @@ from utils import *
 
 from deck import *
 from noble import Noble
+from deck import *
+from sidebar import Sidebar
 from splendorToken import Token
 from action import Action
 
@@ -28,11 +30,13 @@ def initialize_game():
     initialize_cards()
     initialize_tokens()
     initialize_nobles()
+    initialize_sidebar()
 
 
 def initialize_board():
     Board.instance(WIDTH, HEIGHT)
-
+def initialize_sidebar():
+    Sidebar.instance(WIDTH, HEIGHT)
 
 def initialize_cards():
     BlueDeck.instance()
@@ -67,16 +71,21 @@ def set_flash_message(text, timer=60):
 def display():
     # reset the display and re-display everything
     DISPLAYSURF.fill((0, 0, 0))
+    display_sidebar()
     display_board()
     display_decks()
     display_tokens()
     display_nobles()
+    display_sidebar()
     show_flash_message()  # last so it's on top
     pygame.display.update()
 
 
 def display_board():
     Board.instance().display(DISPLAYSURF)
+
+def display_sidebar():
+    Sidebar.instance().display(DISPLAYSURF)
 
 
 def display_decks():
@@ -143,9 +152,15 @@ def perform_action(obj):
         obj.take_token()
         set_flash_message('Took a token')
     elif isinstance(obj, Noble):
-        obj.take_noble()
+        obj.take_noble(Sidebar.instance())
         set_flash_message('Took a noble')
+    elif isinstance(obj, Sidebar):
+        obj.scroll_sidebar()
 
+def check_toggle(mouse_pos):
+    sidebar = Sidebar.instance()
+    page_num = sidebar.is_clicked_toggle(mouse_pos)
+    sidebar.toggle(page_num)
 
 def play():
     initialize_game()
@@ -168,9 +183,18 @@ def play():
                 if event.key == K_f:
                     pygame.display.set_mode((WIDTH, HEIGHT), pygame.FULLSCREEN)
             elif event.type == MOUSEBUTTONDOWN:
-                obj = get_clicked_object(pygame.mouse.get_pos())
-                perform_action(obj)
-                display()
+                if event.button == 4:
+                    Sidebar.instance().scroll_sidebar(50)
+                elif event.button == 5:
+                    Sidebar.instance().scroll_sidebar(-50)
+                else:
+                    # check if it's the sidebar toggle
+                    position = pygame.mouse.get_pos()
+                    check_toggle(position)
+                    obj = get_clicked_object(position)
+                    perform_action(obj)
+
+                    display()
 
         pygame.display.update()
         FPSCLOCK.tick(FPS)

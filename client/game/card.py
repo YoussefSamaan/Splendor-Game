@@ -72,6 +72,13 @@ class Card:
         screen.blit(image, (x, y))
         self.pos = (x, y)
 
+    def draw_for_sidebar(self, screen, x, y):
+        board = Board.instance()
+        width, height = Card.get_card_size(board)
+        image = pygame.transform.scale(self._image, (int(width)*1.5, int(height)*1.5))
+        screen.blit(image, (x, y))
+        self.pos = (x, y)
+        
     def is_clicked(self, mousePos):
         """
         Returns True if the card is clicked.
@@ -159,7 +166,9 @@ class Card:
     def buy(self):
         # FIXME: Implement this to put card in player inventory
         self.deck.take_card(self)
+        self.deck.add_card_to_sidebar(self)
 
     def reserve(self):
         # FIXME: Implement this to put card in player inventory
         self.deck.take_card(self)
+        self.deck.add_reserved_to_sidebar(self)
