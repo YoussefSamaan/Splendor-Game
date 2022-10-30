@@ -19,9 +19,9 @@ class Sidebar:
         self.reserved_cards = {}
         self.nobles = {}
  
-        self.last_position_card = (0,self.card_size[0])
-        self.last_position_noble = (0,self.card_size[0])
-        self.last_position_reserved = (0,self.card_size[0])
+        self.last_position_card = (0,self.card_size[1] / 4 + 10)
+        self.last_position_noble = (0,self.card_size[1] / 4 + 10)
+        self.last_position_reserved = (0,self.card_size[1] / 4 + 10)
         
         self.current_display = 0
         self.bought_button = pygame.Rect(0, 0,
