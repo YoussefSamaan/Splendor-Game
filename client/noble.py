@@ -7,10 +7,10 @@ import random
 @Flyweight
 class Noble:
     x_MarginToBoardSizeRatio = 0.2
-    y_MarginToBoardSizeRatio = 0.3
+    y_MarginToBoardSizeRatio = 0.07
     x_DistanceBetweenCardsToBoardWidthRatio = 1 / 30
-    x_ratio = 1 / 12  # ratio of card width to board width 
-    y_ratio = 1 / 12  # ratio of card height to board height
+    x_ratio = 1 / 10  # ratio of card width to board width 
+    y_ratio = 1 / 7  # ratio of card height to board height
 
     def __init__(self, id: int):
         self._id = id  # 1 -> 4

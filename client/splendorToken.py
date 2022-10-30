@@ -3,6 +3,7 @@ import pygame
 from board import Board
 from color import Color
 from flyweight import Flyweight
+from utils import write_on
 
 
 @Flyweight
@@ -25,7 +26,7 @@ class Token:
         Color.GOLD: 5,
     }
 
-    yMargin = 31 / 33
+    yMargin = 30 / 33
     xMargin = 1 / 10
     xRatio = 1 / 15
     yRatio = 2 / 33
@@ -86,28 +87,25 @@ class Token:
 
     @staticmethod
     def display_all(screen):
-        for token in Token._flyweights.values():
-            if token.isOnDisplay:  # can be improved by not drawing same color tokens on top of each other
-                token.draw(screen, *token.pos)
+        """
+        Draws all tokens on display to the screen
+        :param screen:
+        :return:
+        """
+        for color in Color:
+            tokens = Token.tokens_on_display(color)
+            if len(tokens) > 0:
+                token_to_draw = tokens[0]
+                token_to_draw.draw(screen, *token_to_draw.pos, amount=len(tokens))
 
     @staticmethod
     def get_clicked_token(mouse_pos):
         if not Token.is_within_range(mouse_pos):
             return None
         # FIXME: Only look at tokens that are on display, and one of each color
-        for token in Token._flyweights.values():
+        for token in Token.flyweights.values():
             if token.isOnDisplay and token.is_clicked(mouse_pos):
                 return token
-
-    def take_token(self):
-        """
-        Takes a token from the display
-        """
-        self.isOnDisplay = False
-
-    def draw(self, screen, x, y):
-        image = pygame.transform.scale(self.image, Token.get_size())
-        screen.blit(image, (x, y))
 
     @staticmethod
     def get_size():
@@ -115,6 +113,21 @@ class Token:
         width = board.get_width() * Token.xRatio
         height = board.get_height() * Token.yRatio
         return width, height
+
+    @staticmethod
+    def tokens_on_display(color: Color):
+        return [token for token in Token.flyweights.values() if token.isOnDisplay and token.get_color() == color]
+
+    def take_token(self):
+        """
+        Takes a token from the display
+        """
+        self.isOnDisplay = False
+
+    def draw(self, screen, x, y, amount=0):
+        image = pygame.transform.scale(self.image, Token.get_size())
+        write_on(image, str(amount), font_size=30)
+        screen.blit(image, (x, y))
 
     def get_color(self):
         return self._color

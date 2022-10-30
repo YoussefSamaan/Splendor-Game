@@ -46,7 +46,7 @@ def draw_buy_button(surface: pygame.Surface):
 @Flyweight
 class Card:
     x_ratio = 0.09  # ratio of card width to board width
-    y_ratio = 0.12  # ratio of card height to board height
+    y_ratio = 0.18  # ratio of card height to board height
 
     def __init__(self, id: int, deck, prestige_points=1, cost=Cost(1, 1, 1, 1, 1),
                  bonus=Bonus(1, 1, 1, 1, 1)):

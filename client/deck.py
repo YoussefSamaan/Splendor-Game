@@ -9,13 +9,14 @@ from card import Card
 from color import Color
 from singleton import Singleton
 from sidebar import Sidebar
+from utils import write_on
 
 
 class Deck:
     x_DistanceBetweenCardsToBoardWidthRatio = 1 / 30  # The ratio of the distance between cards on the x-axis to the width of the board
     y_DistanceBetweenCardsToBoardHeightRatio = 1 / 22  # The ratio of the distance between cards on the y-axis to the height of the board
     x_MarginToBoardWidthRatio = 1 / 60  # The margin between the left side of the board and the left side of the deck cover
-    y_MarginToBoardHeightRatio = 0.44  # First deck starts at 0.44 * board height y-coordinate
+    y_MarginToBoardHeightRatio = 0.25  # First deck starts at 0.44 * board height y-coordinate
     _ID_START = 0
     _NUMBER_OF_CARDS = 0
 
@@ -27,9 +28,10 @@ class Deck:
         self.level = level
         self.color = color
         self.image = self._get_image()
+        self.empty_slot_image = self._get_empty_slot_image()
         self.rect = self.image.get_rect()
-        self.card_ids = []
-        self.cardsOnDisplay: Dict[int, Card] = {}
+        self.card_ids = []  # The ids of the cards in the deck
+        self.cardsOnDisplay: Dict[int, Card] = {}  # If no card is in a slot, the value is None
         self.board = Board.instance()
         self._init_deck()
         self._shuffle()
@@ -48,26 +50,30 @@ class Deck:
         """
         return len(self.card_ids) == 0
 
-    def draw_card(self) -> Card:
+    def draw_card(self, pos) -> Card:
         """
-        Draws a card from the deck
+        Draws a card from the deck to the position
 
         :pre: The deck is not empty
+        :param: pos: The position to draw the card to
         :return: The card that was drawn
         """
         assert not self.is_empty(), "Deck is empty"
         id = self.card_ids.pop()
         card = Card.instance(id=id, deck=self)
-        self._add_card_to_display(card)
+        self.cardsOnDisplay[pos] = card
         return card
 
     def display(self, screen):
         """
         Displays the cards on the board, and the deck cover
         """
-        self._display_deck_cover(screen)
+        self._display_deck_cover(screen, amount=len(self.card_ids))
         for slot_pos, card in self.cardsOnDisplay.items():
-            self._draw_card_to_board(screen, card, slot_pos)
+            if card is not None:
+                self._draw_card_to_board(screen, card, slot_pos)
+            else:
+                self.draw_empty_slot(screen, slot_pos)
 
     def take_card(self, card) -> boolean:
         """
@@ -78,11 +84,9 @@ class Deck:
         """
         for slot_pos, cardOnDisplay in self.cardsOnDisplay.items():
             if cardOnDisplay == card:
-                
-                self.cardsOnDisplay.pop(slot_pos)
-                
+                self.cardsOnDisplay[slot_pos] = None
                 if not self.is_empty():
-                    self.draw_card()
+                    self.draw_card(slot_pos)
                 return True
         return False
 
@@ -95,7 +99,7 @@ class Deck:
         """
         # FIXME: improve algorithm by not checking all cards.
         for card in self.cardsOnDisplay.values():
-            if card.is_clicked(mouse_pos):
+            if card is not None and card.is_clicked(mouse_pos):
                 return card
         return None
 
@@ -110,30 +114,21 @@ class Deck:
         Fills the empty slots in the deck with cards
         """
         while len(self.cardsOnDisplay) < self.card_slots:
-            self.draw_card()
+            self.draw_card(len(self.cardsOnDisplay) + 1)
 
-    def _add_card_to_display(self, card: Card):
-        """
-        Adds a card to the cards on display. The card is added to the first empty slot
-
-        :param: card: The card to add to the display
-        :pre: There is an empty slot in the deck
-        """
-        for i in range(1, self.card_slots + 1):
-            if i not in self.cardsOnDisplay.keys():
-                self.cardsOnDisplay[i] = card
-                return
-
-    def _display_deck_cover(self, screen):
+    def _display_deck_cover(self, screen, amount=0):
         """
         Displays the deck cover on the board surface
         """
+        if amount == 0:
+            return
         width, height = Deck.get_deck_display_size(self.board)
         x = self._get_deck_x()
         if self.color == Color.RED:
             x -= width
         y = self._get_deck_y()
         image = pygame.transform.scale(self.image, (int(width), int(height)))
+        write_on(image, str(amount), font_size=30)
         screen.blit(image, (x, y))
 
     def _draw_card_to_board(self, screen, card, slot_pos):
@@ -195,6 +190,17 @@ class Deck:
         else:
             return pygame.image.load('sprites/cards/{}/back.png'.format(self.color.name.lower()))
 
+    def _get_empty_slot_image(self):
+        """
+        Returns the image of the empty slot
+        """
+        if hasattr(self, 'empty_slot_image'):
+            return self.empty_slot_image
+        if self.color == Color.RED:
+            return pygame.image.load('sprites/cards/red{}/empty_slot.png'.format(str(self.level)))
+        else:
+            return pygame.image.load('sprites/cards/{}/empty_slot.png'.format(self.color.name.lower()))
+
     def _x_distance_between_cards(self):
         """
         Returns the distance between the end of the first card, and start of second card on the x-axis
@@ -232,6 +238,18 @@ class Deck:
     def add_reserved_to_sidebar(self, card):
         sidebar = Sidebar.instance()
         sidebar.reserve_card(card)
+        
+    def draw_empty_slot(self, screen, slot_pos):
+        """
+        Draws an empty slot on the board surface
+
+        :param: screen: The screen to draw the card on
+        :param: slot_pos: The position of the card slot to draw the card to
+        """
+        x, y = self._get_card_coords(slot_pos)
+        image = pygame.transform.scale(self.empty_slot_image,
+                                       (int(Card.get_card_size(self.board)[0]), int(Card.get_card_size(self.board)[1])))
+        screen.blit(image, (x, y))
 
 
 @Singleton
