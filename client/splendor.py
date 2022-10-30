@@ -159,9 +159,9 @@ def perform_action(obj):
 
 def check_toggle(mouse_pos):
     sidebar = Sidebar.instance()
-    if sidebar.isClickedToggle(mouse_pos) == 1:
+    if sidebar.is_clicked_toggle(mouse_pos) == 1:
         sidebar.toggle1()
-    elif sidebar.isClickedToggle(mouse_pos) == 2:
+    elif sidebar.is_clicked_toggle(mouse_pos) == 2:
         sidebar.toggle2()
 
 
