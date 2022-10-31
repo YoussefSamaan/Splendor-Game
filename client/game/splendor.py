@@ -8,7 +8,7 @@ from utils import *
 from deck import *
 from noble import Noble
 from deck import *
-from sidebar import Sidebar
+from sidebar import *
 from splendorToken import Token
 from action import Action
 
@@ -76,7 +76,7 @@ def display():
     display_decks()
     display_tokens()
     display_nobles()
-    display_sidebar()
+
     show_flash_message()  # last so it's on top
     pygame.display.update()
 
@@ -85,6 +85,7 @@ def display_board():
     Board.instance().display(DISPLAYSURF)
 
 def display_sidebar():
+    # 0 = card, 1 = noble, 2 = reserve
     Sidebar.instance().display(DISPLAYSURF)
 
 
@@ -154,8 +155,12 @@ def perform_action(obj):
     elif isinstance(obj, Noble):
         obj.take_noble(Sidebar.instance())
         set_flash_message('Took a noble')
-    elif isinstance(obj, Sidebar):
-        obj.scroll_sidebar()
+
+def check_toggle(mouse_pos):
+    sidebar = Sidebar.instance()
+    page_num = sidebar.is_clicked_toggle(mouse_pos)
+    sidebar.toggle(page_num)
+
 
 def check_toggle(mouse_pos):
     sidebar = Sidebar.instance()
