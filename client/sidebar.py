@@ -146,16 +146,16 @@ class Sidebar:
         #print("scrolling")
         # update last positions
         # update positions in dicts
-        # getting the first value of the dict and its y position
-        # if (direction < 0 and list(self.cards.items())[0][1][1] < 50) :
-        #     pass
-        # elif (direction > 0 and self.last_position_card[1] > Board.instance().height):
-        #     pass
-        # else:
-        #     self.update_positions(direction)
-        #     self.sidebarRect.move_ip(0, direction)
-        self.update_positions(direction)
-        self.sidebar_rect.move_ip(0, direction)
+        # getting the last value of the dict and its y position
+        if (direction < 0 and self.last_position_card[1] < self.card_size[1]) :
+            pass
+        elif (direction > 0 and list(self.cards.items())[0][1][1] > (Board.instance().height - 2*self.card_size[1])):
+            pass
+        else:
+            self.update_positions(direction)
+            self.sidebar_rect.move_ip(0, direction)
+        # self.update_positions(direction)
+        # self.sidebar_rect.move_ip(0, direction)
     
     def get_rect(self):
         return self.sidebarRect
