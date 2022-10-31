@@ -21,6 +21,7 @@ fullScreen = True
 DECKS = [BlueDeck, RedDeck3, YellowDeck, RedDeck2, GreenDeck, RedDeck1]
 FLASH_MESSAGE = None
 FLASH_TIMER = 0
+FLASH_START = 0
 
 
 def initialize_game():
@@ -52,16 +53,16 @@ def initialize_nobles():
 
 
 def show_flash_message():
-    global FLASH_TIMER, FLASH_MESSAGE
-    if FLASH_MESSAGE is None or FLASH_TIMER <= 0:
+    global FLASH_TIMER, FLASH_MESSAGE, FLASH_START
+    time_diff = (pygame.time.get_ticks() - FLASH_START) / 1000
+    if FLASH_MESSAGE is None or time_diff > FLASH_TIMER:
         return
-    FLASH_TIMER -= 1
-    flash_message(DISPLAYSURF, FLASH_MESSAGE, opacity=min(255, FLASH_TIMER * 2))
+    flash_message(DISPLAYSURF, FLASH_MESSAGE, opacity=255*(1 - time_diff / FLASH_TIMER))
 
 
-def set_flash_message(text, timer=60):
-    global FLASH_MESSAGE, FLASH_TIMER
-    FLASH_MESSAGE, FLASH_TIMER = text, timer
+def set_flash_message(text, timer=5):
+    global FLASH_MESSAGE, FLASH_TIMER, FLASH_START
+    FLASH_MESSAGE, FLASH_TIMER, FLASH_START = text, timer, pygame.time.get_ticks()
 
 
 def display():
