@@ -14,6 +14,7 @@ class Player:
     '''
 
     def __init__(self, name):
+        self._max_number_of_tokens = 10
         self.turn = 0 # to check if it is the player's turn 
         self.name = name
         self.prestige_points = 0
@@ -39,12 +40,18 @@ class Player:
         # Overloaded take_token function for 2 tokens of the same type (color)
         self.add_token(self, color, 2) #adds the token and updates num_of_tokens
 
+        if self.number_of_tokens > self._max_number_of_tokens:
+            self.return_coins(self.num_of_tokens- self._max_number_of_tokens)
+
     def take_token(self, color1, color2, color3):
         # Overloaded take_token function for 3 tokens of different types
         # usage example: take_token(self, Color.BLUE, Color.GREEN, Color.RED)
         self.add_token(self, color1, 1)
         self.add_token(self, color2, 1)
         self.add_token(self, color3, 1)
+        
+        if self.number_of_tokens > self._max_number_of_tokens:
+            self.return_coins(self.num_of_tokens- self._max_number_of_tokens)
     
     def add_token(self, color, number_of_tokens):
         # This function adds the token to the player and updates num_of_tokens
@@ -65,6 +72,10 @@ class Player:
             return 
         # only update number of tokens if it's a valid colour
         self.num_of_tokens += number_of_tokens
+    
+    def return_coins(self, num_of_coins):
+        #TODO: get the tokens that need to be returned
+        pass
 
     def buy_card(self, card):
         '''
@@ -107,10 +118,10 @@ class Player:
         self.brown_discounts -= card.bonus.get_brown(card.bonus)
 
     def add_prestige(self, card):
-        self.prestige_points += card._presetge_points
+        self.prestige_points += card.get_prestige_points()
 
     def remove_prestige(self, card):
-        self.prestige_points -= card._presetge_points
+        self.prestige_points -= card.get_prestige_points()
     
     def reserve_card(self, card):
         # TODO: rename this to avoid confusion. This function is for adding a card to the player's reserved_cards_list.

@@ -51,7 +51,7 @@ class Card:
     def __init__(self, id: int, deck, prestige_points=1, cost=Cost(1, 1, 1, 1, 1),
                  bonus=Bonus(1, 1, 1, 1, 1)):
         self._id = id
-        self._presetge_points = prestige_points
+        self._prestige_points = prestige_points
         self._cost = cost
         self._bonus = bonus
         self._color = deck.get_color()
@@ -82,7 +82,7 @@ class Card:
         image = pygame.transform.scale(self._image, (int(width)*1.5, int(height)*1.5))
         screen.blit(image, (x, y))
         self.pos = (x, y)
-        
+
     def is_clicked(self, mousePos):
         """
         Returns True if the card is clicked.
@@ -99,6 +99,9 @@ class Card:
 
     def get_color(self):
         return self._color
+
+    def get_prestige_points(self):
+        return self._prestige_points
 
     def get_id(self):
         return self._id
