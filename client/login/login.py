@@ -15,10 +15,6 @@ RED = (255, 0, 0)
 FPS = 60
 
 
-def validate(username, password):
-    return validate_credentials(username, password)
-
-
 def login():
     os.chdir(os.path.dirname(os.path.abspath(__file__)))
     pygame.init()
@@ -66,7 +62,7 @@ def login():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 wrong_credentials = False
                 if login_rect.collidepoint(event.pos):
-                    if validate(username_text, password_text):
+                    if validate_credentials(username_text, password_text):
                         return
                     else:
                         wrong_credentials = True
