@@ -65,9 +65,12 @@ class Card:
         height = board.get_height() * Card.y_ratio
         return width, height
 
-    def draw(self, screen, x, y):
+    def draw(self, screen, x, y, width=None, height=None):
         board = Board.instance()
-        width, height = Card.get_card_size(board)
+        if width is None:
+            width = Card.get_card_size(board)[0]
+        if height is None:
+            height = Card.get_card_size(board)[1]
         image = pygame.transform.scale(self._image, (int(width), int(height)))
         screen.blit(image, (x, y))
         self.pos = (x, y)
@@ -116,15 +119,6 @@ class Card:
         Allows user to choose whether to buy or reserve the card.
         """
         selection_box, selection_box_rect = get_selection_box(screen)
-        # draw the card's prestige points on the left side of the rect
-        font = pygame.font.SysFont('comicsans', 40)
-        text = font.render(str(self._presetge_points), 1, (0, 0, 0))
-        selection_box.blit(text, (selection_box_rect.x + 10, selection_box_rect.y + 10))
-        # # draw the card's cost on the right side of the rect
-        # self._cost.draw(screen, rect.x + rect.width - 10, rect.y + 10)
-        # # draw the card's bonus on the bottom of the rect
-        self.draw(selection_box, selection_box_rect.width / 2 - Card.get_card_size(Board.instance())[0] / 2,
-                  selection_box_rect.height / 2 - Card.get_card_size(Board.instance())[1] / 2)
 
         # draw the reserve button
         reserve_button = draw_reserve_button(selection_box)
@@ -136,6 +130,14 @@ class Card:
         # get the true position of the button
         buy_button.x += selection_box_rect.x
         buy_button.y += selection_box_rect.y
+
+        card_width, card_height = Card.get_card_size(Board.instance())
+        card_width *= 2  # make the card wider
+        card_height = buy_button.y - selection_box_rect.y - 20  # height of card is from top of box to buy button
+        self.draw(selection_box,
+                  selection_box_rect.width / 2 - card_width / 2,
+                  10,
+                  width=card_width, height=card_height)
 
         screen.blit(selection_box, selection_box_rect)
         pygame.display.update()
