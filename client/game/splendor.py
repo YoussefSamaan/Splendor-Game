@@ -6,7 +6,6 @@ from win32api import GetSystemMetrics
 
 from action import Action
 from deck import *
-from player import Player
 from sidebar import *
 from splendorToken import Token
 
@@ -24,6 +23,7 @@ FLASH_TIMER = 0
 FLASH_START = 0
 NUM_PLAYERS = 4  # For now
 CURR_PLAYER = 0
+
 
 def initialize_game():
     initialize_board()

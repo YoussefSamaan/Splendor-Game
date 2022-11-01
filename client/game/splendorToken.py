@@ -38,7 +38,6 @@ class Token:
             if token.get_color() == color:
                 return token
 
-
     def __init__(self, color: Color, id: int):
         self._color = color
         self.image = pygame.image.load('../sprites/tokens/{}.png'.format(color.name.lower()))

@@ -1,9 +1,10 @@
+import random
+
+import pygame
+
+import utils
 from board import Board
 from flyweight import Flyweight
-import pygame
-from cost import Cost
-import random
-import utils
 
 
 @Flyweight
@@ -54,7 +55,8 @@ class Noble:
 
     def draw_for_sidebar(self, screen, x, y):
         width, height = Noble.get_card_size()
-        image = pygame.transform.scale(self._image, (int(width)*utils.SIDEBAR_IMAGE_SCALE, int(height)*utils.SIDEBAR_IMAGE_SCALE))
+        image = pygame.transform.scale(self._image, (
+        int(width) * utils.SIDEBAR_IMAGE_SCALE, int(height) * utils.SIDEBAR_IMAGE_SCALE))
         screen.blit(image, (x, y))
         self.pos = (x, y)
 

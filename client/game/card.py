@@ -1,7 +1,3 @@
-import time
-
-import pygame
-
 from action import Action
 from board import Board
 from bonus import Bonus
@@ -77,11 +73,10 @@ class Card:
         screen.blit(image, (x, y))
         self.pos = (x, y)
 
-
     def draw_for_sidebar(self, screen, x, y):
         board = Board.instance()
         width, height = Card.get_card_size(board)
-        image = pygame.transform.scale(self._image, (int(width)*1.5, int(height)*1.5))
+        image = pygame.transform.scale(self._image, (int(width) * 1.5, int(height) * 1.5))
         screen.blit(image, (x, y))
         self.pos = (x, y)
 

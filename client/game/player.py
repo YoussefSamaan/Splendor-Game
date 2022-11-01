@@ -198,7 +198,7 @@ class Player:
         screen.blit(inventory, (x, y))
 
         # Draw the actual inventory
-        inventory = pygame.Surface((width - 2*self.BORDER_SIZE, height - 2*self.BORDER_SIZE))
+        inventory = pygame.Surface((width - 2 * self.BORDER_SIZE, height - 2 * self.BORDER_SIZE))
         inventory.fill(self.BACKGROUND_COLOR)
 
         self.show_name(inventory)
