@@ -3,6 +3,8 @@ import sys
 
 from pygame.locals import *
 from win32api import GetSystemMetrics
+
+from bonus import Bonus
 from utils import *
 
 from deck import *
