@@ -124,4 +124,3 @@ class Player:
         # self.nobles_list.append(noble_card)
         self.add_prestige(noble_card)
         self.add_noble_to_sidebar(noble_card)
-
