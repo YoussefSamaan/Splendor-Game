@@ -11,7 +11,6 @@ from splendorToken import Token
 from utils import write_on
 
 
-
 @Flyweight
 class Player:
     '''
@@ -24,11 +23,13 @@ class Player:
     - reserve noble
     '''
 
-    BACKGROUND_COLOR = Color.WHITE.value
-    BORDER_COLOR = utils.BACKGROUND_COLOR
+    BACKGROUND_COLOR = utils.BACKGROUND_COLOR
+    BORDER_COLOR = Color.BLACK.value
+    HIGHLIGHT_COLOR = Color.YELLOW.value
     NAME_RATIO = 1 / 4
     TOKENS_RATIO = 3 / 8
     DISCOUNTS_RATIO = 3 / 8
+    BORDER_SIZE = 2.5
 
     assert NAME_RATIO + TOKENS_RATIO + DISCOUNTS_RATIO == 1, "Ratios must add up to 1"
 
@@ -56,6 +57,7 @@ class Player:
             Color.WHITE: 0,
             Color.GOLD: 0
         }
+
     def is_clicked(self, position, width, height, num):
         board = Board.instance()
         x_start = self.pos * width / num
@@ -63,7 +65,6 @@ class Player:
         x_end = (self.pos + 1) * width / num
         y_end = height
         return x_start <= position[0] <= x_end and y_start <= position[1] <= y_end
-        
 
     def add_noble_to_sidebar(self, noble):
         self.nobles[noble] = self.last_position_noble
@@ -78,16 +79,8 @@ class Player:
         self.last_position_reserved = (
             self.last_position_reserved[0], self.last_position_reserved[1] + Card.get_card_size()[1])
 
-    def take_token(self, color):
-        # Overloaded take_token function for 2 tokens of the same type (color)
-        self.tokens[color] += 2  # adds the token and updates num_of_tokens
-
-    def take_token(self, color1, color2, color3):
-        # Overloaded take_token function for 3 tokens of different types
-        # usage example: take_token(self, Color.BLUE, Color.GREEN, Color.RED)
-        self.tokens[color1] += 1
-        self.tokens[color2] += 1
-        self.tokens[color3] += 1
+    def add_token(self, token):
+        self.tokens[token.get_color()] += 1
 
     def get_number_of_tokens(self):
         # TODO: fill in this function
@@ -183,9 +176,10 @@ class Player:
         self.discounts.draw(surface)
         inventory.blit(surface, (0, inventory.get_height() * (self.NAME_RATIO + self.TOKENS_RATIO)))
 
-    def display(self, screen: pygame.Surface, num_players: int):
+    def display(self, screen: pygame.Surface, num_players: int, highlighted: bool = False):
         """
         Draw the player's Inventory.
+        :param highlighted: whether the player is the current player
         :param screen:
         :param num_players: number of players
         :return:
@@ -197,14 +191,19 @@ class Player:
 
         # Draw the border
         inventory = pygame.Surface((width, height))
-        inventory.fill(self.BORDER_COLOR)
+        if highlighted:
+            inventory.fill(self.HIGHLIGHT_COLOR)
+        else:
+            inventory.fill(self.BORDER_COLOR)
         screen.blit(inventory, (x, y))
 
         # Draw the actual inventory
-        inventory = pygame.Surface((width - 5, height - 5))
+        inventory = pygame.Surface((width - 2*self.BORDER_SIZE, height - 2*self.BORDER_SIZE))
         inventory.fill(self.BACKGROUND_COLOR)
+
         self.show_name(inventory)
         self.show_tokens(inventory)
         self.show_prestige_points(inventory)
         self.show_discounts(inventory)
-        screen.blit(inventory, (x, y))
+
+        screen.blit(inventory, (x + self.BORDER_SIZE, y + self.BORDER_SIZE))

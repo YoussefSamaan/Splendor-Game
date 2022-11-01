@@ -45,7 +45,6 @@ class Bonus:
             bonus.fill(color.value)
             outlined_text(bonus, str(self.bonus[color]))
             surface.blit(bonus, (x, 0))
-
             x += width
 
     def __add__(self, other):

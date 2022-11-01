@@ -13,7 +13,7 @@ class Sidebar:
         self.card_size = Card.get_card_size()
         self.noble_size = Noble.get_card_size()
         self.width = screen_width - Board.instance().get_rect().width
-        self.height = 10000 #min(screenHeight, 800)
+        self.height = 10000  #min(screenHeight, 800)
         self.sidebar_rect = pygame.Rect(0, 0, self.width, self.height)
  
         self.current_player = Player.instance(0) 
@@ -21,7 +21,7 @@ class Sidebar:
         self.current_display = 0
         self.bought_button = pygame.Rect(0, 0,
                                             self.width/3, self.card_size[1] / 4)
-        self.current_player.nobles_button = pygame.Rect(self.width/3, 0, 
+        self.nobles_button = pygame.Rect(self.width/3, 0,
                                             self.width/3, self.card_size[1] / 4)
         self.reserve_button = pygame.Rect(self.width*2/3, 0, 
                                             self.width/3, self.card_size[1] / 4)
@@ -187,10 +187,10 @@ class Sidebar:
     def get_height(self):
         return self.height
 
-    def is_clicked_toggle(self, mousePos):
-        if self.reserve_button.collidepoint(mousePos):
+    def is_clicked_toggle(self, mouse_pos):
+        if self.reserve_button.collidepoint(mouse_pos):
             return 2
-        elif self.nobles_button.collidepoint(mousePos):
+        elif self.nobles_button.collidepoint(mouse_pos):
             return 1
-        elif self.bought_button.collidepoint(mousePos):
+        elif self.bought_button.collidepoint(mouse_pos):
             return 0

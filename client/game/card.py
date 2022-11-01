@@ -174,12 +174,12 @@ class Card:
                     pygame.quit()
                     quit()
 
-    def buy(self):
-        # FIXME: Implement this to put card in player inventory
+    def buy(self, player):
         self.deck.take_card(self)
         self.deck.add_card_to_sidebar(self)
+        player.add_card(self)
 
-    def reserve(self):
-        # FIXME: Implement this to put card in player inventory
+    def reserve(self, player):
         self.deck.take_card(self)
         self.deck.add_reserved_to_sidebar(self)
+        player.reserve_card(self)

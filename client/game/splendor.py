@@ -4,11 +4,11 @@ import sys
 from pygame.locals import *
 from win32api import GetSystemMetrics
 
+from action import Action
 from deck import *
+from player import Player
 from sidebar import *
 from splendorToken import Token
-from action import Action
-from player import Player
 
 os.chdir(os.path.dirname(os.path.abspath(__file__)))  # to make image imports start from current directory
 WIDTH, HEIGHT = GetSystemMetrics(0), GetSystemMetrics(1)
@@ -23,19 +23,20 @@ FLASH_MESSAGE = None
 FLASH_TIMER = 0
 FLASH_START = 0
 NUM_PLAYERS = 4  # For now
+CURR_PLAYER = 0
 
 def initialize_game():
     initialize_board()
+    initialize_players()
     initialize_cards()
     initialize_tokens()
     initialize_nobles()
     initialize_players()
     initialize_sidebar()
-    initialize_players()
 
 
 def initialize_players():
-    for i in range(NUM_PLAYERS):
+    for i in range(0, NUM_PLAYERS):
         Player.instance(id=i, name='Player {}'.format(i + 1))
 
 
@@ -44,7 +45,7 @@ def initialize_board():
 
 
 def initialize_sidebar():
-    Sidebar.instance(WIDTH, HEIGHT, Player.instance(id=0))
+    Sidebar.instance(WIDTH, HEIGHT)
 
 
 def initialize_cards():
@@ -119,7 +120,8 @@ def display_nobles():
 
 def display_players():
     for i in range(NUM_PLAYERS):
-        Player.instance(id=i).display(DISPLAYSURF, NUM_PLAYERS)
+        highlight = i == CURR_PLAYER
+        Player.instance(id=i).display(DISPLAYSURF, NUM_PLAYERS, highlight)
 
 
 def get_clicked_object(pos):
@@ -152,12 +154,12 @@ def get_user_card_selection(card):
     """
     dim_screen(DISPLAYSURF)
     action = card.get_user_selection(DISPLAYSURF)
-    global FLASH_MESSAGE, FLASH_TIMER
+    global FLASH_MESSAGE, FLASH_TIMER, CURR_PLAYER
     if action == Action.RESERVE:
-        card.reserve()
+        card.reserve(Player.instance(id=CURR_PLAYER))
         set_flash_message('Reserved a card')
     elif action == Action.BUY:
-        card.buy()
+        card.buy(Player.instance(id=CURR_PLAYER))
         set_flash_message('Bought a card')
     elif action == Action.CANCEL:
         return
@@ -168,15 +170,17 @@ def get_user_card_selection(card):
 def perform_action(obj):
     if obj is None:
         return
+    global CURR_PLAYER
     if isinstance(obj, Card):
         get_user_card_selection(obj)
     elif isinstance(obj, Token):
-        obj.take_token()
+        obj.take_token(Player.instance(id=CURR_PLAYER))
         set_flash_message('Took a token')
     elif isinstance(obj, Noble):
-        obj.take_noble(Sidebar.instance())
+        obj.take_noble(Sidebar.instance(), Player.instance(id=CURR_PLAYER))
         set_flash_message('Took a noble')
     elif isinstance(obj, Player):
+        CURR_PLAYER = obj.pos
         Sidebar.instance().switch_player(obj)
 
 
