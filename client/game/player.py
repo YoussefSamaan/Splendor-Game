@@ -28,7 +28,7 @@ class Player:
         self.brown_discounts = 0
         self.white_discounts = 0
         self.num_of_tokens = 0 # to check if they have over the limit and they need to return some
-        
+
         self.blue_tokens = 0
         self.green_tokens = 0
         self.red_tokens = 0
@@ -68,6 +68,11 @@ class Player:
         # only update number of tokens if it's a valid colour
         self.num_of_tokens += number_of_tokens
 
+    def return_coins(self):
+        '''
+        TODO:Fill this function
+        '''
+        pass
     def buy_card(self, card):
         '''
         TODO:
