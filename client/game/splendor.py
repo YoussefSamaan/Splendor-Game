@@ -53,7 +53,7 @@ def initialize_tokens():
 
 
 def initialize_nobles():
-    Noble.initialize(n=4)
+    Noble.initialize(n=5)
 
 
 def show_flash_message():
