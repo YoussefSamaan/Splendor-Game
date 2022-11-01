@@ -1,9 +1,15 @@
+import pygame
+
 from card import Card
+from board import Board
+from flyweight import Flyweight
+from utils import write_on
 from noble import Noble
 from color import Color
 from bonus import Bonus
 
 
+@Flyweight
 class Player:
     '''
     Player needs to:
@@ -15,7 +21,9 @@ class Player:
     - reserve noble
     '''
 
-    def __init__(self, name):
+    BACKGROUND_COLOR = Color.WHITE.value
+
+    def __init__(self, name, id):
         self._max_number_of_tokens = 10
         self.turn = 0  # to check if it is the player's turn
         self.name = name
@@ -23,6 +31,7 @@ class Player:
         self.cards_bought = {}  # to store the bought cards
         self.nobles = {}  # to store the reserved nobles
         self.reserved_cards = {}  # to store the reserved cards
+        self.pos = id
 
         # for sidebar
         self.last_position_card = (0, Card.get_card_size()[1] / 4 + 10)
@@ -50,7 +59,7 @@ class Player:
     def reserve_card_to_sidebar(self, reserved):
         self.reserved_cards[reserved] = self.last_position_reserved
         self.last_position_reserved = (
-        self.last_position_reserved[0], self.last_position_reserved[1] + Card.get_card_size()[1])
+            self.last_position_reserved[0], self.last_position_reserved[1] + Card.get_card_size()[1])
 
     def take_token(self, color):
         # Overloaded take_token function for 2 tokens of the same type (color)
@@ -124,3 +133,30 @@ class Player:
         # self.nobles_list.append(noble_card)
         self.add_prestige(noble_card)
         self.add_noble_to_sidebar(noble_card)
+
+    def show_name(self, inventory: pygame.Surface):
+        surface = pygame.Surface((inventory.get_width(), inventory.get_height() / 4))
+        surface.fill(self.BACKGROUND_COLOR)
+        write_on(surface, self.name)
+        inventory.blit(surface, (inventory.get_width() / 2 - surface.get_width() / 2, 0))
+
+    def show_tokens(self, inventory: pygame.Surface):
+        pass
+    def display(self, screen: pygame.Surface, num_players: int):
+        """
+        Draw the player's Inventory.
+        :param screen:
+        :param num_players: number of players
+        :return:
+        """
+        width = screen.get_width() // num_players
+        height = screen.get_height() - Board.instance().get_height()
+        x = self.pos * width
+        y = Board.instance().get_height()
+        inventory = pygame.Surface((width, height))
+        inventory.fill(self.BACKGROUND_COLOR)
+        self.show_name(inventory)
+        # self.show_tokens(inventory)
+        # self.show_presige_points(inventory)
+        # self.show_discounts(inventory)
+        screen.blit(inventory, (x, y))

@@ -7,6 +7,7 @@ import pygame
 from board import Board
 from card import Card
 from color import Color
+from sidebar import Sidebar
 from singleton import Singleton
 from utils import outlined_text
 from sidebar import Sidebar
@@ -235,6 +236,7 @@ class Deck:
     def add_card_to_sidebar(self, card):
         sidebar = Sidebar.instance()
         sidebar.add_card(card)
+
     def add_reserved_to_sidebar(self, card):
         sidebar = Sidebar.instance()
         sidebar.reserve_card(card)

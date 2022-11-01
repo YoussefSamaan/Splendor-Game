@@ -4,11 +4,6 @@ import sys
 from pygame.locals import *
 from win32api import GetSystemMetrics
 
-from bonus import Bonus
-from utils import *
-
-from deck import *
-from noble import Noble
 from deck import *
 from sidebar import *
 from splendorToken import Token
@@ -27,8 +22,7 @@ DECKS = [BlueDeck, RedDeck3, YellowDeck, RedDeck2, GreenDeck, RedDeck1]
 FLASH_MESSAGE = None
 FLASH_TIMER = 0
 FLASH_START = 0
-PLAYERS = []
-
+NUM_PLAYERS = 4  # For now
 
 def initialize_game():
     initialize_board()
@@ -37,22 +31,21 @@ def initialize_game():
     initialize_nobles()
     initialize_players()
     initialize_sidebar()
+    initialize_players()
+
+
+def initialize_players():
+    for i in range(NUM_PLAYERS):
+        Player.instance(id=i, name='Player {}'.format(i + 1))
+
 
 def initialize_board():
     Board.instance(WIDTH, HEIGHT)
-    
-def initialize_sidebar():
-    Sidebar.instance(WIDTH, HEIGHT, PLAYERS[0])
 
-def initialize_players():
-    player1 = Player("P1")
-    player2 = Player("P2")
-    player3 = Player("P3")
-    player4 = Player("P4")
-    PLAYERS.append(player1)
-    PLAYERS.append(player2)
-    PLAYERS.append(player3)
-    PLAYERS.append(player4)
+
+def initialize_sidebar():
+    Sidebar.instance(WIDTH, HEIGHT, Player.instance(id=0))
+
 
 def initialize_cards():
     BlueDeck.instance()
@@ -76,7 +69,7 @@ def show_flash_message():
     time_diff = (pygame.time.get_ticks() - FLASH_START) / 1000
     if FLASH_MESSAGE is None or time_diff > FLASH_TIMER:
         return
-    flash_message(DISPLAYSURF, FLASH_MESSAGE, opacity=255*(1 - time_diff / FLASH_TIMER))
+    flash_message(DISPLAYSURF, FLASH_MESSAGE, opacity=255 * (1 - time_diff / FLASH_TIMER))
 
 
 def set_flash_message(text, timer=5):
@@ -88,6 +81,7 @@ def display():
     # reset the display and re-display everything
     DISPLAYSURF.fill((0, 0, 0))
     display_sidebar()
+    display_players()
     display_board()
     display_decks()
     display_tokens()
@@ -99,6 +93,7 @@ def display():
 
 def display_board():
     Board.instance().display(DISPLAYSURF)
+
 
 def display_sidebar():
     # 0 = card, 1 = noble, 2 = reserve
@@ -120,6 +115,11 @@ def display_tokens():
 
 def display_nobles():
     Noble.display_all(DISPLAYSURF)
+
+
+def display_players():
+    for i in range(NUM_PLAYERS):
+        Player.instance(id=i).display(DISPLAYSURF, NUM_PLAYERS)
 
 
 def get_clicked_object(pos):
@@ -172,6 +172,7 @@ def perform_action(obj):
         obj.take_noble(Sidebar.instance())
         set_flash_message('Took a noble')
 
+
 def check_toggle(mouse_pos):
     sidebar = Sidebar.instance()
     page_num = sidebar.is_clicked_toggle(mouse_pos)
@@ -182,6 +183,7 @@ def check_toggle(mouse_pos):
     sidebar = Sidebar.instance()
     page_num = sidebar.is_clicked_toggle(mouse_pos)
     sidebar.toggle(page_num)
+
 
 def play():
     initialize_game()
