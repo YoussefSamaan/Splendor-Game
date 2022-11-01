@@ -6,11 +6,13 @@ WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 GREY = (57, 57, 57)
 LIGHT_GREY = (99, 99, 99)
-LIGHT_BLUE = (141,182,205)
+LIGHT_BLUE = (141, 182, 205)
 # BACKGROUND_COLOR = (158, 58, 64)
 BACKGROUND_COLOR = (113, 155, 158)
 
-SIDEBAR_IMAGE_SCALE = 1.5 # make cards and nobles 1.5x bigger
+SIDEBAR_IMAGE_SCALE = 1.5  # make cards and nobles 1.5x bigger
+
+
 def dim_screen(screen, color=(0, 0, 0), alpha=128):
     """
     Dim the screen with a color and alpha value
@@ -72,9 +74,10 @@ def flash_message(screen, text, color=GREEN, opacity=255):
     screen.blit(box, (screen.get_width() / 2 - box.get_width() / 2, 0))
 
 
-def write_on(surface, text, color=BLACK, font='Arial', font_size=20):
+def write_on(surface, text, color=BLACK, font='Arial', font_size=20, center=None):
     """
     Write text to a surface
+    :param center: center the text on the surface
     :param text: the text to write
     :param surface: the rect to write to
     :param color: the color of the text
@@ -84,5 +87,35 @@ def write_on(surface, text, color=BLACK, font='Arial', font_size=20):
     font = pygame.font.SysFont(font, font_size)
     text = font.render(text, True, color)
     text_rect = text.get_rect()
-    text_rect.center = (surface.get_width() / 2, surface.get_height() / 2)
+    if center is None:
+        text_rect.center = (surface.get_width() / 2, surface.get_height() / 2)
+    else:
+        text_rect.center = center
     surface.blit(text, text_rect)
+
+
+def outlined_text(surface, text, outline_color=BLACK, color=WHITE, font='Arial', font_size=20, center=None):
+    """
+    Write text to a surface
+    :param outline_color: the color of the outline
+    :param center: center the text on the surface
+    :param text: the text to write
+    :param surface: the rect to write to
+    :param color: the color of the text
+    :param font: the font of the text
+    :param font_size: the size of the font
+    """
+    if center is None:
+        center = (surface.get_width() / 2, surface.get_height() / 2)
+    # top left
+    write_on(surface, text, outline_color, font, font_size, (center[0] - 2, center[1] - 2))
+    # top right
+    write_on(surface, text, outline_color, font, font_size, (center[0] + 2, center[1] - 2))
+    # btm left
+    write_on(surface, text, outline_color, font, font_size, (center[0] - 2, center[1] + 2))
+    # btm right
+    write_on(surface, text, outline_color, font, font_size, (center[0] + 2, center[1] + 2))
+
+    # TEXT FILL
+
+    write_on(surface, text, color, font, font_size, center)
