@@ -19,10 +19,14 @@ class Player:
         self.turn = 0 # to check if it is the player's turn 
         self.name = name
         self.prestige_points = 0
-        self.cards_bought = [] # to store the bought cards
-        self.nobles = [] # to store the reserved nobles
-        self.reserved_cards = [] # to store the reserved cards
+        self.cards_bought = {} # to store the bought cards
+        self.nobles = {} # to store the reserved nobles
+        self.reserved_cards = {} # to store the reserved cards
 
+# for sidebar
+        self.last_position_card = (0,self.card_size[1] / 4 + 10)
+        self.last_position_noble = (0,self.card_size[1] / 4 + 10)
+        self.last_position_reserved = (0,self.card_size[1] / 4 + 10)
         self.discounts = {
             Color.BLUE: 0,
             Color.BROWN: 0,
@@ -40,6 +44,18 @@ class Player:
             Color.GOLD: 0
         }
 
+    def add_noble_to_sidebar(self, noble):
+        self.nobles[noble] = self.last_position_noble
+        self.last_position_noble = (self.last_position_noble[0], self.last_position_noble[1]+self.noble_size[1])
+
+    def add_card_to_sidebar(self, card):
+        self.cards[card] = self.last_position_card
+        self.last_position_card = (self.last_position_card[0], self.last_position_card[1]+self.card_size[1])
+
+    def reserve_card_to_sidebar(self, reserved):
+        self.reserved_cards[reserved] = self.last_position_reserved
+        self.last_position_reserved = (self.last_position_reserved[0], self.last_position_reserved[1]+self.card_size[1])
+     
     def take_token(self, color):
         # Overloaded take_token function for 2 tokens of the same type (color)
         self.tokens[color] += 2  #adds the token and updates num_of_tokens
@@ -81,9 +97,10 @@ class Player:
         Add card bonuses (discounts) to player.
         Add card prestige points to player.
         """
-        self.cards_list.append(card)
+        #self.cards_list.append(card)
         self.add_bonus(self, card)
         self.add_prestige(self, card)
+        self.add_card_to_sidebar
 
     def add_bonus(self, card):
         # add the discounts from a card
@@ -109,11 +126,13 @@ class Player:
     
     def reserve_card(self, card):
         # TODO: rename this to avoid confusion. This function is for adding a card to the player's reserved_cards_list.
-        self.reserved_cards_list.append(card)
+        #self.reserved_cards_list.append(card)
         self.add_token(self, Color.GOLD, 1)
+        self.reserve_card_to_sidebar
 
     def reserve_noble(self, noble_card):
         # reserves a noble. 
         # TODO: Figure out noble card. Current noble class does not have prestige attribute.
-        self.nobles_list.append(noble_card)
+        #self.nobles_list.append(noble_card)
         self.add_prestige(self, noble_card)
+        self.add_noble_to_sidebar
