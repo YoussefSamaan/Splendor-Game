@@ -47,7 +47,7 @@ class Noble:
 
     def take_noble(self, sidebar, player):
         self.isOnDisplay = False
-        sidebar.add_noble(self)
+        #sidebar.add_noble(self)
         player.reserve_noble(self)
 
     def draw(self, screen, x, y):

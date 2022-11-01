@@ -44,16 +44,16 @@ class Sidebar:
         pygame.draw.rect(screen, (0, 0, 0, 0), self.sidebar_rect)
         if self.current_display == 0:
             for card in self.current_player.cards_bought:
-                card.draw_for_sidebar(screen, self.current_player.cards_bought[card][0] * 1.5,
-                                      self.current_player.cards_bought[card][1] * 1.5)
+                card.draw_for_sidebar(screen, self.current_player.cards_bought[card][0] ,
+                                      self.current_player.cards_bought[card][1] )
         elif self.current_display == 1:
             for noble in self.current_player.nobles:
-                noble.draw_for_sidebar(screen, self.current_player.nobles[noble][0] * 1.5,
-                                       self.current_player.nobles[noble][1] * 1.5)
+                noble.draw_for_sidebar(screen, self.current_player.nobles[noble][0] ,
+                                       self.current_player.nobles[noble][1] )
         else:
             for reserve_card in self.current_player.reserved_cards:
-                reserve_card.draw_for_sidebar(screen, self.current_player.reserved_cards[reserve_card][0] * 1.5,
-                                              self.current_player.reserved_cards[reserve_card][1] * 1.5)
+                reserve_card.draw_for_sidebar(screen, self.current_player.reserved_cards[reserve_card][0] ,
+                                              self.current_player.reserved_cards[reserve_card][1] )
 
         self.draw_buttons(screen)
 
@@ -117,20 +117,20 @@ class Sidebar:
         button_rect.y = y
         return button_rect
 
-    def add_noble(self, noble):
-        self.current_player.nobles[noble] = self.current_player.last_position_noble
-        self.current_player.last_position_noble = (
-        self.current_player.last_position_noble[0], self.current_player.last_position_noble[1] + self.noble_size[1])
+    # def add_noble(self, noble):
+    #     self.current_player.nobles[noble] = self.current_player.last_position_noble
+    #     self.current_player.last_position_noble = (
+    #     self.current_player.last_position_noble[0], self.current_player.last_position_noble[1] + self.noble_size[1])
 
-    def add_card(self, card):
-        self.current_player.cards_bought[card] = self.current_player.last_position_card
-        self.current_player.last_position_card = (
-        self.current_player.last_position_card[0], self.current_player.last_position_card[1] + self.card_size[1])
+    # def add_card(self, card):
+    #     self.current_player.cards_bought[card] = self.current_player.last_position_card
+    #     self.current_player.last_position_card = (
+    #     self.current_player.last_position_card[0], self.current_player.last_position_card[1] + self.card_size[1])
 
-    def reserve_card(self, reserved):
-        self.current_player.reserved_cards[reserved] = self.current_player.last_position_reserved
-        self.current_player.last_position_reserved = (self.current_player.last_position_reserved[0],
-                                                      self.current_player.last_position_reserved[1] + self.card_size[1])
+    # def reserve_card(self, reserved):
+    #     self.current_player.reserved_cards[reserved] = self.current_player.last_position_reserved
+    #     self.current_player.last_position_reserved = (self.current_player.last_position_reserved[0],
+    #                                                   self.current_player.last_position_reserved[1] + self.card_size[1])
 
     def update_positions(self, amount):
         # updating the last values for new cards_bought

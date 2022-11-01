@@ -76,7 +76,7 @@ class Card:
     def draw_for_sidebar(self, screen, x, y):
         board = Board.instance()
         width, height = Card.get_card_size(board)
-        image = pygame.transform.scale(self._image, (int(width) * 1.5, int(height) * 1.5))
+        image = pygame.transform.scale(self._image, (int(width) *1.5, int(height) *1.5))
         screen.blit(image, (x, y))
         self.pos = (x, y)
 
@@ -171,10 +171,10 @@ class Card:
 
     def buy(self, player):
         self.deck.take_card(self)
-        self.deck.add_card_to_sidebar(self)
+        #self.deck.add_card_to_sidebar(self)
         player.add_card(self)
 
     def reserve(self, player):
         self.deck.take_card(self)
-        self.deck.add_reserved_to_sidebar(self)
+        #self.deck.add_reserved_to_sidebar(self)
         player.reserve_card(self)

@@ -68,16 +68,16 @@ class Player:
 
     def add_noble_to_sidebar(self, noble):
         self.nobles[noble] = self.last_position_noble
-        self.last_position_noble = (self.last_position_noble[0], self.last_position_noble[1] + Noble.get_card_size()[1])
+        self.last_position_noble = (self.last_position_noble[0], self.last_position_noble[1] + Noble.get_card_size()[1] * 1.5)
 
     def add_card_to_sidebar(self, card):
         self.cards_bought[card] = self.last_position_card
-        self.last_position_card = (self.last_position_card[0], self.last_position_card[1] + Card.get_card_size()[1])
+        self.last_position_card = (self.last_position_card[0], self.last_position_card[1] + Card.get_card_size()[1]* 1.5)
 
     def reserve_card_to_sidebar(self, reserved):
         self.reserved_cards[reserved] = self.last_position_reserved
         self.last_position_reserved = (
-            self.last_position_reserved[0], self.last_position_reserved[1] + Card.get_card_size()[1])
+            self.last_position_reserved[0], self.last_position_reserved[1] + Card.get_card_size()[1]* 1.5)
 
     def add_token(self, token):
         self.tokens[token.get_color()] += 1
