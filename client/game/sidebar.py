@@ -7,32 +7,29 @@ from utils import *
 
 @Singleton
 class Sidebar:
-    def __init__(self, screen_width, screen_height):
+    def __init__(self, screen_width, screen_height, player):
         # [0] is width, [1] is height
-        self.card_size = Card.get_card_size(Board.instance())
+        self.card_size = Card.get_card_size()
         self.noble_size = Noble.get_card_size()
-        self.width = screen_width  - Board.instance().get_rect().width
+        self.width = screen_width - Board.instance().get_rect().width
         self.height = 10000 #min(screenHeight, 800)
         self.sidebar_rect = pygame.Rect(0, 0, self.width, self.height)
-
-        self.cards = {}
-        self.reserved_cards = {}
-        self.nobles = {}
  
-        self.last_position_card = (0,self.card_size[1] / 4 + 10)
-        self.last_position_noble = (0,self.card_size[1] / 4 + 10)
-        self.last_position_reserved = (0,self.card_size[1] / 4 + 10)
+        self.current_player = player 
         
         self.current_display = 0
         self.bought_button = pygame.Rect(0, 0,
                                             self.width/3, self.card_size[1] / 4)
-        self.nobles_button = pygame.Rect(self.width/3, 0, 
+        self.current_player.nobles_button = pygame.Rect(self.width/3, 0, 
                                             self.width/3, self.card_size[1] / 4)
         self.reserve_button = pygame.Rect(self.width*2/3, 0, 
                                             self.width/3, self.card_size[1] / 4)
         
         self.display_color_active = LIGHT_BLUE
         
+    def switch_player(self, player):
+        self.current_player = player
+        # don't forget to update screen in splendor.py
 
     def toggle(self, num):
         if type(num) !=  int:
@@ -40,19 +37,18 @@ class Sidebar:
         elif -1 < num < 4:
             self.current_display = num
 
-
     def display(self, screen):
         # draw dummy color background
         pygame.draw.rect(screen, (0,0,0,0), self.sidebar_rect)
         if self.current_display == 0:
-            for card in self.cards:
-                card.draw_for_sidebar(screen, self.cards[card][0]*1.5, self.cards[card][1]*1.5)
+            for card in self.current_player.cards_bought:
+                card.draw_for_sidebar(screen, self.current_player.cards_bought[card][0]*1.5, self.current_player.cards_bought[card][1]*1.5)
         elif self.current_display == 1:
-            for noble in self.nobles:
-                noble.draw_for_sidebar(screen, self.nobles[noble][0]*1.5, self.nobles[noble][1]*1.5)
+            for noble in self.current_player.nobles:
+                noble.draw_for_sidebar(screen, self.current_player.nobles[noble][0]*1.5, self.current_player.nobles[noble][1]*1.5)
         else:
-            for reserve_card in self.reserved_cards:
-                reserve_card.draw_for_sidebar(screen, self.reserved_cards[reserve_card][0]*1.5, self.reserved_cards[reserve_card][1]*1.5)   
+            for reserve_card in self.current_player.reserved_cards:
+                reserve_card.draw_for_sidebar(screen, self.current_player.reserved_cards[reserve_card][0]*1.5, self.current_player.reserved_cards[reserve_card][1]*1.5)   
 
         self.draw_buttons(screen)
 
@@ -117,29 +113,29 @@ class Sidebar:
         return button_rect
 
     def add_noble(self, noble):
-        self.nobles[noble] = self.last_position_noble
-        self.last_position_noble = (self.last_position_noble[0], self.last_position_noble[1]+self.noble_size[1])
+        self.current_player.nobles[noble] = self.current_player.last_position_noble
+        self.current_player.last_position_noble = (self.current_player.last_position_noble[0], self.current_player.last_position_noble[1]+self.noble_size[1])
 
     def add_card(self, card):
-        self.cards[card] = self.last_position_card
-        self.last_position_card = (self.last_position_card[0], self.last_position_card[1]+self.card_size[1])
+        self.current_player.cards_bought[card] = self.current_player.last_position_card
+        self.current_player.last_position_card = (self.current_player.last_position_card[0], self.current_player.last_position_card[1]+self.card_size[1])
 
     def reserve_card(self, reserved):
-        self.reserved_cards[reserved] = self.last_position_reserved
-        self.last_position_reserved = (self.last_position_reserved[0], self.last_position_reserved[1]+self.card_size[1])
+        self.current_player.reserved_cards[reserved] = self.current_player.last_position_reserved
+        self.current_player.last_position_reserved = (self.current_player.last_position_reserved[0], self.current_player.last_position_reserved[1]+self.card_size[1])
         
     def update_positions(self, amount):
-        # updating the last values for new cards
-        self.last_position_card = (self.last_position_card[0], self.last_position_card[1] + amount)
-        self.last_position_noble = (self.last_position_noble[0], self.last_position_noble[1] + amount)
-        self.last_position_reserved =(self.last_position_reserved[0], self.last_position_reserved[1] + amount)
-        # updating values of cards in dict
-        for item in self.cards:
-            self.cards[item] = (self.cards[item][0], self.cards[item][1] + amount)
-        for item in self.nobles:
-            self.nobles[item] = (self.nobles[item][0], self.nobles[item][1] + amount)
-        for item in self.reserved_cards:
-            self.reserved_cards[item] = (self.reserved_cards[item][0], self.reserved_cards[item][1] + amount)
+        # updating the last values for new cards_bought
+        self.current_player.last_position_card = (self.current_player.last_position_card[0], self.current_player.last_position_card[1] + amount)
+        self.current_player.last_position_noble = (self.current_player.last_position_noble[0], self.current_player.last_position_noble[1] + amount)
+        self.current_player.last_position_reserved =(self.current_player.last_position_reserved[0], self.current_player.last_position_reserved[1] + amount)
+        # updating values of cards_bought in dict
+        for item in self.current_player.cards_bought:
+            self.current_player.cards_bought[item] = (self.current_player.cards_bought[item][0], self.current_player.cards_bought[item][1] + amount)
+        for item in self.current_player.nobles:
+            self.current_player.nobles[item] = (self.current_player.nobles[item][0], self.current_player.nobles[item][1] + amount)
+        for item in self.current_player.reserved_cards:
+            self.current_player.reserved_cards[item] = (self.current_player.reserved_cards[item][0], self.current_player.reserved_cards[item][1] + amount)
 
 
     def scroll_sidebar(self, direction):
@@ -148,26 +144,26 @@ class Sidebar:
         # update positions in dicts
         # getting the last value of the dict and its y position
         if (self.current_display == 0):
-            if (direction < 0 and self.last_position_card[1] < 1*self.card_size[1]) :
+            if (direction < 0 and self.current_player.last_position_card[1] < 1*self.card_size[1]) :
                 return
-            elif (direction > 0 and list(self.cards.items())[0][1][1] > (Board.instance().height - 3*self.noble_size[1])):
+            elif (direction > 0 and list(self.current_player.cards_bought.items())[0][1][1] > (Board.instance().height - 3*self.noble_size[1])):
                 return
             # else:
             #     self.update_positions(direction)
             #     self.sidebar_rect.move_ip(0, direction)
         elif (self.current_display == 1):
-            if (direction < 0 and self.last_position_noble[1] < 1*self.noble_size[1]) :
+            if (direction < 0 and self.current_player.last_position_noble[1] < 1*self.noble_size[1]) :
                 return
-            elif (direction > 0 and list(self.nobles.items())[0][1][1] > (Board.instance().height - 3*self.noble_size[1])):
+            elif (direction > 0 and list(self.current_player.nobles.items())[0][1][1] > (Board.instance().height - 3*self.noble_size[1])):
                 return
             # else:
             #     self.update_positions(direction)
             #     self.sidebar_rect.move_ip(0, direction)
         else:
             #==2  must be reserved card -
-            if (direction < 0 and self.last_position_reserved[1] < 2*self.card_size[1]) :
+            if (direction < 0 and self.current_player.last_position_reserved[1] < 2*self.card_size[1]) :
                 return
-            elif (direction > 0 and list(self.reserved_cards.items())[0][1][1] > (Board.instance().height - 3*self.card_size[1])):
+            elif (direction > 0 and list(self.current_player.reserved_cards.items())[0][1][1] > (Board.instance().height - 3*self.card_size[1])):
                 return
             # else:
             #     self.update_positions(direction)
@@ -194,7 +190,7 @@ class Sidebar:
     def is_clicked_toggle(self, mousePos):
         if self.reserve_button.collidepoint(mousePos) :
             return 2
-        elif self.nobles_button.collidepoint(mousePos):
+        elif self.current_player.nobles_button.collidepoint(mousePos):
             return 1
         elif self.bought_button.collidepoint(mousePos):
             return 0

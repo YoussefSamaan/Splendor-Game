@@ -25,9 +25,9 @@ class Player:
         self.reserved_cards = {}  # to store the reserved cards
 
         # for sidebar
-        self.last_position_card = (0, Card.card_size[1] / 4 + 10)
-        self.last_position_noble = (0, Card.card_size[1] / 4 + 10)
-        self.last_position_reserved = (0, Card.card_size[1] / 4 + 10)
+        self.last_position_card = (0, Card.get_card_size()[1] / 4 + 10)
+        self.last_position_noble = (0, Card.get_card_size()[1] / 4 + 10)
+        self.last_position_reserved = (0, Card.get_card_size()[1] / 4 + 10)
         self.discounts = Bonus(0, 0, 0, 0, 0)
 
         self.tokens = {
@@ -41,16 +41,16 @@ class Player:
 
     def add_noble_to_sidebar(self, noble):
         self.nobles[noble] = self.last_position_noble
-        self.last_position_noble = (self.last_position_noble[0], self.last_position_noble[1] + Noble.noble_size[1])
+        self.last_position_noble = (self.last_position_noble[0], self.last_position_noble[1] + Noble.get_card_size()[1])
 
     def add_card_to_sidebar(self, card):
         self.cards_bought[card] = self.last_position_card
-        self.last_position_card = (self.last_position_card[0], self.last_position_card[1] + Card.card_size[1])
+        self.last_position_card = (self.last_position_card[0], self.last_position_card[1] + Card.get_card_size()[1])
 
     def reserve_card_to_sidebar(self, reserved):
         self.reserved_cards[reserved] = self.last_position_reserved
         self.last_position_reserved = (
-        self.last_position_reserved[0], self.last_position_reserved[1] + Card.card_size[1])
+        self.last_position_reserved[0], self.last_position_reserved[1] + Card.get_card_size()[1])
 
     def take_token(self, color):
         # Overloaded take_token function for 2 tokens of the same type (color)

@@ -60,7 +60,9 @@ class Card:
         self.pos = None
 
     @staticmethod
-    def get_card_size(board):
+    def get_card_size(board=None):
+        if board == None:
+            board = Board.instance()
         width = board.get_width() * Card.x_ratio
         height = board.get_height() * Card.y_ratio
         return width, height

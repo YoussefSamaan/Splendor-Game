@@ -13,6 +13,7 @@ from deck import *
 from sidebar import *
 from splendorToken import Token
 from action import Action
+from player import Player
 
 os.chdir(os.path.dirname(os.path.abspath(__file__)))  # to make image imports start from current directory
 WIDTH, HEIGHT = GetSystemMetrics(0), GetSystemMetrics(1)
@@ -26,6 +27,7 @@ DECKS = [BlueDeck, RedDeck3, YellowDeck, RedDeck2, GreenDeck, RedDeck1]
 FLASH_MESSAGE = None
 FLASH_TIMER = 0
 FLASH_START = 0
+PLAYERS = []
 
 
 def initialize_game():
@@ -33,13 +35,24 @@ def initialize_game():
     initialize_cards()
     initialize_tokens()
     initialize_nobles()
+    initialize_players()
     initialize_sidebar()
-
 
 def initialize_board():
     Board.instance(WIDTH, HEIGHT)
+    
 def initialize_sidebar():
-    Sidebar.instance(WIDTH, HEIGHT)
+    Sidebar.instance(WIDTH, HEIGHT, PLAYERS[0])
+
+def initialize_players():
+    player1 = Player("P1")
+    player2 = Player("P2")
+    player3 = Player("P3")
+    player4 = Player("P4")
+    PLAYERS.append(player1)
+    PLAYERS.append(player2)
+    PLAYERS.append(player3)
+    PLAYERS.append(player4)
 
 def initialize_cards():
     BlueDeck.instance()
