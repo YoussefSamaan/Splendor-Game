@@ -3,7 +3,7 @@ import pygame
 from board import Board
 from color import Color
 from flyweight import Flyweight
-from utils import write_on
+from utils import outlined_text
 
 
 @Flyweight
@@ -126,7 +126,7 @@ class Token:
 
     def draw(self, screen, x, y, amount=0):
         image = pygame.transform.scale(self.image, Token.get_size())
-        write_on(image, str(amount), font_size=30)
+        outlined_text(image, str(amount), font_size=30)
         screen.blit(image, (x, y))
 
     def get_color(self):

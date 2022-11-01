@@ -8,7 +8,7 @@ from board import Board
 from card import Card
 from color import Color
 from singleton import Singleton
-from utils import write_on
+from utils import outlined_text
 from sidebar import Sidebar
 
 
@@ -128,7 +128,7 @@ class Deck:
             x -= width
         y = self._get_deck_y()
         image = pygame.transform.scale(self.image, (int(width), int(height)))
-        write_on(image, str(amount), font_size=30)
+        outlined_text(image, str(amount), font_size=30, center=(width / 2, height/4))
         screen.blit(image, (x, y))
 
     def _draw_card_to_board(self, screen, card, slot_pos):
