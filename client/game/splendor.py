@@ -36,8 +36,9 @@ def initialize_game():
 
 
 def initialize_players():
+    names = ['Wassim', 'Kevin', 'Youssef', 'Rui']  # FIXME: change this
     for i in range(0, NUM_PLAYERS):
-        Player.instance(id=i, name='Player {}'.format(i + 1))
+        Player.instance(id=i, name=names[i])
 
 
 def initialize_board():
