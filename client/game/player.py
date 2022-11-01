@@ -1,3 +1,4 @@
+from turtle import color
 from card import Card
 from noble import Noble
 from color import Color
@@ -18,61 +19,48 @@ class Player:
         self.turn = 0 # to check if it is the player's turn 
         self.name = name
         self.prestige_points = 0
-        self.cards_list = [] # to store the bought cards
-        self.nobles_list = [] # to store the reserved nobles
-        self.reserved_cards_list = [] # to store the reserved cards
+        self.cards_bought = [] # to store the bought cards
+        self.nobles = [] # to store the reserved nobles
+        self.reserved_cards = [] # to store the reserved cards
 
-        self.blue_discounts = 0
-        self.green_discounts = 0
-        self.red_discounts = 0
-        self.brown_discounts = 0
-        self.white_discounts = 0
-        self.num_of_tokens = 0 # to check if they have over the limit and they need to return some
+        self.discounts = {
+            Color.BLUE: 0,
+            Color.BROWN: 0,
+            Color.GREEN: 0,
+            Color.RED: 0,
+            Color.WHITE: 0
+        }
 
-        self.blue_tokens = 0
-        self.green_tokens = 0
-        self.red_tokens = 0
-        self.brown_tokens = 0
-        self.white_tokens = 0
-        self.gold_tokens = 0
+        self.tokens = {
+            Color.BLUE: 0,
+            Color.BROWN: 0,
+            Color.GREEN: 0,
+            Color.RED: 0,
+            Color.WHITE: 0,
+            Color.GOLD: 0
+        }
 
     def take_token(self, color):
         # Overloaded take_token function for 2 tokens of the same type (color)
-        self.add_token(self, color, 2) #adds the token and updates num_of_tokens
+        self.tokens[color] += 2  #adds the token and updates num_of_tokens
 
     def take_token(self, color1, color2, color3):
         # Overloaded take_token function for 3 tokens of different types
         # usage example: take_token(self, Color.BLUE, Color.GREEN, Color.RED)
-        self.add_token(self, color1, 1)
-        self.add_token(self, color2, 1)
-        self.add_token(self, color3, 1)
+        self.tokens[color1] += 1
+        self.tokens[color2] += 1
+        self.tokens[color3] += 1
     
-    
-    def add_token(self, color, number_of_tokens):
-        # This function adds the token to the player and updates num_of_tokens
-        # usage example: add_token(self, Color.GOLD, 1)
-        if color == Color.BLUE:
-            self.blue_tokens += number_of_tokens
-        elif color == Color.GREEN:
-            self.green_tokens += number_of_tokens
-        elif color == Color.RED:  
-            self.red_tokens += number_of_tokens
-        elif color == Color.BROWN:
-            self.brown_tokens += number_of_tokens
-        elif color == Color.WHITE:  
-            self.white_tokens += number_of_tokens
-        elif color == Color.GOLD:
-            self.gold_tokens += number_of_tokens
-        else:
-            return 
-        # only update number of tokens if it's a valid colour
-        self.num_of_tokens += number_of_tokens
+    def get_number_of_tokens(self):
+        # TODO: fill in this function
+        pass
 
     def return_coins(self):
         '''
         TODO:Fill this function
         '''
         pass
+
     def buy_card(self, card):
         '''
         TODO:
@@ -99,7 +87,7 @@ class Player:
 
     def add_bonus(self, card):
         # add the discounts from a card
-        self.red_discounts += card.bonus.get_red(card.bonus)
+        self.discounts[Color.RED] += card.bonus.get_red(card.bonus)
         self.green_discounts += card.bonus.get_green(card.bonus)
         self.blue_discounts += card.bonus.get_blue(card.bonus)
         self.white_discounts += card.bonus.get_white(card.bonus)
