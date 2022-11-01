@@ -4,11 +4,11 @@ from card import Card
 from noble import Noble
 from board import Board
 from utils import *
-
+from player import Player
 
 @Singleton
 class Sidebar:
-    def __init__(self, screen_width, screen_height, player):
+    def __init__(self, screen_width, screen_height):
         # [0] is width, [1] is height
         self.card_size = Card.get_card_size()
         self.noble_size = Noble.get_card_size()
@@ -16,7 +16,7 @@ class Sidebar:
         self.height = 10000 #min(screenHeight, 800)
         self.sidebar_rect = pygame.Rect(0, 0, self.width, self.height)
  
-        self.current_player = player 
+        self.current_player = Player.instance(0) 
         
         self.current_display = 0
         self.bought_button = pygame.Rect(0, 0,
@@ -190,7 +190,7 @@ class Sidebar:
     def is_clicked_toggle(self, mousePos):
         if self.reserve_button.collidepoint(mousePos):
             return 2
-        elif self.current_player.nobles_button.collidepoint(mousePos):
+        elif self.nobles_button.collidepoint(mousePos):
             return 1
         elif self.bought_button.collidepoint(mousePos):
             return 0

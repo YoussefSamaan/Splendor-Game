@@ -124,6 +124,11 @@ def display_players():
 
 def get_clicked_object(pos):
     board = Board.instance()
+    sidebar = Sidebar.instance()
+    for i in range(NUM_PLAYERS):
+        temp_player = Player.instance(id=i)
+        if temp_player.is_clicked(pos, WIDTH, HEIGHT, NUM_PLAYERS):
+            return temp_player
     if not board.is_clicked(pos):
         return None
     for deck in DECKS:
@@ -171,6 +176,8 @@ def perform_action(obj):
     elif isinstance(obj, Noble):
         obj.take_noble(Sidebar.instance())
         set_flash_message('Took a noble')
+    elif isinstance(obj, Player):
+        Sidebar.instance().switch_player(obj)
 
 
 def check_toggle(mouse_pos):

@@ -9,3 +9,4 @@ class Color(Enum):
     BROWN = (139, 69, 19)
     WHITE = (255, 255, 255)
     GOLD = (255, 215, 0)
+    BLACK = (0, 0, 0)

@@ -1,12 +1,15 @@
 import pygame
 
-from card import Card
+import utils
 from board import Board
-from flyweight import Flyweight
-from utils import write_on
-from noble import Noble
-from color import Color
 from bonus import Bonus
+from card import Card
+from color import Color
+from flyweight import Flyweight
+from noble import Noble
+from splendorToken import Token
+from utils import write_on
+
 
 
 @Flyweight
@@ -22,6 +25,12 @@ class Player:
     '''
 
     BACKGROUND_COLOR = Color.WHITE.value
+    BORDER_COLOR = utils.BACKGROUND_COLOR
+    NAME_RATIO = 1 / 4
+    TOKENS_RATIO = 3 / 8
+    DISCOUNTS_RATIO = 3 / 8
+
+    assert NAME_RATIO + TOKENS_RATIO + DISCOUNTS_RATIO == 1, "Ratios must add up to 1"
 
     def __init__(self, name, id):
         self._max_number_of_tokens = 10
@@ -47,6 +56,14 @@ class Player:
             Color.WHITE: 0,
             Color.GOLD: 0
         }
+    def is_clicked(self, position, width, height, num):
+        board = Board.instance()
+        x_start = self.pos * width / num
+        y_start = height - board.height_offset
+        x_end = (self.pos + 1) * width / num
+        y_end = height
+        return x_start <= position[0] <= x_end and y_start <= position[1] <= y_end
+        
 
     def add_noble_to_sidebar(self, noble):
         self.nobles[noble] = self.last_position_noble
@@ -135,13 +152,37 @@ class Player:
         self.add_noble_to_sidebar(noble_card)
 
     def show_name(self, inventory: pygame.Surface):
-        surface = pygame.Surface((inventory.get_width(), inventory.get_height() / 4))
+        surface = pygame.Surface((inventory.get_width(), inventory.get_height() * self.NAME_RATIO))
         surface.fill(self.BACKGROUND_COLOR)
         write_on(surface, self.name)
         inventory.blit(surface, (inventory.get_width() / 2 - surface.get_width() / 2, 0))
 
     def show_tokens(self, inventory: pygame.Surface):
-        pass
+        surface = pygame.Surface((inventory.get_width(), inventory.get_height() * self.TOKENS_RATIO))
+        surface.fill(self.BACKGROUND_COLOR)
+        token_size = (surface.get_width() / 6, surface.get_height())
+        for i, color in enumerate(self.tokens):
+            token = Token.get_token(color)
+            token.draw(surface, x=token_size[0] * i, y=0, amount=self.tokens[color], size=token_size)
+        inventory.blit(surface, (0, inventory.get_height() * self.NAME_RATIO))  # Should be below name
+
+    def show_prestige_points(self, inventory: pygame.Surface):
+        """
+        Shows prestige points in top left corner of inventory
+        :param inventory:
+        :return:
+        """
+        surface = pygame.Surface((inventory.get_width() * self.NAME_RATIO, inventory.get_height() * self.NAME_RATIO))
+        surface.fill(self.BACKGROUND_COLOR)
+        write_on(surface, str(self.prestige_points), font_size=surface.get_height(), color=Color.BROWN.value)
+        inventory.blit(surface, (0, 0))
+
+    def show_discounts(self, inventory: pygame.Surface):
+        surface = pygame.Surface((inventory.get_width(), inventory.get_height() * self.DISCOUNTS_RATIO))
+        surface.fill(self.BACKGROUND_COLOR)
+        self.discounts.draw(surface)
+        inventory.blit(surface, (0, inventory.get_height() * (self.NAME_RATIO + self.TOKENS_RATIO)))
+
     def display(self, screen: pygame.Surface, num_players: int):
         """
         Draw the player's Inventory.
@@ -153,10 +194,17 @@ class Player:
         height = screen.get_height() - Board.instance().get_height()
         x = self.pos * width
         y = Board.instance().get_height()
+
+        # Draw the border
         inventory = pygame.Surface((width, height))
+        inventory.fill(self.BORDER_COLOR)
+        screen.blit(inventory, (x, y))
+
+        # Draw the actual inventory
+        inventory = pygame.Surface((width - 5, height - 5))
         inventory.fill(self.BACKGROUND_COLOR)
         self.show_name(inventory)
-        # self.show_tokens(inventory)
-        # self.show_presige_points(inventory)
-        # self.show_discounts(inventory)
+        self.show_tokens(inventory)
+        self.show_prestige_points(inventory)
+        self.show_discounts(inventory)
         screen.blit(inventory, (x, y))

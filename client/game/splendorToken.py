@@ -32,6 +32,13 @@ class Token:
     yRatio = 2 / 33
     xSeparationRatio = 1 / 20
 
+    @staticmethod
+    def get_token(color: Color):
+        for token in Token.flyweights.values():
+            if token.get_color() == color:
+                return token
+
+
     def __init__(self, color: Color, id: int):
         self._color = color
         self.image = pygame.image.load('../sprites/tokens/{}.png'.format(color.name.lower()))
@@ -124,8 +131,10 @@ class Token:
         """
         self.isOnDisplay = False
 
-    def draw(self, screen, x, y, amount=0):
-        image = pygame.transform.scale(self.image, Token.get_size())
+    def draw(self, screen, x, y, amount=0, size=None):
+        if size is None:
+            size = Token.get_size()
+        image = pygame.transform.scale(self.image, size)
         outlined_text(image, str(amount), font_size=30)
         screen.blit(image, (x, y))
 
