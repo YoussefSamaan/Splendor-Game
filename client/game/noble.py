@@ -43,11 +43,18 @@ class Noble:
                 return noble
         return None
 
-    def take_noble(self):
+    def take_noble(self, sidebar):
         self.isOnDisplay = False
+        sidebar.add_noble(self)
 
     def draw(self, screen, x, y):
         screen.blit(pygame.transform.scale(self._image, Noble.get_card_size()), (x, y))
+
+    def draw_for_sidebar(self, screen, x, y):
+        width, height = Noble.get_card_size()
+        image = pygame.transform.scale(self._image, (int(width)*1.5, int(height)*1.5))
+        screen.blit(image, (x, y))
+        self.pos = (x, y)
 
     def get_rect(self):
         return self._image.get_rect()
