@@ -20,3 +20,19 @@ class Bonus:
 
     def get_black(self):
         return self._black
+
+    def __add__(self, other):
+        self._red += other.get_red()
+        self._green += other.get_green()
+        self._blue += other.get_blue()
+        self._white += other.get_white()
+        self._black += other.get_black()
+        return self
+
+    def __sub__(self, other):
+        self._red -= other.get_red()
+        self._green -= other.get_green()
+        self._blue -= other.get_blue()
+        self._white -= other.get_white()
+        self._black -= other.get_black()
+        return self

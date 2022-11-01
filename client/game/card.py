@@ -109,6 +109,9 @@ class Card:
     def get_deck(self):
         return self.deck
 
+    def get_bonus(self):
+        return self._bonus
+
     def set_pos(self, x, y):
         self.pos = (x, y)
         self._image.get_rect().center = self.pos
