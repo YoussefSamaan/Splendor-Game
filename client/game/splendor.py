@@ -187,6 +187,10 @@ def play():
                     pygame.display.set_mode((1, 1))
                 if event.key == K_f:
                     pygame.display.set_mode((WIDTH, HEIGHT), pygame.FULLSCREEN)
+                if event.key == K_UP:
+                    Sidebar.instance().scroll_sidebar(50)
+                if event.key == K_DOWN:
+                    Sidebar.instance().scroll_sidebar(-50)
             elif event.type == MOUSEBUTTONDOWN:
                 if event.button == 4:
                     Sidebar.instance().scroll_sidebar(50)

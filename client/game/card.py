@@ -34,8 +34,8 @@ def draw_buy_button(surface: pygame.Surface):
     :return:
     """
     buy_button = button('Buy', width=surface.get_width() / 6, height=surface.get_height() / 8, color=GREEN)
-    x = surface.get_width() / 2 - buy_button.get_width() * 1.5 - 10
-    y = surface.get_height() - buy_button.get_height() * 1.5
+    x = surface.get_width() / 2 - buy_button.get_width() * SIDEBAR_IMAGE_SCALE - 10
+    y = surface.get_height() - buy_button.get_height() * SIDEBAR_IMAGE_SCALE
     surface.blit(buy_button, (x, y))
     button_rect = buy_button.get_rect()
     button_rect.x = x
