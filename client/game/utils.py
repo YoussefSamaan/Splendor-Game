@@ -9,6 +9,8 @@ LIGHT_GREY = (99, 99, 99)
 LIGHT_BLUE = (141,182,205)
 # BACKGROUND_COLOR = (158, 58, 64)
 BACKGROUND_COLOR = (113, 155, 158)
+
+SIDEBAR_IMAGE_SCALE = 1.5 # make cards and nobles 1.5x bigger
 def dim_screen(screen, color=(0, 0, 0), alpha=128):
     """
     Dim the screen with a color and alpha value
