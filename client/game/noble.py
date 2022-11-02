@@ -1,9 +1,10 @@
+import random
+
+import pygame
+
+import utils
 from board import Board
 from flyweight import Flyweight
-import pygame
-from cost import Cost
-import random
-import utils
 
 
 @Flyweight
@@ -44,16 +45,18 @@ class Noble:
                 return noble
         return None
 
-    def take_noble(self, sidebar):
+    def take_noble(self, sidebar, player):
         self.isOnDisplay = False
-        sidebar.add_noble(self)
+        #sidebar.add_noble(self)
+        player.reserve_noble(self)
 
     def draw(self, screen, x, y):
         screen.blit(pygame.transform.scale(self._image, Noble.get_card_size()), (x, y))
 
     def draw_for_sidebar(self, screen, x, y):
         width, height = Noble.get_card_size()
-        image = pygame.transform.scale(self._image, (int(width)*utils.SIDEBAR_IMAGE_SCALE, int(height)*utils.SIDEBAR_IMAGE_SCALE))
+        image = pygame.transform.scale(self._image, (
+        int(width) * utils.SIDEBAR_IMAGE_SCALE, int(height) * utils.SIDEBAR_IMAGE_SCALE))
         screen.blit(image, (x, y))
         self.pos = (x, y)
 
@@ -92,3 +95,7 @@ class Noble:
         x_end = x_start + Noble.get_card_size()[0]
         y_end = y_start + Noble.get_card_size()[1]
         return x_start <= mouse_pos[0] <= x_end and y_start <= mouse_pos[1] <= y_end
+
+    def get_prestige_points(self):
+        # Just to make player add noble work
+        return 5

@@ -7,9 +7,9 @@ import pygame
 from board import Board
 from card import Card
 from color import Color
+from sidebar import Sidebar
 from singleton import Singleton
 from utils import outlined_text
-from sidebar import Sidebar
 
 
 class Deck:
@@ -128,7 +128,7 @@ class Deck:
             x -= width
         y = self._get_deck_y()
         image = pygame.transform.scale(self.image, (int(width), int(height)))
-        outlined_text(image, str(amount), font_size=30, center=(width / 2, height/4))
+        outlined_text(image, str(amount), font_size=30, center=(width / 2, height / 4))
         screen.blit(image, (x, y))
 
     def _draw_card_to_board(self, screen, card, slot_pos):
@@ -175,9 +175,9 @@ class Deck:
         Returns the y-coordinate of the deck cover based on the size of the board
         """
         board = self.board
-        distanceFromTop = (
-                                  3 - self.level) * self._y_distance_between_card_start_to_next_start()  # based on the deck level
-        return board.get_y() + (board.get_height() * self.y_MarginToBoardHeightRatio) + distanceFromTop
+        distance_from_top = (
+                                        3 - self.level) * self._y_distance_between_card_start_to_next_start()  # based on the deck level
+        return board.get_y() + (board.get_height() * self.y_MarginToBoardHeightRatio) + distance_from_top
 
     def _get_image(self):
         """
@@ -235,6 +235,7 @@ class Deck:
     def add_card_to_sidebar(self, card):
         sidebar = Sidebar.instance()
         sidebar.add_card(card)
+
     def add_reserved_to_sidebar(self, card):
         sidebar = Sidebar.instance()
         sidebar.reserve_card(card)

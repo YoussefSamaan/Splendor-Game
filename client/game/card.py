@@ -1,7 +1,3 @@
-import time
-
-import pygame
-
 from action import Action
 from board import Board
 from bonus import Bonus
@@ -51,7 +47,7 @@ class Card:
     def __init__(self, id: int, deck, prestige_points=1, cost=Cost(1, 1, 1, 1, 1),
                  bonus=Bonus(1, 1, 1, 1, 1)):
         self._id = id
-        self._presetge_points = prestige_points
+        self._prestige_points = prestige_points
         self._cost = cost
         self._bonus = bonus
         self._color = deck.get_color()
@@ -60,7 +56,9 @@ class Card:
         self.pos = None
 
     @staticmethod
-    def get_card_size(board):
+    def get_card_size(board=None):
+        if board is None:
+            board = Board.instance()
         width = board.get_width() * Card.x_ratio
         height = board.get_height() * Card.y_ratio
         return width, height
@@ -75,14 +73,13 @@ class Card:
         screen.blit(image, (x, y))
         self.pos = (x, y)
 
-
     def draw_for_sidebar(self, screen, x, y):
         board = Board.instance()
         width, height = Card.get_card_size(board)
-        image = pygame.transform.scale(self._image, (int(width)*1.5, int(height)*1.5))
+        image = pygame.transform.scale(self._image, (int(width) *1.5, int(height) *1.5))
         screen.blit(image, (x, y))
         self.pos = (x, y)
-        
+
     def is_clicked(self, mousePos):
         """
         Returns True if the card is clicked.
@@ -100,11 +97,17 @@ class Card:
     def get_color(self):
         return self._color
 
+    def get_prestige_points(self):
+        return self._prestige_points
+
     def get_id(self):
         return self._id
 
     def get_deck(self):
         return self.deck
+
+    def get_bonus(self):
+        return self._bonus
 
     def set_pos(self, x, y):
         self.pos = (x, y)
@@ -166,12 +169,12 @@ class Card:
                     pygame.quit()
                     quit()
 
-    def buy(self):
-        # FIXME: Implement this to put card in player inventory
+    def buy(self, player):
         self.deck.take_card(self)
-        self.deck.add_card_to_sidebar(self)
+        #self.deck.add_card_to_sidebar(self)
+        player.add_card(self)
 
-    def reserve(self):
-        # FIXME: Implement this to put card in player inventory
+    def reserve(self, player):
         self.deck.take_card(self)
-        self.deck.add_reserved_to_sidebar(self)
+        #self.deck.add_reserved_to_sidebar(self)
+        player.reserve_card(self)

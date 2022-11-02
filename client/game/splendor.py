@@ -3,14 +3,11 @@ import sys
 
 from pygame.locals import *
 from win32api import GetSystemMetrics
-from utils import *
 
-from deck import *
-from noble import Noble
+from action import Action
 from deck import *
 from sidebar import *
 from splendorToken import Token
-from action import Action
 
 os.chdir(os.path.dirname(os.path.abspath(__file__)))  # to make image imports start from current directory
 WIDTH, HEIGHT = GetSystemMetrics(0), GetSystemMetrics(1)
@@ -24,20 +21,34 @@ DECKS = [BlueDeck, RedDeck3, YellowDeck, RedDeck2, GreenDeck, RedDeck1]
 FLASH_MESSAGE = None
 FLASH_TIMER = 0
 FLASH_START = 0
+NUM_PLAYERS = 4  # For now
+CURR_PLAYER = 0
 
 
 def initialize_game():
+    pygame.display.set_mode((WIDTH, HEIGHT), pygame.FULLSCREEN)
     initialize_board()
+    initialize_players()
     initialize_cards()
     initialize_tokens()
     initialize_nobles()
+    initialize_players()
     initialize_sidebar()
+
+
+def initialize_players():
+    names = ['Wassim', 'Kevin', 'Youssef', 'Rui']  # FIXME: change this
+    for i in range(0, NUM_PLAYERS):
+        Player.instance(id=i, name=names[i])
 
 
 def initialize_board():
     Board.instance(WIDTH, HEIGHT)
+
+
 def initialize_sidebar():
     Sidebar.instance(WIDTH, HEIGHT)
+
 
 def initialize_cards():
     BlueDeck.instance()
@@ -53,7 +64,7 @@ def initialize_tokens():
 
 
 def initialize_nobles():
-    Noble.initialize(n=4)
+    Noble.initialize(n=5)
 
 
 def show_flash_message():
@@ -61,7 +72,7 @@ def show_flash_message():
     time_diff = (pygame.time.get_ticks() - FLASH_START) / 1000
     if FLASH_MESSAGE is None or time_diff > FLASH_TIMER:
         return
-    flash_message(DISPLAYSURF, FLASH_MESSAGE, opacity=255*(1 - time_diff / FLASH_TIMER))
+    flash_message(DISPLAYSURF, FLASH_MESSAGE, opacity=255 * (1 - time_diff / FLASH_TIMER))
 
 
 def set_flash_message(text, timer=5):
@@ -73,6 +84,7 @@ def display():
     # reset the display and re-display everything
     DISPLAYSURF.fill((0, 0, 0))
     display_sidebar()
+    display_players()
     display_board()
     display_decks()
     display_tokens()
@@ -84,6 +96,7 @@ def display():
 
 def display_board():
     Board.instance().display(DISPLAYSURF)
+
 
 def display_sidebar():
     # 0 = card, 1 = noble, 2 = reserve
@@ -107,8 +120,19 @@ def display_nobles():
     Noble.display_all(DISPLAYSURF)
 
 
+def display_players():
+    for i in range(NUM_PLAYERS):
+        highlight = i == CURR_PLAYER
+        Player.instance(id=i).display(DISPLAYSURF, NUM_PLAYERS, highlight)
+
+
 def get_clicked_object(pos):
     board = Board.instance()
+    sidebar = Sidebar.instance()
+    for i in range(NUM_PLAYERS):
+        temp_player = Player.instance(id=i)
+        if temp_player.is_clicked(pos, WIDTH, HEIGHT, NUM_PLAYERS):
+            return temp_player
     if not board.is_clicked(pos):
         return None
     for deck in DECKS:
@@ -132,12 +156,12 @@ def get_user_card_selection(card):
     """
     dim_screen(DISPLAYSURF)
     action = card.get_user_selection(DISPLAYSURF)
-    global FLASH_MESSAGE, FLASH_TIMER
+    global FLASH_MESSAGE, FLASH_TIMER, CURR_PLAYER
     if action == Action.RESERVE:
-        card.reserve()
+        card.reserve(Player.instance(id=CURR_PLAYER))
         set_flash_message('Reserved a card')
     elif action == Action.BUY:
-        card.buy()
+        card.buy(Player.instance(id=CURR_PLAYER))
         set_flash_message('Bought a card')
     elif action == Action.CANCEL:
         return
@@ -148,30 +172,35 @@ def get_user_card_selection(card):
 def perform_action(obj):
     if obj is None:
         return
+    global CURR_PLAYER
     if isinstance(obj, Card):
         get_user_card_selection(obj)
     elif isinstance(obj, Token):
-        obj.take_token()
+        obj.take_token(Player.instance(id=CURR_PLAYER))
         set_flash_message('Took a token')
     elif isinstance(obj, Noble):
-        obj.take_noble(Sidebar.instance())
+        obj.take_noble(Sidebar.instance(), Player.instance(id=CURR_PLAYER))
         set_flash_message('Took a noble')
-
-def check_toggle(mouse_pos):
-    sidebar = Sidebar.instance()
-    page_num = sidebar.is_clicked_toggle(mouse_pos)
-    sidebar.toggle(page_num)
+    elif isinstance(obj, Player):
+        CURR_PLAYER = obj.pos
+        Sidebar.instance().switch_player(obj)
 
 
 def check_toggle(mouse_pos):
     sidebar = Sidebar.instance()
     page_num = sidebar.is_clicked_toggle(mouse_pos)
     sidebar.toggle(page_num)
+
+
+def check_toggle(mouse_pos):
+    sidebar = Sidebar.instance()
+    page_num = sidebar.is_clicked_toggle(mouse_pos)
+    sidebar.toggle(page_num)
+
 
 def play():
     initialize_game()
     display()
-    pygame.display.set_mode((WIDTH, HEIGHT), pygame.FULLSCREEN)
     while True:
         display()
         for event in pygame.event.get():
