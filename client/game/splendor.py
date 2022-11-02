@@ -26,6 +26,7 @@ CURR_PLAYER = 0
 
 
 def initialize_game():
+    pygame.display.set_mode((WIDTH, HEIGHT), pygame.FULLSCREEN)
     initialize_board()
     initialize_players()
     initialize_cards()
@@ -200,7 +201,6 @@ def check_toggle(mouse_pos):
 def play():
     initialize_game()
     display()
-    pygame.display.set_mode((WIDTH, HEIGHT), pygame.FULLSCREEN)
     while True:
         display()
         for event in pygame.event.get():
