@@ -156,7 +156,10 @@ class Sidebar:
         # update last positions
         # update positions in dicts
         # getting the last value of the dict and its y position
+        
         if (self.current_display == 0):
+            if not self.current_player.cards_bought.items():
+                return
             if (direction < 0 and self.current_player.last_position_card[1] < 1 * self.card_size[1]):
                 return
             elif (direction > 0 and list(self.current_player.cards_bought.items())[0][1][1] > (
@@ -166,6 +169,8 @@ class Sidebar:
             #     self.update_positions(direction)
             #     self.sidebar_rect.move_ip(0, direction)
         elif (self.current_display == 1):
+            if not self.current_player.nobles.items():
+                return
             if (direction < 0 and self.current_player.last_position_noble[1] < 1 * self.noble_size[1]):
                 return
             elif (direction > 0 and list(self.current_player.nobles.items())[0][1][1] > (
@@ -176,6 +181,8 @@ class Sidebar:
             #     self.sidebar_rect.move_ip(0, direction)
         else:
             # ==2  must be reserved card -
+            if not self.current_player.reserved_cards.items():
+                return
             if (direction < 0 and self.current_player.last_position_reserved[1] < 2 * self.card_size[1]):
                 return
             elif (direction > 0 and list(self.current_player.reserved_cards.items())[0][1][1] > (
