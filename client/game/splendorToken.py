@@ -38,6 +38,15 @@ class Token:
             if token.get_color() == color:
                 return token
 
+    @staticmethod
+    def get_token_from_board(color):
+        """
+        Returns the first token of the given color from the board
+        """
+        for token in Token.flyweights.values():
+            if token.get_color() == color and token.isOnDisplay:
+                return token
+
     def __init__(self, color: Color, id: int):
         self._color = color
         self.image = pygame.image.load('../sprites/tokens/{}.png'.format(color.name.lower()))
