@@ -200,7 +200,6 @@ def check_toggle(mouse_pos):
 
 def play():
     initialize_game()
-    display()
     while True:
         display()
         for event in pygame.event.get():

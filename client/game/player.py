@@ -134,7 +134,9 @@ class Player:
     def reserve_card(self, card):
         # TODO: rename this to avoid confusion. This function is for adding a card to the player's reserved_cards_list.
         # self.reserved_cards_list.append(card)
-        self.tokens[Color.GOLD] += 1
+        gold_token = Token.get_token_from_board(Color.GOLD)
+        if gold_token is not None:
+            gold_token.take_token(self)
         self.reserve_card_to_sidebar(card)
 
     def reserve_noble(self, noble_card):
