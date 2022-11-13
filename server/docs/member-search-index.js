@@ -1,1 +1,0 @@
-memberSearchIndex = [{"p":"splendor","c":"RestLauncher","l":"main(String[])","u":"main(java.lang.String[])"},{"p":"splendor","c":"RestLauncher","l":"RestLauncher()","u":"%3Cinit%3E()"}];updateSearchResults();
