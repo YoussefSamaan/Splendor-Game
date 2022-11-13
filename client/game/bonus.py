@@ -43,7 +43,7 @@ class Bonus:
         for color in self.bonus.keys():
             bonus = pygame.Surface((width, surface.get_height()))
             bonus.fill(color.value)
-            outlined_text(bonus, str(self.bonus[color]))
+            outlined_text(bonus, "+ " + str(self.bonus[color]))
             surface.blit(bonus, (x, 0))
             x += width
 

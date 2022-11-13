@@ -108,13 +108,13 @@ def outlined_text(surface, text, outline_color=BLACK, color=WHITE, font='Arial',
     if center is None:
         center = (surface.get_width() / 2, surface.get_height() / 2)
     # top left
-    write_on(surface, text, outline_color, font, font_size, (center[0] - 2, center[1] - 2))
+    write_on(surface, text, outline_color, font, font_size, (center[0] - 1, center[1] - 1))
     # top right
-    write_on(surface, text, outline_color, font, font_size, (center[0] + 2, center[1] - 2))
+    write_on(surface, text, outline_color, font, font_size, (center[0] + 1, center[1] - 1))
     # btm left
-    write_on(surface, text, outline_color, font, font_size, (center[0] - 2, center[1] + 2))
+    write_on(surface, text, outline_color, font, font_size, (center[0] - 1, center[1] + 1))
     # btm right
-    write_on(surface, text, outline_color, font, font_size, (center[0] + 2, center[1] + 2))
+    write_on(surface, text, outline_color, font, font_size, (center[0] + 1, center[1] + 1))
 
     # TEXT FILL
 
