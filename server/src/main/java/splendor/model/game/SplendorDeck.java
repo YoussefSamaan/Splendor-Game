@@ -1,4 +1,4 @@
-package splendor.model;
+package splendor.model.game;
 
 /**
  * This interface separates the deck from a card source. It is used to

@@ -1,4 +1,4 @@
-package splendor.model;
+package splendor.model.game;
 
 /**
  * This interface represents a source of cards, e.g. a deck or a player's hand.

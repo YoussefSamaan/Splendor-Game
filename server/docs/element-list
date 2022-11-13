@@ -1,2 +1,6 @@
+splendor
 splendor.controller
-splendor.model
+splendor.controller.game
+splendor.controller.helper
+splendor.controller.lobbyservice
+splendor.model.game

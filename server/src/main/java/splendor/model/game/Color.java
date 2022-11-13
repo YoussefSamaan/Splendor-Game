@@ -1,4 +1,4 @@
-package splendor.model;
+package splendor.model.game;
 
 /**
  * The colors used in the game.
