@@ -111,6 +111,7 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
                     <fork>true</fork>
+                    <!-- Replace "zoo" by actual package name in next line! -->
                     <mainClass>splendor.controller.RestLauncher</mainClass>
                 </configuration>
                 <executions>

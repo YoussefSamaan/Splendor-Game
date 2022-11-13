@@ -1,4 +1,4 @@
-package splendor.model;
+package splendor.model.game;
 
 /**
  * This interface represents a splendor card.
