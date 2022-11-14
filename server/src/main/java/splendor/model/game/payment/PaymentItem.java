@@ -1,4 +1,4 @@
-package splendor.model.game;
+package splendor.model.game.payment;
 
 /**
  * Interface for payment items. Used for tokens

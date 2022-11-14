@@ -1,4 +1,6 @@
-package splendor.model.game;
+package splendor.model.game.payment;
+
+import splendor.model.game.Color;
 
 /**
  * Flyweight for tokens.

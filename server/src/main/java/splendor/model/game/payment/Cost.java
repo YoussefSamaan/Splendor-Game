@@ -1,6 +1,7 @@
-package splendor.model.game;
+package splendor.model.game.payment;
 
 import java.util.HashMap;
+import splendor.model.game.Color;
 
 /**
  * Cost is a map of token colors to integers. It represents the cost of a card.

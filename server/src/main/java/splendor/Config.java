@@ -9,7 +9,7 @@ import java.util.Properties;
  * A class for loading configuration files.
  */
 public class Config {
-  private static final String CONFIG_FILE = "src/main/java/splendor/config.properties";
+  private static final String CONFIG_FILE = "src/main/resources/config.properties";
   private static final Properties properties = loadConfig();
 
   /**

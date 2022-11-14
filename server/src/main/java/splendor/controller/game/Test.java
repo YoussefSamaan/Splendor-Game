@@ -4,6 +4,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import splendor.controller.lobbyservice.Authenticator;
+import splendor.controller.lobbyservice.LogicException;
 
 /**
  * This class is used for testing purposes.
@@ -16,8 +17,8 @@ public class Test {
   }
 
   @GetMapping("/test")
-  public boolean test(@RequestParam("token") String token,
-                      @RequestParam("username") String username) {
-    return Authenticator.authenticate(token, username);
+  public void test(@RequestParam("token") String token,
+                      @RequestParam("username") String username) throws LogicException {
+    Authenticator.authenticate(token, username);
   }
 }

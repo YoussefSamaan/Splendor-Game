@@ -10,5 +10,14 @@ public enum Color {
   RED,
   BROWN,
   GOLD,
-  YELLOW
+  YELLOW;
+
+  /**
+   * The colors of tokens.
+   *
+   * @return the colors of tokens
+   */
+  public static Color[] tokenColors() {
+    return new Color[] {WHITE, GREEN, BLUE, RED, BROWN, GOLD};
+  }
 }

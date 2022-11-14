@@ -9,10 +9,10 @@ public interface SplendorDeck {
   /**
    * The color of the deck.
    */
-  public Color getColor();
+  Color getColor();
 
   /**
    * The level of the deck.
    */
-  public int getLevel();
+  int getLevel();
 }

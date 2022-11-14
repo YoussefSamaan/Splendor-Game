@@ -1,7 +1,8 @@
-package splendor.model.game;
+package splendor.model.game.payment;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import splendor.model.game.Color;
 
 /**
  * A set of bonuses mapping colors to integers.
@@ -43,6 +44,15 @@ public class Bonus implements Iterable<Color> {
     for (Color color : bonus) {
       bonusMap.put(color, getBonus(color) + bonus.getBonus(color));
     }
+  }
+
+  /**
+   * Returns a copy of this bonus.
+   *
+   * @return a copy of this bonus.
+   */
+  public Bonus copy() {
+    return new Bonus(bonusMap);
   }
 
   @Override
