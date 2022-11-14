@@ -1,9 +1,9 @@
 package splendor.model.game;
 
 /**
- * This interface represents a splendor card.
+ * This interface represents a splendor card. It can be a noble or a normal card.
  */
-public interface Icard {
+public interface SplendorCard {
 
   /**
    * The cost of the card.
@@ -25,13 +25,6 @@ public interface Icard {
    * @return the card id.
    */
   public int getCardId();
-
-  /**
-   * The color of the card.
-   *
-   * @return the color of the card.
-   */
-  public Color getColor();
 
   /**
    * The bonus of the card.

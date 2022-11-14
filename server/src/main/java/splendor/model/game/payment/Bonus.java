@@ -17,6 +17,13 @@ public class Bonus implements Iterable<Color> {
   }
 
   /**
+   * Empty Bonus constructor.
+   */
+  public Bonus() {
+    this.bonusMap = new HashMap<>();
+  }
+
+  /**
    * Returns the bonus for the given color. If no bonus exists for the given color,
    * 0 is returned.
    *

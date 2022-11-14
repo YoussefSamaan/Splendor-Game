@@ -5,10 +5,9 @@ import java.util.HashMap;
 /**
  * A splendor card.
  */
-public class Card implements Icard {
+public abstract class AbstractCard implements SplendorCard {
 
   private final int cardId;
-  private final Color color;
   private final Cost cost;
   private final int prestigePoints;
   private final Bonus bonus;
@@ -18,9 +17,8 @@ public class Card implements Icard {
    *
    * @param cardId the card id.
    */
-  public Card(int cardId) {
+  protected AbstractCard(int cardId) {
     this.cardId = cardId;
-    this.color = Color.BLUE;
     this.cost = new Cost(new HashMap<Color, Integer>());
     this.prestigePoints = 0;
     this.bonus = new Bonus(new HashMap<Color, Integer>());
@@ -39,11 +37,6 @@ public class Card implements Icard {
   @Override
   public int getCardId() {
     return cardId;
-  }
-
-  @Override
-  public Color getColor() {
-    return color;
   }
 
   @Override
