@@ -1,5 +1,8 @@
 package splendor.controller.lobbyservice;
 
+import javax.naming.AuthenticationException;
+import splendor.controller.helper.TokenHelper;
+
 /**
  * This class is used to authenticate all requests made to the Server.
  * Authentication is done by validating the authentication token with the Lobby Service.
@@ -17,16 +20,14 @@ public class Authenticator {
    *
    * @param token    the authentication token
    * @param username the username of the user making the request
-   * @throws LogicException if the authentication fails
+   * @throws AuthenticationException if the authentication fails
    */
-  public static void authenticate(String token, String username) throws LogicException {
-    if (!TokenValidator.isMatchingPlayer(username, token)) {
-      throw new LogicException("Received token does not match player of to accessed resource.");
+  public static void authenticate(String token, String username) throws AuthenticationException {
+    if (!TokenHelper.validate(token, username)) {
+      throw new AuthenticationException("Authentication token is invalid for user " + username);
     }
-
-    // Verify the provided token is a player token
-    if (!TokenValidator.isPlayerToken(token)) {
-      throw new LogicException("Received token is an admin token but a player token is required.");
+    if (!TokenHelper.isPlayer(token)) {
+      throw new AuthenticationException("Token does not belong to a player.");
     }
   }
 }
