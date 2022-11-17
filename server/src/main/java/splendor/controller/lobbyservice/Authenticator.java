@@ -20,12 +20,12 @@ public class Authenticator {
    * @throws LogicException if the authentication fails
    */
   public static void authenticate(String token, String username) throws LogicException {
-    if (!TokenResolver.isMatchingPlayer(username, token)) {
+    if (!TokenValidator.isMatchingPlayer(username, token)) {
       throw new LogicException("Received token does not match player of to accessed resource.");
     }
 
     // Verify the provided token is a player token
-    if (!TokenResolver.isPlayerToken(token)) {
+    if (!TokenValidator.isPlayerToken(token)) {
       throw new LogicException("Received token is an admin token but a player token is required.");
     }
   }

@@ -3,8 +3,8 @@ package splendor.controller.lobbyservice;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import splendor.Config;
 
 /**
  * Copied and adjusted from BoardGamePlatform Project.
@@ -15,12 +15,13 @@ import splendor.Config;
  * @Author Maximilian Schiedermeier, January 2021
  */
 @Component
-public class TokenResolver {
+public class TokenValidator {
 
   private static final String TOKEN_ROLE_RESOURCE = "/oauth/role";
   private static final String TOKEN_NAME_RESOURCE = "/oauth/username";
 
-  private static final String lobbyServiceLocation = Config.getProperty("lobbyServiceURL");
+  @Value("${lobbyservice.location}")
+  private static String lobbyServiceLocation;
 
   /**
    * Resolves an OAuth2 token to the associated user.
