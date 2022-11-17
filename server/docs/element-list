@@ -1,8 +1,0 @@
-splendor
-splendor.controller
-splendor.controller.game
-splendor.controller.helper
-splendor.controller.lobbyservice
-splendor.model.game
-splendor.model.game.card
-splendor.model.game.payment
