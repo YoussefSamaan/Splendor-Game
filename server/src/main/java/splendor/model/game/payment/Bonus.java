@@ -12,6 +12,8 @@ public class Bonus implements Iterable<Color> {
 
   /**
    * Creates a new bonus.
+   *
+   * @param bonusMap map of colors to amounts
    */
   public Bonus(HashMap<Color, Integer> bonusMap) {
     this.bonusMap = bonusMap;

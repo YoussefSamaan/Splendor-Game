@@ -8,7 +8,6 @@ import org.springframework.context.annotation.ComponentScan;
  * This class powers up Spring and ensures the annotated controllers are detected.
  */
 @SpringBootApplication
-@ComponentScan(basePackages = {"splendor.controller", "splendor.controller.lobbyservice"})
 public class RestLauncher {
   public static void main(String[] args) {
     SpringApplication.run(RestLauncher.class, args);

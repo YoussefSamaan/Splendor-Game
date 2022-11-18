@@ -70,6 +70,13 @@ public class TokenHelper {
     return role.toLowerCase().contains(desiredRole.toString().toLowerCase());
   }
 
+  /**
+   * Checks whether the provided token is valid for the provided username.
+   *
+   * @param token OAuth2 access token
+   * @param username the username of the user
+   * @return true if the token is valid for the provided username, false otherwise
+   */
   public static boolean validate(String token, String username) {
     try {
       return name(token).equalsIgnoreCase(username);
@@ -78,6 +85,15 @@ public class TokenHelper {
     }
   }
 
+  /**
+   * Checks whether the provided token is valid for the provided username AND that the user has
+   * the desired role.
+   *
+   * @param token OAuth2 access token
+   * @param username the username of the user
+   * @param role the role of the user to check for
+   * @return true if the token is valid for the provided username, false otherwise
+   */
   public static boolean validate(String token, String username, Role role) {
     try {
       return validate(token, username) && hasRole(role(token), role);

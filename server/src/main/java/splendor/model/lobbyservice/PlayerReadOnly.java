@@ -3,22 +3,22 @@ package splendor.model.lobbyservice;
 /**
  * Read only interface for properties of a player, as provided by the LobbyService.
  *
- * @Author: Maximilian Schiedermeier
- * @Date: December 2020
+ * @Author Maximilian Schiedermeier
+ * @Date December 2020
  */
 public interface PlayerReadOnly {
 
   /**
    * Getter for the name of a player.
    *
-   * @return
+   * @return the name of the player
    */
   String getName();
 
   /**
    * Getter for the preferred colour of a player.
    *
-   * @return
+   * @return the preferred colour of the player
    */
   String getPreferredColour();
 
