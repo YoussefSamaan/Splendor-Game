@@ -50,15 +50,15 @@
         </dependency>
 
         <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-web</artifactId>
-            <version>5.3.13</version>
-        </dependency>
-
-        <dependency>
             <groupId>com.mashape.unirest</groupId>
             <artifactId>unirest-java</artifactId>
             <version>1.4.9</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.8.9</version>
         </dependency>
     </dependencies>
 
@@ -98,13 +98,13 @@
                 </executions>
             </plugin>
 
-            <!-- Spring specific build plugin, produces self contained JAR with default launcher class.-->
+            <!-- Spring specific build plugin, produces self-contained JAR with default launcher
+            class.-->
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
                     <fork>true</fork>
-                    <!-- Replace "zoo" by actual package name in next line! -->
                     <mainClass>splendor.controller.RestLauncher</mainClass>
                 </configuration>
                 <executions>
