@@ -1,6 +1,7 @@
 package splendor.model.lobbyservice;
 
 /**
+ * Copied from BoardGamePlatform.
  * Read only interface for properties of a player, as provided by the LobbyService.
  *
  * @Author Maximilian Schiedermeier

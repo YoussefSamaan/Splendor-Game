@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Value;
 import splendor.Config;
 import splendor.model.game.card.DevelopmentCard;
 import splendor.model.game.card.DevelopmentCardI;
@@ -11,8 +12,10 @@ import splendor.model.game.card.DevelopmentCardI;
 /**
  * A deck of splendor cards. The deck is shuffled when it is created.
  */
-public class Deck implements CardSource, SplendorDeck {
-  private static final String CARDS_JSON = Config.getProperty("cards.json.location");
+
+public class Deck implements SplendorDeck {
+  @Value("${cards.json.location}")
+  private static String CARDS_JSON;
   private final List<DevelopmentCardI> cards = new ArrayList<>();
   private final Color color;
   private final int level;

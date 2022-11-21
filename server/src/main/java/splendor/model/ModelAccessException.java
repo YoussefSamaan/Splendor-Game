@@ -1,6 +1,7 @@
 package splendor.model;
 
 /**
+ * Copied from BoardGamePlatform.
  * Custom Exception that is fired whenever model modifications are requested that would lead to an
  * inconsistent state.
  *

@@ -31,6 +31,7 @@ public class Cost {
    * Checks if the given resources are sufficient to pay this cost.
    *
    * @param resources a Cost to add
+   * @return true if the given resources are sufficient to pay this cost
    */
   public boolean isAffordable(HashMap<Color, Integer> resources) {
     for (Color color : costMap.keySet()) {

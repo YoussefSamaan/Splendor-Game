@@ -1,6 +1,7 @@
 package splendor.controller.lobbyservice;
 
 /**
+ * Copied from BoardGamePlatform.
  * Custom Exception that is fired whenever the logic is instructed to handle parameters that
  * semantically are not applicable.
  *
