@@ -1,20 +1,24 @@
-package splendor.model.game;
+package splendor.model.game.deck;
 
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.springframework.beans.factory.annotation.Value;
+import org.json.JSONTokener;
+import splendor.model.game.Color;
 import splendor.model.game.card.DevelopmentCard;
 import splendor.model.game.card.DevelopmentCardI;
+import splendor.model.game.card.SplendorCard;
 
 /**
  * A deck of splendor cards. The deck is shuffled when it is created.
  */
 
 public class Deck implements SplendorDeck {
-  @Value("${cards.json.location}")
-  private static String CARDS_JSON;
+  private static String CARDS_JSON = "src/main/resources/cards.json";
+  private JSONObject cardsJson;
   private final List<DevelopmentCardI> cards = new ArrayList<>();
   private final Color color;
   private final int level;
@@ -28,6 +32,11 @@ public class Deck implements SplendorDeck {
   public Deck(Color color) {
     this.color = color;
     this.level = 1;
+    try {
+      cardsJson = new JSONObject(new JSONTokener(new FileReader(CARDS_JSON)));
+    } catch (FileNotFoundException e) {
+      throw new RuntimeException("Could not find cards.json");
+    }
     addAllCards();
   }
 
@@ -56,7 +65,7 @@ public class Deck implements SplendorDeck {
     * @return the card at the top of the deck.
    */
   @Override
-  public DevelopmentCardI drawCard() {
+  public SplendorCard drawCard() {
     return cards.remove(cards.size() - 1);
   }
 
@@ -92,7 +101,7 @@ public class Deck implements SplendorDeck {
   }
 
   private int[] getStartAndEndIds() {
-    JSONArray json = new JSONObject(CARDS_JSON)
+    JSONArray json = cardsJson
             .getJSONObject("color_map")
             .getJSONArray(toString());
     return new int[]{json.getInt(0), json.getInt(1)};

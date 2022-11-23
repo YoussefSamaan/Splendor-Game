@@ -46,8 +46,7 @@ public class DevelopmentCard extends AbstractCard implements DevelopmentCardI {
   }
 
   private Color getColorFromJson(int cardId) {
-    JSONObject map = new JSONObject(CARDS_JSON)
-            .getJSONObject("color_map");
+    JSONObject map = super.getJson().getJSONObject("color_map");
     for (String key : map.keySet()) {
       if (map.getJSONArray(key).getInt(0) <= cardId
               && map.getJSONArray(key).getInt(1) >= cardId) {

@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import splendor.controller.helper.Authenticator;
-import splendor.model.game.GameManager;
 
 /**
  * Controller responsible for all HTTP requests specific to a game.
@@ -29,8 +28,8 @@ public class SplendorController extends HandlerInterceptorAdapter {
 
   /**
    * Validate all requests have correct access token.
+   * Validate all requests have correct game id, if applicable.
    * This method is called before any request is processed.
-   *
    */
   @Override
   public boolean preHandle(javax.servlet.http.HttpServletRequest request,
@@ -40,6 +39,7 @@ public class SplendorController extends HandlerInterceptorAdapter {
     String username = request.getParameter("username");
     LOGGER.info(String.format("Received request to %s with access token %s and username %s",
                               request.getRequestURI(), accessToken, username));
+    // Check if access token is valid
     try {
       authenticator.authenticate(accessToken, username);
     } catch (AuthenticationException e) {
@@ -60,11 +60,30 @@ public class SplendorController extends HandlerInterceptorAdapter {
   public ResponseEntity getBoard(@PathVariable long gameId) {
     LOGGER.info(String.format("Received request to get board of game with id %d", gameId));
     if (!gameManager.exists(gameId)) {
-      LOGGER.warning(String.format("Game with id %d does not exist", gameId));
       return ResponseEntity.badRequest().body(String.format("Game with id %d does not exist",
           gameId));
     }
     String body = new Gson().toJson(gameManager.getBoard(gameId));
+    return ResponseEntity.ok().body(body);
+  }
+
+  /**
+   * Generates all the actions that can be performed by the player.
+   * This is used by the client to generate the buttons that the player can click.
+   *
+   * @param gameId the id of the game.
+   * @param username the username of the player.
+   * @return a list of actions that the player can perform.
+   */
+  @GetMapping("/api/games/{gameId}/players/{username}/actions")
+  public ResponseEntity getActions(@PathVariable long gameId, @PathVariable String username) {
+    LOGGER.info(String.format("Received request to get actions of player %s in game with id %d",
+                              username, gameId));
+    if (!gameManager.exists(gameId)) {
+      return ResponseEntity.badRequest().body(String.format("Game with id %d does not exist",
+          gameId));
+    }
+    String body = new Gson().toJson(gameManager.generateActions(gameId, username));
     return ResponseEntity.ok().body(body);
   }
 }

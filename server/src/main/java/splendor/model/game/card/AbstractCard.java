@@ -1,7 +1,11 @@
 package splendor.model.game.card;
 
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.util.HashMap;
+import org.json.JSONArray;
 import org.json.JSONObject;
+import org.json.JSONTokener;
 import splendor.Config;
 import splendor.model.game.Color;
 import splendor.model.game.payment.Bonus;
@@ -57,7 +61,7 @@ public abstract class AbstractCard implements SplendorCard {
    *
    * @return the cost of the card.
    */
-  private Cost getCostFromJson() {
+  protected Cost getCostFromJson() {
     JSONObject cost = getCardJson().getJSONObject("cost");
     HashMap<Color, Integer> costMap = new HashMap<>();
     for (Color color : Color.values()) {
@@ -73,7 +77,7 @@ public abstract class AbstractCard implements SplendorCard {
    *
    * @return the prestige points of the card.
    */
-  private int getPrestigePointsFromJson() {
+  protected int getPrestigePointsFromJson() {
     if (getCardJson().has("prestigePoints")) {
       return getCardJson().getInt("prestigePoints");
     }
@@ -85,7 +89,7 @@ public abstract class AbstractCard implements SplendorCard {
    *
    * @return the bonus of the card.
    */
-  private Bonus getBonusFromJson() {
+  protected Bonus getBonusFromJson() {
     if (!getCardJson().has("bonus")) {
       return new Bonus();
     }
@@ -99,9 +103,26 @@ public abstract class AbstractCard implements SplendorCard {
     return new Bonus(bonusMap);
   }
 
-  private JSONObject getCardJson() {
-    return new JSONObject(CARDS_JSON)
-              .getJSONArray("cards")
-              .getJSONObject(cardId);
+  /**
+   * Returns the card json object.
+   *
+   * @return the card json object.
+   */
+  protected JSONObject getCardJson() {
+    JSONArray cards = getJson().getJSONArray("cards");
+    return cards.getJSONObject(cardId);
+  }
+
+  /**
+   * Returns the json object of the entire file.
+   *
+   * @return the json object.
+   */
+  protected JSONObject getJson() {
+    try {
+      return new JSONObject(new JSONTokener(new FileReader(CARDS_JSON)));
+    } catch (FileNotFoundException e) {
+      throw new RuntimeException("Could not find cards.json");
+    }
   }
 }

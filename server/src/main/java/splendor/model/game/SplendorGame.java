@@ -1,9 +1,8 @@
 package splendor.model.game;
 
-import java.util.Set;
+import java.util.Arrays;
 import splendor.controller.lobbyservice.GameInfo;
 import splendor.model.game.player.Player;
-import splendor.model.game.player.PlayerReadOnly;
 
 /**
  * Class responsible for storing metadata about a game.
@@ -31,5 +30,17 @@ public class SplendorGame {
    */
   public Board getBoard() {
     return board;
+  }
+
+  /**
+   * Returns a player.
+   *
+   * @return a player
+   */
+  public Player getPlayer(String name) {
+    return Arrays.stream(gameInfo.getPlayers())
+            .filter(player -> player.getName().equals(name))
+            .findFirst()
+            .orElse(null);
   }
 }

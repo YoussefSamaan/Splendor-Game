@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import splendor.model.game.card.Noble;
+import splendor.model.game.deck.CompositeDeck;
+import splendor.model.game.deck.DevelopmentDecks;
 import splendor.model.game.player.Player;
 
 /**
@@ -11,7 +13,7 @@ import splendor.model.game.player.Player;
  */
 public class Board {
   private final Set<Player> players;
-  private final List<Deck> decks = new ArrayList<>();
+  private final CompositeDeck decks;
   private final List<Noble> nobles = new ArrayList<>();
   private final Bank bank = new TokenBank();
 
@@ -29,5 +31,15 @@ public class Board {
     if (this.players.size() != players.length) {
       throw new IllegalArgumentException("Players must be unique");
     }
+    decks = new DevelopmentDecks();
+  }
+
+  /**
+   * Returns the decks.
+   *
+   * @return the decks
+   */
+  public CompositeDeck getDecks() {
+    return decks;
   }
 }
