@@ -25,11 +25,11 @@ public class SplendorGame {
   }
 
   /**
-   * Returns the game players.
+   * Returns the game board.
    *
-   * @return the game players
+   * @return the game board
    */
-  public Player[] getPlayers() {
-    return gameInfo.getPlayers();
+  public Board getBoard() {
+    return board;
   }
 }

@@ -23,6 +23,17 @@ public class GameManager {
   }
 
   /**
+   * Returns the board of a specific game.
+   *
+   * @param gameId the id of the game
+   * @return the board of the game
+   * @pre exists(gameId) is true
+   */
+  public Board getBoard(long gameId) {
+    return games.get(gameId).getBoard();
+  }
+
+  /**
    * Creates a new game, and tracks it.
    *
    * @param gameInfo the info of the game to create
