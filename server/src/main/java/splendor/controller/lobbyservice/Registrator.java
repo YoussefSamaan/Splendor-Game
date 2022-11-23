@@ -4,6 +4,7 @@ import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.naming.AuthenticationException;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,7 +50,8 @@ public class Registrator {
         registerAtLobbyService(tokenHelper.get(gameServiceParameters.getOauth2Name(),
                 gameServiceParameters.getOauth2Password()), 3);
       } catch (UnirestException | AuthenticationException e) {
-        throw new RuntimeException(e);
+        logger.error("Failed to register with LS", e);
+        System.exit(1);
       }
     }).start();
   }
@@ -90,8 +92,35 @@ public class Registrator {
         registerAtLobbyService(token, retries - 1);
       } else {
         logger.error("Could not register at lobby service. Giving up.");
-        throw new RuntimeException("Could not register at lobby service. Giving up.");
+        System.exit(1);
       }
+    }
+  }
+
+  /**
+   * Deregisters the game service from the lobby service. Called before the application exits.
+   */
+  @PreDestroy
+  public void deregisterFromLobbyService() {
+    logger.info("Deregistering from lobby service.");
+    String url =
+            gameServiceParameters.getLobbyServiceLocation() + REGISTRATION_RESOURCE
+            + "/" + gameServiceParameters.getName();
+    try {
+      String token = tokenHelper.get(gameServiceParameters.getOauth2Name(),
+              gameServiceParameters.getOauth2Password());
+      HttpResponse<String> response = Unirest
+              .delete(url)
+              .header("Content-Type", "application/json")
+              .header("Authorization", "Bearer " + token)
+              .asString();
+      if (response.getStatus() != 200) {
+        logger.error("Could not deregister from lobby service.\n Status: {}\n Body: {}",
+                response.getStatus(), response.getBody());
+      }
+      logger.info("Successfully deregistered from lobby service.");
+    } catch (UnirestException | AuthenticationException e) {
+      logger.error("Could not deregister from lobby service.", e);
     }
   }
 }

@@ -1,4 +1,4 @@
-package splendor.model.lobbyservice;
+package splendor.model.game.player;
 
 /**
  * Copied from BoardGamePlatform.
