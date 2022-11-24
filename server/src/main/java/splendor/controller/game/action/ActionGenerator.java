@@ -14,6 +14,7 @@ public class ActionGenerator {
   }
 
   public List<Action> generateActions(SplendorGame game, SplendorPlayer player) {
+    // TODO: ADD more actions
     return DevelopmentCardAction.getLegalActions(game, player);
   }
 
