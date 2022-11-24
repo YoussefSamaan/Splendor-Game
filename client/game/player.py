@@ -175,7 +175,7 @@ class Player:
     def show_discounts(self, inventory: pygame.Surface):
         surface = pygame.Surface((inventory.get_width(), inventory.get_height() * self.DISCOUNTS_RATIO))
         surface.fill(self.BACKGROUND_COLOR)
-        self.discounts.draw(surface)
+        self.discounts.draw(surface, len(self.reserved_cards), Color.YELLOW)
         inventory.blit(surface, (0, inventory.get_height() * (self.NAME_RATIO + self.TOKENS_RATIO)))
 
     def display(self, screen: pygame.Surface, num_players: int, highlighted: bool = False):
@@ -187,9 +187,9 @@ class Player:
         :return:
         """
         width = screen.get_width() // num_players
-        height = screen.get_height() - Board.instance().get_height()
+        height = screen.get_height() - Board.instance().get_height() * 0.95
         x = self.pos * width
-        y = Board.instance().get_height()
+        y = Board.instance().get_height() - 40
 
         # Draw the border
         inventory = pygame.Surface((width, height))
