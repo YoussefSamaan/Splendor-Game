@@ -1,7 +1,6 @@
 package splendor.model.game.card;
 
 import org.json.JSONObject;
-import splendor.Config;
 import splendor.model.game.Color;
 
 /**

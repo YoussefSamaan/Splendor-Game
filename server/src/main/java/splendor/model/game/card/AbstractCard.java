@@ -6,7 +6,6 @@ import java.util.HashMap;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
-import splendor.Config;
 import splendor.model.game.Color;
 import splendor.model.game.payment.Bonus;
 import splendor.model.game.payment.Cost;
@@ -17,7 +16,7 @@ import splendor.model.game.payment.Cost;
  */
 public abstract class AbstractCard implements SplendorCard {
 
-  private static final String CARDS_JSON = Config.getProperty("cards.json.location");
+  private static final String CARDS_JSON = "src/main/resources/cards.json";
   private final int cardId;
   private final Cost cost;
   private final int prestigePoints;
