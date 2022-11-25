@@ -17,9 +17,16 @@ public interface SplendorDeck {
   DevelopmentCardI takeCard(int pos);
 
   /**
-   * The face up cards in the deck.
+   * Check if the deck contains a card.
    *
-   * @return array of length 3 of the face up cards.
+   * @return if the card is face up, return the position of the card, otherwise return -1.
+   */
+  int isFaceUp(DevelopmentCardI card);
+
+  /**
+   * Returns the face up cards.
+   *
+   * @return the face up cards
    */
   DevelopmentCardI[] getFaceUpCards();
 

@@ -3,6 +3,8 @@ package splendor.controller.game.action;
 import java.util.ArrayList;
 import java.util.List;
 import splendor.model.game.SplendorGame;
+import splendor.model.game.card.DevelopmentCardI;
+import splendor.model.game.card.SplendorCard;
 import splendor.model.game.deck.SplendorDeck;
 import splendor.model.game.player.SplendorPlayer;
 
@@ -11,17 +13,15 @@ import splendor.model.game.player.SplendorPlayer;
  */
 public class DevelopmentCardAction extends CardAction {
   private final CardType cardType = CardType.DevelopmentCard;
-  private final SplendorDeck deck;
 
   /**
    * Creates a new card action.
    *
    * @param actionType the type of the action
-   * @param cardIndex  the index of the card
+   * @param card the card
    */
-  protected DevelopmentCardAction(CardActionType actionType, SplendorDeck deck, int cardIndex) {
-    super(actionType, cardIndex);
-    this.deck = deck;
+  private DevelopmentCardAction(CardActionType actionType, SplendorCard card) {
+    super(actionType, card);
   }
 
   /**
@@ -35,10 +35,10 @@ public class DevelopmentCardAction extends CardAction {
   public void execute(SplendorGame game, SplendorPlayer player) {
     switch (super.getType()) {
       case BUY:
-        player.buyCard(getCardIndex(), deck.getColor(), game);
+        game.buyCard(player, getCard());
         break;
       case RESERVE:
-        player.reserveCard(getCardIndex(), deck.getColor(), game);
+        game.reserveCard(player, getCard());
         break;
       default:
         throw new IllegalStateException("Unknown action type: " + super.getType());
@@ -67,8 +67,12 @@ public class DevelopmentCardAction extends CardAction {
   public static List<Action> getLegalActions(SplendorGame game, SplendorPlayer player) {
     List<Action> actions = new ArrayList<>();
     for (SplendorDeck deck : game.getBoard().getDecks()) {
-      actions.add(new DevelopmentCardAction(CardActionType.BUY, deck, 0));
-      actions.add(new DevelopmentCardAction(CardActionType.RESERVE, deck, 0));
+      for (DevelopmentCardI card : deck.getFaceUpCards()) {
+        if (player.canAfford(card)) {
+          actions.add(new DevelopmentCardAction(CardActionType.BUY, card));
+        }
+        actions.add(new DevelopmentCardAction(CardActionType.RESERVE, card));
+      }
     }
     return actions;
   }

@@ -3,10 +3,14 @@ package splendor.model.game;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import splendor.model.game.card.DevelopmentCardI;
 import splendor.model.game.card.Noble;
+import splendor.model.game.card.SplendorCard;
 import splendor.model.game.deck.Deck;
 import splendor.model.game.deck.SplendorDeck;
+import splendor.model.game.payment.Token;
 import splendor.model.game.player.Player;
+import splendor.model.game.player.SplendorPlayer;
 
 /**
  * The board of the game. Contains the players, the nobles, the decks, and the tokens
@@ -15,7 +19,7 @@ public class Board {
   private final Set<Player> players;
   private final SplendorDeck[] decks = new SplendorDeck[1];
   private final List<Noble> nobles = new ArrayList<>();
-  private final Bank bank = new TokenBank();
+  private final Bank<Token> bank = new TokenBank(true);
 
   /**
    * Creates a new board.
@@ -41,5 +45,32 @@ public class Board {
    */
   public SplendorDeck[] getDecks() {
     return decks;
+  }
+
+  /**
+   * Buys a card from the deck.
+   *
+   * @param player the player buying the card
+   * @param card the card to buy
+   */
+  public void buyCard(SplendorPlayer player, SplendorCard card) {
+    if (card instanceof Noble) {
+      throw new IllegalArgumentException("Cannot buy a noble yet");
+    }
+    buyDevelopmentCard(player, (DevelopmentCardI) card);
+  }
+
+  private void buyDevelopmentCard(SplendorPlayer player, DevelopmentCardI card) {
+    if (!player.canAfford(card)) {
+      throw new IllegalArgumentException("Player cannot afford card");
+    }
+
+    for (SplendorDeck deck : decks) {
+      int pos = deck.isFaceUp(card);
+      if (pos != -1) {
+        deck.takeCard(pos);
+        player.buyCard(card);
+      }
+    }
   }
 }

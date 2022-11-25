@@ -13,7 +13,7 @@ public class Cost {
    * Creates a new cost.
    */
   public Cost(HashMap<Color, Integer> costMap) {
-    this.costMap = costMap;
+    this.costMap = new HashMap<>(costMap);
   }
 
   /**

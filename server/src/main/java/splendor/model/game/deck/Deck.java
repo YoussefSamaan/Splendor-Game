@@ -89,8 +89,19 @@ public class Deck implements SplendorDeck {
   }
 
   @Override
+  public int isFaceUp(DevelopmentCardI card) {
+    for (int i = 0; i < faceUpCards.length; i++) {
+      // This can be done since cards are flyweights
+      if (faceUpCards[i] == card) {
+        return i;
+      }
+    }
+    return -1;
+  }
+
+  @Override
   public DevelopmentCardI[] getFaceUpCards() {
-    return faceUpCards.clone();
+    return new DevelopmentCardI[] {faceUpCards[0], faceUpCards[1], faceUpCards[2]};
   }
 
   @Override

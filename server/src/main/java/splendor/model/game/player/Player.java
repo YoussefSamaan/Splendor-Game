@@ -2,6 +2,7 @@ package splendor.model.game.player;
 
 import splendor.model.game.Color;
 import splendor.model.game.SplendorGame;
+import splendor.model.game.card.DevelopmentCardI;
 
 /**
  * A player in the game.
@@ -9,6 +10,8 @@ import splendor.model.game.SplendorGame;
 public class Player implements PlayerReadOnly, SplendorPlayer {
   private final String name;
   private final String color;
+  private final Inventory inventory;
+  private int prestigePoints = 0;
 
   /**
    * Creates a new player.
@@ -19,6 +22,7 @@ public class Player implements PlayerReadOnly, SplendorPlayer {
   public Player(String name, String color) {
     this.name = name;
     this.color = color;
+    this.inventory = new Inventory();
   }
 
   /**
@@ -58,7 +62,7 @@ public class Player implements PlayerReadOnly, SplendorPlayer {
   }
 
   @Override
-  public void buyCard(int cardIndex, Color color, SplendorGame game) {
+  public void buyCard(DevelopmentCardI card) {
 
   }
 
@@ -70,5 +74,10 @@ public class Player implements PlayerReadOnly, SplendorPlayer {
   @Override
   public void takeToken(Color color, SplendorGame game) {
 
+  }
+
+  @Override
+  public boolean canAfford(DevelopmentCardI card) {
+    return card.getCost().isAffordable(inventory.getResources());
   }
 }

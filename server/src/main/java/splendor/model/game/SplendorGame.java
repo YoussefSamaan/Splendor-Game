@@ -2,7 +2,10 @@ package splendor.model.game;
 
 import java.util.Arrays;
 import splendor.controller.lobbyservice.GameInfo;
+import splendor.model.game.card.DevelopmentCardI;
+import splendor.model.game.card.SplendorCard;
 import splendor.model.game.player.Player;
+import splendor.model.game.player.SplendorPlayer;
 
 /**
  * Class responsible for storing metadata about a game.
@@ -42,5 +45,18 @@ public class SplendorGame {
             .filter(player -> player.getName().equals(name))
             .findFirst()
             .orElse(null);
+  }
+
+  /**
+   * Buy a card.
+   *
+   * @param player the player
+   * @param card   the card
+   */
+  public void buyCard(SplendorPlayer player, SplendorCard card) {
+    board.buyCard(player, card);
+  }
+
+  public void reserveCard(SplendorPlayer player, SplendorCard card) {
   }
 }

@@ -6,6 +6,7 @@ import splendor.model.game.Color;
 
 /**
  * A set of bonuses mapping colors to integers.
+ * Bonuses are immutable.
  */
 public class Bonus implements Iterable<Color> {
   private final HashMap<Color, Integer> bonusMap;
@@ -16,11 +17,11 @@ public class Bonus implements Iterable<Color> {
    * @param bonusMap map of colors to amounts
    */
   public Bonus(HashMap<Color, Integer> bonusMap) {
-    this.bonusMap = bonusMap;
+    this.bonusMap = new HashMap<>(bonusMap);
   }
 
   /**
-   * Empty Bonus constructor.
+   * Empty Constructor.
    */
   public Bonus() {
     this.bonusMap = new HashMap<>();
@@ -35,26 +36,6 @@ public class Bonus implements Iterable<Color> {
    */
   public int getBonus(Color color) {
     return bonusMap.getOrDefault(color, 0);
-  }
-
-  /**
-   * Adds the given bonus to this bonus.
-   *
-   * @param bonus a Bonus to add
-   */
-  public void add(Bonus bonus) {
-    for (Color color : bonus) {
-      bonusMap.put(color, getBonus(color) + bonus.getBonus(color));
-    }
-  }
-
-  /**
-   * Returns a copy of this bonus.
-   *
-   * @return a copy of this bonus.
-   */
-  public Bonus copy() {
-    return new Bonus(bonusMap);
   }
 
   @Override

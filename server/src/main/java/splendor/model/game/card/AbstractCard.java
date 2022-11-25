@@ -52,7 +52,7 @@ public abstract class AbstractCard implements SplendorCard {
   @Override
   public Bonus getBonus() {
     // Creates a copy to keep cards immutable.
-    return bonus.copy();
+    return bonus;
   }
 
   /**
