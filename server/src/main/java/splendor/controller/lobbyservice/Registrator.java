@@ -117,6 +117,7 @@ public class Registrator {
       if (response.getStatus() != 200) {
         logger.error("Could not deregister from lobby service.\n Status: {}\n Body: {}",
                 response.getStatus(), response.getBody());
+        return;
       }
       logger.info("Successfully deregistered from lobby service.");
     } catch (UnirestException | AuthenticationException e) {

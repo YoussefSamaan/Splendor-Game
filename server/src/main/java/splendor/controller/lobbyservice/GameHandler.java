@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import splendor.model.game.GameManager;
+import splendor.controller.game.GameManager;
 
 /**
  * Rest Controller responsible for starting/deleting/saving games.

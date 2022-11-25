@@ -1,9 +1,12 @@
 package splendor.model.game.player;
 
+import splendor.model.game.Color;
+import splendor.model.game.SplendorGame;
+
 /**
  * A player in the game.
  */
-public class Player implements PlayerReadOnly {
+public class Player implements PlayerReadOnly, SplendorPlayer {
   private final String name;
   private final String color;
 
@@ -54,4 +57,18 @@ public class Player implements PlayerReadOnly {
     return name;
   }
 
+  @Override
+  public void buyCard(int cardIndex, Color color, SplendorGame game) {
+
+  }
+
+  @Override
+  public void reserveCard(int cardIndex, Color color, SplendorGame game) {
+
+  }
+
+  @Override
+  public void takeToken(Color color, SplendorGame game) {
+
+  }
 }

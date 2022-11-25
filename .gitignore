@@ -134,3 +134,6 @@ __pycache__
 
 # javadoc
 server/docs
+
+# target
+server/target

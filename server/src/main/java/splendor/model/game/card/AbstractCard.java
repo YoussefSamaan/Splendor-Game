@@ -1,8 +1,11 @@
 package splendor.model.game.card;
 
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.util.HashMap;
+import org.json.JSONArray;
 import org.json.JSONObject;
-import splendor.Config;
+import org.json.JSONTokener;
 import splendor.model.game.Color;
 import splendor.model.game.payment.Bonus;
 import splendor.model.game.payment.Cost;
@@ -13,7 +16,7 @@ import splendor.model.game.payment.Cost;
  */
 public abstract class AbstractCard implements SplendorCard {
 
-  private static final String CARDS_JSON = Config.getProperty("cards.json.location");
+  private static final String CARDS_JSON = "src/main/resources/cards.json";
   private final int cardId;
   private final Cost cost;
   private final int prestigePoints;
@@ -57,7 +60,7 @@ public abstract class AbstractCard implements SplendorCard {
    *
    * @return the cost of the card.
    */
-  private Cost getCostFromJson() {
+  protected Cost getCostFromJson() {
     JSONObject cost = getCardJson().getJSONObject("cost");
     HashMap<Color, Integer> costMap = new HashMap<>();
     for (Color color : Color.values()) {
@@ -73,7 +76,7 @@ public abstract class AbstractCard implements SplendorCard {
    *
    * @return the prestige points of the card.
    */
-  private int getPrestigePointsFromJson() {
+  protected int getPrestigePointsFromJson() {
     if (getCardJson().has("prestigePoints")) {
       return getCardJson().getInt("prestigePoints");
     }
@@ -85,7 +88,7 @@ public abstract class AbstractCard implements SplendorCard {
    *
    * @return the bonus of the card.
    */
-  private Bonus getBonusFromJson() {
+  protected Bonus getBonusFromJson() {
     if (!getCardJson().has("bonus")) {
       return new Bonus();
     }
@@ -99,9 +102,26 @@ public abstract class AbstractCard implements SplendorCard {
     return new Bonus(bonusMap);
   }
 
-  private JSONObject getCardJson() {
-    return new JSONObject(CARDS_JSON)
-              .getJSONArray("cards")
-              .getJSONObject(cardId);
+  /**
+   * Returns the card json object.
+   *
+   * @return the card json object.
+   */
+  protected JSONObject getCardJson() {
+    JSONArray cards = getJson().getJSONArray("cards");
+    return cards.getJSONObject(cardId);
+  }
+
+  /**
+   * Returns the json object of the entire file.
+   *
+   * @return the json object.
+   */
+  protected JSONObject getJson() {
+    try {
+      return new JSONObject(new JSONTokener(new FileReader(CARDS_JSON)));
+    } catch (FileNotFoundException e) {
+      throw new RuntimeException("Could not find cards.json");
+    }
   }
 }

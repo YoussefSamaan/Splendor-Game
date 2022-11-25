@@ -1,9 +1,9 @@
-package splendor.controller.lobbyservice;
+package splendor.controller.helper;
 
 import javax.naming.AuthenticationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import splendor.controller.helper.TokenHelper;
+import splendor.controller.lobbyservice.Role;
 
 /**
  * This class is used to authenticate all requests made to the Server.

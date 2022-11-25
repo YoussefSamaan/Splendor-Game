@@ -1,8 +1,15 @@
-package splendor.model.game;
+package splendor.controller.game;
 
 import java.util.HashMap;
+import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import splendor.controller.game.action.Action;
+import splendor.controller.game.action.ActionGenerator;
 import splendor.controller.lobbyservice.GameInfo;
+import splendor.model.game.Board;
+import splendor.model.game.SplendorGame;
+import splendor.model.game.player.SplendorPlayer;
 
 /**
  * Class responsible for storing all the ongoing games.
@@ -11,6 +18,11 @@ import splendor.controller.lobbyservice.GameInfo;
 @Component
 public class GameManager {
   private HashMap<Long, SplendorGame> games = new HashMap<>();
+  private ActionGenerator actionGenerator;
+
+  private GameManager(@Autowired ActionGenerator actionGenerator) {
+    this.actionGenerator = actionGenerator;
+  }
 
   /**
    * Checks if a game with the given id exists.
@@ -20,6 +32,17 @@ public class GameManager {
    */
   public boolean exists(long gameId) {
     return games.containsKey(gameId);
+  }
+
+  /**
+   * Returns the board of a specific game.
+   *
+   * @param gameId the id of the game
+   * @return the board of the game
+   * @pre exists(gameId) is true
+   */
+  public Board getBoard(long gameId) {
+    return games.get(gameId).getBoard();
   }
 
   /**
@@ -48,5 +71,18 @@ public class GameManager {
       throw new IllegalArgumentException(String.format("Game with id %d does not exist", gameId));
     }
     games.remove(gameId);
+  }
+
+  /**
+   * Generates the actions for a specific player.
+   *
+   * @param gameId the id of the game
+   * @param playerName the name of the player
+   * @return the actions for the player
+   */
+  public List<Action> generateActions(long gameId, String playerName) {
+    SplendorGame game = games.get(gameId);
+    SplendorPlayer player = game.getPlayer(playerName);
+    return actionGenerator.generateActions(games.get(gameId), player);
   }
 }

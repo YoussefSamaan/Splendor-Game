@@ -1,14 +1,13 @@
 package splendor.model.game.card;
 
 import org.json.JSONObject;
-import splendor.Config;
 import splendor.model.game.Color;
 
 /**
  * Flyweight class for a development card.
  */
 public class DevelopmentCard extends AbstractCard implements DevelopmentCardI {
-  private static final String CARDS_JSON = Config.getProperty("cards.json.location");
+  private static final String CARDS_JSON = "src/main/resources/cards.json";
   private final Color color;
   private static final int NUMBER_OF_CARDS = 120;
   private static final DevelopmentCard[] CARDS = new DevelopmentCard[NUMBER_OF_CARDS];
@@ -46,8 +45,7 @@ public class DevelopmentCard extends AbstractCard implements DevelopmentCardI {
   }
 
   private Color getColorFromJson(int cardId) {
-    JSONObject map = new JSONObject(CARDS_JSON)
-            .getJSONObject("color_map");
+    JSONObject map = super.getJson().getJSONObject("color_map");
     for (String key : map.keySet()) {
       if (map.getJSONArray(key).getInt(0) <= cardId
               && map.getJSONArray(key).getInt(1) >= cardId) {
