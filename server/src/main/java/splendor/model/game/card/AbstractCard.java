@@ -18,9 +18,9 @@ public abstract class AbstractCard implements SplendorCard {
 
   private static final String CARDS_JSON = "src/main/resources/cards.json";
   private final int cardId;
-  private final Cost cost;
-  private final int prestigePoints;
-  private final Bonus bonus;
+  private final transient Cost cost;
+  private final transient int prestigePoints;
+  private final transient Bonus bonus;
 
   /**
    * Creates a new card. The Card values are based on the cardId.

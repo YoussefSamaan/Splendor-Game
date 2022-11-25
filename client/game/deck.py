@@ -30,12 +30,9 @@ class Deck:
         self.image = self._get_image()
         self.empty_slot_image = self._get_empty_slot_image()
         self.rect = self.image.get_rect()
-        self.card_ids = []  # The ids of the cards in the deck
         self.cardsOnDisplay: Dict[int, Card] = {}  # If no card is in a slot, the value is None
+        self.num_remaining_cards = 0
         self.board = Board.instance()
-        self._init_deck()
-        self._shuffle()
-        self._fill_empty_slots()
 
     @staticmethod
     def get_deck_display_size(board):
@@ -44,51 +41,35 @@ class Deck:
         """
         return Card.get_card_size(board)
 
+    def update(self, decks_json):
+        """
+        Updates the deck based on the json data
+
+        :param: decks_json: The json data of the decks
+        """
+        deck_json = self.find_deck_by_color(decks_json)
+        self.num_remaining_cards = deck_json["numRemainingCards"]
+        for i, card in enumerate(deck_json["faceUpCards"], start=1):
+            self.cardsOnDisplay[i] = Card.instance(id=card["cardId"], deck=self)
+        print("Deck updated")
+        print(self.cardsOnDisplay)
+
     def is_empty(self):
         """
         Returns whether the deck is empty
         """
-        return len(self.card_ids) == 0
-
-    def draw_card(self, pos) -> Card:
-        """
-        Draws a card from the deck to the position
-
-        :pre: The deck is not empty
-        :param: pos: The position to draw the card to
-        :return: The card that was drawn
-        """
-        assert not self.is_empty(), "Deck is empty"
-        id = self.card_ids.pop()
-        card = Card.instance(id=id, deck=self)
-        self.cardsOnDisplay[pos] = card
-        return card
+        return self.num_remaining_cards == 0
 
     def display(self, screen):
         """
         Displays the cards on the board, and the deck cover
         """
-        self._display_deck_cover(screen, amount=len(self.card_ids))
+        self._display_deck_cover(screen, amount=self.num_remaining_cards)
         for slot_pos, card in self.cardsOnDisplay.items():
             if card is not None:
                 self._draw_card_to_board(screen, card, slot_pos)
             else:
                 self.draw_empty_slot(screen, slot_pos)
-
-    def take_card(self, card) -> boolean:
-        """
-        Takes a card from the deck
-
-        :pre: The card is on display
-        :return: The card that was taken
-        """
-        for slot_pos, cardOnDisplay in self.cardsOnDisplay.items():
-            if cardOnDisplay == card:
-                self.cardsOnDisplay[slot_pos] = None
-                if not self.is_empty():
-                    self.draw_card(slot_pos)
-                return True
-        return False
 
     def get_clicked_card(self, mouse_pos):
         """
@@ -102,19 +83,6 @@ class Deck:
             if card is not None and card.is_clicked(mouse_pos):
                 return card
         return None
-
-    def _shuffle(self):
-        """
-        Shuffles the deck
-        """
-        shuffle(self.card_ids)
-
-    def _fill_empty_slots(self):
-        """
-        Fills the empty slots in the deck with cards
-        """
-        while len(self.cardsOnDisplay) < self.card_slots:
-            self.draw_card(len(self.cardsOnDisplay) + 1)
 
     def _display_deck_cover(self, screen, amount=0):
         """
@@ -175,8 +143,7 @@ class Deck:
         Returns the y-coordinate of the deck cover based on the size of the board
         """
         board = self.board
-        distance_from_top = (
-                                        3 - self.level) * self._y_distance_between_card_start_to_next_start()  # based on the deck level
+        distance_from_top = (3 - self.level) * self._y_distance_between_card_start_to_next_start()  # based on the deck level
         return board.get_y() + (board.get_height() * self.y_MarginToBoardHeightRatio) + distance_from_top
 
     def _get_image(self):
@@ -225,10 +192,6 @@ class Deck:
         """
         return self._y_distance_between_cards() + Card.get_card_size(self.board)[1]
 
-    def _init_deck(self):
-        for i in range(self._ID_START, self._ID_START + self._NUMBER_OF_CARDS):
-            self.card_ids.append(i)
-
     def get_color(self):
         return self.color
 
@@ -251,6 +214,11 @@ class Deck:
         image = pygame.transform.scale(self.empty_slot_image,
                                        (int(Card.get_card_size(self.board)[0]), int(Card.get_card_size(self.board)[1])))
         screen.blit(image, (x, y))
+
+    def find_deck_by_color(self, decks_json):
+        for deck in decks_json:
+            if deck['color'] == self.color.name.upper():
+                return deck
 
 
 @Singleton

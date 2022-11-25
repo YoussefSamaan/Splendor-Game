@@ -1,5 +1,7 @@
 package splendor.model.game.deck;
 
+import static java.util.Collections.shuffle;
+
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.ArrayList;
@@ -10,7 +12,6 @@ import org.json.JSONTokener;
 import splendor.model.game.Color;
 import splendor.model.game.card.DevelopmentCard;
 import splendor.model.game.card.DevelopmentCardI;
-import splendor.model.game.card.SplendorCard;
 
 /**
  * A deck of splendor cards. The deck is shuffled when it is created.
@@ -18,8 +19,11 @@ import splendor.model.game.card.SplendorCard;
 
 public class Deck implements SplendorDeck {
   private static String CARDS_JSON = "src/main/resources/cards.json";
-  private JSONObject cardsJson;
-  private final List<DevelopmentCardI> cards = new ArrayList<>();
+  private transient JSONObject cardsJson;
+  private final transient List<DevelopmentCardI> faceDown = new ArrayList<>();
+  private final DevelopmentCardI[] faceUpCards = new DevelopmentCardI[3];
+
+  private int numRemainingCards; // This field is only used for serialization
   private final Color color;
   private final int level;
 
@@ -38,6 +42,9 @@ public class Deck implements SplendorDeck {
       throw new RuntimeException("Could not find cards.json");
     }
     addAllCards();
+    shuffle(faceDown);
+    fillFaceUpCards();
+    numRemainingCards = faceDown.size();
   }
 
   /**
@@ -65,18 +72,25 @@ public class Deck implements SplendorDeck {
     * @return the card at the top of the deck.
    */
   @Override
-  public SplendorCard drawCard() {
-    return cards.remove(cards.size() - 1);
+  public DevelopmentCardI takeCard(int pos) {
+    DevelopmentCardI card = faceUpCards[pos];
+    if (!faceDown.isEmpty()) {
+      faceUpCards[pos] = faceDown.remove(0);
+      numRemainingCards--;
+    } else {
+      faceUpCards[pos] = null;
+    }
+    return card;
   }
 
   @Override
   public int getCardCount() {
-    return cards.size();
+    return faceDown.size();
   }
 
   @Override
-  public boolean isEmpty() {
-    return cards.isEmpty();
+  public DevelopmentCardI[] getFaceUpCards() {
+    return faceUpCards.clone();
   }
 
   @Override
@@ -96,7 +110,16 @@ public class Deck implements SplendorDeck {
     int[] indices = getStartAndEndIds();
     for (int i = indices[0]; i <= indices[1]; i++) {
       // Creates a new card and adds it to the deck.
-      this.cards.add(DevelopmentCard.get(i));
+      this.faceDown.add(DevelopmentCard.get(i));
+    }
+  }
+
+  /**
+   * Fills the face up cards with cards from the deck.
+   */
+  private void fillFaceUpCards() {
+    for (int i = 0; i < faceUpCards.length; i++) {
+      faceUpCards[i] = faceDown.remove(0);
     }
   }
 
@@ -112,7 +135,6 @@ public class Deck implements SplendorDeck {
    *
    * @return a string representation of the deck.
    */
-
   @Override
   public String toString() {
     if (color == Color.RED) {

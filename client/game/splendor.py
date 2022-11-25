@@ -1,15 +1,18 @@
 import os
 import sys
+import threading
 
 from pygame.locals import *
 from win32api import GetSystemMetrics
 
 from action import Action
+from client.game import server_manager
 from deck import *
 from sidebar import *
 from splendorToken import Token
 
-os.chdir(os.path.dirname(os.path.abspath(__file__)))  # to make image imports start from current directory
+os.chdir(os.path.dirname(
+    os.path.abspath(__file__)))  # to make image imports start from current directory
 WIDTH, HEIGHT = GetSystemMetrics(0), GetSystemMetrics(1)
 FPS = 60
 FPSCLOCK = pygame.time.Clock()
@@ -78,6 +81,11 @@ def show_flash_message():
 def set_flash_message(text, timer=5):
     global FLASH_MESSAGE, FLASH_TIMER, FLASH_START
     FLASH_MESSAGE, FLASH_TIMER, FLASH_START = text, timer, pygame.time.get_ticks()
+
+
+def update(authenticator, game_id):
+    board_json = server_manager.get_board(authenticator=authenticator, game_id=game_id)
+    GreenDeck.instance().update(board_json['decks'])
 
 
 def display():
@@ -198,10 +206,15 @@ def check_toggle(mouse_pos):
     sidebar.toggle(page_num)
 
 
-def play():
+def play(authenticator, game_id):
     initialize_game()
+    last_update = pygame.time.get_ticks()
     while True:
-        display()
+        # update every 5 seconds on a separate thread
+        if pygame.time.get_ticks() - last_update > 5000:
+            last_update = pygame.time.get_ticks()
+            # start a new thread
+            threading.Thread(target=update, args=(authenticator, game_id)).start()
         for event in pygame.event.get():
             if event.type == QUIT:
                 pygame.quit()
@@ -232,11 +245,6 @@ def play():
                     obj = get_clicked_object(position)
                     perform_action(obj)
 
-                    display()
-
+        display()
         pygame.display.update()
         FPSCLOCK.tick(FPS)
-
-
-if __name__ == '__main__':
-    play()

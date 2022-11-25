@@ -60,6 +60,7 @@ public class SplendorController extends HandlerInterceptorAdapter {
   public ResponseEntity getBoard(@PathVariable long gameId) {
     LOGGER.info(String.format("Received request to get board of game with id %d", gameId));
     if (!gameManager.exists(gameId)) {
+      LOGGER.warning(String.format("Game with id %d does not exist", gameId));
       return ResponseEntity.badRequest().body(String.format("Game with id %d does not exist",
           gameId));
     }
