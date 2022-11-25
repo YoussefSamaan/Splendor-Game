@@ -18,7 +18,7 @@ import splendor.model.game.player.SplendorPlayer;
 @Component
 public class GameManager {
   private HashMap<Long, SplendorGame> games = new HashMap<>();
-  private ActionGenerator actionGenerator = new ActionGenerator();
+  private ActionGenerator actionGenerator;
 
   private GameManager(@Autowired ActionGenerator actionGenerator) {
     this.actionGenerator = actionGenerator;

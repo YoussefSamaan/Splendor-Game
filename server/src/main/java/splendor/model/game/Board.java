@@ -13,7 +13,7 @@ import splendor.model.game.player.Player;
  */
 public class Board {
   private final Set<Player> players;
-  private final CompositeDeck decks;
+  private final transient CompositeDeck decks;
   private final List<Noble> nobles = new ArrayList<>();
   private final Bank bank = new TokenBank();
 
