@@ -214,7 +214,8 @@ def play(authenticator, game_id):
         if pygame.time.get_ticks() - last_update > 5000:
             last_update = pygame.time.get_ticks()
             # start a new thread
-            threading.Thread(target=update, args=(authenticator, game_id)).start()
+            with threading.Lock():
+                threading.Thread(target=update, args=(authenticator, game_id)).start()
         for event in pygame.event.get():
             if event.type == QUIT:
                 pygame.quit()
