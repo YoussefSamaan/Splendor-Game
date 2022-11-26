@@ -66,15 +66,15 @@ def session():
 
     while True:
         screen.fill(GREY)
-        last_game_rect = pygame.Rect((150, 350, 200, 55))
-        last_game_location = (175, 400)
+        last_game_rect = pygame.Rect((150, 450, 200, 55))
+        last_game_location = (150, 450)
         for game in get_games():
             #print(game)
             last_game_name = base_font.render(game, True, WHITE)
             pygame.draw.rect(screen, LIGHT_BLUE, last_game_rect, 3)
-            screen.blit(last_game_name, last_game_location)
-            last_game_location = (175, last_game_location[1] + 50)
-            last_game_rect = pygame.Rect((150, last_game_location[1] + 75, 200, 55))
+            screen.blit(last_game_name, (last_game_location[0]+20, last_game_location[1]+20))
+            last_game_location = (150, last_game_location[1] + 100)
+            last_game_rect = pygame.Rect((150, last_game_location[1], 200, 55))
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
