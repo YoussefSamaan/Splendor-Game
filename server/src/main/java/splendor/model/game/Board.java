@@ -17,6 +17,7 @@ import splendor.model.game.player.SplendorPlayer;
  */
 public class Board {
   private final Set<Player> players;
+  private int currentTurn;
   private final SplendorDeck[] decks = new SplendorDeck[1];
   private final List<Noble> nobles = new ArrayList<>();
   private final Bank<Token> bank = new TokenBank(true);
@@ -36,6 +37,7 @@ public class Board {
       throw new IllegalArgumentException("Players must be unique");
     }
     decks[0] = new Deck(Color.GREEN);
+    currentTurn = 0;
   }
 
   /**
@@ -72,5 +74,15 @@ public class Board {
         player.buyCard(card);
       }
     }
+  }
+
+  /**
+   * Checks if it's a player's turn.
+   *
+   * @param player the player
+   * @return true if it's the player's turn
+   */
+  public boolean isTurnPlayer(SplendorPlayer player) {
+    return players.toArray()[currentTurn].equals(player);
   }
 }

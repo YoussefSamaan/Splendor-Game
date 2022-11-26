@@ -83,6 +83,16 @@ public class GameManager {
   public List<Action> generateActions(long gameId, String playerName) {
     SplendorGame game = games.get(gameId);
     SplendorPlayer player = game.getPlayer(playerName);
-    return actionGenerator.generateActions(games.get(gameId), player);
+    return actionGenerator.generateActions(game, player);
+  }
+
+  /**
+   * Check if a player is in a game.
+   *
+   * @param gameId the id of the game
+   * @param playerName the name of the player
+   */
+  public boolean playerInGame(long gameId, String playerName) {
+    return exists(gameId) && games.get(gameId).getPlayer(playerName) != null;
   }
 }

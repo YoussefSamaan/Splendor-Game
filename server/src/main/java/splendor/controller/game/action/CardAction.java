@@ -11,6 +11,8 @@ public abstract class CardAction implements Action {
   private final CardActionType actionType;
   private final SplendorCard card;
 
+  private final int actionId;
+
   /**
    * Creates a new card action.
    *
@@ -20,6 +22,7 @@ public abstract class CardAction implements Action {
   protected CardAction(CardActionType actionType, SplendorCard card) {
     this.actionType = actionType;
     this.card = card;
+    this.actionId = card.getCardId();
   }
 
   /**
@@ -38,5 +41,15 @@ public abstract class CardAction implements Action {
    */
   public SplendorCard getCard() {
     return card;
+  }
+
+  /**
+   * Returns the id of the action.
+   *
+   * @return the id of the action
+   */
+  @Override
+  public int getId() {
+    return actionId;
   }
 }

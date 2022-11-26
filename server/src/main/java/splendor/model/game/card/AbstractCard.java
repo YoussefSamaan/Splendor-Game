@@ -62,12 +62,7 @@ public abstract class AbstractCard implements SplendorCard {
    */
   protected Cost getCostFromJson() {
     JSONObject cost = getCardJson().getJSONObject("cost");
-    HashMap<Color, Integer> costMap = new HashMap<>();
-    for (Color color : Color.values()) {
-      if (cost.has(color.toString())) {
-        costMap.put(color, cost.getInt(color.toString()));
-      }
-    }
+    HashMap<Color, Integer> costMap = getMapFromJson(cost);
     return new Cost(costMap);
   }
 
@@ -93,13 +88,19 @@ public abstract class AbstractCard implements SplendorCard {
       return new Bonus();
     }
     JSONObject bonus = getCardJson().getJSONObject("bonus");
+    HashMap<Color, Integer> bonusMap = getMapFromJson(bonus);
+    return new Bonus(bonusMap);
+  }
+
+  private HashMap<Color, Integer> getMapFromJson(JSONObject bonus) {
     HashMap<Color, Integer> bonusMap = new HashMap<>();
     for (Color color : Color.values()) {
-      if (bonus.has(color.toString())) {
-        bonusMap.put(color, bonus.getInt(color.toString()));
+      String colorString = color.toString().toLowerCase();
+      if (bonus.has(colorString)) {
+        bonusMap.put(color, bonus.getInt(colorString));
       }
     }
-    return new Bonus(bonusMap);
+    return bonusMap;
   }
 
   /**

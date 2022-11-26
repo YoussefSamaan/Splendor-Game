@@ -59,4 +59,14 @@ public class SplendorGame {
 
   public void reserveCard(SplendorPlayer player, SplendorCard card) {
   }
+
+  /**
+   * Checks if it's a player's turn.
+   *
+   * @param player the player
+   * @return true if it's the player's turn
+   */
+  public boolean isTurnPlayer(SplendorPlayer player) {
+    return board.isTurnPlayer(player);
+  }
 }

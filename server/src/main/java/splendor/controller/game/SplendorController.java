@@ -84,6 +84,10 @@ public class SplendorController extends HandlerInterceptorAdapter {
       return ResponseEntity.badRequest().body(String.format("Game with id %d does not exist",
           gameId));
     }
+    if (!gameManager.playerInGame(gameId, username)) {
+      return ResponseEntity.badRequest().body(String.format("Player %s is not in game with id %d",
+          username, gameId));
+    }
     String body = new Gson().toJson(gameManager.generateActions(gameId, username));
     return ResponseEntity.ok().body(body);
   }
