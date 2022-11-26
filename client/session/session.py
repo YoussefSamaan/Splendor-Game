@@ -49,9 +49,14 @@ def session():
     create_rect = pygame.Rect((350, 300, 200, 70))
     join_rect = pygame.Rect((350, 600, 200, 70))
     back_rect = pygame.Rect((150, 100, 150, 70))
+    previous_button_rect = pygame.Rect((150, 660, 150, 70))
+    next_button_rect = pygame.Rect((600, 660, 150, 70))
+
     back_text = base_font.render('Log Out', True, WHITE)
     create_text = base_font.render('Create', True, WHITE)
     join_text = base_font.render('Join', True, WHITE)
+    next_text = base_font.render('Next', True, WHITE)
+    previous_text = base_font.render('Previous', True, WHITE)
     create_text_display = base_font.render('Session Name', True, WHITE)
     create_color = color_passive
 
@@ -63,6 +68,7 @@ def session():
 
     wrong_credentials = False # like session somehow invalid
 
+    #TODO: add pop up confirmation for create and join
 
     while True:
         screen.fill(GREY)
@@ -112,12 +118,12 @@ def session():
                         create_text_entry = create_text[:-1] # deletes last character
                     else:
                         create_text_entry += event.unicode
-
-
         
         pygame.draw.rect(screen, create_color, create_input_rect, 3)
 
         pygame.draw.rect(screen, RED, back_rect)
+        pygame.draw.rect(screen, GREEN, next_button_rect)
+        pygame.draw.rect(screen, GREEN, previous_button_rect)
         pygame.draw.rect(screen, LIGHT_GREY, create_rect)
 
         screen.blit(create_text, (420, 325))
@@ -126,6 +132,8 @@ def session():
         screen.blit(create_text_surface, (create_input_rect.x + 5, create_input_rect.y + 5))
 
         screen.blit(back_text, (185, 125))
+        screen.blit(next_text, (655, 685))
+        screen.blit(previous_text, (185, 685))
         screen.blit(create_text_display, (150, 225))
         
         create_input_rect.w = max(600, create_text_surface.get_width() + 10)
