@@ -1,8 +1,9 @@
 package splendor.model.game;
 
 import java.util.Arrays;
+import splendor.controller.game.action.Action;
+import splendor.controller.game.action.ActionData;
 import splendor.controller.lobbyservice.GameInfo;
-import splendor.model.game.card.DevelopmentCardI;
 import splendor.model.game.card.SplendorCard;
 import splendor.model.game.player.Player;
 import splendor.model.game.player.SplendorPlayer;
@@ -68,5 +69,17 @@ public class SplendorGame {
    */
   public boolean isTurnPlayer(SplendorPlayer player) {
     return board.isTurnPlayer(player);
+  }
+
+  /**
+   * Performs an action.
+   * Checking for the turn must have been done before.
+   *
+   * @param action the action
+   * @param username the username
+   * @param actionData the action data
+   */
+  public void performAction(Action action, String username, ActionData actionData) {
+
   }
 }

@@ -47,10 +47,13 @@ public class Inventory {
   /**
    * Adds tokens to the inventory.
    *
-   * @param tokens the tokens to add
+   * @param token the tokens to add
+   * @param amount the number of tokens to add
    */
-  public void addTokens(Token... tokens) {
-    this.tokens.add(tokens);
+  public void addTokens(Token token, int amount) {
+    for (int i = 0; i < amount; i++) {
+      this.tokens.add(token);
+    }
   }
 
   /**
@@ -77,5 +80,16 @@ public class Inventory {
       }
     }
     return resources;
+  }
+
+  /**
+   * For the demo.
+   */
+  public static Inventory getDemoInventory() {
+    Inventory inventory = new Inventory();
+    for (Color color : Color.tokenColors()) {
+      inventory.addTokens(Token.of(color), 3);
+    }
+    return inventory;
   }
 }

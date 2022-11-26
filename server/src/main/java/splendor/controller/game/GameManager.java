@@ -5,10 +5,13 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import splendor.controller.game.action.Action;
+import splendor.controller.game.action.ActionData;
 import splendor.controller.game.action.ActionGenerator;
+import splendor.controller.game.action.InvalidAction;
 import splendor.controller.lobbyservice.GameInfo;
 import splendor.model.game.Board;
 import splendor.model.game.SplendorGame;
+import splendor.model.game.payment.Cost;
 import splendor.model.game.player.SplendorPlayer;
 
 /**
@@ -83,7 +86,7 @@ public class GameManager {
   public List<Action> generateActions(long gameId, String playerName) {
     SplendorGame game = games.get(gameId);
     SplendorPlayer player = game.getPlayer(playerName);
-    return actionGenerator.generateActions(game, player);
+    return actionGenerator.generateActions(game, gameId, player);
   }
 
   /**
@@ -94,5 +97,20 @@ public class GameManager {
    */
   public boolean playerInGame(long gameId, String playerName) {
     return exists(gameId) && games.get(gameId).getPlayer(playerName) != null;
+  }
+
+  /**
+   * Performs an action on a game.
+   *
+   * @param gameId the id of the game
+   * @param username the name of the player performing the action
+   * @param actionId the id of the action
+   * @param actionData the data of the action
+   * @throws InvalidAction if the action is invalid
+   */
+  public void performAction(long gameId, String username, String actionId, ActionData actionData)
+      throws InvalidAction {
+    Action action = actionGenerator.getGeneratedAction(gameId, Long.parseLong(actionId));
+    games.get(gameId).performAction(action, username, actionData);
   }
 }

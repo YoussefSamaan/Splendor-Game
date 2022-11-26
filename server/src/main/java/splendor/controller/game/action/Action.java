@@ -8,9 +8,5 @@ import splendor.model.game.player.SplendorPlayer;
  * All actions can be executed.
  */
 public interface Action {
-  void execute(SplendorGame game, SplendorPlayer player);
-
-  boolean isLegal(SplendorGame game, SplendorPlayer player);
-
-  int getId();
+  long getId();
 }

@@ -25,39 +25,6 @@ public class DevelopmentCardAction extends CardAction {
   }
 
   /**
-   * Executes the action on a game instance.
-   *
-   * @param game  the game instance
-   * @param player the player that performs the action
-   * @pre isLegal(game) is true
-   */
-  @Override
-  public void execute(SplendorGame game, SplendorPlayer player) {
-    switch (super.getType()) {
-      case BUY:
-        game.buyCard(player, getCard());
-        break;
-      case RESERVE:
-        game.reserveCard(player, getCard());
-        break;
-      default:
-        throw new IllegalStateException("Unknown action type: " + super.getType());
-    }
-  }
-
-  /**
-   * Returns whether the action is legal in the given game state.
-   *
-   * @param game  the game instance
-   * @param player the player that performs the action
-   * @return whether the action is legal in the given game state
-   */
-  @Override
-  public boolean isLegal(SplendorGame game, SplendorPlayer player) {
-    return false;
-  }
-
-  /**
    * Returns all legal actions for the given player in the given game state.
    *
    * @param game  the game instance

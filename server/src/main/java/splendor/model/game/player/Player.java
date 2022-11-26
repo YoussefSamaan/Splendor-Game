@@ -3,6 +3,7 @@ package splendor.model.game.player;
 import splendor.model.game.Color;
 import splendor.model.game.SplendorGame;
 import splendor.model.game.card.DevelopmentCardI;
+import splendor.model.game.payment.Token;
 
 /**
  * A player in the game.
@@ -22,7 +23,7 @@ public class Player implements PlayerReadOnly, SplendorPlayer {
   public Player(String name, String color) {
     this.name = name;
     this.color = color;
-    this.inventory = new Inventory();
+    this.inventory = Inventory.getDemoInventory();
   }
 
   /**

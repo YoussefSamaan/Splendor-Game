@@ -7,8 +7,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
+import splendor.controller.game.action.ActionData;
+import splendor.controller.game.action.InvalidAction;
 import splendor.controller.helper.Authenticator;
 
 /**
@@ -64,6 +68,7 @@ public class SplendorController extends HandlerInterceptorAdapter {
       return ResponseEntity.badRequest().body(String.format("Game with id %d does not exist",
           gameId));
     }
+    LOGGER.info(String.format("Returning board of game with id %d", gameId));
     String body = new Gson().toJson(gameManager.getBoard(gameId));
     return ResponseEntity.ok().body(body);
   }
@@ -90,5 +95,39 @@ public class SplendorController extends HandlerInterceptorAdapter {
     }
     String body = new Gson().toJson(gameManager.generateActions(gameId, username));
     return ResponseEntity.ok().body(body);
+  }
+
+  /**
+   * Performs a previously generated action.
+   *
+   * @param gameId the id of the game.
+   * @param username the username of the player.
+   * @param actionId the id of the action.
+   * @param actionData the data of the action.
+   */
+  @PostMapping("/api/games/{gameId}/players/{username}/actions/{actionId}")
+  public ResponseEntity performAction(@PathVariable long gameId,
+                                      @PathVariable String username,
+                                      @PathVariable String actionId,
+                                      @RequestBody ActionData actionData) {
+    LOGGER.info(String.format("Received request to perform action %s of player %s in game %d",
+                              actionId, username, gameId));
+    if (!gameManager.exists(gameId)) {
+      return ResponseEntity.badRequest().body(String.format("Game with id %d does not exist",
+          gameId));
+    }
+    if (!gameManager.playerInGame(gameId, username)) {
+      return ResponseEntity.badRequest().body(String.format("Player %s is not in game with id %d",
+          username, gameId));
+    }
+    try {
+      gameManager.performAction(gameId, username, actionId, actionData);
+      LOGGER.info(String.format("Performed action %s of player %s in game with id %d",
+                                actionId, username, gameId));
+      return ResponseEntity.ok().build();
+    } catch (InvalidAction e) {
+      LOGGER.warning(e.getMessage());
+      return ResponseEntity.badRequest().body(e.getMessage());
+    }
   }
 }
