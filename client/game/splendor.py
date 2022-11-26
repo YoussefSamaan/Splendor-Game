@@ -7,6 +7,7 @@ from win32api import GetSystemMetrics
 
 from action import Action
 from client.game import server_manager
+from client.game.action_manager import ActionManager
 from deck import *
 from sidebar import *
 from splendorToken import Token
@@ -26,6 +27,7 @@ FLASH_TIMER = 0
 FLASH_START = 0
 NUM_PLAYERS = 4  # For now
 CURR_PLAYER = 0
+action_manager = None
 
 
 def initialize_game():
@@ -40,7 +42,9 @@ def initialize_game():
 
 
 def initialize_players():
-    names = ['Wassim', 'Kevin', 'Youssef', 'Rui']  # FIXME: change this
+    names = ['wassim', 'maex']  # FIXME: change this
+    global NUM_PLAYERS
+    NUM_PLAYERS = len(names)
     for i in range(0, NUM_PLAYERS):
         Player.instance(id=i, name=names[i])
 
@@ -85,7 +89,16 @@ def set_flash_message(text, timer=5):
 
 def update(authenticator, game_id):
     board_json = server_manager.get_board(authenticator=authenticator, game_id=game_id)
+    global action_manager
+    action_manager.update(Player.instance(id=CURR_PLAYER).name)
+    update_turn_player(board_json)
     GreenDeck.instance().update(board_json['decks'])
+
+
+def update_turn_player(board_json):
+    global CURR_PLAYER
+    CURR_PLAYER = board_json['currentTurn']
+    print("Current player is: " + str(Player.instance(id=CURR_PLAYER).name))
 
 
 def display():
@@ -158,23 +171,24 @@ def get_clicked_object(pos):
 
 def get_user_card_selection(card):
     """
-    Get the user's selection of cards to reserve or buy
+    Allow user to choose whether to buy or reserve the card
     :param card:
     :return:
     """
     dim_screen(DISPLAYSURF)
     action = card.get_user_selection(DISPLAYSURF)
-    global FLASH_MESSAGE, FLASH_TIMER, CURR_PLAYER
-    if action == Action.RESERVE:
-        card.reserve(Player.instance(id=CURR_PLAYER))
-        set_flash_message('Reserved a card')
-    elif action == Action.BUY:
-        card.buy(Player.instance(id=CURR_PLAYER))
-        set_flash_message('Bought a card')
-    elif action == Action.CANCEL:
-        return
+    global FLASH_MESSAGE, FLASH_TIMER, CURR_PLAYER, action_manager
+    if action_manager.is_valid_card_action(card, Player.instance(id=CURR_PLAYER).name, action):
+        if action == Action.BUY:
+            card.buy(Player.instance(id=CURR_PLAYER))
+            set_flash_message('Bought a card')
+        elif action == Action.RESERVE:
+            card.reserve(Player.instance(id=CURR_PLAYER))
+            set_flash_message('Reserved a card')
+        else:
+            return
     else:
-        raise ValueError('Invalid action')
+        set_flash_message('Invalid action')
 
 
 def perform_action(obj):
@@ -190,7 +204,6 @@ def perform_action(obj):
         obj.take_noble(Sidebar.instance(), Player.instance(id=CURR_PLAYER))
         set_flash_message('Took a noble')
     elif isinstance(obj, Player):
-        CURR_PLAYER = obj.pos
         Sidebar.instance().switch_player(obj)
 
 
@@ -208,7 +221,9 @@ def check_toggle(mouse_pos):
 
 def play(authenticator, game_id):
     initialize_game()
-    last_update = pygame.time.get_ticks()
+    last_update = pygame.time.get_ticks() - 10000  # force update on first loop
+    global action_manager
+    action_manager = ActionManager(authenticator=authenticator, game_id=game_id)
     while True:
         # update every 5 seconds on a separate thread
         if pygame.time.get_ticks() - last_update > 5000:

@@ -209,3 +209,6 @@ class Player:
         self.show_discounts(inventory)
 
         screen.blit(inventory, (x + self.BORDER_SIZE, y + self.BORDER_SIZE))
+
+    def get_name(self):
+        return self.name

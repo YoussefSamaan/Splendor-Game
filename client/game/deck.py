@@ -52,7 +52,6 @@ class Deck:
         for i, card in enumerate(deck_json["faceUpCards"], start=1):
             self.cardsOnDisplay[i] = Card.instance(id=card["cardId"], deck=self)
         print("Deck updated")
-        print(self.cardsOnDisplay)
 
     def is_empty(self):
         """
