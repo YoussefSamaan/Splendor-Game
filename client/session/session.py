@@ -81,12 +81,13 @@ def session():
         while True:
             screen.fill(GREY)
             newtext = base_font.render("Joining " + game +" confirm?", True, WHITE)
-            screen.blit(newtext, (350, 350))
-            screen.blit(back_text, (185, 125))
-            screen.blit(join_text, (400, 625))
+ 
             pygame.draw.rect(screen, RED, back_rect)
 
             pygame.draw.rect(screen, GREEN, join_rect)
+            screen.blit(newtext, (350, 350))
+            screen.blit(back_text, (185, 125))
+            screen.blit(join_text, (400, 625))
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
