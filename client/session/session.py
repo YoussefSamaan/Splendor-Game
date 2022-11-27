@@ -57,6 +57,8 @@ def session():
     next_button_rect = pygame.Rect((600, 660, 150, 70))
     delete_text = base_font.render("Delete", True, WHITE)
     back_text = base_font.render('Log Out', True, WHITE)
+    back_text2 = base_font.render('Back', True, WHITE)
+
     create_text = base_font.render('Create', True, WHITE)
     join_text = base_font.render('Join', True, WHITE)
     next_text = base_font.render('Next', True, WHITE)
@@ -83,7 +85,7 @@ def session():
 
             pygame.draw.rect(screen, GREEN, join_rect)
             screen.blit(newtext, (350, 350))
-            screen.blit(back_text, (185, 125))
+            screen.blit(back_text2, (185, 125))
             screen.blit(join_text, (400, 625))
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -147,13 +149,13 @@ def session():
                     # need to add the actual code
                 elif join_rect.collidepoint(event.pos):
                     pass
-                elif previous_button_rect.collidepoint(event.pos):
-                    if current_page > 0:
-                        current_page -= 1
+                # elif previous_button_rect.collidepoint(event.pos):
+                #     if current_page > 0:
+                #         current_page -= 1
                     
-                elif next_button_rect.collidepoint(event.pos):
-                    if current_page < len(get_games()) / 2:
-                        current_page += 1
+                # elif next_button_rect.collidepoint(event.pos):
+                #     if current_page < len(get_games()) / 2:
+                #         current_page += 1
 
                 else:
                     if wrong_credentials:
@@ -176,8 +178,8 @@ def session():
         pygame.draw.rect(screen, create_color, create_input_rect, 3)
 
         pygame.draw.rect(screen, RED, back_rect)
-        pygame.draw.rect(screen, GREEN, next_button_rect)
-        pygame.draw.rect(screen, GREEN, previous_button_rect)
+        # pygame.draw.rect(screen, GREEN, next_button_rect)
+        # pygame.draw.rect(screen, GREEN, previous_button_rect)
         pygame.draw.rect(screen, LIGHT_GREY, create_rect)
 
         screen.blit(create_text, (420, 325))
@@ -186,8 +188,8 @@ def session():
         screen.blit(create_text_surface, (create_input_rect.x + 5, create_input_rect.y + 5))
 
         screen.blit(back_text, (185, 125))
-        screen.blit(next_text, (655, 685))
-        screen.blit(previous_text, (185, 685))
+        # screen.blit(next_text, (655, 685))
+        # screen.blit(previous_text, (185, 685))
         screen.blit(create_text_display, (150, 225))
         
         create_input_rect.w = max(600, create_text_surface.get_width() + 10)
