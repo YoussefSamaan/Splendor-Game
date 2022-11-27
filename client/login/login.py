@@ -62,7 +62,7 @@ def login(authenticator: Authenticator):
             if event.type == pygame.MOUSEBUTTONDOWN:
                 wrong_credentials = False
                 if login_rect.collidepoint(event.pos):
-                    if authenticator.authenticate(username_text, password_text):
+                    if authenticator.authenticate(username_text, password_text).status_code == 200:
                         return
                     else:
                         wrong_credentials = True
