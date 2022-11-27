@@ -178,12 +178,14 @@ def get_user_card_selection(card):
     dim_screen(DISPLAYSURF)
     action = card.get_user_selection(DISPLAYSURF)
     global FLASH_MESSAGE, FLASH_TIMER, CURR_PLAYER, action_manager
-    if action_manager.is_valid_card_action(card, Player.instance(id=CURR_PLAYER).name, action):
+    server_action_id = action_manager.get_card_action_id(card, Player.instance(id=CURR_PLAYER).name,
+                                                         action)
+    if server_action_id > -1:
         if action == Action.BUY:
-            card.buy(Player.instance(id=CURR_PLAYER))
+            action_manager.perform_action(server_action_id)
             set_flash_message('Bought a card')
         elif action == Action.RESERVE:
-            card.reserve(Player.instance(id=CURR_PLAYER))
+            action_manager.perform_action(server_action_id)
             set_flash_message('Reserved a card')
         else:
             return
@@ -260,6 +262,7 @@ def play(authenticator, game_id):
                     check_toggle(position)
                     obj = get_clicked_object(position)
                     perform_action(obj)
+                    update(authenticator, game_id)
 
         display()
         pygame.display.update()

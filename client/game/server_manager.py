@@ -36,8 +36,27 @@ def get_actions(authenticator: Authenticator, game_id: str, player_name: str):
     }
     response = requests.get(url, data=data)
     if response.status_code == 200:
-        print(response.json())
         return response.json()
     raise Exception("Could not get actions")
 
 
+def perform_action(authenticator: Authenticator, game_id: str, player_name: str, action_id: int):
+    """
+    Performs the action with the given id.
+    :param authenticator: The authenticator of the user.
+    :param game_id: The id of the game.
+    :param player_name: the name of the player performing the action
+    :param action_id: The id of the action.
+    :return: The actions of the game.
+    """
+    url = config.server_url + '/api/games/' + game_id + '/players/' + player_name + '/actions/' \
+          + str(action_id)
+    data = {
+        "username": authenticator.username,
+        "access_token": authenticator.get_token(),
+    }
+    headers = {"Content-Type": "application/json; charset=utf-8"}
+    response = requests.post(url, data=data, headers=headers, json={})
+    if response.status_code == 200:
+        return
+    raise Exception("Could not perform action")

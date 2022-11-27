@@ -17,19 +17,21 @@ class ActionManager:
         self.last_updated_player = player_name
         self.actions = server_manager.get_actions(self.authenticator, self.game_id, player_name)
 
-    def is_valid_card_action(self, card: Card, player_name: str, action_type: Action):
-        print(card, action_type.value)
+    def get_card_action_id(self, card: Card, player_name: str, action_type: Action):
         if action_type == Action.CANCEL:
-            return True
+            return 0
         if player_name != self.last_updated_player:
             # Not player's turn
-            return False
+            return -1
         for action in self.actions:
-            print(action)
             if action['cardType'] != 'DevelopmentCard' or action['actionType'] != action_type.value\
-                    or action['actionId'] != card.get_id():
+                    or action['card']['cardId'] != card.get_id():
                 continue
-            return True
-        return False
+            return action['actionId']
+        return -1
+
+    def perform_action(self, action_id: int):
+        server_manager.perform_action(self.authenticator, self.game_id, self.last_updated_player,
+                                      action_id)
 
 
