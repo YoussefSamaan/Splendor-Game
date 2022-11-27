@@ -30,19 +30,14 @@ color_error = pygame.Color(RED)
 
 base_font = pygame.font.Font(None, 28)  # font, size
 
-def validate_session(name):
-    return True # need to add the actual code
-def add_session(name):
-    return True
-def validate_join(player):
-    return True # likewise
-
 def get_games():
     # gets games currently stored in memory
     return ["game1", "game2"]
 def get_players():
     # gets players currently stored in memory
-    return ["player1, player3", "player2, player4, player5"]
+    return ["player1, player3", "player5"]
+def get_creator():
+    return ["creator1", "creator2"]
 
 
 def session():
@@ -58,7 +53,7 @@ def session():
     delete_text = base_font.render("Delete", True, WHITE)
     back_text = base_font.render('Log Out', True, WHITE)
     back_text2 = base_font.render('Back', True, WHITE)
-
+    play_text = base_font.render('Play', True, WHITE)
     create_text = base_font.render('Create', True, WHITE)
     join_text = base_font.render('Join', True, WHITE)
     next_text = base_font.render('Next', True, WHITE)
@@ -72,10 +67,15 @@ def session():
 
     game_rect1 = pygame.Rect((150, 450, 400, 55))
     game_rect2 = pygame.Rect((150, 550, 400, 55))
-    del_rect1 = pygame.Rect((600, 450, 150, 55))
-    del_rect2 = pygame.Rect((600, 550, 150, 55))
+    del_rect1 = pygame.Rect((655, 450, 90, 55))
+    del_rect2 = pygame.Rect((655, 550, 90, 55))
+    leave_rect1 = pygame.Rect((650, 450, 100, 55)) # creator can't leave game 
+    leave_rect2 = pygame.Rect((650, 550, 100, 55))
+    play_rect1 = pygame.Rect((555, 450, 90, 55))
+    play_rect2 = pygame.Rect((555, 550, 90, 55))
     current_page = 0
     wrong_credentials = False # like session somehow invalid
+    
     def join(game):
         while True:
             screen.fill(GREY)
@@ -110,21 +110,25 @@ def session():
     def delete(game):
         pass
     
-    #TODO: add pop up confirmation for create and join
-    # connect to server
     while True:
         screen.fill(GREY)
         i = current_page * 2
-        last_game_name = base_font.render(get_games()[i] + " / " + get_players()[i], True, WHITE)
-        last_game_name = base_font.render(get_games()[i+1] + " / " + get_players()[i+1], True, WHITE)
+        game_name = base_font.render(get_games()[i] + " / "+ get_creator()[i] + " / " + get_players()[i], True, WHITE)
+        game_name2 = base_font.render(get_games()[i+1] + " / " + get_creator()[i+1] + " / " + get_players()[i+1], True, WHITE)
         pygame.draw.rect(screen, LIGHT_BLUE, game_rect1, 3)
-        screen.blit(last_game_name, (game_rect1[0]+20, game_rect1[1]+20))
+        screen.blit(game_name, (game_rect1[0]+20, game_rect1[1]+20))
         pygame.draw.rect(screen, LIGHT_BLUE, game_rect2, 3)
-        screen.blit(last_game_name, (game_rect2[0]+20, game_rect2[1]+20))
+        screen.blit(game_name2, (game_rect2[0]+20, game_rect2[1]+20))
         pygame.draw.rect(screen, RED, del_rect1)
         pygame.draw.rect(screen, RED, del_rect2)
-        screen.blit(delete_text, (del_rect1[0]+30, del_rect1[1]+20))
-        screen.blit(delete_text, (del_rect2[0]+30, del_rect2[1]+20))
+        pygame.draw.rect(screen, GREEN, play_rect1)
+        pygame.draw.rect(screen, GREEN, play_rect2)
+        screen.blit(play_text, (play_rect1[0]+20, play_rect1[1]+20))
+        screen.blit(play_text, (play_rect2[0]+20, play_rect2[1]+20))
+        # add code to make sure only creator can delete game 
+        # add code to make sure only joined player can leave game 
+        screen.blit(delete_text, (del_rect1[0]+20, del_rect1[1]+20))
+        screen.blit(delete_text, (del_rect2[0]+20, del_rect2[1]+20))
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
