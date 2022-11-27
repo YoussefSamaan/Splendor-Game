@@ -11,9 +11,14 @@ public class TokenBank implements Bank<Token> {
   private final HashMap<Color, Integer> tokens = new HashMap<>();
 
   /**
-   * Creates a new token bank with the maximum number of tokens of each color.
+   * Creates a new token bank.
+   *
+   * @param fill if true, the bank is filled with max number of tokens of each color.
    */
-  public TokenBank() {
+  public TokenBank(boolean fill) {
+    if (!fill) {
+      return;
+    }
     for (Color color : Color.tokenColors()) {
       tokens.put(color, Token.of(color).maxAmount());
     }
@@ -21,23 +26,23 @@ public class TokenBank implements Bank<Token> {
 
   @Override
   public void add(Token element) {
-    assert tokens.get(element.getColor()) < element.maxAmount();
-    tokens.put(element.getColor(), tokens.get(element.getColor()) + 1);
+    assert tokens.getOrDefault(element.getColor(), 0) < element.maxAmount();
+    tokens.put(element.getColor(), tokens.getOrDefault(element.getColor(), 0) + 1);
   }
 
   @Override
   public void remove(Token element) {
     assert contains(element);
-    tokens.put(element.getColor(), tokens.get(element.getColor()) - 1);
+    tokens.put(element.getColor(), tokens.getOrDefault(element.getColor(), 0) - 1);
   }
 
   @Override
   public boolean contains(Token element) {
-    return tokens.get(element.getColor()) > 0;
+    return tokens.getOrDefault(element.getColor(), 0) > 0;
   }
 
   @Override
   public int count(Token element) {
-    return tokens.get(element.getColor());
+    return tokens.getOrDefault(element.getColor(), 0);
   }
 }

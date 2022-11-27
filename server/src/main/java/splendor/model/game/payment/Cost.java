@@ -1,19 +1,20 @@
 package splendor.model.game.payment;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import splendor.model.game.Color;
 
 /**
  * Cost is a map of token colors to integers. It represents the cost of a card.
  */
-public class Cost {
+public class Cost implements Iterable<Color> {
   private final HashMap<Color, Integer> costMap;
 
   /**
    * Creates a new cost.
    */
   public Cost(HashMap<Color, Integer> costMap) {
-    this.costMap = costMap;
+    this.costMap = new HashMap<>(costMap);
   }
 
   /**
@@ -40,5 +41,10 @@ public class Cost {
       }
     }
     return true;
+  }
+
+  @Override
+  public Iterator<Color> iterator() {
+    return costMap.keySet().iterator();
   }
 }

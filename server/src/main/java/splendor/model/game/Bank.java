@@ -14,6 +14,17 @@ public interface Bank<T> {
   void add(T element);
 
   /**
+   * Supports adding multiple elements at once.
+   *
+   * @param elements the element to add
+   */
+  default void add(T... elements) {
+    for (T element : elements) {
+      add(element);
+    }
+  }
+
+  /**
    * Remove an element from the bank.
    *
    * @pre count(element) is less than element.maxAmount()

@@ -7,7 +7,6 @@ import splendor.model.game.Color;
  * Flyweight class for a development card.
  */
 public class DevelopmentCard extends AbstractCard implements DevelopmentCardI {
-  private static final String CARDS_JSON = "src/main/resources/cards.json";
   private final Color color;
   private static final int NUMBER_OF_CARDS = 120;
   private static final DevelopmentCard[] CARDS = new DevelopmentCard[NUMBER_OF_CARDS];

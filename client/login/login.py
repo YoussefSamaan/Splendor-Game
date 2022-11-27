@@ -2,7 +2,7 @@ import os
 
 import pygame
 import sys
-from .credential_validator import validate_credentials
+from authenticator import Authenticator
 
 HEIGHT = 750
 WIDTH = 900
@@ -15,7 +15,7 @@ RED = (255, 0, 0)
 FPS = 60
 
 
-def login():
+def login(authenticator: Authenticator):
     os.chdir(os.path.dirname(os.path.abspath(__file__)))
     pygame.init()
     pygame.display.set_caption('Splendor')
@@ -62,7 +62,7 @@ def login():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 wrong_credentials = False
                 if login_rect.collidepoint(event.pos):
-                    if validate_credentials(username_text, password_text):
+                    if authenticator.authenticate(username_text, password_text):
                         return
                     else:
                         wrong_credentials = True

@@ -2,13 +2,16 @@ package splendor.controller.game;
 
 import java.util.HashMap;
 import java.util.List;
+import javax.naming.InsufficientResourcesException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import splendor.controller.game.action.Action;
-import splendor.controller.game.action.ActionGenerator;
 import splendor.controller.lobbyservice.GameInfo;
 import splendor.model.game.Board;
 import splendor.model.game.SplendorGame;
+import splendor.model.game.action.Action;
+import splendor.model.game.action.ActionData;
+import splendor.model.game.action.ActionGenerator;
+import splendor.model.game.action.InvalidAction;
 import splendor.model.game.player.SplendorPlayer;
 
 /**
@@ -17,8 +20,8 @@ import splendor.model.game.player.SplendorPlayer;
  */
 @Component
 public class GameManager {
-  private HashMap<Long, SplendorGame> games = new HashMap<>();
-  private ActionGenerator actionGenerator;
+  private final HashMap<Long, SplendorGame> games = new HashMap<>();
+  private final ActionGenerator actionGenerator;
 
   private GameManager(@Autowired ActionGenerator actionGenerator) {
     this.actionGenerator = actionGenerator;
@@ -76,13 +79,38 @@ public class GameManager {
   /**
    * Generates the actions for a specific player.
    *
-   * @param gameId the id of the game
+   * @param gameId     the id of the game
    * @param playerName the name of the player
    * @return the actions for the player
    */
   public List<Action> generateActions(long gameId, String playerName) {
     SplendorGame game = games.get(gameId);
     SplendorPlayer player = game.getPlayer(playerName);
-    return actionGenerator.generateActions(games.get(gameId), player);
+    return actionGenerator.generateActions(game, gameId, player);
+  }
+
+  /**
+   * Check if a player is in a game.
+   *
+   * @param gameId     the id of the game
+   * @param playerName the name of the player
+   */
+  public boolean playerInGame(long gameId, String playerName) {
+    return exists(gameId) && games.get(gameId).getPlayer(playerName) != null;
+  }
+
+  /**
+   * Performs an action on a game.
+   *
+   * @param gameId     the id of the game
+   * @param username   the name of the player performing the action
+   * @param actionId   the id of the action
+   * @param actionData the data of the action
+   * @throws InvalidAction if the action is invalid
+   */
+  public void performAction(long gameId, String username, String actionId, ActionData actionData)
+      throws InvalidAction, InsufficientResourcesException {
+    Action action = actionGenerator.getGeneratedAction(gameId, Long.parseLong(actionId));
+    games.get(gameId).performAction(action, username, actionData);
   }
 }

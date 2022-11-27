@@ -209,3 +209,18 @@ class Player:
         self.show_discounts(inventory)
 
         screen.blit(inventory, (x + self.BORDER_SIZE, y + self.BORDER_SIZE))
+
+    def get_name(self):
+        return self.name
+
+    def update_player_inventory(self, player_json):
+        self.prestige_points = player_json['prestige_points']
+        inventory = player_json['inventory']
+        tokens = inventory['tokens']['tokens']
+        for color in tokens:
+            self.tokens[color] = tokens[color.value]
+        for noble in inventory['nobles']:
+            noble = Noble.instance(id=noble['cardId'])
+            self.add_noble_to_sidebar(noble)
+            noble.isOnDisplay = False
+

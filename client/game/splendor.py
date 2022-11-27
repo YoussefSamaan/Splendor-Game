@@ -1,15 +1,19 @@
 import os
 import sys
+import threading
 
 from pygame.locals import *
 from win32api import GetSystemMetrics
 
 from action import Action
+from client.game import server_manager
+from client.game.action_manager import ActionManager
 from deck import *
 from sidebar import *
 from splendorToken import Token
 
-os.chdir(os.path.dirname(os.path.abspath(__file__)))  # to make image imports start from current directory
+os.chdir(os.path.dirname(
+    os.path.abspath(__file__)))  # to make image imports start from current directory
 WIDTH, HEIGHT = GetSystemMetrics(0), GetSystemMetrics(1)
 FPS = 60
 FPSCLOCK = pygame.time.Clock()
@@ -23,23 +27,26 @@ FLASH_TIMER = 0
 FLASH_START = 0
 NUM_PLAYERS = 4  # For now
 CURR_PLAYER = 0
+action_manager = None
+has_initialized = False
 
 
-def initialize_game():
+def initialize_game(board_json):
     pygame.display.set_mode((WIDTH, HEIGHT), pygame.FULLSCREEN)
     initialize_board()
-    initialize_players()
     initialize_cards()
     initialize_tokens()
     initialize_nobles()
-    initialize_players()
+    initialize_players(board_json)
     initialize_sidebar()
 
 
-def initialize_players():
-    names = ['Wassim', 'Kevin', 'Youssef', 'Rui']  # FIXME: change this
+def initialize_players(board_json):
+    global NUM_PLAYERS
+    players = board_json['players']
+    NUM_PLAYERS = len(players)
     for i in range(0, NUM_PLAYERS):
-        Player.instance(id=i, name=names[i])
+        player = Player.instance(id=i, name=players[i]['name'])
 
 
 def initialize_board():
@@ -78,6 +85,34 @@ def show_flash_message():
 def set_flash_message(text, timer=5):
     global FLASH_MESSAGE, FLASH_TIMER, FLASH_START
     FLASH_MESSAGE, FLASH_TIMER, FLASH_START = text, timer, pygame.time.get_ticks()
+
+
+def update(authenticator, game_id):
+    global has_initialized
+    board_json = server_manager.get_board(authenticator=authenticator, game_id=game_id)
+    if not has_initialized:
+        has_initialized = True
+        initialize_game(board_json)
+    global action_manager
+    action_manager.update(Player.instance(id=CURR_PLAYER).name)
+    update_turn_player(board_json)
+    update_players(board_json)
+    GreenDeck.instance().update(board_json['decks'])
+
+
+def update_turn_player(board_json):
+    global CURR_PLAYER
+    CURR_PLAYER = board_json['currentTurn']
+    print("Current player is: " + str(Player.instance(id=CURR_PLAYER).name))
+
+
+def update_players(board_json):
+    global NUM_PLAYERS
+    players = board_json['players']
+    NUM_PLAYERS = len(players)
+    for i in range(0, NUM_PLAYERS):
+        player = Player.instance(id=i, name=players[i]['name'])
+        # player.update_player_inventory(players[i])
 
 
 def display():
@@ -150,23 +185,26 @@ def get_clicked_object(pos):
 
 def get_user_card_selection(card):
     """
-    Get the user's selection of cards to reserve or buy
+    Allow user to choose whether to buy or reserve the card
     :param card:
     :return:
     """
     dim_screen(DISPLAYSURF)
     action = card.get_user_selection(DISPLAYSURF)
-    global FLASH_MESSAGE, FLASH_TIMER, CURR_PLAYER
-    if action == Action.RESERVE:
-        card.reserve(Player.instance(id=CURR_PLAYER))
-        set_flash_message('Reserved a card')
-    elif action == Action.BUY:
-        card.buy(Player.instance(id=CURR_PLAYER))
-        set_flash_message('Bought a card')
-    elif action == Action.CANCEL:
-        return
+    global FLASH_MESSAGE, FLASH_TIMER, CURR_PLAYER, action_manager
+    server_action_id = action_manager.get_card_action_id(card, Player.instance(id=CURR_PLAYER).name,
+                                                         action)
+    if server_action_id > -1:
+        if action == Action.BUY:
+            action_manager.perform_action(server_action_id)
+            set_flash_message('Bought a card')
+        elif action == Action.RESERVE:
+            action_manager.perform_action(server_action_id)
+            set_flash_message('Reserved a card')
+        else:
+            return
     else:
-        raise ValueError('Invalid action')
+        set_flash_message('Invalid action')
 
 
 def perform_action(obj):
@@ -182,7 +220,6 @@ def perform_action(obj):
         obj.take_noble(Sidebar.instance(), Player.instance(id=CURR_PLAYER))
         set_flash_message('Took a noble')
     elif isinstance(obj, Player):
-        CURR_PLAYER = obj.pos
         Sidebar.instance().switch_player(obj)
 
 
@@ -198,10 +235,18 @@ def check_toggle(mouse_pos):
     sidebar.toggle(page_num)
 
 
-def play():
-    initialize_game()
+def play(authenticator, game_id):
+    last_update = pygame.time.get_ticks()  # force update on first loop
+    global action_manager
+    action_manager = ActionManager(authenticator=authenticator, game_id=game_id)
+    update(authenticator, game_id)
     while True:
-        display()
+        # update every 5 seconds on a separate thread
+        if pygame.time.get_ticks() - last_update > 5000:
+            last_update = pygame.time.get_ticks()
+            # start a new thread
+            with threading.Lock():
+                threading.Thread(target=update, args=(authenticator, game_id)).start()
         for event in pygame.event.get():
             if event.type == QUIT:
                 pygame.quit()
@@ -231,12 +276,8 @@ def play():
                     check_toggle(position)
                     obj = get_clicked_object(position)
                     perform_action(obj)
+                    update(authenticator, game_id)
 
-                    display()
-
+        display()
         pygame.display.update()
         FPSCLOCK.tick(FPS)
-
-
-if __name__ == '__main__':
-    play()

@@ -178,3 +178,6 @@ class Card:
         self.deck.take_card(self)
         #self.deck.add_reserved_to_sidebar(self)
         player.reserve_card(self)
+
+    def __str__(self):
+        return "Color: {}, id: {}".format(self._color, self._id)

@@ -1,7 +1,11 @@
 package splendor.model.game.player;
 
+import java.util.HashMap;
+import javax.naming.InsufficientResourcesException;
 import splendor.model.game.Color;
 import splendor.model.game.SplendorGame;
+import splendor.model.game.card.SplendorCard;
+import splendor.model.game.payment.Cost;
 
 /**
  * A player in the game.
@@ -9,6 +13,8 @@ import splendor.model.game.SplendorGame;
 public class Player implements PlayerReadOnly, SplendorPlayer {
   private final String name;
   private final String color;
+  private final Inventory inventory;
+  private final int prestigePoints = 0;
 
   /**
    * Creates a new player.
@@ -19,6 +25,8 @@ public class Player implements PlayerReadOnly, SplendorPlayer {
   public Player(String name, String color) {
     this.name = name;
     this.color = color;
+    //FIXME: Only for demo
+    this.inventory = Inventory.getDemoInventory();
   }
 
   /**
@@ -57,9 +65,22 @@ public class Player implements PlayerReadOnly, SplendorPlayer {
     return name;
   }
 
+  /**
+   * Buy card using player's resources.
+   *
+   * @param card the card to buy
+   * @throws InsufficientResourcesException if player does not have enough resources
+   */
   @Override
-  public void buyCard(int cardIndex, Color color, SplendorGame game) {
-
+  public void buyCard(SplendorCard card) throws InsufficientResourcesException {
+    Cost cost = card.getCost();
+    HashMap<Color, Integer> resources = inventory.getResources();
+    for (Color color : cost) {
+      if (resources.getOrDefault(color, 0) < cost.getValue(color)) {
+        throw new InsufficientResourcesException("Not enough resources to buy card");
+      }
+      inventory.payFor(color, cost.getValue(color));
+    }
   }
 
   @Override
@@ -70,5 +91,10 @@ public class Player implements PlayerReadOnly, SplendorPlayer {
   @Override
   public void takeToken(Color color, SplendorGame game) {
 
+  }
+
+  @Override
+  public boolean canAfford(SplendorCard card) {
+    return card.getCost().isAffordable(inventory.getResources());
   }
 }

@@ -1,6 +1,8 @@
+from client.authenticator import Authenticator
 from game import splendor
 from login import login
 
 if __name__ == '__main__':
-    login.login()
-    splendor.play()
+    authenticator = Authenticator()
+    login.login(authenticator)
+    splendor.play(authenticator=authenticator, game_id="7620377171362791498")
