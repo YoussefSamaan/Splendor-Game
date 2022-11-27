@@ -81,6 +81,7 @@ public class SplendorGame {
    * @param action     the action
    * @param username   the username
    * @param actionData the action data
+   * @post updates the turn
    */
   public void performAction(Action action, String username, ActionData actionData)
       throws InsufficientResourcesException {
@@ -91,5 +92,6 @@ public class SplendorGame {
     } else {
       throw new IllegalArgumentException("Invalid action");
     }
+    board.nextTurn();
   }
 }

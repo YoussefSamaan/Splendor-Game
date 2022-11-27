@@ -17,7 +17,7 @@ import splendor.model.game.player.SplendorPlayer;
  * The board of the game. Contains the players, the nobles, the decks, and the tokens
  */
 public class Board {
-  private final Set<Player> players;
+  private final Player[] players;
   private int currentTurn;
   private final SplendorDeck[] decks = new SplendorDeck[1];
   private final List<Noble> nobles = new ArrayList<>();
@@ -33,12 +33,13 @@ public class Board {
       throw new IllegalArgumentException(
               String.format("Only 2-4 players are allowed, not %d", players.length));
     }
-    this.players = Set.of(players);
-    if (this.players.size() != players.length) {
-      throw new IllegalArgumentException("Players must be unique");
+    this.players = players;
+    // make sure there are no duplicate players
+    if (Set.of(players).size() != players.length) {
+      throw new IllegalArgumentException("Duplicate players are not allowed");
     }
-    decks[0] = new Deck(Color.GREEN);
     currentTurn = 0;
+    decks[0] = new Deck(Color.GREEN);
   }
 
   /**
@@ -86,6 +87,14 @@ public class Board {
    * @return true if it's the player's turn
    */
   public boolean isTurnPlayer(SplendorPlayer player) {
-    return players.toArray()[currentTurn].equals(player);
+    return players[currentTurn].equals(player);
+  }
+
+  /**
+   * Updates the board to the next turn.
+   *
+   */
+  public void nextTurn() {
+    currentTurn = (currentTurn + 1) % players.length;
   }
 }
