@@ -111,7 +111,7 @@ public class GameManager {
   public void performAction(long gameId, String username, String actionId, ActionData actionData)
       throws InvalidAction, InsufficientResourcesException {
     Action action = actionGenerator.getGeneratedAction(gameId, Long.parseLong(actionId));
-    System.out.println(action);
     games.get(gameId).performAction(action, username, actionData);
+    actionGenerator.removeAction(gameId, Long.parseLong(actionId));
   }
 }
