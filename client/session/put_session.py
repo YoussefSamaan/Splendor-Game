@@ -1,9 +1,17 @@
 import requests
 
+# some_file.py
+import sys
+
+# caution: path[0] is reserved for script path (or '' in REPL)
+sys.path.insert(1, 'client\config')
+from config import LOBBY_SERVICE_URL
+
+
 def add_player(access_token, session, username):
-    url = f'http://localhost:4242/api/sessions/{session}/players/{username}?access_token={access_token}'
+    url = f"{LOBBY_SERVICE_URL}/api/sessions/{session}/players/{username}?access_token={access_token}"
     response = requests.put(url)
-    print(response.json())
+    # print(response.json())
     return response
 
-add_player("h9UONiYVQ43aYWAGFBEv2tsbqiY=", 2388798427305018889, "Linus")
+# add_player("m%2BL/mY/70yMWI4uE5wLaudtDpHs=", 636302944309790167, "maex")
