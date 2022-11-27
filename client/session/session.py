@@ -55,7 +55,7 @@ def session():
     back_rect = pygame.Rect((150, 100, 150, 70))
     previous_button_rect = pygame.Rect((150, 660, 150, 70))
     next_button_rect = pygame.Rect((600, 660, 150, 70))
-
+    delete_text = base_font.render("Delete", True, WHITE)
     back_text = base_font.render('Log Out', True, WHITE)
     create_text = base_font.render('Create', True, WHITE)
     join_text = base_font.render('Join', True, WHITE)
@@ -71,44 +71,77 @@ def session():
     create_active = False
     join_active = False
 
+    game_rect1 = pygame.Rect((150, 450, 400, 55))
+    game_rect2 = pygame.Rect((150, 550, 400, 55))
+    del_rect1 = pygame.Rect((600, 450, 150, 55))
+    del_rect2 = pygame.Rect((600, 550, 150, 55))
+    current_page = 0
     wrong_credentials = False # like session somehow invalid
     def join(game):
         while True:
             screen.fill(GREY)
-            newtext = "Joining " + game
-            screen.blit(newtext, (200, 50))
+            newtext = base_font.render("Joining " + game +" confirm?", True, WHITE)
+            screen.blit(newtext, (350, 350))
             screen.blit(back_text, (185, 125))
             screen.blit(join_text, (400, 625))
             pygame.draw.rect(screen, RED, back_rect)
+
             pygame.draw.rect(screen, GREEN, join_rect)
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    #wrong_credentials = False
+                    if join_rect.collidepoint(event.pos):
+                        if validate_session(create_text_entry):
+                            # move to the waiting room?
+                            add_session(create_text_entry)
+                            return
+                        else:
+                            wrong_credentials = True
+                    elif back_rect.collidepoint(event.pos):
+                        screen.fill(GREY)
+                        session()
+
+                    elif join_rect.collidepoint(event.pos) & join_active:
+                        pass
+
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        pygame.quit()
+                        sys.exit()
+            pygame.display.flip()
+            clock.tick(FPS)
     def delete(game):
         pass
     #TODO: add pop up confirmation for create and join
     # connect to server
     while True:
         screen.fill(GREY)
-        last_game_rect = pygame.Rect((150, 450, 600, 55))
-        last_game_location = (150, 450)
-        for i in range(len(get_games())):
-            #print(game)
-            last_game_name = base_font.render(get_games()[i] + " / " + get_players()[i], True, WHITE)
-            pygame.draw.rect(screen, LIGHT_BLUE, last_game_rect, 3)
-            screen.blit(last_game_name, (last_game_location[0]+20, last_game_location[1]+20))
-            last_game_location = (150, last_game_location[1] + 100)
-            last_game_rect = pygame.Rect((150, last_game_location[1], 600, 55))
+        i = current_page * 2
+        last_game_name = base_font.render(get_games()[i] + " / " + get_players()[i], True, WHITE)
+        last_game_name = base_font.render(get_games()[i+1] + " / " + get_players()[i+1], True, WHITE)
+        pygame.draw.rect(screen, LIGHT_BLUE, game_rect1, 3)
+        screen.blit(last_game_name, (game_rect1[0]+20, game_rect1[1]+20))
+        pygame.draw.rect(screen, LIGHT_BLUE, game_rect2, 3)
+        screen.blit(last_game_name, (game_rect2[0]+20, game_rect2[1]+20))
+        pygame.draw.rect(screen, RED, del_rect1)
+        pygame.draw.rect(screen, RED, del_rect2)
+        screen.blit(delete_text, (del_rect1[0]+30, del_rect1[1]+20))
+        screen.blit(delete_text, (del_rect2[0]+30, del_rect2[1]+20))
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 wrong_credentials = False
-                if create_rect.collidepoint(event.pos):
-                    if validate_session(create_text_entry):
-                        # move to the waiting room?
-                        add_session(create_text_entry)
-                        return
-                    else:
-                        wrong_credentials = True
+                if game_rect1.collidepoint(event.pos):
+                    print("TEST")
+                    join(get_games()[i])
+                elif game_rect2.collidepoint(event.pos):
+                    screen.fill(GREY)
+                    join(get_games()[i+1])
                 elif back_rect.collidepoint(event.pos):
                     screen.fill(GREY)
                     
@@ -119,9 +152,12 @@ def session():
                 elif join_rect.collidepoint(event.pos) & join_active:
                     pass
                 elif previous_button_rect.collidepoint(event.pos):
-                    pass
+                    if current_page > 0:
+                        current_page -= 1
+                    
                 elif next_button_rect.collidepoint(event.pos):
-                    pass
+                    if current_page < len(get_games()) / 2:
+                        current_page += 1
 
                 else:
                     if wrong_credentials:
