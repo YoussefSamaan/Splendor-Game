@@ -68,9 +68,6 @@ def session():
 
     create_text_surface = base_font.render(create_text_entry, True, WHITE)
 
-    create_active = False
-    join_active = False
-
     game_rect1 = pygame.Rect((150, 450, 400, 55))
     game_rect2 = pygame.Rect((150, 550, 400, 55))
     del_rect1 = pygame.Rect((600, 450, 150, 55))
@@ -93,19 +90,12 @@ def session():
                     pygame.quit()
                     sys.exit()
                 if event.type == pygame.MOUSEBUTTONDOWN:
-                    #wrong_credentials = False
-                    if join_rect.collidepoint(event.pos):
-                        if validate_session(create_text_entry):
-                            # move to the waiting room?
-                            add_session(create_text_entry)
-                            return
-                        else:
-                            wrong_credentials = True
-                    elif back_rect.collidepoint(event.pos):
+
+                    if back_rect.collidepoint(event.pos):
                         screen.fill(GREY)
                         session()
 
-                    elif join_rect.collidepoint(event.pos) & join_active:
+                    elif join_rect.collidepoint(event.pos):
                         pass
 
                 if event.type == pygame.KEYDOWN:
@@ -114,8 +104,10 @@ def session():
                         sys.exit()
             pygame.display.flip()
             clock.tick(FPS)
+    
     def delete(game):
         pass
+    
     #TODO: add pop up confirmation for create and join
     # connect to server
     while True:
@@ -145,12 +137,15 @@ def session():
                     join(get_games()[i+1])
                 elif back_rect.collidepoint(event.pos):
                     screen.fill(GREY)
-                    
+                elif del_rect1.collidepoint(event.pos):
+                    delete(get_games()[i])
+                elif del_rect2.collidepoint(event.pos):
+                    delete(get_games()[i+1])
                 elif create_input_rect.collidepoint(event.pos):
                     create_active = True
                     create_color = color_active
                     # need to add the actual code
-                elif join_rect.collidepoint(event.pos) & join_active:
+                elif join_rect.collidepoint(event.pos):
                     pass
                 elif previous_button_rect.collidepoint(event.pos):
                     if current_page > 0:
