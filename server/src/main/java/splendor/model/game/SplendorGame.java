@@ -5,6 +5,7 @@ import javax.naming.InsufficientResourcesException;
 import splendor.controller.lobbyservice.GameInfo;
 import splendor.model.game.action.Action;
 import splendor.model.game.action.ActionData;
+import splendor.model.game.action.CardActionType;
 import splendor.model.game.action.DevelopmentCardAction;
 import splendor.model.game.card.SplendorCard;
 import splendor.model.game.player.Player;
@@ -62,6 +63,7 @@ public class SplendorGame {
   }
 
   public void reserveCard(SplendorPlayer player, SplendorCard card) {
+    board.reserveCard(player, card);
   }
 
   /**
@@ -88,9 +90,14 @@ public class SplendorGame {
     // No use of action data for now, system automatically decides tokens to use for payment
     Player player = getPlayer(username);
     if (action instanceof DevelopmentCardAction) {
-      buyCard(player, ((DevelopmentCardAction) action).getCard());
+      DevelopmentCardAction cardAction = (DevelopmentCardAction) action;
+      if (cardAction.getType() == CardActionType.BUY) {
+        buyCard(player, ((DevelopmentCardAction) action).getCard());
+      } else {
+        reserveCard(player, ((DevelopmentCardAction) action).getCard());
+      }
     } else {
-      throw new IllegalArgumentException("Invalid action");
+      throw new IllegalArgumentException("Not yet implemented");
     }
     board.nextTurn();
   }

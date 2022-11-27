@@ -4,8 +4,10 @@ import java.util.HashMap;
 import javax.naming.InsufficientResourcesException;
 import splendor.model.game.Color;
 import splendor.model.game.SplendorGame;
+import splendor.model.game.card.DevelopmentCardI;
 import splendor.model.game.card.SplendorCard;
 import splendor.model.game.payment.Cost;
+import splendor.model.game.payment.Token;
 
 /**
  * A player in the game.
@@ -72,7 +74,7 @@ public class Player implements PlayerReadOnly, SplendorPlayer {
    * @throws InsufficientResourcesException if player does not have enough resources
    */
   @Override
-  public void buyCard(SplendorCard card) throws InsufficientResourcesException {
+  public void buyCard(DevelopmentCardI card) throws InsufficientResourcesException {
     Cost cost = card.getCost();
     HashMap<Color, Integer> resources = inventory.getResources();
     for (Color color : cost) {
@@ -80,12 +82,16 @@ public class Player implements PlayerReadOnly, SplendorPlayer {
         throw new InsufficientResourcesException("Not enough resources to buy card");
       }
       inventory.payFor(color, cost.getValue(color));
+      inventory.addCard(card);
     }
   }
 
   @Override
-  public void reserveCard(int cardIndex, Color color, SplendorGame game) {
-
+  public void reserveCard(DevelopmentCardI card, boolean addGoldToken) {
+    inventory.addCard(card);
+    if (addGoldToken) {
+      inventory.addTokens(Token.of(Color.GOLD), 1);
+    }
   }
 
   @Override

@@ -13,6 +13,7 @@ import splendor.model.game.player.SplendorPlayer;
 @Component
 public class ActionGenerator {
   private HashMap<Long, List<Action>> gameActions = new HashMap<>();
+  private HashMap<Long, String> gamePlayerActions = new HashMap<>();
 
   /**
    * Returns all possible actions for a given game state.
@@ -26,9 +27,15 @@ public class ActionGenerator {
     if (!game.isTurnPlayer(player)) {
       return actions;
     }
+    if (gamePlayerActions.containsKey(gameId) && gamePlayerActions.get(gameId)
+        .equals(player.getName())) {
+      // To check if the action was already generated for the player
+      return gameActions.get(gameId);
+    }
     // TODO: ADD more actions
     actions.addAll(DevelopmentCardAction.getLegalActions(game, player));
     gameActions.put(gameId, actions); // save the actions for later validation
+    gamePlayerActions.put(gameId, player.getName());
     return actions;
   }
 

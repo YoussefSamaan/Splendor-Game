@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.IntStream;
-import javax.naming.InsufficientResourcesException;
 import splendor.model.game.Color;
 import splendor.model.game.TokenBank;
 import splendor.model.game.card.DevelopmentCardI;

@@ -23,7 +23,7 @@ public class GameManager {
   private final HashMap<Long, SplendorGame> games = new HashMap<>();
   private final ActionGenerator actionGenerator;
 
-  private GameManager(@Autowired ActionGenerator actionGenerator) {
+  public GameManager(@Autowired ActionGenerator actionGenerator) {
     this.actionGenerator = actionGenerator;
   }
 
@@ -111,6 +111,7 @@ public class GameManager {
   public void performAction(long gameId, String username, String actionId, ActionData actionData)
       throws InvalidAction, InsufficientResourcesException {
     Action action = actionGenerator.getGeneratedAction(gameId, Long.parseLong(actionId));
+    System.out.println(action);
     games.get(gameId).performAction(action, username, actionData);
   }
 }
