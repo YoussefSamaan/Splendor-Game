@@ -137,3 +137,7 @@ server/docs
 
 # target
 server/target
+
+# IDE
+server/.*
+server/bin
