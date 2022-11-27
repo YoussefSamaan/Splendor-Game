@@ -40,6 +40,10 @@ def validate_join(player):
 def get_games():
     # gets games currently stored in memory
     return ["game1", "game2"]
+def get_players():
+    # gets players currently stored in memory
+    return ["player1, player3", "player2, player4, player5"]
+
 
 def session():
     # needs to add game to the list of games
@@ -65,22 +69,33 @@ def session():
     create_text_surface = base_font.render(create_text_entry, True, WHITE)
 
     create_active = False
+    join_active = False
 
     wrong_credentials = False # like session somehow invalid
-
+    def join(game):
+        while True:
+            screen.fill(GREY)
+            newtext = "Joining " + game
+            screen.blit(newtext, (200, 50))
+            screen.blit(back_text, (185, 125))
+            screen.blit(join_text, (400, 625))
+            pygame.draw.rect(screen, RED, back_rect)
+            pygame.draw.rect(screen, GREEN, join_rect)
+    def delete(game):
+        pass
     #TODO: add pop up confirmation for create and join
-
+    # connect to server
     while True:
         screen.fill(GREY)
-        last_game_rect = pygame.Rect((150, 450, 200, 55))
+        last_game_rect = pygame.Rect((150, 450, 600, 55))
         last_game_location = (150, 450)
-        for game in get_games():
+        for i in range(len(get_games())):
             #print(game)
-            last_game_name = base_font.render(game, True, WHITE)
+            last_game_name = base_font.render(get_games()[i] + " / " + get_players()[i], True, WHITE)
             pygame.draw.rect(screen, LIGHT_BLUE, last_game_rect, 3)
             screen.blit(last_game_name, (last_game_location[0]+20, last_game_location[1]+20))
             last_game_location = (150, last_game_location[1] + 100)
-            last_game_rect = pygame.Rect((150, last_game_location[1], 200, 55))
+            last_game_rect = pygame.Rect((150, last_game_location[1], 600, 55))
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -100,6 +115,13 @@ def session():
                 elif create_input_rect.collidepoint(event.pos):
                     create_active = True
                     create_color = color_active
+                    # need to add the actual code
+                elif join_rect.collidepoint(event.pos) & join_active:
+                    pass
+                elif previous_button_rect.collidepoint(event.pos):
+                    pass
+                elif next_button_rect.collidepoint(event.pos):
+                    pass
 
                 else:
                     if wrong_credentials:
