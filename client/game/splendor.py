@@ -28,25 +28,25 @@ FLASH_START = 0
 NUM_PLAYERS = 4  # For now
 CURR_PLAYER = 0
 action_manager = None
+has_initialized = False
 
 
-def initialize_game():
+def initialize_game(board_json):
     pygame.display.set_mode((WIDTH, HEIGHT), pygame.FULLSCREEN)
     initialize_board()
-    initialize_players()
     initialize_cards()
     initialize_tokens()
     initialize_nobles()
-    initialize_players()
+    initialize_players(board_json)
     initialize_sidebar()
 
 
-def initialize_players():
-    names = ['wassim', 'maex']  # FIXME: change this
+def initialize_players(board_json):
     global NUM_PLAYERS
-    NUM_PLAYERS = len(names)
+    players = board_json['players']
+    NUM_PLAYERS = len(players)
     for i in range(0, NUM_PLAYERS):
-        Player.instance(id=i, name=names[i])
+        player = Player.instance(id=i, name=players[i]['name'])
 
 
 def initialize_board():
@@ -88,10 +88,15 @@ def set_flash_message(text, timer=5):
 
 
 def update(authenticator, game_id):
+    global has_initialized
     board_json = server_manager.get_board(authenticator=authenticator, game_id=game_id)
+    if not has_initialized:
+        has_initialized = True
+        initialize_game(board_json)
     global action_manager
     action_manager.update(Player.instance(id=CURR_PLAYER).name)
     update_turn_player(board_json)
+    update_players(board_json)
     GreenDeck.instance().update(board_json['decks'])
 
 
@@ -99,6 +104,15 @@ def update_turn_player(board_json):
     global CURR_PLAYER
     CURR_PLAYER = board_json['currentTurn']
     print("Current player is: " + str(Player.instance(id=CURR_PLAYER).name))
+
+
+def update_players(board_json):
+    global NUM_PLAYERS
+    players = board_json['players']
+    NUM_PLAYERS = len(players)
+    for i in range(0, NUM_PLAYERS):
+        player = Player.instance(id=i, name=players[i]['name'])
+        # player.update_player_inventory(players[i])
 
 
 def display():
@@ -222,10 +236,10 @@ def check_toggle(mouse_pos):
 
 
 def play(authenticator, game_id):
-    initialize_game()
-    last_update = pygame.time.get_ticks() - 10000  # force update on first loop
+    last_update = pygame.time.get_ticks()  # force update on first loop
     global action_manager
     action_manager = ActionManager(authenticator=authenticator, game_id=game_id)
+    update(authenticator, game_id)
     while True:
         # update every 5 seconds on a separate thread
         if pygame.time.get_ticks() - last_update > 5000:

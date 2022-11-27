@@ -5,4 +5,4 @@ from login import login
 if __name__ == '__main__':
     authenticator = Authenticator()
     login.login(authenticator)
-    splendor.play(authenticator=authenticator, game_id="3559325797226476362")
+    splendor.play(authenticator=authenticator, game_id="7620377171362791498")
