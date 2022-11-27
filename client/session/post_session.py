@@ -1,29 +1,33 @@
 import requests
-# from config import config
+
+# some_file.py
+import sys
+
+# caution: path[0] is reserved for script path (or '' in REPL)
+sys.path.insert(1, 'client\config')
+from config import LOBBY_SERVICE_URL
+
 
 def create_session(username, access_token, savegameid):
-    url = f'http://localhost:4242/api/sessions?access_token={access_token}' # config.lobby_service_url + '/api/sessions'
+    url = f"{LOBBY_SERVICE_URL}/api/sessions?access_token={access_token}"
     data = {
         "creator": username,
         "game": "xox",
         "savegame": savegameid
     }
-    parameters = {
-        "access_token": access_token
-    }
     header = {
         "Content-Type" : "application/json"
     }
     response = requests.post(url, json=data, headers=header)
-    print(response.json())
+    # print(response.json())
     return response
 
 def launch_session(access_token, session):
-    url = f'http://localhost:4242/api/sessions/{session}?access_token={access_token}' # config.lobby_service_url + '/api/sessions'
+    url = f"{LOBBY_SERVICE_URL}/api/sessions/{session}?access_token={access_token}"
     response = requests.post(url)
-    print(response.json())
+    # print(response.json())
     return response
 
-test_access_token = "h9UONiYVQ43aYWAGFBEv2tsbqiY="
-create_session("maex", test_access_token, "")
-#launch_session(test_access_token, 551890973492251833)
+# test_access_token = "h9UONiYVQ43aYWAGFBEv2tsbqiY="
+# create_session("maex", test_access_token, "")
+# launch_session("nble56mnjuhvdtfjNQYijVCuYNk=", 636302944309790167)

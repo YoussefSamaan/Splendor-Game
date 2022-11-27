@@ -1,17 +1,31 @@
 import requests
 
-def get_session_details():
-    url = 'http://localhost:4242/api/sessions'    
+# some_file.py
+import sys
+
+# caution: path[0] is reserved for script path (or '' in REPL)
+sys.path.insert(1, 'client\config')
+from config import LOBBY_SERVICE_URL
+
+def get_all_sessions():
+    url = f"{LOBBY_SERVICE_URL}/api/sessions"    
     response = requests.get(url)
     print(response.json())
     return response
 
-def get_session_details(session):
-    url = f'http://localhost:4242/api/sessions/{session}'
+def get_all_sessions_long_polling(hash_code):
+    url = f"{LOBBY_SERVICE_URL}/api/sessions?hash={hash_code}"  
     response = requests.get(url)
-    print(response.json())
+    # print(response.json())
     return response
 
-get_session_details()
-get_session_details(4989443599829874511)
+
+def get_session(session):
+    url = f'{lobby_service_url}/api/sessions/{session}'
+    response = requests.get(url)
+    # print(response.json())
+    return response
+
+# get_all_sessions()
+# get_session(4989443599829874511)
 
