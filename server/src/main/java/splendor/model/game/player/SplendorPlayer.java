@@ -23,4 +23,11 @@ public interface SplendorPlayer {
    * @return true if player has enough resources to buy the card
    */
   boolean canAfford(SplendorCard card);
+
+  /**
+   * Get the player's name.
+   *
+   * @return the player's name
+   */
+  String getName();
 }

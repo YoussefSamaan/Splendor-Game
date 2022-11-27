@@ -89,10 +89,6 @@ public class Board {
   }
 
   private void reserveDevelopmentCard(SplendorPlayer player, DevelopmentCardI card) {
-    if (!player.canAfford(card)) {
-      throw new IllegalArgumentException("Player cannot afford card");
-    }
-
     takeCardFromDeck(card);
     boolean addGoldToken = false;
     if (bank.contains(Token.of(Color.GOLD))) {
