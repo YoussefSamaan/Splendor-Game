@@ -82,8 +82,8 @@ public class Player implements PlayerReadOnly, SplendorPlayer {
         throw new InsufficientResourcesException("Not enough resources to buy card");
       }
       inventory.payFor(color, cost.getValue(color));
-      inventory.addCard(card);
     }
+    inventory.addCard(card);
   }
 
   @Override
