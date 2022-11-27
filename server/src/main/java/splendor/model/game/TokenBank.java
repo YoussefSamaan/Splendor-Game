@@ -26,19 +26,19 @@ public class TokenBank implements Bank<Token> {
 
   @Override
   public void add(Token element) {
-    assert tokens.get(element.getColor()) < element.maxAmount();
+    assert tokens.getOrDefault(element.getColor(), 0) < element.maxAmount();
     tokens.put(element.getColor(), tokens.getOrDefault(element.getColor(), 0) + 1);
   }
 
   @Override
   public void remove(Token element) {
     assert contains(element);
-    tokens.put(element.getColor(), tokens.get(element.getColor()) - 1);
+    tokens.put(element.getColor(), tokens.getOrDefault(element.getColor(), 0) - 1);
   }
 
   @Override
   public boolean contains(Token element) {
-    return tokens.get(element.getColor()) > 0;
+    return tokens.getOrDefault(element.getColor(), 0) > 0;
   }
 
   @Override
