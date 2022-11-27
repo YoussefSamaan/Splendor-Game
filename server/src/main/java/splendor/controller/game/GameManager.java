@@ -23,7 +23,7 @@ public class GameManager {
   private final HashMap<Long, SplendorGame> games = new HashMap<>();
   private final ActionGenerator actionGenerator;
 
-  private GameManager(@Autowired ActionGenerator actionGenerator) {
+  public GameManager(@Autowired ActionGenerator actionGenerator) {
     this.actionGenerator = actionGenerator;
   }
 
