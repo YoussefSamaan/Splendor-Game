@@ -1,4 +1,4 @@
-package splendor.controller.game.action;
+package splendor.model.game.action;
 
 /**
  * Exception that is thrown when an action is invalid.

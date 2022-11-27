@@ -3,6 +3,7 @@ package splendor.controller.game;
 import com.google.gson.Gson;
 import java.util.logging.Logger;
 import javax.naming.AuthenticationException;
+import javax.naming.InsufficientResourcesException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,9 +12,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
-import splendor.controller.game.action.ActionData;
-import splendor.controller.game.action.InvalidAction;
 import splendor.controller.helper.Authenticator;
+import splendor.model.game.action.ActionData;
+import splendor.model.game.action.InvalidAction;
 
 /**
  * Controller responsible for all HTTP requests specific to a game.
@@ -21,8 +22,8 @@ import splendor.controller.helper.Authenticator;
 @RestController
 public class SplendorController extends HandlerInterceptorAdapter {
   private static final Logger LOGGER = Logger.getLogger(SplendorController.class.getName());
-  private GameManager gameManager;
-  private Authenticator authenticator;
+  private final GameManager gameManager;
+  private final Authenticator authenticator;
 
   public SplendorController(@Autowired GameManager gameManager,
                             @Autowired Authenticator authenticator) {
@@ -42,7 +43,7 @@ public class SplendorController extends HandlerInterceptorAdapter {
     String accessToken = request.getParameter("access_token");
     String username = request.getParameter("username");
     LOGGER.info(String.format("Received request to %s with access token %s and username %s",
-                              request.getRequestURI(), accessToken, username));
+        request.getRequestURI(), accessToken, username));
     // Check if access token is valid
     try {
       authenticator.authenticate(accessToken, username);
@@ -60,7 +61,7 @@ public class SplendorController extends HandlerInterceptorAdapter {
    *
    * @param gameId the id of the game.
    */
-  @GetMapping("/api/games/{gameId}/board")
+  @GetMapping(value = "/api/games/{gameId}/board")
   public ResponseEntity getBoard(@PathVariable long gameId) {
     LOGGER.info(String.format("Received request to get board of game with id %d", gameId));
     if (!gameManager.exists(gameId)) {
@@ -77,14 +78,14 @@ public class SplendorController extends HandlerInterceptorAdapter {
    * Generates all the actions that can be performed by the player.
    * This is used by the client to generate the buttons that the player can click.
    *
-   * @param gameId the id of the game.
+   * @param gameId   the id of the game.
    * @param username the username of the player.
    * @return a list of actions that the player can perform.
    */
   @GetMapping("/api/games/{gameId}/players/{username}/actions")
   public ResponseEntity getActions(@PathVariable long gameId, @PathVariable String username) {
     LOGGER.info(String.format("Received request to get actions of player %s in game with id %d",
-                              username, gameId));
+        username, gameId));
     if (!gameManager.exists(gameId)) {
       return ResponseEntity.badRequest().body(String.format("Game with id %d does not exist",
           gameId));
@@ -100,18 +101,16 @@ public class SplendorController extends HandlerInterceptorAdapter {
   /**
    * Performs a previously generated action.
    *
-   * @param gameId the id of the game.
-   * @param username the username of the player.
-   * @param actionId the id of the action.
-   * @param actionData the data of the action.
+   * @param gameId     the id of the game.
+   * @param username   the username of the player.
+   * @param actionId   the id of the action.
    */
   @PostMapping("/api/games/{gameId}/players/{username}/actions/{actionId}")
   public ResponseEntity performAction(@PathVariable long gameId,
                                       @PathVariable String username,
-                                      @PathVariable String actionId,
-                                      @RequestBody ActionData actionData) {
+                                      @PathVariable String actionId) {
     LOGGER.info(String.format("Received request to perform action %s of player %s in game %d",
-                              actionId, username, gameId));
+        actionId, username, gameId));
     if (!gameManager.exists(gameId)) {
       return ResponseEntity.badRequest().body(String.format("Game with id %d does not exist",
           gameId));
@@ -121,11 +120,12 @@ public class SplendorController extends HandlerInterceptorAdapter {
           username, gameId));
     }
     try {
+      ActionData actionData = new ActionData(); // dummy for now
       gameManager.performAction(gameId, username, actionId, actionData);
       LOGGER.info(String.format("Performed action %s of player %s in game with id %d",
-                                actionId, username, gameId));
+          actionId, username, gameId));
       return ResponseEntity.ok().build();
-    } catch (InvalidAction e) {
+    } catch (InvalidAction | InsufficientResourcesException e) {
       LOGGER.warning(e.getMessage());
       return ResponseEntity.badRequest().body(e.getMessage());
     }

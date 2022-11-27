@@ -1,4 +1,4 @@
-package splendor.controller.game.action;
+package splendor.model.game.action;
 
 
 import splendor.model.game.card.SplendorCard;

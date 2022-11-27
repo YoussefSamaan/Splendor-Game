@@ -1,9 +1,11 @@
 package splendor.model.game;
 
 import java.util.Arrays;
-import splendor.controller.game.action.Action;
-import splendor.controller.game.action.ActionData;
+import javax.naming.InsufficientResourcesException;
 import splendor.controller.lobbyservice.GameInfo;
+import splendor.model.game.action.Action;
+import splendor.model.game.action.ActionData;
+import splendor.model.game.action.DevelopmentCardAction;
 import splendor.model.game.card.SplendorCard;
 import splendor.model.game.player.Player;
 import splendor.model.game.player.SplendorPlayer;
@@ -13,8 +15,8 @@ import splendor.model.game.player.SplendorPlayer;
  */
 public class SplendorGame {
   private final GameInfo gameInfo;
-  private boolean isFinished;
   private final Board board;
+  private final boolean isFinished;
 
   /**
    * Creates a new game, with a fresh board.
@@ -43,9 +45,9 @@ public class SplendorGame {
    */
   public Player getPlayer(String name) {
     return Arrays.stream(gameInfo.getPlayers())
-            .filter(player -> player.getName().equals(name))
-            .findFirst()
-            .orElse(null);
+        .filter(player -> player.getName().equals(name))
+        .findFirst()
+        .orElse(null);
   }
 
   /**
@@ -54,7 +56,8 @@ public class SplendorGame {
    * @param player the player
    * @param card   the card
    */
-  public void buyCard(SplendorPlayer player, SplendorCard card) {
+  public void buyCard(SplendorPlayer player, SplendorCard card)
+      throws InsufficientResourcesException {
     board.buyCard(player, card);
   }
 
@@ -75,11 +78,18 @@ public class SplendorGame {
    * Performs an action.
    * Checking for the turn must have been done before.
    *
-   * @param action the action
-   * @param username the username
+   * @param action     the action
+   * @param username   the username
    * @param actionData the action data
    */
-  public void performAction(Action action, String username, ActionData actionData) {
-
+  public void performAction(Action action, String username, ActionData actionData)
+      throws InsufficientResourcesException {
+    // No use of action data for now, system automatically decides tokens to use for payment
+    Player player = getPlayer(username);
+    if (action instanceof DevelopmentCardAction) {
+      buyCard(player, ((DevelopmentCardAction) action).getCard());
+    } else {
+      throw new IllegalArgumentException("Invalid action");
+    }
   }
 }

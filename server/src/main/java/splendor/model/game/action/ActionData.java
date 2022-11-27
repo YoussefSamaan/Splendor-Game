@@ -1,4 +1,4 @@
-package splendor.controller.game.action;
+package splendor.model.game.action;
 
 import java.util.HashMap;
 import splendor.model.game.Color;
@@ -18,5 +18,20 @@ public class ActionData {
     this.payment = payment;
   }
 
+  /**
+   * Empty constructor.
+   *
+   */
+  public ActionData() {
+    this.payment = new HashMap<>();
+  }
 
+  /**
+   * Gets the payment.
+   *
+   * @return the payment
+   */
+  public HashMap<Color, Integer> getPayment() {
+    return payment;
+  }
 }

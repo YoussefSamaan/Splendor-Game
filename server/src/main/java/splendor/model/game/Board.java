@@ -3,6 +3,7 @@ package splendor.model.game;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import javax.naming.InsufficientResourcesException;
 import splendor.model.game.card.DevelopmentCardI;
 import splendor.model.game.card.Noble;
 import splendor.model.game.card.SplendorCard;
@@ -55,14 +56,16 @@ public class Board {
    * @param player the player buying the card
    * @param card the card to buy
    */
-  public void buyCard(SplendorPlayer player, SplendorCard card) {
+  public void buyCard(SplendorPlayer player, SplendorCard card)
+      throws InsufficientResourcesException {
     if (card instanceof Noble) {
       throw new IllegalArgumentException("Cannot buy a noble yet");
     }
     buyDevelopmentCard(player, (DevelopmentCardI) card);
   }
 
-  private void buyDevelopmentCard(SplendorPlayer player, DevelopmentCardI card) {
+  private void buyDevelopmentCard(SplendorPlayer player, DevelopmentCardI card)
+      throws InsufficientResourcesException {
     if (!player.canAfford(card)) {
       throw new IllegalArgumentException("Player cannot afford card");
     }

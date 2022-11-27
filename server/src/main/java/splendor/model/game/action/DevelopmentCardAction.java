@@ -1,4 +1,4 @@
-package splendor.controller.game.action;
+package splendor.model.game.action;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,4 +1,4 @@
-package splendor.controller.game.action;
+package splendor.model.game.action;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -38,11 +38,12 @@ public class ActionGenerator {
    * @param gameId the id of the game
    * @param actionId the id of the action
    * @return the action
+   * @throws InvalidAction if the action does not exist
    */
-  public Action getGeneratedAction(long gameId, long actionId) {
+  public Action getGeneratedAction(long gameId, long actionId) throws InvalidAction {
     return gameActions.get(gameId).stream()
         .filter(action -> action.getId() == actionId)
         .findFirst()
-        .orElseThrow(() -> new IllegalArgumentException("Action not found"));
+        .orElseThrow(() -> new InvalidAction("Action not found"));
   }
 }

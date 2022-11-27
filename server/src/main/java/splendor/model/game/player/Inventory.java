@@ -3,10 +3,13 @@ package splendor.model.game.player;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.IntStream;
+import javax.naming.InsufficientResourcesException;
 import splendor.model.game.Color;
 import splendor.model.game.TokenBank;
 import splendor.model.game.card.DevelopmentCardI;
 import splendor.model.game.card.Noble;
+import splendor.model.game.card.SplendorCard;
 import splendor.model.game.payment.Bonus;
 import splendor.model.game.payment.Token;
 
@@ -67,19 +70,18 @@ public class Inventory {
     for (Color color : Color.tokenColors()) {
       resources.put(color, tokens.count(Token.of(color)));
     }
-    for (DevelopmentCardI card : cards) {
+    addBonus(cards, resources);
+    addBonus(nobles, resources);
+    return resources;
+  }
+
+  private void addBonus(List<? extends SplendorCard> cards, HashMap<Color, Integer> resources) {
+    for (SplendorCard card : cards) {
       Bonus bonus = card.getBonus();
       for (Color color : card.getBonus()) {
         resources.put(color, resources.get(color) + bonus.getBonus(color));
       }
     }
-    for (Noble noble : nobles) {
-      Bonus bonus = noble.getBonus();
-      for (Color color : noble.getBonus()) {
-        resources.put(color, resources.get(color) + bonus.getBonus(color));
-      }
-    }
-    return resources;
   }
 
   /**
@@ -91,5 +93,19 @@ public class Inventory {
       inventory.addTokens(Token.of(color), 3);
     }
     return inventory;
+  }
+
+  /**
+   * To make a payment of some color.
+   *
+   * @param color the color to pay
+   * @param amount the amount to pay
+   * @pre player has enough resources
+   */
+  public void payFor(Color color, int amount) {
+    int discount = nobles.stream().mapToInt(noble -> noble.getBonus().getBonus(color)).sum();
+    discount += cards.stream().mapToInt(card -> card.getBonus().getBonus(color)).sum();
+    int toPay = amount - discount;
+    IntStream.range(0, toPay).forEach(i -> tokens.remove(Token.of(color)));
   }
 }

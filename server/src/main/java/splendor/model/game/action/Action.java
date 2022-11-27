@@ -1,7 +1,4 @@
-package splendor.controller.game.action;
-
-import splendor.model.game.SplendorGame;
-import splendor.model.game.player.SplendorPlayer;
+package splendor.model.game.action;
 
 /**
  * Interface for all actions that can be performed by a player.
