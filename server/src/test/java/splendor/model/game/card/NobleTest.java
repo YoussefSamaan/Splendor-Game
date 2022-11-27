@@ -1,0 +1,48 @@
+package splendor.model.game.card;
+
+import org.junit.jupiter.api.*;
+
+import splendor.model.game.Color;
+import splendor.model.game.payment.Bonus;
+import splendor.model.game.payment.Cost;
+
+public class NobleTest {
+
+	@Test
+	void validateGetNobleClass() {
+		Assertions.assertEquals(Noble.class, Noble.get(1).getClass());
+	}
+	
+	@Test
+	void tryGetIllegalNoble() {
+		Assertions.assertThrows(IllegalArgumentException.class, () -> {
+			Noble.get(-1);
+		});
+		Assertions.assertTrue(true);
+	}
+	
+	@Test
+	void validateGetCost() {
+		Cost testCost = Noble.get(3).getCost();
+		Assertions.assertEquals(testCost.getValue(Color.BROWN), 4);
+	}
+	
+	@Test
+	void validateGetBonus() {
+		Bonus testBonus = Noble.get(3).getBonus();
+		Assertions.assertEquals(testBonus.getBonus(Color.GREEN), 1);
+	}
+	
+	// TODO: Test non-zero prestige points when JSON file is complete
+	@Test
+	void validateGetPrestigePoints() {
+		int testPrestigePoints = Noble.get(1).getPrestigePoints();
+		Assertions.assertEquals(testPrestigePoints, 0);
+	}
+	
+	@Test
+	void validateGetId() {
+		int testId = Noble.get(3).getCardId();
+		Assertions.assertEquals(testId, 3);
+	}
+}
