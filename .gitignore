@@ -138,6 +138,9 @@ server/docs
 # target
 server/target
 
+# splendor.iml
+server/splendor.iml
+
 # IDE
 server/.*
 server/bin
