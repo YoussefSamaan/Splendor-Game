@@ -1,4 +1,4 @@
-package controller.game;
+package splendor.controller.game;
 
 import java.lang.reflect.Field;
 import org.junit.Before;

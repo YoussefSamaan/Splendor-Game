@@ -8,10 +8,10 @@ import splendor.model.game.player.Player;
  */
 public class GameInfo {
 
-  private String gameServer;
-  private String creator;
-  private Player[] players;
-  private String savegame;
+  private final String gameServer;
+  private final String creator;
+  private final Player[] players;
+  private final String savegame;
 
   /**
    * Instantiates a new Game info.
@@ -26,10 +26,6 @@ public class GameInfo {
     this.creator = creator;
     this.players = players;
     this.savegame = savegame;
-  }
-
-  public String getGameServer() {
-    return gameServer;
   }
 
   public Player[] getPlayers() {
