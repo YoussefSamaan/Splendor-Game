@@ -21,7 +21,7 @@ public class Board {
   private int currentTurn;
   private final SplendorDeck[] decks = new SplendorDeck[1];
   private final List<Noble> nobles = new ArrayList<>();
-  private final Bank<Token> bank = new TokenBank(true);
+  private final TokenBank bank = new TokenBank(true);
 
   /**
    * Creates a new board.
