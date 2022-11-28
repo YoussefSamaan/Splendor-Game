@@ -214,13 +214,13 @@ class Player:
         return self.name
 
     def update_player_inventory(self, player_json):
-        self.prestige_points = player_json['prestige_points']
+        self.prestige_points = player_json['prestigePoints']
         inventory = player_json['inventory']
         tokens = inventory['tokens']['tokens']
-        for color in tokens:
-            self.tokens[color] = tokens[color.value]
-        for noble in inventory['nobles']:
-            noble = Noble.instance(id=noble['cardId'])
-            self.add_noble_to_sidebar(noble)
-            noble.isOnDisplay = False
+        # for color in tokens:
+        #     self.tokens[color] = tokens[color.value]
+        # for noble in inventory['nobles']:
+        #     noble = Noble.instance(id=noble['cardId'])
+        #     self.add_noble_to_sidebar(noble)
+        #     noble.isOnDisplay = False
 

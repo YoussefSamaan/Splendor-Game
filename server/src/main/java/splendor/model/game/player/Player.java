@@ -18,7 +18,7 @@ public class Player implements PlayerReadOnly, SplendorPlayer {
   private final String name;
   private final String color;
   private final Inventory inventory;
-  private final int prestigePoints = 0;
+  private int prestigePoints = 0;
 
   /**
    * Creates a new player.
@@ -71,6 +71,7 @@ public class Player implements PlayerReadOnly, SplendorPlayer {
 
   /**
    * Buy card using player's resources.
+   * Updates prestige points.
    *
    * @param card the card to buy
    * @throws InsufficientResourcesException if player does not have enough resources
@@ -87,6 +88,7 @@ public class Player implements PlayerReadOnly, SplendorPlayer {
       inventory.payFor(color, cost.getValue(color));
     }
     inventory.addBoughtCard(card);
+    prestigePoints += card.getPrestigePoints();
   }
 
   @Override

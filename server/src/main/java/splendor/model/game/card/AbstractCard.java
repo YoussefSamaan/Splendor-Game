@@ -73,8 +73,8 @@ public abstract class AbstractCard implements SplendorCard {
    * @return the prestige points of the card.
    */
   protected int getPrestigePointsFromJson() {
-    if (getCardJson().has("prestigePoints")) {
-      return getCardJson().getInt("prestigePoints");
+    if (getCardJson().has("prestige_points")) {
+      return getCardJson().getInt("prestige_points");
     }
     return 0;
   }

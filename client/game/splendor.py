@@ -128,7 +128,7 @@ def update_players(board_json):
     NUM_PLAYERS = len(players)
     for i in range(0, NUM_PLAYERS):
         player = Player.instance(id=i, name=players[i]['name'])
-        # player.update_player_inventory(players[i])
+        player.update_player_inventory(players[i])
 
 
 def display():
