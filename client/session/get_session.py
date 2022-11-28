@@ -5,8 +5,8 @@ import sys
 
 # caution: path[0] is reserved for script path (or '' in REPL)
 sys.path.insert(1, 'client\config')
-from config import LOBBY_SERVICE_URL
-
+from config import *
+LOBBY_SERVICE_URL = config.get_url()
 def get_all_sessions():
     url = f"{LOBBY_SERVICE_URL}/api/sessions"    
     response = requests.get(url)
