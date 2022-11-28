@@ -38,45 +38,65 @@ auth = Authenticator()
 def set_authentication(username, password):
     auth.authenticate(username, password)
 
+#fs_access_token = '6fZgH9D%2BmWV7ZnbyxQg9/XXPhVc=' # FS20221128: for testing
 
 '''ALL FUNCTIONS HERE HAVE TO BE CHANGED'''
+# FS20221128: works. Uses game id as game name. Maybe calling them "game1, game2" would be nicer.
 def get_games():
     # gets games currently stored in memory
-    json = get_session.get_all_sessions_long_polling(auth.get_token()).json()
+    access_token = auth.get_token()
+    # access_token = fs_access_token #for testing
+    json = get_session.get_all_sessions_long_polling(access_token).json()
     names = []
     for game in json['sessions']:
-        names.append(game['savegameid'])
+        names.append(game)
     return names
     
+# FS20221128: Haven't tested, but I think it might work.
 def get_joined_games():
     # get every game joined by the curr player
-    json = get_session.get_all_sessions_long_polling(auth.get_token()).json()
+    access_token = auth.get_token()
+    # access_token = fs_access_token #for testing
+    json = get_session.get_all_sessions_long_polling(access_token).json()
     games = []
     for game in json['sessions']:
-        if (auth.username) in game['players']:
-            games.append(game['savegameid'])
+        if (auth.username) in json['sessions'][f'{game}']['players']:
+            games.append(game)
     return games
 
+# FS20221128: Works. Does not include creator in list of players
 def get_players():
     # gets players currently stored in memory
-    json = get_session.get_all_sessions_long_polling(auth.get_token()).json()
+    access_token = auth.get_token()
+    # access_token = fs_access_token #for testing
+    json = get_session.get_all_sessions_long_polling(access_token).json()
     players = []
-    for game in json['sessions']:
-        players.append([game['players']])
-    print(players)
+    for item in json['sessions']:
+        p = json['sessions'][f'{item}']['players']
+        p.pop(0) # don't include creator in list of players to reduce clutter
+        p_clean = ', '.join(p) #remove brackets from e.g. ['maex', 'linus'] to get maex, linus
+        players.append(str(p_clean))
     return players
 
-# This function gets the creators of all games. Is this intended?
+
+# This function gets the creators of all games. Is this intended? Ans: Yes (Felicia)
+# FS20221128: Works
 def get_creator():
     # gets creator of the game
-    json = get_session.get_all_sessions_long_polling(auth.get_token()).json()
-    creator = []
+    access_token = auth.get_token()
+    # access_token = fs_access_token #for testing
+    json = get_session.get_all_sessions_long_polling(access_token).json()
+    creators = []
     for game in json['sessions']:
-        creator.append(game['creator'])
-    return creator
+        creator = json['sessions'][f'{game}']['creator']
+        creators.append(str(creator))
+    return creators
 
+# FS20221128: I did not test or modify. Probably doesn't work.
 def is_game_launched(game_id):
-    json = get_session.get_all_sessions_long_polling(auth.get_token()).json()
+    access_token = auth.get_token()
+    # access_token = fs_access_token #for testing
+    json = get_session.get_all_sessions_long_polling(access_token).json()
     for game in json['sessions']:
         if game['savegameid'] == game_id:
             return game['launched']
