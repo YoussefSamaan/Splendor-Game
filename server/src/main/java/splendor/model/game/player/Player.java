@@ -83,12 +83,12 @@ public class Player implements PlayerReadOnly, SplendorPlayer {
       }
       inventory.payFor(color, cost.getValue(color));
     }
-    inventory.addCard(card);
+      inventory.addBoughtCard(card);
   }
 
   @Override
   public void reserveCard(DevelopmentCardI card, boolean addGoldToken) {
-    inventory.addCard(card);
+    inventory.addReservedCard(card);
     if (addGoldToken) {
       inventory.addTokens(Token.of(Color.GOLD), 1);
     }
