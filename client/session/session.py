@@ -32,12 +32,17 @@ splendor_text = pygame.transform.scale(splendor_text, (500, 200))
 color_active = pygame.Color(LIGHT_BLUE)
 color_passive = pygame.Color(LIGHT_GREY)
 color_error = pygame.Color(RED)
+
 auth = Authenticator()
+
+def set_authentication(username, password):
+    auth.authenticate(username, password)
+
 
 '''ALL FUNCTIONS HERE HAVE TO BE CHANGED'''
 def get_games():
     # gets games currently stored in memory
-    json = get_session.get_all_sessions_long_polling(Authenticator.get_token()).json()
+    json = get_session.get_all_sessions_long_polling(auth.get_token()).json()
     names = []
     for game in json:
         names.append(game['savegameid'])
@@ -45,16 +50,16 @@ def get_games():
     
 def get_joined_games():
     # get every game joined by the curr player
-    json = get_session.get_all_sessions_long_polling(Authenticator.get_token()).json()
+    json = get_session.get_all_sessions_long_polling(auth.get_token()).json()
     games = []
     for game in json:
-        if (Authenticator.username) in game['players']:
+        if (auth.username) in game['players']:
             games.append(game['savegameid'])
     return games
 
 def get_players():
     # gets players currently stored in memory
-    json = get_session.get_all_sessions_long_polling(Authenticator.get_token()).json()
+    json = get_session.get_all_sessions_long_polling(auth.get_token()).json()
     players = []
     for game in json:
         players.append([game['players']])
