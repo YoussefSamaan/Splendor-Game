@@ -1,8 +1,12 @@
 package splendor.model.game;
 
+import java.util.List;
 import javax.naming.InsufficientResourcesException;
 import org.junit.jupiter.api.*;
 import splendor.controller.lobbyservice.GameInfo;
+import splendor.model.game.action.Action;
+import splendor.model.game.action.ActionData;
+import splendor.model.game.action.ActionGenerator;
 import splendor.model.game.card.DevelopmentCard;
 import splendor.model.game.card.SplendorCard;
 import splendor.model.game.player.Player;
@@ -38,13 +42,12 @@ public class SplendorGameTest {
 	@Test
 	void buyCardTest() {
 		try {
-			Assertions.assertTrue(player1.canAfford((SplendorCard) DevelopmentCard.get(1)));
-			testSplendorGame.buyCard(player1, (SplendorCard) DevelopmentCard.get(1));
+			Assertions.assertTrue(player1.canAfford(DevelopmentCard.get(1)));
+			testSplendorGame.buyCard(player1, DevelopmentCard.get(1));
 			//player1.canAfford((SplendorCard) DevelopmentCard.get(1))
 		} catch (InsufficientResourcesException e) {
-			Assertions.assertTrue(false);
+			Assertions.fail();
 		}
-		
 		Assertions.assertTrue(true);
 	}
 	
@@ -58,4 +61,24 @@ public class SplendorGameTest {
 	}
 	
 	// TODO: Test performAction
+	@Test
+	public void testPerformAction() {
+		ActionGenerator actionGenerator = new ActionGenerator();
+		List<Action> actions = actionGenerator.generateActions(testSplendorGame, 1, player1);
+		Action action = actions.get(0);
+		ActionData actionData = new ActionData();
+		try {
+			testSplendorGame.performAction(action, player1.getName(), actionData);
+		}
+		catch (Exception e) {
+			Assertions.fail();
+		}
+		Assertions.assertTrue(true);
+	}
+
+	@Test
+	public void testPerformingActionUpdatesTurn() {
+		testPerformAction();
+		Assertions.assertFalse(testSplendorGame.isTurnPlayer(player1));
+	}
 }

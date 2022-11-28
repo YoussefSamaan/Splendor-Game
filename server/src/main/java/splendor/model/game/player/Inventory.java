@@ -91,7 +91,7 @@ public class Inventory {
     for (SplendorCard card : cards) {
       Bonus bonus = card.getBonus();
       for (Color color : card.getBonus()) {
-        resources.put(color, resources.get(color) + bonus.getBonus(color));
+        resources.put(color, resources.getOrDefault(color, 0) + bonus.getBonus(color));
       }
     }
   }

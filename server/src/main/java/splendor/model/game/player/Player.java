@@ -83,7 +83,7 @@ public class Player implements PlayerReadOnly, SplendorPlayer {
       }
       inventory.payFor(color, cost.getValue(color));
     }
-      inventory.addBoughtCard(card);
+    inventory.addBoughtCard(card);
   }
 
   @Override
