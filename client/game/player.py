@@ -98,6 +98,7 @@ class Player:
     def get_true_cost(self, cost, discount):
         """
         Returns an updated cost after removing discounts from previously owned cards
+        if the cost is negative, it returns 0
         """
         if cost - discount >= 0:
             return cost-discount
