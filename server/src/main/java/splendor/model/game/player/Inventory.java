@@ -1,6 +1,7 @@
 package splendor.model.game.player;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.IntStream;
@@ -18,7 +19,9 @@ import splendor.model.game.payment.Token;
  */
 public class Inventory {
   private final TokenBank tokens;
-  private final List<DevelopmentCardI> cards = new ArrayList<>();
+  private final List<DevelopmentCardI> boughtCards = new ArrayList<>();
+  private final List<DevelopmentCardI> reservedCards = new ArrayList<>();
+  private final HashMap<Color, Integer> discounts = new HashMap<>();
   private List<Noble> nobles = new ArrayList<>();
 
   /**
@@ -33,8 +36,18 @@ public class Inventory {
    *
    * @param card the card to add
    */
-  public void addCard(DevelopmentCardI card) {
-    cards.add(card);
+  public void addBoughtCard(DevelopmentCardI card) {
+    this.boughtCards.add(card);
+    addBonus(Collections.singletonList(card), this.discounts);
+  }
+
+  /**
+   * Adds a development card to the inventory as a reserved card.
+   *
+   * @param card the card to add
+   */
+  public void addReservedCard(DevelopmentCardI card) {
+    this.reservedCards.add(card);
   }
 
   /**
@@ -69,7 +82,7 @@ public class Inventory {
     for (Color color : Color.tokenColors()) {
       resources.put(color, tokens.count(Token.of(color)));
     }
-    addBonus(cards, resources);
+    addBonus(boughtCards, resources);
     addBonus(nobles, resources);
     return resources;
   }
@@ -103,7 +116,7 @@ public class Inventory {
    */
   public void payFor(Color color, int amount) {
     int discount = nobles.stream().mapToInt(noble -> noble.getBonus().getBonus(color)).sum();
-    discount += cards.stream().mapToInt(card -> card.getBonus().getBonus(color)).sum();
+    discount += boughtCards.stream().mapToInt(card -> card.getBonus().getBonus(color)).sum();
     int toPay = amount - discount;
     IntStream.range(0, toPay).forEach(i -> tokens.remove(Token.of(color)));
   }

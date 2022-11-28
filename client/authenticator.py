@@ -14,7 +14,7 @@ class Authenticator:
         url = config.lobby_service_url + '/oauth/token'
         data = {
             'grant_type': 'password',
-            'username': "wassim", #username,
+            'username': username, #username,
             'password': "abc123_ABC123", #password
         }
         response = requests.post(url, data=data, auth=('bgp-client-name', 'bgp-client-pw'))

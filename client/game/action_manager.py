@@ -1,6 +1,6 @@
-from client.game import server_manager
-from client.game.action import Action
-from client.game.card import Card
+from game import server_manager
+from game.action import Action
+from game.card import Card
 
 
 class ActionManager:

@@ -6,8 +6,8 @@ from pygame.locals import *
 from win32api import GetSystemMetrics
 
 from action import Action
-from client.game import server_manager
-from client.game.action_manager import ActionManager
+from game import server_manager
+from game.action_manager import ActionManager
 from deck import *
 from sidebar import *
 from splendorToken import Token
