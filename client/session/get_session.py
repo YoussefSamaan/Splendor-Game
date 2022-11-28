@@ -10,7 +10,7 @@ LOBBY_SERVICE_URL = config.get_url()
 def get_all_sessions():
     url = f"{LOBBY_SERVICE_URL}/api/sessions"    
     response = requests.get(url)
-    print(response.json())
+    # print(response.json())
     return response
 
 def get_all_sessions_long_polling(hash_code):
