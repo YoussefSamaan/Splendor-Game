@@ -293,9 +293,15 @@ self.get_true_cost(cost.get_black() - self.discounts.get_black()))
         for color in newtokens:
             self.tokens[color] = newtokens[color.value]
         for noble in inventory['nobles']:
-            noble = Noble.instance(id=noble['cardId'])
-            self.add_noble_to_sidebar(noble)
-            noble.isOnDisplay = False
+            if noble not in self.nobles.keys():
+                noble = Noble.instance(id=noble['cardId'])
+                self.add_noble_to_sidebar(noble)
+                noble.isOnDisplay = False
+        for card in inventory['cards']:
+            if card not in self.cards_bought.keys():
+                card = Card.instance(id=card['cardId'])
+                self.add_card_to_sidebar(card)
+                card.isOnDisplay = False
         self.discounts = Bonus( inventory['discounts']["RED"], inventory['discounts']["GREEN"], inventory['discounts']["WHITE"], inventory['discounts']["BLUE"], inventory['discounts']["BROWN"])
 
 
