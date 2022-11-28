@@ -52,7 +52,7 @@ def get_joined_games():
     # get every game joined by the curr player
     json = get_session.get_all_sessions_long_polling(auth.get_token()).json()
     games = []
-    for game in json:
+    for game in json['sessions']:
         if (auth.username) in game['players']:
             games.append(game['savegameid'])
     return games
@@ -61,23 +61,26 @@ def get_players():
     # gets players currently stored in memory
     json = get_session.get_all_sessions_long_polling(auth.get_token()).json()
     players = []
-    for game in json:
+    for game in json['sessions']:
         players.append([game['players']])
     print(players)
     return players
 
+# This function gets the creators of all games. Is this intended?
 def get_creator():
     # gets creator of the game
     json = get_session.get_all_sessions_long_polling(auth.get_token()).json()
     creator = []
-    for game in json:
+    for game in json['sessions']:
         creator.append(game['creator'])
     return creator
-def is_game_launched(game):
+
+def is_game_launched(game_id):
     json = get_session.get_all_sessions_long_polling(auth.get_token()).json()
-    for g in json:
-        if g['savegameid'] == game:
-            return g['launched']
+    for game in json['sessions']:
+        if game['savegameid'] == game_id:
+            return game['launched']
+
 def session():
     # needs to add game to the list of games
     # some sort of scrolling game inventory
