@@ -11,7 +11,6 @@ from noble import Noble
 from splendorToken import Token
 from utils import write_on, SIDEBAR_IMAGE_SCALE
 
-
 @Flyweight
 class Player:
     '''
