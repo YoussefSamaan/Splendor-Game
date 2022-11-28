@@ -6,7 +6,7 @@ parentdir = os.path.dirname(currentdir)
 sys.path.append(parentdir)
 from authenticator import *
 
-from session import get_session
+from session import get_session, post_session
 
 
 HEIGHT = 750
@@ -128,6 +128,9 @@ def session(authenticator):
     current_page = 0
     wrong_credentials = False # like session somehow invalid
     create_active = False # whether you're clicked on the text input
+
+    def create_game(game):
+        post_session.create_session(current_player.username, authenticator.get_token(), game)
     def join(game):
         while True:
             screen.fill(GREY)
@@ -169,6 +172,9 @@ def session(authenticator):
         # len getgames would be 3
 
         # TODO: Add case for 0 games
+        if len(get_games()) == 0:
+            continue
+        
         if len(get_games())-i > 0:
             game_name = base_font.render(get_games()[i] + " / "+ get_creator()[i] + " / " + get_players()[i], True, WHITE)
             screen.blit(game_name, (game_rect1[0]+20, game_rect1[1]+20))
@@ -229,6 +235,8 @@ def session(authenticator):
                     create_active = True
                     create_color = color_active
                     # need to add the actual code
+                elif create_rect.collidepoint(event.pos):
+                    create_game(create_text_entry)
                 elif join_rect.collidepoint(event.pos):
                     pass
                 # elif previous_button_rect.collidepoint(event.pos):
