@@ -40,9 +40,6 @@ public class ActionGeneratorTest {
     List<Action> actions1 = actionGenerator.generateActions(testSplendorGame, 1, player1);
     Action action = actionGenerator.getGeneratedAction(1, actions1.get(0).getId());
     Assertions.assertEquals(actions1.get(0), action);
-    actionGenerator.removeAction(1,action.getId());
-//    Assertions.assertThrows(InvalidAction.class,() -> {
-//      Action errorAction = actionGenerator.getGeneratedAction(1, actions1.get(0).getId());
-//    });
+    actionGenerator.removeActions(1);
   }
 }
