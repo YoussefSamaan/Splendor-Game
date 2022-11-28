@@ -6,7 +6,7 @@ parentdir = os.path.dirname(currentdir)
 sys.path.append(parentdir)
 from authenticator import *
 
-from session import get_session, post_session
+from session import get_session, post_session, put_session, delete_session
 
 
 HEIGHT = 750
@@ -150,10 +150,10 @@ def session(authenticator):
 
                     if back_rect.collidepoint(event.pos):
                         screen.fill(GREY)
-                        session()
+                        session(authenticator)
 
                     elif join_rect.collidepoint(event.pos):
-                        pass
+                        put_session.add_player(authenticator.get_token(), game, current_player.username)
 
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
