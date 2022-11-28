@@ -36,17 +36,4 @@ public class Authenticator {
       throw new AuthenticationException("Token does not belong to a player.");
     }
   }
-
-  /**
-   * This method is used to authenticate a request is from an admin.
-   *
-   * @param token the authentication token
-   * @throws AuthenticationException if the authentication fails
-   */
-  public void authenticateAdmin(String token, String username)
-          throws AuthenticationException {
-    if (!tokenHelper.validate(token, username, Role.ADMIN)) {
-      throw new AuthenticationException("Admin privileges are required for this request");
-    }
-  }
 }

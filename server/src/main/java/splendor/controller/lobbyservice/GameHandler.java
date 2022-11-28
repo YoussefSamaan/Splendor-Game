@@ -33,15 +33,14 @@ public class GameHandler {
   @PutMapping(value = "/api/games/{gameId}", consumes = "application/json; charset=utf-8")
   public ResponseEntity startGame(@PathVariable long gameId, @RequestBody GameInfo gameInfo) {
     try {
-      LOGGER.info(String.format("Received request to create game with gameInfo %s",
-                                gameInfo.toString()));
+      LOGGER.info("Received request to create game");
       LOGGER.info(String.format("Starting game with id %d", gameId));
       gameManager.createGame(gameInfo, gameId);
     } catch (IllegalArgumentException e) {
       LOGGER.warning(e.getMessage());
       return ResponseEntity.badRequest().body(e.getMessage());
     }
-    LOGGER.info(String.format("Game with id %d started", gameId));
+    LOGGER.info(String.format("Game with id %d and gameInfo: %s started", gameId, gameInfo));
     return ResponseEntity.ok().build();
   }
 
