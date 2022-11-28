@@ -25,6 +25,7 @@ DECKS = [BlueDeck, RedDeck3, YellowDeck, RedDeck2, GreenDeck, RedDeck1]
 FLASH_MESSAGE = None
 FLASH_TIMER = 0
 FLASH_START = 0
+FLASH_COLOR = GREEN
 NUM_PLAYERS = 4  # For now
 CURR_PLAYER = 0
 action_manager = None
@@ -79,12 +80,14 @@ def show_flash_message():
     time_diff = (pygame.time.get_ticks() - FLASH_START) / 1000
     if FLASH_MESSAGE is None or time_diff > FLASH_TIMER:
         return
-    flash_message(DISPLAYSURF, FLASH_MESSAGE, opacity=255 * (1 - time_diff / FLASH_TIMER))
+    flash_message(DISPLAYSURF, FLASH_MESSAGE,
+                  color=FLASH_COLOR, opacity=255 * (1 - time_diff / FLASH_TIMER))
 
 
-def set_flash_message(text, timer=5):
-    global FLASH_MESSAGE, FLASH_TIMER, FLASH_START
+def set_flash_message(text, color=GREEN, timer=5):
+    global FLASH_MESSAGE, FLASH_TIMER, FLASH_START, FLASH_COLOR
     FLASH_MESSAGE, FLASH_TIMER, FLASH_START = text, timer, pygame.time.get_ticks()
+    FLASH_COLOR = color
 
 
 def update(authenticator, game_id):
@@ -213,7 +216,7 @@ def get_user_card_selection(card):
         else:
             return
     else:
-        set_flash_message('Invalid action')
+        set_flash_message('Invalid action', color=RED)
 
 
 def perform_action(obj):
@@ -285,7 +288,8 @@ def play(authenticator, game_id):
                     check_toggle(position)
                     obj = get_clicked_object(position)
                     perform_action(obj)
-                    update(authenticator, game_id)
+                    with threading.Lock():
+                        threading.Thread(target=update, args=(authenticator, game_id)).start()
 
         display()
         pygame.display.update()
