@@ -172,7 +172,7 @@ class Card:
     def buy(self, player):
         self.deck.take_card(self)
         #self.deck.add_card_to_sidebar(self)
-        player.add_card(self)
+        player.buy_card(self)
 
     def reserve(self, player):
         self.deck.take_card(self)
