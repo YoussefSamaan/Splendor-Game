@@ -45,6 +45,9 @@ public class ActionGenerator {
    * @throws InvalidAction if the action does not exist
    */
   public Action getGeneratedAction(long gameId, long actionId) throws InvalidAction {
+    if (!gameActions.containsKey(gameId)) {
+      throw new InvalidAction("Game id does not exist");
+    }
     return gameActions.get(gameId).stream()
         .filter(action -> action.getId() == actionId)
         .findFirst()
