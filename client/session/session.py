@@ -1,6 +1,11 @@
 import os
 import pygame
 import sys
+import authenticator
+import get_session
+import delete_session
+import put_session
+import post_session
 
 HEIGHT = 750
 WIDTH = 900
@@ -29,6 +34,7 @@ color_error = pygame.Color(RED)
 '''ALL FUNCTIONS HERE HAVE TO BE CHANGED'''
 def get_games():
     # gets games currently stored in memory
+    response = get_session.get_all_sessions_long_polling(authenticator.get_token())
     return ["game1", "game2"]
 def get_joined_games():
     return ["game2"]
