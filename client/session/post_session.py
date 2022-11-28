@@ -5,7 +5,7 @@ import sys
 
 # caution: path[0] is reserved for script path (or '' in REPL)
 sys.path.insert(1, 'client\config')
-from config import LOBBY_SERVICE_URL
+from config.config import LOBBY_SERVICE_URL
 
 
 def create_session(username, access_token, savegameid):
