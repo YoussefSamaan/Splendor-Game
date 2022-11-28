@@ -49,10 +49,11 @@ def session():
 
     create_rect = pygame.Rect((350, 300, 200, 70))
     join_rect = pygame.Rect((350, 600, 200, 70))
-    back_rect = pygame.Rect((150, 100, 150, 70))
+    back_rect = pygame.Rect((50, 100, 150, 70))
     previous_button_rect = pygame.Rect((150, 660, 150, 70))
     next_button_rect = pygame.Rect((600, 660, 150, 70))
     delete_text = base_font.render("Delete", True, WHITE)
+    base_text = base_font.render("Create a new game", True, WHITE)
     back_text = base_font.render('Log Out', True, WHITE)
     back_text2 = base_font.render('Back', True, WHITE)
     play_text = base_font.render('Play', True, WHITE)
@@ -65,8 +66,6 @@ def session():
     create_color = color_passive
 
     create_text_entry = ""
-
-    create_text_surface = base_font.render(create_text_entry, True, WHITE)
 
     game_rect1 = pygame.Rect((150, 450, 400, 55))
     game_rect2 = pygame.Rect((150, 550, 400, 55))
@@ -204,7 +203,7 @@ def session():
                     sys.exit()
                 if create_active:
                     if event.key == pygame.K_BACKSPACE:
-                        create_text_entry = create_text[:-1] # deletes last character
+                        create_text_entry = create_text_entry[:-1] # deletes last character
                     else:
                         create_text_entry += event.unicode
         
@@ -219,8 +218,8 @@ def session():
 
         create_text_surface = base_font.render(create_text_entry, True, WHITE)
         screen.blit(create_text_surface, (create_input_rect.x + 5, create_input_rect.y + 5))
-
-        screen.blit(back_text, (185, 125))
+        screen.blit(base_text, (350,17))
+        screen.blit(back_text, (85, 125))
         # screen.blit(next_text, (655, 685))
         # screen.blit(previous_text, (185, 685))
         screen.blit(create_text_display, (150, 225))
