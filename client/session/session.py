@@ -33,43 +33,32 @@ color_active = pygame.Color(LIGHT_BLUE)
 color_passive = pygame.Color(LIGHT_GREY)
 color_error = pygame.Color(RED)
 
-auth = Authenticator()
+current_player = Authenticator()
+current_player.username = "maex"
 
-def set_authentication(username, password):
-    auth.authenticate(username, password)
-
-#fs_access_token = '6fZgH9D%2BmWV7ZnbyxQg9/XXPhVc=' # FS20221128: for testing
 
 '''ALL FUNCTIONS HERE HAVE TO BE CHANGED'''
-# FS20221128: works. Uses game id as game name. Maybe calling them "game1, game2" would be nicer.
 def get_games():
     # gets games currently stored in memory
-    access_token = auth.get_token()
-    # access_token = fs_access_token #for testing
-    json = get_session.get_all_sessions_long_polling(access_token).json()
+    json = get_session.get_all_sessions().json()
     names = []
     for game in json['sessions']:
         names.append(game)
     return names
     
-# FS20221128: Haven't fixed, doesn't work.
-def get_joined_games():
+def get_joined_games(current_player):
     # get every game joined by the curr player
-    access_token = auth.get_token()
-    # access_token = fs_access_token #for testing
-    json = get_session.get_all_sessions_long_polling(access_token).json()
+    json = get_session.get_all_sessions().json()
     games = []
     for game in json['sessions']:
-        if (auth.username) in json['sessions'][f'{game}']['players']:
+        if current_player.username in json['sessions'][f'{game}']['players']:
             games.append(game)
+    # print(games)
     return games
 
-# FS20221128: Works. Does not include creator in list of players
 def get_players():
     # gets players currently stored in memory
-    access_token = auth.get_token()
-    # access_token = fs_access_token #for testing
-    json = get_session.get_all_sessions_long_polling(access_token).json()
+    json = get_session.get_all_sessions().json()
     players = []
     for item in json['sessions']:
         p = json['sessions'][f'{item}']['players']
@@ -78,34 +67,31 @@ def get_players():
         players.append(str(p_clean))
     return players
 
-
-# This function gets the creators of all games. Is this intended? Ans: Yes (Felicia)
-# FS20221128: Works
+# This function gets the creators of all games. Is this intended?
 def get_creator():
     # gets creator of the game
-    access_token = auth.get_token()
-    # access_token = fs_access_token #for testing
-    json = get_session.get_all_sessions_long_polling(access_token).json()
+    json = get_session.get_all_sessions().json()
     creators = []
     for game in json['sessions']:
         creator = json['sessions'][f'{game}']['creator']
         creators.append(str(creator))
     return creators
 
-# FS20221128: I did not test or modify. Probably doesn't work.
 def is_game_launched(game_id):
-    access_token = auth.get_token()
-    # access_token = fs_access_token #for testing
-    json = get_session.get_all_sessions_long_polling(access_token).json()
+    json = get_session.get_all_sessions().json()
     for game in json['sessions']:
-        if game['savegameid'] == game_id:
-            return game['launched']
+        # if game['savegameid'] == game_id:
+        # print(game_id)
+        # print(game)
+        # print(int(game) == game_id)
+        if int(game) == game_id:
+            # print(json['sessions'][f'{game}']['launched'])
+            return json['sessions'][f'{game}']['launched']
+
 
 def session():
     # needs to add game to the list of games
     # some sort of scrolling game inventory
-
-    current_player = "creator1" # NEED TO CHANGE THIS 
 
     create_input_rect = pygame.Rect((150, 250, 200, 35))  # pos_x, pos_y, width, height
 
@@ -196,7 +182,7 @@ def session():
                 else:
                     pygame.draw.rect(screen, GREEN, launch_rect1)
                     screen.blit(launch_text, (launch_rect1[0]+20, launch_rect1[1]+20))
-            elif get_games()[i] in get_joined_games():
+            elif get_games()[i] in get_joined_games(current_player):
                     pygame.draw.rect(screen, GREEN, launch_rect1)
                     screen.blit(launch_text, (launch_rect1[0]+10, launch_rect1[1]+20))
 
@@ -214,7 +200,7 @@ def session():
                 else:
                     pygame.draw.rect(screen, GREEN, launch_rect2)
                     screen.blit(launch_text, (launch_rect2[0]+10, launch_rect2[1]+20))
-            elif get_games()[i+1] in get_joined_games():
+            elif get_games()[i+1] in get_joined_games(current_player):
                     pygame.draw.rect(screen, GREEN, launch_rect2)
                     screen.blit(launch_text, (launch_rect2[0]+10, launch_rect2[1]+20))
 
@@ -228,7 +214,7 @@ def session():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 wrong_credentials = False
                 if game_rect1.collidepoint(event.pos):
-                    print("TEST")
+                    # print("TEST")
                     join(get_games()[i])
                 elif game_rect2.collidepoint(event.pos):
                     screen.fill(GREY)
