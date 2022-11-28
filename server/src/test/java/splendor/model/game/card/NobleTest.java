@@ -23,13 +23,13 @@ public class NobleTest {
 	
 	@Test
 	void validateGetCost() {
-		Cost testCost = Noble.get(3).getCost();
+		Cost testCost = Noble.get(4).getCost();
 		Assertions.assertEquals(testCost.getValue(Color.BROWN), 4);
 	}
 	
 	@Test
 	void validateGetBonus() {
-		Bonus testBonus = Noble.get(3).getBonus();
+		Bonus testBonus = Noble.get(4).getBonus();
 		Assertions.assertEquals(testBonus.getBonus(Color.GREEN), 1);
 	}
 	

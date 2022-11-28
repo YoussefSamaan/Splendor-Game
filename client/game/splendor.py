@@ -97,7 +97,16 @@ def update(authenticator, game_id):
     action_manager.update(Player.instance(id=CURR_PLAYER).name)
     update_turn_player(board_json)
     update_players(board_json)
+    update_decks(board_json)
+
+
+def update_decks(board_json):
     GreenDeck.instance().update(board_json['decks'])
+    BlueDeck.instance().update(board_json['decks'])
+    RedDeck3.instance().update(board_json['decks'])
+    YellowDeck.instance().update(board_json['decks'])
+    RedDeck2.instance().update(board_json['decks'])
+    RedDeck1.instance().update(board_json['decks'])
 
 
 def update_turn_player(board_json):

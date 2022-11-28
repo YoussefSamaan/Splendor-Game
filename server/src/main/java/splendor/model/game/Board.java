@@ -19,7 +19,7 @@ import splendor.model.game.player.SplendorPlayer;
 public class Board {
   private final Player[] players;
   private int currentTurn;
-  private final SplendorDeck[] decks = new SplendorDeck[1];
+  private final SplendorDeck[] decks = new SplendorDeck[6];
   private final List<Noble> nobles = new ArrayList<>();
   private final TokenBank bank = new TokenBank(true);
 
@@ -40,6 +40,11 @@ public class Board {
     }
     currentTurn = 0;
     decks[0] = new Deck(Color.GREEN);
+    decks[1] = new Deck(Color.YELLOW);
+    decks[2] = new Deck(Color.BLUE);
+    decks[3] = new Deck(Color.RED, 1);
+    decks[4] = new Deck(Color.RED, 2);
+    decks[5] = new Deck(Color.RED, 3);
   }
 
   /**
