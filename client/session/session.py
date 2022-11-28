@@ -52,7 +52,7 @@ def get_games():
         names.append(game)
     return names
     
-# FS20221128: Haven't tested, but I think it might work.
+# FS20221128: Haven't fixed, doesn't work.
 def get_joined_games():
     # get every game joined by the curr player
     access_token = auth.get_token()
