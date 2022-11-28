@@ -28,13 +28,13 @@ public class DevelopmentCardTest {
 	
 	@Test
 	void validateGetCost() {
-		Cost testCost = DevelopmentCard.get(3).getCost();
+		Cost testCost = DevelopmentCard.get(4).getCost();
 		Assertions.assertEquals(testCost.getValue(Color.BROWN), 4);
 	}
 	
 	@Test
 	void validateGetBonus() {
-		Bonus testBonus = DevelopmentCard.get(3).getBonus();
+		Bonus testBonus = DevelopmentCard.get(4).getBonus();
 		Assertions.assertEquals(testBonus.getBonus(Color.GREEN), 1);
 	}
 	

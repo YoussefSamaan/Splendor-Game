@@ -5,7 +5,9 @@ import static java.util.Collections.shuffle;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
@@ -18,8 +20,13 @@ import splendor.model.game.card.DevelopmentCardI;
  */
 
 public class Deck implements SplendorDeck {
-  private static String CARDS_JSON = "src/main/resources/cards.json";
-  private transient JSONObject cardsJson;
+  private static final String CARDS_JSON = "src/main/resources/cards.json";
+  private static final Map<Color, Integer> DECK_LEVELS = Map.ofEntries(
+          Map.entry(Color.GREEN, 1),
+          Map.entry(Color.BLUE, 3),
+          Map.entry(Color.YELLOW, 2)
+  );
+  private static JSONObject cardsJson;
   private final transient List<DevelopmentCardI> faceDown = new ArrayList<>();
   private final DevelopmentCardI[] faceUpCards = new DevelopmentCardI[3];
 
@@ -35,9 +42,15 @@ public class Deck implements SplendorDeck {
    */
   public Deck(Color color) {
     this.color = color;
-    this.level = 1;
+    this.level = DECK_LEVELS.get(color);
+    initDeck();
+  }
+
+  private void initDeck() {
     try {
-      cardsJson = new JSONObject(new JSONTokener(new FileReader(CARDS_JSON)));
+      if (cardsJson == null) {
+        cardsJson = new JSONObject(new JSONTokener(new FileReader(CARDS_JSON)));
+      }
     } catch (FileNotFoundException e) {
       throw new RuntimeException("Could not find cards.json");
     }
@@ -62,7 +75,7 @@ public class Deck implements SplendorDeck {
     }
     this.color = color;
     this.level = level;
-    addAllCards();
+    initDeck();
   }
 
   /**

@@ -17,7 +17,8 @@ import splendor.model.game.payment.Cost;
 public abstract class AbstractCard implements SplendorCard {
 
   private static final String CARDS_JSON = "src/main/resources/cards.json";
-  private final int cardId;
+  private static JSONObject json;
+  private final int cardId; // 1 indexed
   private final transient Cost cost;
   private final transient int prestigePoints;
   private final transient Bonus bonus;
@@ -110,7 +111,14 @@ public abstract class AbstractCard implements SplendorCard {
    */
   protected JSONObject getCardJson() {
     JSONArray cards = getJson().getJSONArray("cards");
-    return cards.getJSONObject(cardId);
+    // TODO: replace above by below when nobles are added to json:
+    // if (this instanceof Noble) {
+    //   cards = getJson().getJSONArray("nobles");
+    // }
+    // else {
+    //   cards = getJson().getJSONArray("cards");
+    // }
+    return cards.getJSONObject(cardId - 1); // -1 because cardId is 1 indexed
   }
 
   /**
@@ -120,7 +128,10 @@ public abstract class AbstractCard implements SplendorCard {
    */
   protected JSONObject getJson() {
     try {
-      return new JSONObject(new JSONTokener(new FileReader(CARDS_JSON)));
+      if (json == null) {
+        json = new JSONObject(new JSONTokener(new FileReader(CARDS_JSON)));
+      }
+      return json;
     } catch (FileNotFoundException e) {
       throw new RuntimeException("Could not find cards.json");
     }
