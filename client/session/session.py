@@ -67,9 +67,17 @@ def get_players():
     return players
 
 def get_creator():
-    return ["creator1", "creator2"]
+    # gets creator of the game
+    json = get_session.get_all_sessions_long_polling(auth.get_token()).json()
+    creator = []
+    for game in json:
+        creator.append(game['creator'])
+    return creator
 def is_game_launched(game):
-    return True
+    json = get_session.get_all_sessions_long_polling(auth.get_token()).json()
+    for g in json:
+        if g['savegameid'] == game:
+            return g['launched']
 def session():
     # needs to add game to the list of games
     # some sort of scrolling game inventory
