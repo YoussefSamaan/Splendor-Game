@@ -1,11 +1,13 @@
 import os
 import pygame
 import sys
+currentdir = os.path.dirname(os.path.realpath(__file__))
+parentdir = os.path.dirname(currentdir)
+sys.path.append(parentdir)
+from authenticator import *
 
 import get_session
-import delete_session
-import put_session
-import post_session
+
 
 HEIGHT = 750
 WIDTH = 900
@@ -30,17 +32,35 @@ splendor_text = pygame.transform.scale(splendor_text, (500, 200))
 color_active = pygame.Color(LIGHT_BLUE)
 color_passive = pygame.Color(LIGHT_GREY)
 color_error = pygame.Color(RED)
+auth = Authenticator()
 
 '''ALL FUNCTIONS HERE HAVE TO BE CHANGED'''
 def get_games():
     # gets games currently stored in memory
-    response = get_session.get_all_sessions_long_polling(authenticator.get_token())
-    return ["game1", "game2"]
+    json = get_session.get_all_sessions_long_polling(Authenticator.get_token()).json()
+    names = []
+    for game in json:
+        names.append(game['savegameid'])
+    return names
+    
 def get_joined_games():
-    return ["game2"]
+    # get every game joined by the curr player
+    json = get_session.get_all_sessions_long_polling(Authenticator.get_token()).json()
+    games = []
+    for game in json:
+        if (Authenticator.username) in game['players']:
+            games.append(game['savegameid'])
+    return games
+
 def get_players():
     # gets players currently stored in memory
-    return ["player1, player3", "player5"]
+    json = get_session.get_all_sessions_long_polling(Authenticator.get_token()).json()
+    players = []
+    for game in json:
+        players.append([game['players']])
+    print(players)
+    return players
+
 def get_creator():
     return ["creator1", "creator2"]
 def is_game_launched(game):
