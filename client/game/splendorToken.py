@@ -18,12 +18,12 @@ class Token:
     }
 
     multiplicities = {
-        Color.WHITE: 7,
-        Color.BLUE: 7,
-        Color.GREEN: 7,
-        Color.RED: 7,
-        Color.BROWN: 7,
-        Color.GOLD: 5,
+        Color.WHITE: 15,  # 7,
+        Color.BLUE: 15,  # 7,
+        Color.GREEN: 15,  # 7,
+        Color.RED: 15,  # 7,
+        Color.BROWN: 15,  # 7,
+        Color.GOLD: 13,  # 5,
     }
 
     yMargin = 30 / 33
@@ -68,9 +68,16 @@ class Token:
     def initialize():
         id = 1
         for color in Token.positions.keys():  # for token color
+            color_id = 1
             for _ in range(Token.multiplicities[color]):  # for number of tokens
-                Token.instance(color=color, id=id)
+                token = Token.instance(color=color, id=id)
                 id += 1
+                # This is a hack for the demo!!!!!!!!
+                if color_id > 5 and color == Color.GOLD:
+                    token.isOnDisplay = False
+                elif color_id > 7:
+                    token.isOnDisplay = False
+                color_id += 1
 
     @staticmethod
     def is_within_range(mouse_pos):
@@ -99,6 +106,19 @@ class Token:
         board = Board.instance()
         width, height = Token.get_size()
         return width + board.get_width() * Token.xSeparationRatio
+
+    @staticmethod
+    def update_all(tokens_json):
+        for color in Color:
+            number_remaining = tokens_json.get(str(color).split('.')[1])
+            for token in Token.flyweights.values():
+                if token.get_color() != color:
+                    continue
+                if number_remaining > 0:
+                    token.isOnDisplay = True
+                    number_remaining -= 1
+                else:
+                    token.isOnDisplay = False
 
     @staticmethod
     def display_all(screen):
@@ -131,7 +151,8 @@ class Token:
 
     @staticmethod
     def tokens_on_display(color: Color):
-        return [token for token in Token.flyweights.values() if token.isOnDisplay and token.get_color() == color]
+        return [token for token in Token.flyweights.values() if
+                token.isOnDisplay and token.get_color() == color]
 
     def take_token(self, player):
         """

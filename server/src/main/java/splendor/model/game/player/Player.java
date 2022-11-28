@@ -1,6 +1,8 @@
 package splendor.model.game.player;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import javax.naming.InsufficientResourcesException;
 import splendor.model.game.Color;
 import splendor.model.game.SplendorGame;
@@ -77,6 +79,7 @@ public class Player implements PlayerReadOnly, SplendorPlayer {
   public void buyCard(DevelopmentCardI card) throws InsufficientResourcesException {
     Cost cost = card.getCost();
     HashMap<Color, Integer> resources = inventory.getResources();
+    List<Token> totalPaidTokens = new ArrayList<>();
     for (Color color : cost) {
       if (resources.getOrDefault(color, 0) < cost.getValue(color)) {
         throw new InsufficientResourcesException("Not enough resources to buy card");

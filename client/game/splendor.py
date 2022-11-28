@@ -101,7 +101,11 @@ def update(authenticator, game_id):
     update_turn_player(board_json)
     update_players(board_json)
     update_decks(board_json)
+    update_tokens(board_json)
 
+
+def update_tokens(board_json):
+    Token.update_all(board_json['bank']['tokens'])
 
 def update_decks(board_json):
     GreenDeck.instance().update(board_json['decks'])
