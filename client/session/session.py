@@ -44,7 +44,7 @@ def get_games():
     # gets games currently stored in memory
     json = get_session.get_all_sessions_long_polling(auth.get_token()).json()
     names = []
-    for game in json:
+    for game in json['sessions']:
         names.append(game['savegameid'])
     return names
     
