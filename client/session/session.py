@@ -6,7 +6,7 @@ parentdir = os.path.dirname(currentdir)
 sys.path.append(parentdir)
 from authenticator import *
 
-import get_session
+from session import get_session
 
 
 HEIGHT = 750
@@ -89,7 +89,7 @@ def is_game_launched(game_id):
             return json['sessions'][f'{game}']['launched']
 
 
-def session():
+def session(authenticator):
     # needs to add game to the list of games
     # some sort of scrolling game inventory
 
@@ -279,4 +279,3 @@ def session():
         pygame.display.flip()
         clock.tick(FPS)
         
-session()
