@@ -55,9 +55,8 @@ public class ActionGenerator {
    * Removes the action that has been executed.
    *
    * @param gameId the id of the game
-   * @param actionId the id of the action
    */
-  public void removeAction(long gameId, long actionId) {
+  public void removeActions(long gameId) {
     gameActions.remove(gameId);
   }
 }
