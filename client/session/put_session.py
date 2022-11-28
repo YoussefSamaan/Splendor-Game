@@ -5,7 +5,11 @@ import sys
 
 # caution: path[0] is reserved for script path (or '' in REPL)
 sys.path.insert(1, 'client\config')
+<<<<<<< HEAD
 from config import LOBBY_SERVICE_URL
+=======
+from config.config import LOBBY_SERVICE_URL
+>>>>>>> a4325d368be37a69e954cdec1b00ceba2d9ecf03
 
 
 def add_player(access_token, session, username):

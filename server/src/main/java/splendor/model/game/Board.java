@@ -3,6 +3,7 @@ package splendor.model.game;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.IntStream;
 import javax.naming.InsufficientResourcesException;
 import splendor.model.game.card.DevelopmentCardI;
 import splendor.model.game.card.Noble;
@@ -86,11 +87,12 @@ public class Board {
   private void buyDevelopmentCard(SplendorPlayer player, DevelopmentCardI card)
       throws InsufficientResourcesException {
     if (!player.canAfford(card)) {
-      throw new IllegalArgumentException("Player cannot afford card");
+      throw new InsufficientResourcesException("Player cannot afford card");
     }
 
     takeCardFromDeck(card);
     player.buyCard(card);
+    giveBackTokens(card.getCost(), card);
   }
 
   private void reserveDevelopmentCard(SplendorPlayer player, DevelopmentCardI card) {
@@ -130,5 +132,16 @@ public class Board {
    */
   public void nextTurn() {
     currentTurn = (currentTurn + 1) % players.length;
+  }
+
+  /**
+   * give back tokens to the bank.
+   *
+   * @param tokens the tokens to give back
+   * @param card the card that was bought
+   */
+  private void giveBackTokens(Iterable<Color> tokens, SplendorCard card) {
+    tokens.forEach(color -> IntStream.range(0, card.getCost().getValue(color))
+        .forEach(i -> bank.add(Token.of(color))));
   }
 }

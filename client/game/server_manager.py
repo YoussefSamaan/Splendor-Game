@@ -10,7 +10,7 @@ def get_board(authenticator: Authenticator, game_id: str):
     :param game_id: The id of the game.
     :return: The board of the game.
     """
-    url = config.server_url + '/api/games/' + game_id + '/board'
+    url = config.SERVER_URL + '/api/games/' + game_id + '/board'
     data = {
         "username": authenticator.username,
         "access_token": authenticator.get_token()
@@ -29,7 +29,7 @@ def get_actions(authenticator: Authenticator, game_id: str, player_name: str):
     :param game_id: The id of the game.
     :return: The actions of the game.
     """
-    url = config.server_url + '/api/games/' + game_id + '/players/' + player_name + '/actions'
+    url = config.SERVER_URL + '/api/games/' + game_id + '/players/' + player_name + '/actions'
     data = {
         "username": authenticator.username,
         "access_token": authenticator.get_token()
@@ -49,7 +49,7 @@ def perform_action(authenticator: Authenticator, game_id: str, player_name: str,
     :param action_id: The id of the action.
     :return: The actions of the game.
     """
-    url = config.server_url + '/api/games/' + game_id + '/players/' + player_name + '/actions/' \
+    url = config.SERVER_URL + '/api/games/' + game_id + '/players/' + player_name + '/actions/' \
           + str(action_id)
     data = {
         "username": authenticator.username,

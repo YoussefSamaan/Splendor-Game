@@ -26,7 +26,8 @@ public class TokenBank implements Bank<Token> {
 
   @Override
   public void add(Token element) {
-    assert tokens.getOrDefault(element.getColor(), 0) < element.maxAmount();
+    // FIXME: Uncomment below after demo
+    // assert tokens.getOrDefault(element.getColor(), 0) < element.maxAmount();
     tokens.put(element.getColor(), tokens.getOrDefault(element.getColor(), 0) + 1);
   }
 

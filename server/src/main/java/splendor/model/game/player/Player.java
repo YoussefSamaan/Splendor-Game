@@ -1,6 +1,8 @@
 package splendor.model.game.player;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import javax.naming.InsufficientResourcesException;
 import splendor.model.game.Color;
 import splendor.model.game.SplendorGame;
@@ -16,7 +18,7 @@ public class Player implements PlayerReadOnly, SplendorPlayer {
   private final String name;
   private final String color;
   private final Inventory inventory;
-  private final int prestigePoints = 0;
+  private int prestigePoints = 0;
 
   /**
    * Creates a new player.
@@ -69,6 +71,7 @@ public class Player implements PlayerReadOnly, SplendorPlayer {
 
   /**
    * Buy card using player's resources.
+   * Updates prestige points.
    *
    * @param card the card to buy
    * @throws InsufficientResourcesException if player does not have enough resources
@@ -77,6 +80,7 @@ public class Player implements PlayerReadOnly, SplendorPlayer {
   public void buyCard(DevelopmentCardI card) throws InsufficientResourcesException {
     Cost cost = card.getCost();
     HashMap<Color, Integer> resources = inventory.getResources();
+    List<Token> totalPaidTokens = new ArrayList<>();
     for (Color color : cost) {
       if (resources.getOrDefault(color, 0) < cost.getValue(color)) {
         throw new InsufficientResourcesException("Not enough resources to buy card");
@@ -84,6 +88,7 @@ public class Player implements PlayerReadOnly, SplendorPlayer {
       inventory.payFor(color, cost.getValue(color));
     }
     inventory.addBoughtCard(card);
+    prestigePoints += card.getPrestigePoints();
   }
 
   @Override
