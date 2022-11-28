@@ -227,6 +227,7 @@ def session(authenticator):
                     join(get_games()[i+1])
                 elif back_rect.collidepoint(event.pos):
                     screen.fill(GREY)
+                    exit()
                 elif del_rect1.collidepoint(event.pos):
                     delete(get_games()[i])
                 elif del_rect2.collidepoint(event.pos):
