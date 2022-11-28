@@ -10,7 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import splendor.controller.helper.Authenticator;
@@ -133,30 +132,5 @@ public class SplendorController extends HandlerInterceptorAdapter {
       LOGGER.warning(e.getMessage());
       return ResponseEntity.badRequest().body(e.getMessage());
     }
-  }
-
-  /**
-   * Gets the bank of a specific game. All information is shared with all players, so all
-   * players get the same view of the bank.
-   *
-   * @param gameId the id of the game.
-   */
-  @GetMapping("/api/games/{gameId}/test")
-  public ResponseEntity test(@PathVariable long gameId) throws NoSuchFieldException,
-      IllegalAccessException {
-    LOGGER.info(String.format("Received request to test game with id %d", gameId));
-    if (!gameManager.exists(gameId)) {
-      return ResponseEntity.badRequest().body(String.format("Game with id %d does not exist",
-          gameId));
-    }
-    Board board = gameManager.getBoard(gameId);
-    String boardString = new Gson().toJson(board);
-    LOGGER.info(String.format("Board of game with id %d is %s", gameId, boardString));
-    Field bank = board.getClass().getDeclaredField("bank");
-    bank.setAccessible(true);
-    Bank<Token> bankObject = (Bank<Token>) bank.get(board);
-    String bankString = new Gson().toJson(bankObject);
-    LOGGER.info(String.format("Bank of game with id %d is %s", gameId, bankString));
-    return ResponseEntity.ok().body(bankString);
   }
 }

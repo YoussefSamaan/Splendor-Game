@@ -35,6 +35,9 @@ public class DevelopmentCardAction extends CardAction {
     List<Action> actions = new ArrayList<>();
     for (SplendorDeck deck : game.getBoard().getDecks()) {
       for (DevelopmentCardI card : deck.getFaceUpCards()) {
+        if (card == null) {
+          continue;
+        }
         if (player.canAfford(card)) {
           actions.add(new DevelopmentCardAction(CardActionType.BUY, card));
         }

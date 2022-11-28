@@ -14,7 +14,11 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import splendor.controller.lobbyservice.GameInfo;
 import splendor.model.game.SplendorGame;
 import splendor.model.game.TokenBank;
@@ -29,9 +33,9 @@ import splendor.model.game.card.SplendorCard;
 import splendor.model.game.player.Player;
 
 public class GameManagerTest {
-  ActionGenerator actionGenerator = Mockito.mock(ActionGenerator.class);
+  ActionGenerator actionGenerator = mock(ActionGenerator.class);
 
-  ActionData actionData = Mockito.mock(ActionData.class);
+  ActionData actionData = mock(ActionData.class);
   private final GameManager gameManager = new GameManager(actionGenerator);
   private final long gameId = 1;
   private final Player[] players = new Player[4];
@@ -74,9 +78,9 @@ public class GameManagerTest {
       throw new RuntimeException(e);
     }
     Action action = constructor.newInstance(CardActionType.RESERVE, DevelopmentCard.get(1));
-    Mockito.when(actionGenerator.generateActions(Mockito.any(), Mockito.anyLong(), Mockito.any()))
+    when(actionGenerator.generateActions(Mockito.any(), Mockito.anyLong(), Mockito.any()))
         .thenReturn(Collections.singletonList(action));
-    Mockito.when(actionGenerator.getGeneratedAction(Mockito.anyLong(), Mockito.anyLong()))
+    when(actionGenerator.getGeneratedAction(Mockito.anyLong(), Mockito.anyLong()))
         .thenReturn(action);
   }
 
@@ -156,14 +160,45 @@ public class GameManagerTest {
   }
 
   @Test
-  public void testPerformActionSuccess() throws NoSuchFieldException, IllegalAccessException,
-      InvalidAction, InsufficientResourcesException {
-//    gameManager.createGame(gameInfo, gameId);
-//    SplendorGame game = getGame(gameManager, gameId);
-//    String actionId = "123";
-//    gameManager.performAction(gameId, players[0].getName(), actionId, actionData);
-//    verify(game).performAction(actionGenerator.getGeneratedAction(gameId, Long.getLong(actionId)),
-//        players[0].getName(),
-//        Mockito.any());
+  public void testPerformActionSuccess() throws InsufficientResourcesException, InvalidAction, NoSuchFieldException, IllegalAccessException {
+    SplendorGame game = mock(SplendorGame.class);
+    ActionGenerator actionGenerator = mock(ActionGenerator.class);
+    GameManager gameManager = new GameManager(actionGenerator);
+    addGameToGameManager(game, gameManager);
+    doNothing().when(game).performAction(Mockito.any(), Mockito.anyString(), Mockito.any());
+    gameManager.performAction(gameId, players[0].getName(), "1", actionData);
+    verify(game).performAction(Mockito.any(), Mockito.anyString(), Mockito.any());
+  }
+
+  @Test
+  public void testPerformActionInvalidAction() throws NoSuchFieldException, IllegalAccessException, InvalidAction {
+    SplendorGame game = mock(SplendorGame.class);
+    ActionGenerator actionGenerator = mock(ActionGenerator.class);
+    GameManager gameManager = new GameManager(actionGenerator);
+    addGameToGameManager(game, gameManager);
+    when(actionGenerator.getGeneratedAction(Mockito.anyLong(), Mockito.anyLong())).thenThrow(InvalidAction.class);
+    assertThrows(InvalidAction.class, () -> {
+      gameManager.performAction(gameId, players[0].getName(), "1", actionData);
+    });
+  }
+
+  @Test
+  public void testPerformActionRemovesActionAfter() throws InsufficientResourcesException,
+      InvalidAction, NoSuchFieldException, IllegalAccessException {
+    SplendorGame game = mock(SplendorGame.class);
+    ActionGenerator actionGenerator = mock(ActionGenerator.class);
+    GameManager gameManager = new GameManager(actionGenerator);
+    addGameToGameManager(game, gameManager);
+    doNothing().when(game).performAction(Mockito.any(), Mockito.anyString(), Mockito.any());
+    doNothing().when(actionGenerator).removeActions(Mockito.anyLong());
+    gameManager.performAction(gameId, players[0].getName(), "1", actionData);
+    verify(actionGenerator).removeActions(Mockito.anyLong());
+  }
+
+  private void addGameToGameManager(SplendorGame game, GameManager gameManager) throws NoSuchFieldException,
+      IllegalAccessException {
+    Field games = gameManager.getClass().getDeclaredField("games");
+    games.setAccessible(true);
+    ((HashMap<Long, SplendorGame>) games.get(gameManager)).put(gameId, game);
   }
 }

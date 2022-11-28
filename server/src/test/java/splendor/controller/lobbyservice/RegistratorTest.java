@@ -29,8 +29,6 @@ public class RegistratorTest {
   public void setUp() throws AuthenticationException, UnirestException {
     when(gameServiceParameters.getOauth2Name()).thenReturn("oauth2Name");
     when(gameServiceParameters.getOauth2Password()).thenReturn("oauth2Password");
-    when(gameServiceParameters.getLobbyServiceLocation()).thenReturn("lobbyServiceUrl");
-    when(gameServiceParameters.getName()).thenReturn("Splendor");
     when(tokenHelper.get(anyString(), anyString())).thenReturn("token");
     when(tokenHelper.get(anyString(), anyString())).thenReturn("token");
 //    HttpRequestWithBody request = Mockito.mock(HttpRequestWithBody.class);

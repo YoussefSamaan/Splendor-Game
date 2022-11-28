@@ -1,45 +1,149 @@
 package splendor.model.game.action;
 
+import java.lang.reflect.Field;
 import java.util.List;
-import javax.naming.InsufficientResourcesException;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 import splendor.controller.lobbyservice.GameInfo;
+import splendor.model.game.Board;
 import splendor.model.game.SplendorGame;
+import splendor.model.game.card.SplendorCard;
+import splendor.model.game.deck.SplendorDeck;
+import splendor.model.game.player.Inventory;
 import splendor.model.game.player.Player;
 
 public class ActionGeneratorTest {
+  ActionGenerator actionGenerator = new ActionGenerator();
+  SplendorGame game;
+  Player player1 = new Player("Wassim", "Blue");
+  Player player2 = new Player("Youssef", "Red");
 
-  private Player player1 = new Player("Wassim", "Blue");
-  private Player player2 = new Player("Youssef", "Red");
-  private SplendorGame testSplendorGame;
-
-  @BeforeEach
-  public void setUp() throws Exception {
+  @Before
+  public void setUp() {
     Player[] testPlayers = {player1,player2};
     GameInfo testGameInfo = new GameInfo("testServer","SplendorGameTest",testPlayers,"testSave");
-    testSplendorGame = new SplendorGame(testGameInfo);
+    game = new SplendorGame(testGameInfo);
+    try {
+      setSingleCardOnly(game);
+    } catch (NoSuchFieldException | IllegalAccessException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  private void clearPlayerTokens(Player player) throws NoSuchFieldException {
+    Field inventory = player.getClass().getDeclaredField("inventory");
+    inventory.setAccessible(true);
+    try {
+      inventory.set(player, new Inventory());
+    } catch (IllegalAccessException e) {
+      e.printStackTrace();
+    }
+  }
+
+  private void setSingleCardOnly(SplendorGame game) throws NoSuchFieldException,
+      IllegalAccessException {
+    // This makes it easier to test the action generator
+    Board board = game.getBoard();
+    Field decks = board.getClass().getDeclaredField("decks");
+    decks.setAccessible(true);
+    SplendorDeck[] gameDeck = (SplendorDeck[]) decks.get(board);
+    boolean keepOne = true;
+    for (SplendorDeck deck : gameDeck) {
+      clearCards(deck, keepOne);
+      keepOne = false;
+    }
+  }
+
+  private void clearCards(SplendorDeck deck, boolean keepOne) throws NoSuchFieldException,
+      IllegalAccessException {
+    Field cards = deck.getClass().getDeclaredField("faceUpCards");
+    cards.setAccessible(true);
+    // make cards not final
+    SplendorCard[] cardArray = (SplendorCard[]) cards.get(deck);
+    for (int i = 0; i < cardArray.length; i++) {
+      if (keepOne && i == 0) {
+        continue;
+      }
+      cardArray[i] = null;
+    }
   }
 
   @Test
-  void generatingActionsTest() throws InsufficientResourcesException {
-    ActionGenerator actionGenerator = new ActionGenerator();
-    List<Action> actions1 = actionGenerator.generateActions(testSplendorGame, 1, player1);
-    List<Action> actions2 = actionGenerator.generateActions(testSplendorGame, 1, player2);
-    Assertions.assertNotEquals(0,actions1.size());
-    Assertions.assertEquals(actions2.size(),0);
-    testSplendorGame.performAction(actions1.get(0), player1.getName(), new ActionData());
-    actions2 = actionGenerator.generateActions(testSplendorGame, 1, player2);
-    Assertions.assertEquals(actions1.size(), actions2.size());
+  public void testGenerateActions() {
+    long gameId = 1;
+    List<Action> actions = actionGenerator.generateActions(game, gameId, player1);
+    assertEquals(2, actions.size()); // buy and reserve
   }
 
   @Test
-  void gettingAndRemovingActions() throws InvalidAction {
-    ActionGenerator actionGenerator = new ActionGenerator();
-    List<Action> actions1 = actionGenerator.generateActions(testSplendorGame, 1, player1);
-    Action action = actionGenerator.getGeneratedAction(1, actions1.get(0).getId());
-    Assertions.assertEquals(actions1.get(0), action);
-    actionGenerator.removeActions(1);
+  public void testGenerateActionsEmptyPlayerInventory() {
+    long gameId = 1;
+    try {
+      clearPlayerTokens(player1);
+    } catch (NoSuchFieldException e) {
+      throw new RuntimeException(e);
+    }
+    List<Action> actions = actionGenerator.generateActions(game, gameId, player1);
+    assertEquals(1, actions.size()); // only reserve
+  }
+
+  @Test
+  public void testGenerateActionsNotPlayerTurn() {
+  long gameId = 1;
+  List<Action> actions = actionGenerator.generateActions(game, gameId, player2);
+  assertEquals(0, actions.size()); // no actions
+  }
+
+  @Test
+  public void testGenerateActionsTwiceAreEqual() {
+    long gameId = 1;
+    List<Action> actions1 = actionGenerator.generateActions(game, gameId, player1);
+    List<Action> actions2 = actionGenerator.generateActions(game, gameId, player1);
+    assertEquals(actions1, actions2);
+  }
+
+  @Test
+  public void testGetGeneratedAction() {
+    long gameId = 1;
+    List<Action> actions = actionGenerator.generateActions(game, gameId, player1);
+    Action action = actions.get(0);
+    long actionId = action.getId();
+    try {
+      assertEquals(action, actionGenerator.getGeneratedAction(gameId, actionId));
+    } catch (InvalidAction e) {
+      fail(e);
+    }
+  }
+
+  @Test
+  public void testGetGeneratedActionInvalidActionId() {
+    long gameId = 1;
+    List<Action> actions = actionGenerator.generateActions(game, gameId, player1);
+    Action action = actions.get(0);
+    long actionId = action.getId();
+    try {
+      actionGenerator.getGeneratedAction(gameId, actionId + 1);
+      fail("InvalidAction should have been thrown");
+    } catch (InvalidAction e) {
+      assertTrue(true);
+    }
+  }
+
+  @Test
+  public void testRemoveAction() {
+    long gameId = 1;
+    List<Action> actions = actionGenerator.generateActions(game, gameId, player1);
+    Action action = actions.get(0);
+    long actionId = action.getId();
+    actionGenerator.removeActions(gameId);
+    try {
+      actionGenerator.getGeneratedAction(gameId, actionId);
+      fail("InvalidAction should have been thrown");
+    } catch (InvalidAction e) {
+      assertTrue(true);
+    }
   }
 }

@@ -1,14 +1,14 @@
 package splendor.model.game.action;
 
 import java.util.HashMap;
+import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 import splendor.model.game.Color;
 
 public class ActionDataTest {
 
   @Test
-  void creatingActionDataObjects() {
+  public void creatingActionDataObjects() {
     HashMap<Color, Integer> payment = new HashMap<>();
     payment.put(Color.RED,3);
     ActionData actionData1 = new ActionData(payment);
