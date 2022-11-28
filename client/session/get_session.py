@@ -21,7 +21,7 @@ def get_all_sessions_long_polling(hash_code):
 
 
 def get_session(session):
-    url = f'{lobby_service_url}/api/sessions/{session}'
+    url = f'{LOBBY_SERVICE_URL}/api/sessions/{session}'
     response = requests.get(url)
     # print(response.json())
     return response
