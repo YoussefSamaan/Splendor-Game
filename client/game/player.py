@@ -1,5 +1,5 @@
 import pygame
-from client.game.cost import Cost
+from game.cost import Cost
 
 import utils
 from board import Board

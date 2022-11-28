@@ -11,7 +11,7 @@ class Authenticator:
         self.refresh_token = None
 
     def authenticate(self, username, password):
-        url = config.lobby_service_url + '/oauth/token'
+        url = config.LOBBY_SERVICE_URL + '/oauth/token'
         data = {
             'grant_type': 'password',
             'username': username, #username,
@@ -27,7 +27,7 @@ class Authenticator:
         return False
 
     def refresh(self):
-        url = config.lobby_service_url + '/oauth/token'
+        url = config.LOBBY_SERVICE_URL + '/oauth/token'
         data = {
             'grant_type': 'refresh_token',
             'refresh_token': self.refresh_token
