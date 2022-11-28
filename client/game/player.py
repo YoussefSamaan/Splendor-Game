@@ -1,4 +1,5 @@
 import pygame
+from client.game.cost import Cost
 
 import utils
 from board import Board
@@ -83,14 +84,75 @@ class Player:
         self.tokens[token.get_color()] += 1
 
     def get_number_of_tokens(self):
-        # TODO: fill in this function
-        pass
+        total = 0
+        for color, amount in self.tokens.items():
+            total += amount
+        return total
 
     def return_coins(self):
         '''
         TODO:Fill this function
         '''
         pass
+
+    def get_true_cost(self, cost, discount):
+        """
+        Returns an updated cost after removing discounts from previously owned cards
+        """
+        if cost - discount >= 0:
+            return cost-discount
+        else:
+            return 0
+    
+    def is_tokens_sufficient(self, cost):
+        """
+        Check if there are enough tokens + gold coins to purchase a card
+        Cost here is an updated cost 
+        Returns True or False
+        """
+        current_gold = self.tokens.get(Color.GOLD)
+        if cost.get_red() > self.tokens.get(Color.RED):
+            # check if we can make up with gold
+            red_remaining = cost.get_red() - self.tokens.get(Color.RED)
+            if current_gold - red_remaining < 0:
+                return False
+            else:
+                current_gold -= red_remaining
+        if cost.get_green() > self.tokens.get(Color.GREEN):
+            green_remaining = cost.get_green() - self.tokens.get(Color.GREEN)
+            if current_gold - green_remaining < 0:
+                return False
+            else:
+                current_gold -= green_remaining
+        if cost.get_blue() > self.tokens.get(Color.BLUE):
+            blue_remaining = cost.get_blue() - self.tokens.get(Color.BLUE)
+            if current_gold - blue_remaining < 0:
+                return False
+            else:
+                current_gold -= blue_remaining
+        if cost.get_white() > self.tokens.get(Color.WHITE):
+            white_remaining = cost.get_white() - self.tokens.get(Color.WHITE)
+            if current_gold - white_remaining < 0:
+                return False
+            else:
+                current_gold -= white_remaining
+        if cost.get_black() > self.tokens.get(Color.BROWN):
+            black_remaining = cost.get_black() - self.tokens.get(Color.BROWN)
+            if current_gold - black_remaining < 0:
+                return False
+            else:
+                current_gold -= black_remaining
+        # if we reach this point it means we have enough tokens
+        # remove the tokens used to buy the card
+        self.tokens[Color.GOLD] = current_gold
+        self.tokens[Color.RED] -= (cost.get_red()-red_remaining)
+        self.tokens[Color.GREEN] -= (cost.get_green()-green_remaining)
+        self.tokens[Color.BLUE] -= (cost.get_blue()-blue_remaining)
+        self.tokens[Color.WHITE] -= (cost.get_white()-white_remaining)
+        self.tokens[Color.BROWN] -= (cost.get_black()-black_remaining)
+
+        return True
+
 
     def buy_card(self, card):
         '''
@@ -103,7 +165,17 @@ class Player:
             (Handled by add_card) Add card bonuses to player.
             (Handled by add_card) Add card prestige points to player.
         '''
-        self.add_card(card)
+        cost = card.cost
+        new_cost = Cost(self.get_true_cost(cost.get_red() - self.discounts.get_red()),
+self.get_true_cost(cost.get_green() - self.discounts.get_green()),
+self.get_true_cost(cost.get_blue() - self.discounts.get_blue()),
+self.get_true_cost(cost.get_white() - self.discounts.get_white()),
+self.get_true_cost(cost.get_black() - self.discounts.get_black()))
+
+        if self.is_tokens_sufficient(new_cost):
+            # if it reaches this point, gold and tokens automatically removed
+            self.add_card(card)
+
 
     def add_card(self, card):
         # add a card and its bonuses/prestige points to a player
