@@ -289,11 +289,18 @@ self.get_true_cost(cost.get_black() - self.discounts.get_black()))
     def update_player_inventory(self, player_json):
         self.prestige_points = player_json['prestigePoints']
         inventory = player_json['inventory']
-        tokens = inventory['tokens']['tokens']
-        # for color in tokens:
-        #     self.tokens[color] = tokens[color.value]
-        # for noble in inventory['nobles']:
-        #     noble = Noble.instance(id=noble['cardId'])
-        #     self.add_noble_to_sidebar(noble)
-        #     noble.isOnDisplay = False
+        newtokens = inventory['tokens']['tokens']
+        for color in newtokens:
+            self.tokens[color] = newtokens[color.value]
+        for noble in inventory['nobles']:
+            if noble not in self.nobles.keys():
+                noble = Noble.instance(id=noble['cardId'])
+                self.add_noble_to_sidebar(noble)
+                noble.isOnDisplay = False
+        for card in inventory['cards']:
+            if card not in self.cards_bought.keys():
+                card = Card.instance(id=card['cardId'])
+                self.add_card_to_sidebar(card)
+                card.isOnDisplay = False
+        self.discounts = Bonus( inventory['discounts']["RED"], inventory['discounts']["GREEN"], inventory['discounts']["WHITE"], inventory['discounts']["BLUE"], inventory['discounts']["BROWN"])
 
