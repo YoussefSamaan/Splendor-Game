@@ -26,23 +26,25 @@ color_active = pygame.Color(LIGHT_BLUE)
 color_passive = pygame.Color(LIGHT_GREY)
 color_error = pygame.Color(RED)
 
-
-
-base_font = pygame.font.Font(None, 28)  # font, size
-
+'''ALL FUNCTIONS HERE HAVE TO BE CHANGED'''
 def get_games():
     # gets games currently stored in memory
     return ["game1", "game2"]
+def get_joined_games():
+    return ["game2"]
 def get_players():
     # gets players currently stored in memory
     return ["player1, player3", "player5"]
 def get_creator():
     return ["creator1", "creator2"]
-
-
+def is_game_launched(game):
+    return True
 def session():
     # needs to add game to the list of games
     # some sort of scrolling game inventory
+
+    current_player = "creator1" # NEED TO CHANGE THIS 
+
     create_input_rect = pygame.Rect((150, 250, 200, 35))  # pos_x, pos_y, width, height
 
     create_rect = pygame.Rect((350, 300, 200, 70))
@@ -56,6 +58,7 @@ def session():
     play_text = base_font.render('Play', True, WHITE)
     create_text = base_font.render('Create', True, WHITE)
     join_text = base_font.render('Join', True, WHITE)
+    launch_text = base_font.render('Launch', True, WHITE)
     next_text = base_font.render('Next', True, WHITE)
     previous_text = base_font.render('Previous', True, WHITE)
     create_text_display = base_font.render('Session Name', True, WHITE)
@@ -69,13 +72,15 @@ def session():
     game_rect2 = pygame.Rect((150, 550, 400, 55))
     del_rect1 = pygame.Rect((655, 450, 90, 55))
     del_rect2 = pygame.Rect((655, 550, 90, 55))
-    leave_rect1 = pygame.Rect((650, 450, 100, 55)) # creator can't leave game 
-    leave_rect2 = pygame.Rect((650, 550, 100, 55))
+    launch_rect1 = pygame.Rect((655, 450, 90, 55))
+    launch_rect2 = pygame.Rect((655, 550, 90, 55))
+    leave_rect1 = pygame.Rect((655, 450, 100, 55)) # creator can't leave game 
+    leave_rect2 = pygame.Rect((655, 550, 100, 55))
     play_rect1 = pygame.Rect((555, 450, 90, 55))
     play_rect2 = pygame.Rect((555, 550, 90, 55))
     current_page = 0
     wrong_credentials = False # like session somehow invalid
-    
+    create_active = False # whether you're clicked on the text input
     def join(game):
         while True:
             screen.fill(GREY)
@@ -113,22 +118,46 @@ def session():
     while True:
         screen.fill(GREY)
         i = current_page * 2
-        game_name = base_font.render(get_games()[i] + " / "+ get_creator()[i] + " / " + get_players()[i], True, WHITE)
-        game_name2 = base_font.render(get_games()[i+1] + " / " + get_creator()[i+1] + " / " + get_players()[i+1], True, WHITE)
-        pygame.draw.rect(screen, LIGHT_BLUE, game_rect1, 3)
-        screen.blit(game_name, (game_rect1[0]+20, game_rect1[1]+20))
-        pygame.draw.rect(screen, LIGHT_BLUE, game_rect2, 3)
-        screen.blit(game_name2, (game_rect2[0]+20, game_rect2[1]+20))
-        pygame.draw.rect(screen, RED, del_rect1)
-        pygame.draw.rect(screen, RED, del_rect2)
-        pygame.draw.rect(screen, GREEN, play_rect1)
-        pygame.draw.rect(screen, GREEN, play_rect2)
-        screen.blit(play_text, (play_rect1[0]+20, play_rect1[1]+20))
-        screen.blit(play_text, (play_rect2[0]+20, play_rect2[1]+20))
+        # if we are on i = 3, page =1 we only need to display 1 game
+        # len getgames would be 3
+        if len(get_games())-i >= 0:
+            game_name = base_font.render(get_games()[i] + " / "+ get_creator()[i] + " / " + get_players()[i], True, WHITE)
+            screen.blit(game_name, (game_rect1[0]+20, game_rect1[1]+20))
+            pygame.draw.rect(screen, LIGHT_BLUE, game_rect1, 3)
+            if get_creator()[i] == current_player:
+                pygame.draw.rect(screen, RED, del_rect1)
+                screen.blit(delete_text, (del_rect1[0]+20, del_rect1[1]+20))
+                if is_game_launched(get_games()[i]):
+                    pygame.draw.rect(screen, GREEN, play_rect1)
+                    screen.blit(play_text, (play_rect1[0]+20, play_rect1[1]+20))
+                else:
+                    pygame.draw.rect(screen, GREEN, launch_rect1)
+                    screen.blit(launch_text, (launch_rect1[0]+20, launch_rect1[1]+20))
+            elif get_games()[i] in get_joined_games():
+                    pygame.draw.rect(screen, GREEN, launch_rect1)
+                    screen.blit(launch_text, (launch_rect1[0]+10, launch_rect1[1]+20))
+
+            
+        if len(get_games())-i >= 1:
+            game_name2 = base_font.render(get_games()[i+1] + " / " + get_creator()[i+1] + " / " + get_players()[i+1], True, WHITE)
+            pygame.draw.rect(screen, LIGHT_BLUE, game_rect2, 3)
+            screen.blit(game_name2, (game_rect2[0]+20, game_rect2[1]+20))
+            if get_creator()[i+1] == current_player:
+                pygame.draw.rect(screen, RED, del_rect2)
+                screen.blit(delete_text, (del_rect2[0]+20, del_rect2[1]+20))
+                if is_game_launched(get_games()[i+1]):
+                    pygame.draw.rect(screen, GREEN, play_rect2)
+                    screen.blit(play_text, (play_rect2[0]+20, play_rect2[1]+20))
+                else:
+                    pygame.draw.rect(screen, GREEN, launch_rect2)
+                    screen.blit(launch_text, (launch_rect2[0]+10, launch_rect2[1]+20))
+            elif get_games()[i+1] in get_joined_games():
+                    pygame.draw.rect(screen, GREEN, launch_rect2)
+                    screen.blit(launch_text, (launch_rect2[0]+10, launch_rect2[1]+20))
+
         # add code to make sure only creator can delete game 
         # add code to make sure only joined player can leave game 
-        screen.blit(delete_text, (del_rect1[0]+20, del_rect1[1]+20))
-        screen.blit(delete_text, (del_rect2[0]+20, del_rect2[1]+20))
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
