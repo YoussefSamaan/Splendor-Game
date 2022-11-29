@@ -6,7 +6,7 @@ parentdir = os.path.dirname(currentdir)
 sys.path.append(parentdir)
 from authenticator import *
 
-from session import get_session, post_session, delete_session
+from session import get_session, post_session, delete_session, put_session
 
 
 HEIGHT = 750
@@ -107,11 +107,12 @@ def session(authenticator):
     create_text = base_font.render('Create', True, WHITE)
     join_text = base_font.render('Join', True, WHITE)
     launch_text = base_font.render('Launch', True, WHITE)
+    leave_text = base_font.render('Leave', True, WHITE)
     next_text = base_font.render('Next', True, WHITE)
     previous_text = base_font.render('Previous', True, WHITE)
     create_text_display = base_font.render('Session Name', True, WHITE)
     create_color = color_passive
-
+    leave_rect = pygame.Rect((655, 450, 100, 55)) # creator can't leave game 
     create_text_entry = ""
 
     game_rect1 = pygame.Rect((150, 450, 400, 55))
@@ -120,8 +121,7 @@ def session(authenticator):
     del_rect2 = pygame.Rect((555, 550, 90, 55))
     launch_rect1 = pygame.Rect((655, 450, 90, 55))
     launch_rect2 = pygame.Rect((655, 550, 90, 55))
-    leave_rect1 = pygame.Rect((655, 450, 100, 55)) # creator can't leave game 
-    leave_rect2 = pygame.Rect((655, 550, 100, 55))
+
     play_rect1 = pygame.Rect((555, 450, 90, 55))
     play_rect2 = pygame.Rect((555, 550, 90, 55))
     current_page = 0
@@ -129,7 +129,7 @@ def session(authenticator):
     create_active = False # whether you're clicked on the text input
 
     def leave_game(game):
-        delete_session.remove_player_from_session(game, authenticator.username)
+        delete_session.remove_player(authenticator.get_token(), game, authenticator.username)
     def create_game(game):
         post_session.create_session(authenticator.username, authenticator.get_token(), game)
     def join(game):
@@ -154,7 +154,7 @@ def session(authenticator):
                         session(authenticator)
 
                     elif join_rect.collidepoint(event.pos):
-                        pass
+                        put_session.add_player(authenticator.get_token(), game, authenticator.username)
 
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
@@ -162,7 +162,36 @@ def session(authenticator):
                         sys.exit()
             pygame.display.flip()
             clock.tick(FPS)
-    
+    def leave(game):
+        while True:
+            screen.fill(GREY)
+            newtext = base_font.render("Leaving " + game +" confirm?", True, WHITE)
+ 
+            pygame.draw.rect(screen, RED, back_rect)
+
+            pygame.draw.rect(screen, RED, leave_rect)
+            screen.blit(newtext, (350, 350))
+            screen.blit(back_text2, (185, 125))
+            screen.blit(leave_text, (400, 625))
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+                if event.type == pygame.MOUSEBUTTONDOWN:
+
+                    if back_rect.collidepoint(event.pos):
+                        screen.fill(GREY)
+                        session(authenticator)
+
+                    elif leave_rect.collidepoint(event.pos):
+                        delete_session.remove_player(authenticator.get_token(), game, authenticator.username)
+
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        pygame.quit()
+                        sys.exit()
+            pygame.display.flip()
+            clock.tick(FPS)
     def delete(game):
         delete_session.delete_session(authenticator.get_token(), game)
     
@@ -219,10 +248,18 @@ def session(authenticator):
             if event.type == pygame.MOUSEBUTTONDOWN:
                 wrong_credentials = False
                 if game_rect1.collidepoint(event.pos):
-                    join(get_games()[i])
+                    if get_creator()[i] != authenticator.username:
+                        if get_games()[i] in get_joined_games(authenticator):
+                            leave(get_games()[i])
+                        else:
+                            join(get_games()[i])
                 elif game_rect2.collidepoint(event.pos):
-                    screen.fill(GREY)
-                    join(get_games()[i+1])
+                    if get_creator()[i+1] != authenticator.username:
+                        if get_games()[i+1] in get_joined_games(authenticator):
+                            leave(get_games()[i+1])
+                        else:
+                            join(get_games()[i+1])
+                    
                 elif back_rect.collidepoint(event.pos):
                     screen.fill(GREY)
                     exit()
@@ -236,10 +273,7 @@ def session(authenticator):
                     # need to add the actual code
                 elif create_rect.collidepoint(event.pos):
                     create_game(create_text_entry)
-                elif leave_rect1.collidepoint(event.pos):
-                    leave_game()
-                elif leave_rect2.collidepoint(event.pos):
-                    leave_game()
+
                 elif launch_rect1.collidepoint(event.pos):
                     print("launch")
                     return get_games()[i]
@@ -252,15 +286,7 @@ def session(authenticator):
                 # elif next_button_rect.collidepoint(event.pos):
                 #     if current_page < len(get_games()) / 2:
                 #         current_page += 1
-
-                else:
-                    if wrong_credentials:
-                        create_color = color_error
-                        
-                    else:
-                        create_color = color_passive
-                        
-                    create_active = False
+    
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     pygame.quit()
