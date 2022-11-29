@@ -295,18 +295,23 @@ self.get_true_cost(cost.get_black() - self.discounts.get_black()))
         self.prestige_points = player_json['prestigePoints']
         inventory = player_json['inventory']
         newtokens = inventory['tokens']['tokens']
-        for color in newtokens:
-            self.tokens[color] = newtokens[color]
-        for noble in inventory['nobles']:
-            if noble not in self.nobles.keys():
-                #noble = Noble.instance(id=noble['cardId'])
-                self.add_noble_to_sidebar(noble)
-                noble.isOnDisplay = False
-        for card in inventory['boughtCards']:
-            if card not in self.cards_bought.keys():
-                #card = Card.instance(id=card['cardId'])
-                self.add_card_to_sidebar(card)
-                card.isOnDisplay = False
+        
+        self.tokens[Color.BLUE] = newtokens["BLUE"]
+        self.tokens[Color.RED] = newtokens["RED"]
+        self.tokens[Color.GREEN] = newtokens["GREEN"]
+        self.tokens[Color.GOLD] = newtokens["GOLD"]
+        self.tokens[Color.WHITE] = newtokens["WHITE"]
+        self.tokens[Color.BROWN] = newtokens["BROWN"]
+        # for noble in inventory['nobles']:
+        #     if noble not in self.nobles.keys():
+        #         #noble = Noble.instance(id=noble['cardId'])
+        #         self.add_noble_to_sidebar(noble)
+        #         noble.isOnDisplay = False
+        # for card in inventory['boughtCards']:
+        #     if card["cardId"] not in self.cards_bought.keys():
+        #         #card = Card.instance(id=card['cardId'])
+        #         self.add_card_to_sidebar(Card.instance(card["cardId"]))
+        #         self.cards_bought[card["cardId"]].isOnDisplay = False
         self.discounts = Bonus( self.get_bonus("RED", inventory),self.get_bonus("GREEN", inventory),self.get_bonus("WHITE", inventory),self.get_bonus("BLUE", inventory), self.get_bonus("BROWN", inventory))
 
 
