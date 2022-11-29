@@ -334,5 +334,3 @@ class Player:
         red = discounts.get('RED', 0)
         white = discounts.get('WHITE', 0)
         self.discounts = Bonus(red, green, blue, white, brown)
-
-
