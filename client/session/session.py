@@ -37,55 +37,45 @@ color_error = pygame.Color(RED)
 
 
 '''ALL FUNCTIONS HERE HAVE TO BE CHANGED'''
-def get_games():
+def get_games(sessions):
     # gets games currently stored in memory
-    json = get_session.get_all_sessions().json()
     names = []
-    for game in json['sessions']:
-        names.append(game)
+    for game in sessions:
+        names.append(sessions[game]["savegameid"])
     return names
     
-def get_joined_games(current_player):
+def get_joined_games(sessions,current_player):
     # get every game joined by the curr player
-    json = get_session.get_all_sessions().json()
     games = []
-    for game in json['sessions']:
-        if current_player.username in json['sessions'][f'{game}']['players']:
+    for game in sessions:
+        if current_player.username in sessions[game]['players']:
             games.append(game)
-    # print(games)
     return games
 
-def get_players():
+def get_players(sessions):
     # gets players currently stored in memory
-    json = get_session.get_all_sessions().json()
     players = []
-    for item in json['sessions']:
-        p = json['sessions'][f'{item}']['players']
+    for game in sessions:
+        p = list(sessions[game]['players'])
         p.pop(0) # don't include creator in list of players to reduce clutter
         p_clean = ', '.join(p) #remove brackets from e.g. ['maex', 'linus'] to get maex, linus
         players.append(str(p_clean))
     return players
 
 # This function gets the creators of all games. Is this intended?
-def get_creator():
+def get_creators(sessions):
     # gets creator of the game
-    json = get_session.get_all_sessions().json()
     creators = []
-    for game in json['sessions']:
-        creator = json['sessions'][f'{game}']['creator']
+    for game in sessions:
+        creator = sessions[game]['creator']
         creators.append(str(creator))
     return creators
 
-def is_game_launched(game_id):
-    json = get_session.get_all_sessions().json()
-    for game in json['sessions']:
-        # if game['savegameid'] == game_id:
-        # print(game_id)
-        # print(game)
-        # print(int(game) == game_id)
-        if int(game) == game_id:
-            # print(json['sessions'][f'{game}']['launched'])
-            return json['sessions'][f'{game}']['launched']
+def is_game_launched(sessions,game_name):
+    for game in sessions:
+        if sessions[game]["savegameid"] == game_name:
+            return sessions[game]["launched"]
+    return False
 
 
 def session(authenticator):
@@ -170,40 +160,42 @@ def session(authenticator):
         # if we are on i = 3, page =1 we only need to display 1 game
         # len getgames would be 3
 
-        if len(get_games()) == 0:
+        sessions_json = get_session.get_all_sessions().json()["sessions"]
+
+        if len(get_games(sessions_json)) == 0:
             pass
-        elif len(get_games())-i > 0:
-            game_name = base_font.render(get_games()[i] + " / "+ get_creator()[i] + " / " + get_players()[i], True, WHITE)
+        elif len(get_games(sessions_json))-i > 0:
+            game_name = base_font.render(get_games(sessions_json)[i] + " / "+ get_creators(sessions_json)[i] + " / " + get_players(sessions_json)[i], True, WHITE)
             screen.blit(game_name, (game_rect1[0]+20, game_rect1[1]+20))
             pygame.draw.rect(screen, LIGHT_BLUE, game_rect1, 3)
-            if get_creator()[i] == authenticator.username:
+            if get_creators(sessions_json)[i] == authenticator.username:
                 pygame.draw.rect(screen, RED, del_rect1)
                 screen.blit(delete_text, (del_rect1[0]+20, del_rect1[1]+20))
-                if is_game_launched(get_games()[i]):
+                if is_game_launched(sessions_json,get_games(sessions_json)[i]):
                     pygame.draw.rect(screen, GREEN, play_rect1)
                     screen.blit(play_text, (play_rect1[0]+20, play_rect1[1]+20))
                 else:
                     pygame.draw.rect(screen, GREEN, launch_rect1)
                     screen.blit(launch_text, (launch_rect1[0]+20, launch_rect1[1]+20))
-            elif get_games()[i] in get_joined_games(authenticator):
+            elif get_games(sessions_json)[i] in get_joined_games(sessions_json,authenticator):
                     pygame.draw.rect(screen, GREEN, launch_rect1)
                     screen.blit(launch_text, (launch_rect1[0]+10, launch_rect1[1]+20))
 
             
-        if len(get_games())-i > 1:
-            game_name2 = base_font.render(get_games()[i+1] + " / " + get_creator()[i+1] + " / " + get_players()[i+1], True, WHITE)
+        if len(get_games(sessions_json))-i > 1:
+            game_name2 = base_font.render(get_games(sessions_json)[i+1] + " / " + get_creators(sessions_json)[i+1] + " / " + get_players(sessions_json)[i+1], True, WHITE)
             pygame.draw.rect(screen, LIGHT_BLUE, game_rect2, 3)
             screen.blit(game_name2, (game_rect2[0]+20, game_rect2[1]+20))
-            if get_creator()[i+1] == authenticator.username:
+            if get_creators(sessions_json)[i+1] == authenticator.username:
                 pygame.draw.rect(screen, RED, del_rect2)
                 screen.blit(delete_text, (del_rect2[0]+20, del_rect2[1]+20))
-                if is_game_launched(get_games()[i+1]):
+                if is_game_launched(sessions_json,get_games(sessions_json)[i+1]):
                     pygame.draw.rect(screen, GREEN, play_rect2)
                     screen.blit(play_text, (play_rect2[0]+20, play_rect2[1]+20))
                 else:
                     pygame.draw.rect(screen, GREEN, launch_rect2)
                     screen.blit(launch_text, (launch_rect2[0]+10, launch_rect2[1]+20))
-            elif get_games()[i+1] in get_joined_games(authenticator):
+            elif get_games(sessions_json)[i+1] in get_joined_games(sessions_json,authenticator):
                     pygame.draw.rect(screen, GREEN, launch_rect2)
                     screen.blit(launch_text, (launch_rect2[0]+10, launch_rect2[1]+20))
 
@@ -218,17 +210,17 @@ def session(authenticator):
                 wrong_credentials = False
                 if game_rect1.collidepoint(event.pos):
                     # print("TEST")
-                    join(get_games()[i])
+                    join(get_games(sessions_json)[i])
                 elif game_rect2.collidepoint(event.pos):
                     screen.fill(GREY)
-                    join(get_games()[i+1])
+                    join(get_games(sessions_json)[i+1])
                 elif back_rect.collidepoint(event.pos):
                     screen.fill(GREY)
                     exit()
                 elif del_rect1.collidepoint(event.pos):
-                    delete(get_games()[i])
+                    delete(get_games(sessions_json)[i])
                 elif del_rect2.collidepoint(event.pos):
-                    delete(get_games()[i+1])
+                    delete(get_games(sessions_json)[i+1])
                 elif create_input_rect.collidepoint(event.pos):
                     create_active = True
                     create_color = color_active
