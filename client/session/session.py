@@ -118,8 +118,6 @@ def session(authenticator):
     wrong_credentials = False # like session somehow invalid
     create_active = False # whether you're clicked on the text input
 
-    def leave_game(game):
-        delete_session.remove_player(authenticator.get_token(), game, authenticator.username)
     def create_game(game):
         post_session.create_session(authenticator.username, authenticator.get_token(), game)
     def join(game):
@@ -183,7 +181,7 @@ def session(authenticator):
             pygame.display.flip()
             clock.tick(FPS)
     def delete(game):
-        pass
+        delete_session.delete_session(authenticator.get_token(), game)
     
     while True:
         screen.fill(GREY)
@@ -238,7 +236,6 @@ def session(authenticator):
                 pygame.quit()
                 sys.exit()
             if event.type == pygame.MOUSEBUTTONDOWN:
-                wrong_credentials = False
                 if game_rect1.collidepoint(event.pos):
                     if get_creators()[i] != authenticator.username:
                         if get_games()[i] in get_joined_games(authenticator):
@@ -254,9 +251,6 @@ def session(authenticator):
                     # print("TEST")
                     join(get_games(sessions_json)[i])
 
-                elif game_rect2.collidepoint(event.pos):
-                    screen.fill(GREY)
-                    join(get_games(sessions_json)[i+1])
                 elif back_rect.collidepoint(event.pos):
                     screen.fill(GREY)
                     exit()
