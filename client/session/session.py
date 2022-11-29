@@ -107,8 +107,8 @@ def session(authenticator):
 
     game_rect1 = pygame.Rect((150, 450, 400, 55))
     game_rect2 = pygame.Rect((150, 550, 400, 55))
-    del_rect1 = pygame.Rect((655, 450, 90, 55))
-    del_rect2 = pygame.Rect((655, 550, 90, 55))
+    del_rect1 = pygame.Rect((555, 450, 90, 55))
+    del_rect2 = pygame.Rect((555, 550, 90, 55))
     launch_rect1 = pygame.Rect((655, 450, 90, 55))
     launch_rect2 = pygame.Rect((655, 550, 90, 55))
 
@@ -240,20 +240,20 @@ def session(authenticator):
             if event.type == pygame.MOUSEBUTTONDOWN:
                 wrong_credentials = False
                 if game_rect1.collidepoint(event.pos):
-                    if get_creator()[i] != authenticator.username:
+                    if get_creators()[i] != authenticator.username:
                         if get_games()[i] in get_joined_games(authenticator):
                             leave(get_games()[i])
                         else:
                             join(get_games()[i])
                 elif game_rect2.collidepoint(event.pos):
-                    if get_creator()[i+1] != authenticator.username:
+                    if get_creators()[i+1] != authenticator.username:
                         if get_games()[i+1] in get_joined_games(authenticator):
                             leave(get_games()[i+1])
                         else:
                             join(get_games()[i+1])
                     # print("TEST")
                     join(get_games(sessions_json)[i])
-                    join(get_games()[i])
+
                 elif game_rect2.collidepoint(event.pos):
                     screen.fill(GREY)
                     join(get_games(sessions_json)[i+1])
