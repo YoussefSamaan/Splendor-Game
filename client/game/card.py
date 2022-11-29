@@ -44,14 +44,14 @@ class Card:
     x_ratio = 0.09  # ratio of card width to board width
     y_ratio = 0.18  # ratio of card height to board height
 
-    def __init__(self, id: int, deck, prestige_points=1, cost=Cost(1, 1, 1, 1, 1),
+    def __init__(self, id: int, color, prestige_points=1, cost=Cost(1, 1, 1, 1, 1),
                  bonus=Bonus(1, 1, 1, 1, 1)):
         self._id = id
         self._prestige_points = prestige_points
         self._cost = cost
         self._bonus = bonus
-        self._color = deck.get_color()
-        self.deck = deck
+        self._color = color
+        # self.deck = deck
         self._image = self._get_image()
         self.pos = None
 
@@ -102,9 +102,6 @@ class Card:
 
     def get_id(self):
         return self._id
-
-    def get_deck(self):
-        return self.deck
 
     def get_bonus(self):
         return self._bonus
@@ -168,16 +165,6 @@ class Card:
                 elif event.type == pygame.QUIT:
                     pygame.quit()
                     quit()
-
-    def buy(self, player):
-        self.deck.take_card(self)
-        #self.deck.add_card_to_sidebar(self)
-        player.buy_card(self)
-
-    def reserve(self, player):
-        self.deck.take_card(self)
-        #self.deck.add_reserved_to_sidebar(self)
-        player.reserve_card(self)
 
     def __str__(self):
         return "Color: {}, id: {}".format(self._color, self._id)

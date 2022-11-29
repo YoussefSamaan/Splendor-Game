@@ -167,10 +167,10 @@ class Player:
         '''
         cost = card.cost
         new_cost = Cost(self.get_true_cost(cost.get_red() - self.discounts.get_red()),
-self.get_true_cost(cost.get_green() - self.discounts.get_green()),
-self.get_true_cost(cost.get_blue() - self.discounts.get_blue()),
-self.get_true_cost(cost.get_white() - self.discounts.get_white()),
-self.get_true_cost(cost.get_black() - self.discounts.get_black()))
+        self.get_true_cost(cost.get_green() - self.discounts.get_green()),
+        self.get_true_cost(cost.get_blue() - self.discounts.get_blue()),
+        self.get_true_cost(cost.get_white() - self.discounts.get_white()),
+        self.get_true_cost(cost.get_black() - self.discounts.get_black()))
 
         if self.is_tokens_sufficient(new_cost):
             # if it reaches this point, gold and tokens automatically removed
@@ -309,14 +309,28 @@ self.get_true_cost(cost.get_black() - self.discounts.get_black()))
         #         self.add_noble_to_sidebar(noble)
         #         #noble.isOnDisplay = False
         for card_json in inventory['boughtCards']:
-            card = Card.instance(id=card_json['cardId'])
+            for color in Color:
+                if str(color).split('.')[1] == card_json['color']:
+                    color = color
+                    break
+
+            card = Card.instance(id=card_json['cardId'], color=color)
             if card not in self.cards_bought.keys():
                 self.add_card_to_sidebar(card)
 
         for card_json in inventory['reservedCards']:
-            card = Card.instance(id=card_json['cardId'])
-            if card not in self.reserved_cards.keys():
+            for color in Color:
+                if str(color).split('.')[1] == card_json['color']:
+                    color = color
+                    break
+            card = Card.instance(id=card_json['cardId'], color=color)
+            if card not in self.cards_bought.keys():
                 self.reserve_card_to_sidebar(card)
-        self.discounts = Bonus( self.get_bonus("RED", inventory),self.get_bonus("GREEN", inventory),self.get_bonus("WHITE", inventory),self.get_bonus("BLUE", inventory), self.get_bonus("BROWN", inventory))
 
-
+        discounts = inventory['discounts']
+        brown = discounts.get('BROWN', 0)
+        green = discounts.get('GREEN', 0)
+        blue = discounts.get('BLUE', 0)
+        red = discounts.get('RED', 0)
+        white = discounts.get('WHITE', 0)
+        self.discounts = Bonus(red, green, blue, white, brown)
