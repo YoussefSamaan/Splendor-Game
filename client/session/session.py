@@ -235,9 +235,9 @@ def session(authenticator):
                     leave_game()
                 elif launch_rect1.collidepoint(event.pos):
                     print("launch")
-                    return get_games()[i]
+                    return get_games(sessions_json)[i]
                 elif launch_rect2.collidepoint(event.pos):
-                    return get_games()[i+1]
+                    return get_games(sessions_json)[i+1]
                 # elif previous_button_rect.collidepoint(event.pos):
                 #     if current_page > 0:
                 #         current_page -= 1
