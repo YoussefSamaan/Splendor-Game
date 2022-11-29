@@ -7,14 +7,12 @@ import sys
 sys.path.insert(1, 'client\config')
 from config import *
 LOBBY_SERVICE_URL = config.get_url()
+
+
 def get_all_sessions():
     url = f"{LOBBY_SERVICE_URL}/api/sessions"    
     response = requests.get(url)
-<<<<<<< HEAD
-    print(response.json())
-=======
     # print(response.json())
->>>>>>> a4325d368be37a69e954cdec1b00ceba2d9ecf03
     return response
 
 def get_all_sessions_long_polling(hash_code):

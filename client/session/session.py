@@ -5,13 +5,8 @@ currentdir = os.path.dirname(os.path.realpath(__file__))
 parentdir = os.path.dirname(currentdir)
 sys.path.append(parentdir)
 from authenticator import *
-<<<<<<< HEAD
 
-from session import get_session, post_session, put_session, delete_session
-=======
-import time
 from session import get_session, post_session
->>>>>>> a4325d368be37a69e954cdec1b00ceba2d9ecf03
 
 
 HEIGHT = 750
@@ -38,12 +33,7 @@ color_active = pygame.Color(LIGHT_BLUE)
 color_passive = pygame.Color(LIGHT_GREY)
 color_error = pygame.Color(RED)
 
-<<<<<<< HEAD
-current_player = Authenticator()
-current_player.username = "maex"
-=======
 
->>>>>>> a4325d368be37a69e954cdec1b00ceba2d9ecf03
 
 
 '''ALL FUNCTIONS HERE HAVE TO BE CHANGED'''
@@ -139,11 +129,7 @@ def session(authenticator):
     create_active = False # whether you're clicked on the text input
 
     def create_game(game):
-<<<<<<< HEAD
-        post_session.create_session(current_player.username, authenticator.get_token(), game)
-=======
         post_session.create_session(authenticator.username, authenticator.get_token(), game)
->>>>>>> a4325d368be37a69e954cdec1b00ceba2d9ecf03
     def join(game):
         while True:
             screen.fill(GREY)
@@ -163,17 +149,10 @@ def session(authenticator):
 
                     if back_rect.collidepoint(event.pos):
                         screen.fill(GREY)
-<<<<<<< HEAD
-                        session(authenticator)
-
-                    elif join_rect.collidepoint(event.pos):
-                        put_session.add_player(authenticator.get_token(), game, current_player.username)
-=======
                         session()
 
                     elif join_rect.collidepoint(event.pos):
                         pass
->>>>>>> a4325d368be37a69e954cdec1b00ceba2d9ecf03
 
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
@@ -186,10 +165,6 @@ def session(authenticator):
         pass
     
     while True:
-<<<<<<< HEAD
-=======
-        time.sleep(1)
->>>>>>> a4325d368be37a69e954cdec1b00ceba2d9ecf03
         screen.fill(GREY)
         i = current_page * 2
         # if we are on i = 3, page =1 we only need to display 1 game
@@ -203,11 +178,7 @@ def session(authenticator):
             game_name = base_font.render(get_games()[i] + " / "+ get_creator()[i] + " / " + get_players()[i], True, WHITE)
             screen.blit(game_name, (game_rect1[0]+20, game_rect1[1]+20))
             pygame.draw.rect(screen, LIGHT_BLUE, game_rect1, 3)
-<<<<<<< HEAD
-            if get_creator()[i] == current_player:
-=======
             if get_creator()[i] == authenticator.username:
->>>>>>> a4325d368be37a69e954cdec1b00ceba2d9ecf03
                 pygame.draw.rect(screen, RED, del_rect1)
                 screen.blit(delete_text, (del_rect1[0]+20, del_rect1[1]+20))
                 if is_game_launched(get_games()[i]):
@@ -216,11 +187,7 @@ def session(authenticator):
                 else:
                     pygame.draw.rect(screen, GREEN, launch_rect1)
                     screen.blit(launch_text, (launch_rect1[0]+20, launch_rect1[1]+20))
-<<<<<<< HEAD
-            elif get_games()[i] in get_joined_games(current_player):
-=======
             elif get_games()[i] in get_joined_games(authenticator):
->>>>>>> a4325d368be37a69e954cdec1b00ceba2d9ecf03
                     pygame.draw.rect(screen, GREEN, launch_rect1)
                     screen.blit(launch_text, (launch_rect1[0]+10, launch_rect1[1]+20))
 
@@ -229,11 +196,7 @@ def session(authenticator):
             game_name2 = base_font.render(get_games()[i+1] + " / " + get_creator()[i+1] + " / " + get_players()[i+1], True, WHITE)
             pygame.draw.rect(screen, LIGHT_BLUE, game_rect2, 3)
             screen.blit(game_name2, (game_rect2[0]+20, game_rect2[1]+20))
-<<<<<<< HEAD
-            if get_creator()[i+1] == current_player:
-=======
             if get_creator()[i+1] == authenticator.username:
->>>>>>> a4325d368be37a69e954cdec1b00ceba2d9ecf03
                 pygame.draw.rect(screen, RED, del_rect2)
                 screen.blit(delete_text, (del_rect2[0]+20, del_rect2[1]+20))
                 if is_game_launched(get_games()[i+1]):
@@ -242,11 +205,7 @@ def session(authenticator):
                 else:
                     pygame.draw.rect(screen, GREEN, launch_rect2)
                     screen.blit(launch_text, (launch_rect2[0]+10, launch_rect2[1]+20))
-<<<<<<< HEAD
-            elif get_games()[i+1] in get_joined_games(current_player):
-=======
             elif get_games()[i+1] in get_joined_games(authenticator):
->>>>>>> a4325d368be37a69e954cdec1b00ceba2d9ecf03
                     pygame.draw.rect(screen, GREEN, launch_rect2)
                     screen.blit(launch_text, (launch_rect2[0]+10, launch_rect2[1]+20))
 
