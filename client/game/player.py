@@ -315,8 +315,8 @@ self.get_true_cost(cost.get_black() - self.discounts.get_black()))
 
         for card_json in inventory['reservedCards']:
             card = Card.instance(id=card_json['cardId'])
-            if card not in self.cards_bought.keys():
+            if card not in self.reserved_cards.keys():
                 self.reserve_card_to_sidebar(card)
-        # self.discounts = Bonus( self.get_bonus("RED", inventory),self.get_bonus("GREEN", inventory),self.get_bonus("WHITE", inventory),self.get_bonus("BLUE", inventory), self.get_bonus("BROWN", inventory))
+        self.discounts = Bonus( self.get_bonus("RED", inventory),self.get_bonus("GREEN", inventory),self.get_bonus("WHITE", inventory),self.get_bonus("BLUE", inventory), self.get_bonus("BROWN", inventory))
 
 
