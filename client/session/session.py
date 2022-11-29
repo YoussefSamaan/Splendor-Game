@@ -170,11 +170,9 @@ def session(authenticator):
         # if we are on i = 3, page =1 we only need to display 1 game
         # len getgames would be 3
 
-        # TODO: Add case for 0 games
         if len(get_games()) == 0:
-            continue
-        
-        if len(get_games())-i > 0:
+            pass
+        elif len(get_games())-i > 0:
             game_name = base_font.render(get_games()[i] + " / "+ get_creator()[i] + " / " + get_players()[i], True, WHITE)
             screen.blit(game_name, (game_rect1[0]+20, game_rect1[1]+20))
             pygame.draw.rect(screen, LIGHT_BLUE, game_rect1, 3)
