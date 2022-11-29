@@ -6,7 +6,7 @@ parentdir = os.path.dirname(currentdir)
 sys.path.append(parentdir)
 from authenticator import *
 
-from session import get_session, post_session
+from session import get_session, post_session, delete_session
 
 
 HEIGHT = 750
@@ -106,8 +106,8 @@ def session(authenticator):
 
     game_rect1 = pygame.Rect((150, 450, 400, 55))
     game_rect2 = pygame.Rect((150, 550, 400, 55))
-    del_rect1 = pygame.Rect((655, 450, 90, 55))
-    del_rect2 = pygame.Rect((655, 550, 90, 55))
+    del_rect1 = pygame.Rect((555, 450, 90, 55))
+    del_rect2 = pygame.Rect((555, 550, 90, 55))
     launch_rect1 = pygame.Rect((655, 450, 90, 55))
     launch_rect2 = pygame.Rect((655, 550, 90, 55))
     leave_rect1 = pygame.Rect((655, 450, 100, 55)) # creator can't leave game 
@@ -118,6 +118,8 @@ def session(authenticator):
     wrong_credentials = False # like session somehow invalid
     create_active = False # whether you're clicked on the text input
 
+    def leave_game(game):
+        delete_session.remove_player_from_session(game, authenticator.username)
     def create_game(game):
         post_session.create_session(authenticator.username, authenticator.get_token(), game)
     def join(game):
@@ -139,7 +141,7 @@ def session(authenticator):
 
                     if back_rect.collidepoint(event.pos):
                         screen.fill(GREY)
-                        session()
+                        session(authenticator)
 
                     elif join_rect.collidepoint(event.pos):
                         pass
@@ -152,7 +154,7 @@ def session(authenticator):
             clock.tick(FPS)
     
     def delete(game):
-        pass
+        delete_session.delete_session(authenticator.get_token(), game)
     
     while True:
         screen.fill(GREY)
@@ -227,8 +229,15 @@ def session(authenticator):
                     # need to add the actual code
                 elif create_rect.collidepoint(event.pos):
                     create_game(create_text_entry)
-                elif join_rect.collidepoint(event.pos):
-                    pass
+                elif leave_rect1.collidepoint(event.pos):
+                    leave_game()
+                elif leave_rect2.collidepoint(event.pos):
+                    leave_game()
+                elif launch_rect1.collidepoint(event.pos):
+                    print("launch")
+                    return get_games()[i]
+                elif launch_rect2.collidepoint(event.pos):
+                    return get_games()[i+1]
                 # elif previous_button_rect.collidepoint(event.pos):
                 #     if current_page > 0:
                 #         current_page -= 1
