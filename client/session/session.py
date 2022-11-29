@@ -34,8 +34,6 @@ color_passive = pygame.Color(LIGHT_GREY)
 color_error = pygame.Color(RED)
 
 
-
-
 '''ALL FUNCTIONS HERE HAVE TO BE CHANGED'''
 def get_games(sessions):
     # gets games currently stored in memory
@@ -115,11 +113,11 @@ def session(authenticator):
     play_rect1 = pygame.Rect((555, 450, 90, 55))
     play_rect2 = pygame.Rect((555, 550, 90, 55))
     current_page = 0
-    wrong_credentials = False # like session somehow invalid
+
     create_active = False # whether you're clicked on the text input
 
     def create_game(game):
-        return post_session.create_session(authenticator.username, authenticator.get_token(), game).text
+        post_session.create_session(authenticator.username, authenticator.get_token(), game)
     def join(game):
         while True:
             screen.fill(GREY)
@@ -143,6 +141,8 @@ def session(authenticator):
 
                     elif join_rect.collidepoint(event.pos):
                         put_session.add_player(authenticator.get_token(), game, authenticator.username)
+                        
+                        session(authenticator)
 
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
@@ -255,6 +255,7 @@ def session(authenticator):
                     screen.fill(GREY)
                     exit()
                 elif del_rect1.collidepoint(event.pos):
+                    print("delete")
                     delete(get_games(sessions_json)[i])
                 elif del_rect2.collidepoint(event.pos):
                     delete(get_games(sessions_json)[i+1])
@@ -263,6 +264,7 @@ def session(authenticator):
                     create_color = color_active
                     # need to add the actual code
                 elif create_rect.collidepoint(event.pos):
+                    print("create")
                     create_game(create_text_entry)
 
                 elif launch_rect1.collidepoint(event.pos):
