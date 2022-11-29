@@ -116,6 +116,8 @@ def session(authenticator):
 
     create_active = False # whether you're clicked on the text input
 
+    def play_game(game_name):
+        return
     def create_game(game):
         post_session.create_session(authenticator.username, authenticator.get_token(), game)
     def join(game):
@@ -271,6 +273,10 @@ def session(authenticator):
                     print("launch")
                     return get_games(sessions_json)[i]
                 elif launch_rect2.collidepoint(event.pos):
+                    return get_games(sessions_json)[i+1]
+                elif play_rect1.collidepoint(event.pos):
+                    return get_games(sessions_json)[i]
+                elif play_rect2.collidepoint(event.pos):
                     return get_games(sessions_json)[i+1]
                 # elif previous_button_rect.collidepoint(event.pos):
                 #     if current_page > 0:
