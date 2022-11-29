@@ -308,11 +308,15 @@ self.get_true_cost(cost.get_black() - self.discounts.get_black()))
         #         #noble = Noble.instance(id=noble['cardId'])
         #         self.add_noble_to_sidebar(noble)
         #         #noble.isOnDisplay = False
-        for card in inventory['boughtCards']["cardId"]:
+        for card_json in inventory['boughtCards']:
+            card = Card.instance(id=card_json['cardId'])
             if card not in self.cards_bought.keys():
-                #card = Card.instance(id=card['cardId'])
                 self.add_card_to_sidebar(card)
-                #card.isOnDisplay = False
-        self.discounts = Bonus( self.get_bonus("RED", inventory),self.get_bonus("GREEN", inventory),self.get_bonus("WHITE", inventory),self.get_bonus("BLUE", inventory), self.get_bonus("BROWN", inventory))
+
+        for card_json in inventory['reservedCards']:
+            card = Card.instance(id=card_json['cardId'])
+            if card not in self.cards_bought.keys():
+                self.reserve_card_to_sidebar(card)
+        # self.discounts = Bonus( self.get_bonus("RED", inventory),self.get_bonus("GREEN", inventory),self.get_bonus("WHITE", inventory),self.get_bonus("BLUE", inventory), self.get_bonus("BROWN", inventory))
 
 
