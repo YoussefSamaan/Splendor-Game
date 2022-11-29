@@ -190,7 +190,7 @@ def session(authenticator):
                     screen.blit(launch_text, (launch_rect1[0]+10, launch_rect1[1]+20))
 
             
-        if len(get_games())-i >= 1:
+        if len(get_games())-i > 1:
             game_name2 = base_font.render(get_games()[i+1] + " / " + get_creator()[i+1] + " / " + get_players()[i+1], True, WHITE)
             pygame.draw.rect(screen, LIGHT_BLUE, game_rect2, 3)
             screen.blit(game_name2, (game_rect2[0]+20, game_rect2[1]+20))
