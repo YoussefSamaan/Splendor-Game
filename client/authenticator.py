@@ -15,7 +15,7 @@ class Authenticator:
         data = {
             'grant_type': 'password',
             'username': username, #username,
-            'password': "abc123_ABC123", #password
+            'password': password, #password
         }
         response = requests.post(url, data=data, auth=('bgp-client-name', 'bgp-client-pw'))
         if response.status_code == 200:

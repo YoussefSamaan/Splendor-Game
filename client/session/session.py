@@ -121,7 +121,7 @@ def session(authenticator):
     def leave_game(game):
         delete_session.remove_player(authenticator.get_token(), game, authenticator.username)
     def create_game(game):
-        post_session.create_session(authenticator.username, authenticator.get_token(), game)
+        return post_session.create_session(authenticator.username, authenticator.get_token(), game).text
     def join(game):
         while True:
             screen.fill(GREY)
@@ -141,7 +141,7 @@ def session(authenticator):
 
                     if back_rect.collidepoint(event.pos):
                         screen.fill(GREY)
-                        session()
+                        session(authenticator)
 
                     elif join_rect.collidepoint(event.pos):
                         put_session.add_player(authenticator.get_token(), game, authenticator.username)
@@ -240,17 +240,17 @@ def session(authenticator):
             if event.type == pygame.MOUSEBUTTONDOWN:
                 wrong_credentials = False
                 if game_rect1.collidepoint(event.pos):
-                    if get_creator()[i] != authenticator.username:
-                        if get_games()[i] in get_joined_games(authenticator):
-                            leave(get_games()[i])
+                    if get_creators(sessions_json)[i] != authenticator.username:
+                        if get_games(sessions_json)[i] in get_joined_games(sessions_json, authenticator):
+                            leave(get_games(sessions_json)[i])
                         else:
-                            join(get_games()[i])
+                            join(get_games(sessions_json)[i])
                 elif game_rect2.collidepoint(event.pos):
-                    if get_creator()[i+1] != authenticator.username:
-                        if get_games()[i+1] in get_joined_games(authenticator):
-                            leave(get_games()[i+1])
+                    if get_creators(sessions_json)[i+1] != authenticator.username:
+                        if get_games(sessions_json)[i+1] in get_joined_games(sessions_json, authenticator):
+                            leave(get_games(sessions_json)[i+1])
                         else:
-                            join(get_games()[i+1])
+                            join(get_games(sessions_json)[i+1])
                     # print("TEST")
                     join(get_games(sessions_json)[i])
                     join(get_games()[i])
