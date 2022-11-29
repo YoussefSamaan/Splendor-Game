@@ -295,7 +295,7 @@ self.get_true_cost(cost.get_black() - self.discounts.get_black()))
         self.prestige_points = player_json['prestigePoints']
         inventory = player_json['inventory']
         newtokens = inventory['tokens']['tokens']
-        
+
         self.tokens[Color.BROWN] = newtokens['BROWN']
         self.tokens[Color.GOLD] = newtokens['GOLD']
         self.tokens[Color.GREEN] = newtokens['GREEN']
