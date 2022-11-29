@@ -1,13 +1,13 @@
 import os
 import pygame
 import sys
+
 currentdir = os.path.dirname(os.path.realpath(__file__))
 parentdir = os.path.dirname(currentdir)
 sys.path.append(parentdir)
 from authenticator import *
 
 from session import get_session, post_session, delete_session, put_session
-
 
 HEIGHT = 750
 WIDTH = 900
@@ -33,16 +33,15 @@ color_active = pygame.Color(LIGHT_BLUE)
 color_passive = pygame.Color(LIGHT_GREY)
 color_error = pygame.Color(RED)
 
-
 '''ALL FUNCTIONS HERE HAVE TO BE CHANGED'''
+
+
 def get_games(sessions):
     # gets games currently stored in memory
-    names = []
-    for game in sessions:
-        names.append(sessions[game]["savegameid"])
-    return names
-    
-def get_joined_games(sessions,current_player):
+    return list(sessions.keys())
+
+
+def get_joined_games(sessions, current_player):
     # get every game joined by the curr player
     games = []
     for game in sessions:
@@ -50,15 +49,17 @@ def get_joined_games(sessions,current_player):
             games.append(game)
     return games
 
+
 def get_players(sessions):
     # gets players currently stored in memory
     players = []
     for game in sessions:
         p = list(sessions[game]['players'])
-        p.pop(0) # don't include creator in list of players to reduce clutter
-        p_clean = ', '.join(p) #remove brackets from e.g. ['maex', 'linus'] to get maex, linus
+        p.pop(0)  # don't include creator in list of players to reduce clutter
+        p_clean = ', '.join(p)  # remove brackets from e.g. ['maex', 'linus'] to get maex, linus
         players.append(str(p_clean))
     return players
+
 
 # This function gets the creators of all games. Is this intended?
 def get_creators(sessions):
@@ -69,7 +70,8 @@ def get_creators(sessions):
         creators.append(str(creator))
     return creators
 
-def is_game_launched(sessions,game_name):
+
+def is_game_launched(sessions, game_name):
     for game in sessions:
         if sessions[game]["savegameid"] == game_name:
             return sessions[game]["launched"]
@@ -100,7 +102,7 @@ def session(authenticator):
     previous_text = base_font.render('Previous', True, WHITE)
     create_text_display = base_font.render('Session Name', True, WHITE)
     create_color = color_passive
-    leave_rect = pygame.Rect((655, 450, 100, 55)) # creator can't leave game 
+    leave_rect = pygame.Rect((655, 450, 100, 55))  # creator can't leave game
     create_text_entry = ""
 
     game_rect1 = pygame.Rect((150, 450, 400, 55))
@@ -114,17 +116,19 @@ def session(authenticator):
     play_rect2 = pygame.Rect((555, 550, 90, 55))
     current_page = 0
 
-    create_active = False # whether you're clicked on the text input
+    create_active = False  # whether you're clicked on the text input
 
     def play_game(game_name):
         return
+
     def create_game(game):
         post_session.create_session(authenticator.username, authenticator.get_token(), game)
+
     def join(game):
         while True:
             screen.fill(GREY)
-            newtext = base_font.render("Joining " + game +" confirm?", True, WHITE)
- 
+            newtext = base_font.render("Joining " + game + " confirm?", True, WHITE)
+
             pygame.draw.rect(screen, RED, back_rect)
 
             pygame.draw.rect(screen, GREEN, join_rect)
@@ -142,8 +146,9 @@ def session(authenticator):
                         session(authenticator)
 
                     elif join_rect.collidepoint(event.pos):
-                        put_session.add_player(authenticator.get_token(), game, authenticator.username)
-                        
+                        put_session.add_player(authenticator.get_token(), game,
+                                               authenticator.username)
+
                         session(authenticator)
 
                 if event.type == pygame.KEYDOWN:
@@ -152,11 +157,12 @@ def session(authenticator):
                         sys.exit()
             pygame.display.flip()
             clock.tick(FPS)
+
     def leave(game):
         while True:
             screen.fill(GREY)
-            newtext = base_font.render("Leaving " + game +" confirm?", True, WHITE)
- 
+            newtext = base_font.render("Leaving " + game + " confirm?", True, WHITE)
+
             pygame.draw.rect(screen, RED, back_rect)
 
             pygame.draw.rect(screen, RED, leave_rect)
@@ -174,7 +180,8 @@ def session(authenticator):
                         session(authenticator)
 
                     elif leave_rect.collidepoint(event.pos):
-                        delete_session.remove_player(authenticator.get_token(), game, authenticator.username)
+                        delete_session.remove_player(authenticator.get_token(), game,
+                                                     authenticator.username)
 
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
@@ -182,9 +189,10 @@ def session(authenticator):
                         sys.exit()
             pygame.display.flip()
             clock.tick(FPS)
+
     def delete(game):
         delete_session.delete_session(authenticator.get_token(), game)
-    
+
     while True:
         screen.fill(GREY)
         i = current_page * 2
@@ -195,40 +203,43 @@ def session(authenticator):
 
         if len(get_games(sessions_json)) == 0:
             pass
-        elif len(get_games(sessions_json))-i > 0:
-            game_name = base_font.render(get_games(sessions_json)[i] + " / "+ get_creators(sessions_json)[i] + " / " + get_players(sessions_json)[i], True, WHITE)
-            screen.blit(game_name, (game_rect1[0]+20, game_rect1[1]+20))
+        elif len(get_games(sessions_json)) - i > 0:
+            game_name = base_font.render(
+                get_games(sessions_json)[i] + " / " + get_creators(sessions_json)[i] + " / " +
+                get_players(sessions_json)[i], True, WHITE)
+            screen.blit(game_name, (game_rect1[0] + 20, game_rect1[1] + 20))
             pygame.draw.rect(screen, LIGHT_BLUE, game_rect1, 3)
             if get_creators(sessions_json)[i] == authenticator.username:
                 pygame.draw.rect(screen, RED, del_rect1)
-                screen.blit(delete_text, (del_rect1[0]+20, del_rect1[1]+20))
-                if is_game_launched(sessions_json,get_games(sessions_json)[i]):
+                screen.blit(delete_text, (del_rect1[0] + 20, del_rect1[1] + 20))
+                if is_game_launched(sessions_json, get_games(sessions_json)[i]):
                     pygame.draw.rect(screen, GREEN, play_rect1)
-                    screen.blit(play_text, (play_rect1[0]+20, play_rect1[1]+20))
+                    screen.blit(play_text, (play_rect1[0] + 20, play_rect1[1] + 20))
                 else:
                     pygame.draw.rect(screen, GREEN, launch_rect1)
-                    screen.blit(launch_text, (launch_rect1[0]+20, launch_rect1[1]+20))
-            elif get_games(sessions_json)[i] in get_joined_games(sessions_json,authenticator):
-                    pygame.draw.rect(screen, GREEN, launch_rect1)
-                    screen.blit(launch_text, (launch_rect1[0]+10, launch_rect1[1]+20))
+                    screen.blit(launch_text, (launch_rect1[0] + 20, launch_rect1[1] + 20))
+            elif get_games(sessions_json)[i] in get_joined_games(sessions_json, authenticator):
+                pygame.draw.rect(screen, GREEN, launch_rect1)
+                screen.blit(launch_text, (launch_rect1[0] + 10, launch_rect1[1] + 20))
 
-            
-        if len(get_games(sessions_json))-i > 1:
-            game_name2 = base_font.render(get_games(sessions_json)[i+1] + " / " + get_creators(sessions_json)[i+1] + " / " + get_players(sessions_json)[i+1], True, WHITE)
+        if len(get_games(sessions_json)) - i > 1:
+            game_name2 = base_font.render(
+                get_games(sessions_json)[i + 1] + " / " + get_creators(sessions_json)[
+                    i + 1] + " / " + get_players(sessions_json)[i + 1], True, WHITE)
             pygame.draw.rect(screen, LIGHT_BLUE, game_rect2, 3)
-            screen.blit(game_name2, (game_rect2[0]+20, game_rect2[1]+20))
-            if get_creators(sessions_json)[i+1] == authenticator.username:
+            screen.blit(game_name2, (game_rect2[0] + 20, game_rect2[1] + 20))
+            if get_creators(sessions_json)[i + 1] == authenticator.username:
                 pygame.draw.rect(screen, RED, del_rect2)
-                screen.blit(delete_text, (del_rect2[0]+20, del_rect2[1]+20))
-                if is_game_launched(sessions_json,get_games(sessions_json)[i+1]):
+                screen.blit(delete_text, (del_rect2[0] + 20, del_rect2[1] + 20))
+                if is_game_launched(sessions_json, get_games(sessions_json)[i + 1]):
                     pygame.draw.rect(screen, GREEN, play_rect2)
-                    screen.blit(play_text, (play_rect2[0]+20, play_rect2[1]+20))
+                    screen.blit(play_text, (play_rect2[0] + 20, play_rect2[1] + 20))
                 else:
                     pygame.draw.rect(screen, GREEN, launch_rect2)
-                    screen.blit(launch_text, (launch_rect2[0]+10, launch_rect2[1]+20))
-            elif get_games(sessions_json)[i+1] in get_joined_games(sessions_json,authenticator):
-                    pygame.draw.rect(screen, GREEN, launch_rect2)
-                    screen.blit(launch_text, (launch_rect2[0]+10, launch_rect2[1]+20))
+                    screen.blit(launch_text, (launch_rect2[0] + 10, launch_rect2[1] + 20))
+            elif get_games(sessions_json)[i + 1] in get_joined_games(sessions_json, authenticator):
+                pygame.draw.rect(screen, GREEN, launch_rect2)
+                screen.blit(launch_text, (launch_rect2[0] + 10, launch_rect2[1] + 20))
 
         # add code to make sure only creator can delete game 
         # add code to make sure only joined player can leave game 
@@ -240,27 +251,35 @@ def session(authenticator):
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if game_rect1.collidepoint(event.pos):
                     if get_creators(sessions_json)[i] != authenticator.username:
-                        if get_games(sessions_json)[i] in get_joined_games(sessions_json, authenticator):
+                        if get_games(sessions_json)[i] in get_joined_games(sessions_json,
+                                                                           authenticator):
                             leave(get_games(sessions_json)[i])
                         else:
                             join(get_games(sessions_json)[i])
                 elif game_rect2.collidepoint(event.pos):
-                    if get_creators(sessions_json)[i+1] != authenticator.username:
-                        if get_games(sessions_json)[i+1] in get_joined_games(sessions_json, authenticator):
-                            leave(get_games(sessions_json)[i+1])
+                    if get_creators(sessions_json)[i + 1] != authenticator.username:
+                        if get_games(sessions_json)[i + 1] in get_joined_games(sessions_json,
+                                                                               authenticator):
+                            leave(get_games(sessions_json)[i + 1])
                         else:
-                            join(get_games(sessions_json)[i+1])
+                            join(get_games(sessions_json)[i + 1])
                     # print("TEST")
                     join(get_games(sessions_json)[i])
 
                 elif back_rect.collidepoint(event.pos):
                     screen.fill(GREY)
                     exit()
+                elif play_rect1.collidepoint(event.pos):
+                    print(get_games(sessions_json)[i])
+                    return post_session.launch_session(authenticator.get_token(),
+                                                       get_games(sessions_json)[i])
+                elif play_rect2.collidepoint(event.pos):
+                    return get_games(sessions_json)[i + 1]
                 elif del_rect1.collidepoint(event.pos):
                     print("delete")
                     delete(get_games(sessions_json)[i])
                 elif del_rect2.collidepoint(event.pos):
-                    delete(get_games(sessions_json)[i+1])
+                    delete(get_games(sessions_json)[i + 1])
                 elif create_input_rect.collidepoint(event.pos):
                     create_active = True
                     create_color = color_active
@@ -270,32 +289,31 @@ def session(authenticator):
                     create_game(create_text_entry)
 
                 elif launch_rect1.collidepoint(event.pos):
-                    print("launch")
-                    return get_games(sessions_json)[i]
+                    print(get_games(sessions_json)[i])
+                    return post_session.launch_session(authenticator.get_token(),
+                                                       get_games(sessions_json)[i])
                 elif launch_rect2.collidepoint(event.pos):
-                    return get_games(sessions_json)[i+1]
-                elif play_rect1.collidepoint(event.pos):
-                    return get_games(sessions_json)[i]
-                elif play_rect2.collidepoint(event.pos):
-                    return get_games(sessions_json)[i+1]
+                    print(get_games(sessions_json)[i])
+                    return post_session.launch_session(authenticator.get_token(),
+                                                       get_games(sessions_json)[i+1])
                 # elif previous_button_rect.collidepoint(event.pos):
                 #     if current_page > 0:
                 #         current_page -= 1
-                    
+
                 # elif next_button_rect.collidepoint(event.pos):
                 #     if current_page < len(get_games(sessions_json)) / 2:
                 #         current_page += 1
-    
+
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     pygame.quit()
                     sys.exit()
                 if create_active:
                     if event.key == pygame.K_BACKSPACE:
-                        create_text_entry = create_text_entry[:-1] # deletes last character
+                        create_text_entry = create_text_entry[:-1]  # deletes last character
                     else:
                         create_text_entry += event.unicode
-        
+
         pygame.draw.rect(screen, create_color, create_input_rect, 3)
 
         pygame.draw.rect(screen, RED, back_rect)
@@ -307,14 +325,13 @@ def session(authenticator):
 
         create_text_surface = base_font.render(create_text_entry, True, WHITE)
         screen.blit(create_text_surface, (create_input_rect.x + 5, create_input_rect.y + 5))
-        screen.blit(base_text, (350,17))
+        screen.blit(base_text, (350, 17))
         screen.blit(back_text, (85, 125))
         # screen.blit(next_text, (655, 685))
         # screen.blit(previous_text, (185, 685))
         screen.blit(create_text_display, (150, 225))
-        
+
         create_input_rect.w = max(600, create_text_surface.get_width() + 10)
 
         pygame.display.flip()
         clock.tick(FPS)
-        

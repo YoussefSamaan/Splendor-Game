@@ -7,4 +7,5 @@ if __name__ == '__main__':
     authenticator = Authenticator()
     login.login(authenticator)
     game_id = session.session(authenticator)
+    print(game_id)
     splendor.play(authenticator=authenticator, game_id=game_id)

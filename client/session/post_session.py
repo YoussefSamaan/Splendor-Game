@@ -16,17 +16,21 @@ def create_session(username, access_token, savegameid):
         "savegame": savegameid
     }
     header = {
-        "Content-Type" : "application/json"
+        "Content-Type": "application/json"
     }
     response = requests.post(url, json=data, headers=header)
-    # print(response.json())
     return response
+
 
 def launch_session(access_token, session):
     url = f"{LOBBY_SERVICE_URL}/api/sessions/{session}?access_token={access_token}"
     response = requests.post(url)
-    # print(response.json())
-    return response
+    print(response)
+    if response.status_code == 200:
+        print("SUCCESSS!!!!!!!")
+        return session
+    print("FAILLL")
+    return session
 
 # test_access_token = "h9UONiYVQ43aYWAGFBEv2tsbqiY="
 # create_session("maex", test_access_token, "")

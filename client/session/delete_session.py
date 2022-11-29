@@ -23,4 +23,3 @@ def remove_player(access_token, session, username):
 
 # session number can be either 3165409446827231019 or "3165409446827231019"
 # delete_session("J%2BF98Sf9oVbnCX6RuHlR72vzscs=", 4017376585323182585)
-remove_player("m%2BL/mY/70yMWI4uE5wLaudtDpHs=", 636302944309790167, "maex")
