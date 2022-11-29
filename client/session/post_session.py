@@ -12,7 +12,7 @@ def create_session(username, access_token, savegameid):
     url = f"{LOBBY_SERVICE_URL}/api/sessions?access_token={access_token}"
     data = {
         "creator": username,
-        "game": "xox",
+        "game": "splendor",
         "savegame": savegameid
     }
     header = {
