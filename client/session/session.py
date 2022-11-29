@@ -106,8 +106,8 @@ def session(authenticator):
 
     game_rect1 = pygame.Rect((150, 450, 400, 55))
     game_rect2 = pygame.Rect((150, 550, 400, 55))
-    del_rect1 = pygame.Rect((555, 450, 90, 55))
-    del_rect2 = pygame.Rect((555, 550, 90, 55))
+    del_rect1 = pygame.Rect((655, 450, 90, 55))
+    del_rect2 = pygame.Rect((655, 550, 90, 55))
     launch_rect1 = pygame.Rect((655, 450, 90, 55))
     launch_rect2 = pygame.Rect((655, 550, 90, 55))
     leave_rect1 = pygame.Rect((655, 450, 100, 55)) # creator can't leave game 
@@ -118,8 +118,6 @@ def session(authenticator):
     wrong_credentials = False # like session somehow invalid
     create_active = False # whether you're clicked on the text input
 
-    def leave_game(game):
-        delete_session.remove_player_from_session(game, authenticator.username)
     def create_game(game):
         post_session.create_session(authenticator.username, authenticator.get_token(), game)
     def join(game):
@@ -141,7 +139,7 @@ def session(authenticator):
 
                     if back_rect.collidepoint(event.pos):
                         screen.fill(GREY)
-                        session(authenticator)
+                        session()
 
                     elif join_rect.collidepoint(event.pos):
                         pass
@@ -154,7 +152,7 @@ def session(authenticator):
             clock.tick(FPS)
     
     def delete(game):
-        delete_session.delete_session(authenticator.get_token(), game)
+        pass
     
     while True:
         screen.fill(GREY)
@@ -213,6 +211,7 @@ def session(authenticator):
                 if game_rect1.collidepoint(event.pos):
                     # print("TEST")
                     join(get_games(sessions_json)[i])
+                    join(get_games()[i])
                 elif game_rect2.collidepoint(event.pos):
                     screen.fill(GREY)
                     join(get_games(sessions_json)[i+1])
@@ -243,7 +242,7 @@ def session(authenticator):
                 #         current_page -= 1
                     
                 # elif next_button_rect.collidepoint(event.pos):
-                #     if current_page < len(get_games()) / 2:
+                #     if current_page < len(get_games(sessions_json)) / 2:
                 #         current_page += 1
 
                 else:
