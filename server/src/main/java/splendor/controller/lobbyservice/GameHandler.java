@@ -12,6 +12,7 @@ import splendor.controller.game.GameManager;
 
 /**
  * Rest Controller responsible for starting/deleting/saving games.
+ * 
  */
 @RestController
 public class GameHandler {
