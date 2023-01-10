@@ -169,6 +169,7 @@ def session(authenticator):
             screen.blit(newtext, (350, 350))
             screen.blit(back_text2, (185, 125))
             screen.blit(leave_text, (400, 625))
+
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
@@ -202,14 +203,20 @@ def session(authenticator):
         sessions_json = get_session.get_all_sessions().json()["sessions"]
 
         if len(get_games(sessions_json)) == 0:
+            # don't display anything if there are no games
             pass
         elif len(get_games(sessions_json)) - i > 0:
+            # if there is at least one game to display
+            # get name from json
             game_name = base_font.render(
                 get_games(sessions_json)[i] + " / " + get_creators(sessions_json)[i] + " / " +
                 get_players(sessions_json)[i], True, WHITE)
             screen.blit(game_name, (game_rect1[0] + 20, game_rect1[1] + 20))
+            # draw game
             pygame.draw.rect(screen, LIGHT_BLUE, game_rect1, 3)
+
             if get_creators(sessions_json)[i] == authenticator.username:
+                # if you are the creator of the game
                 pygame.draw.rect(screen, RED, del_rect1)
                 screen.blit(delete_text, (del_rect1[0] + 20, del_rect1[1] + 20))
                 if is_game_launched(sessions_json, get_games(sessions_json)[i]):
@@ -219,10 +226,12 @@ def session(authenticator):
                     pygame.draw.rect(screen, GREEN, launch_rect1)
                     screen.blit(launch_text, (launch_rect1[0] + 20, launch_rect1[1] + 20))
             elif get_games(sessions_json)[i] in get_joined_games(sessions_json, authenticator):
+                # if the game is in your joined games
                 pygame.draw.rect(screen, GREEN, launch_rect1)
                 screen.blit(launch_text, (launch_rect1[0] + 10, launch_rect1[1] + 20))
 
         if len(get_games(sessions_json)) - i > 1:
+            # if there is at least two games to display
             game_name2 = base_font.render(
                 get_games(sessions_json)[i + 1] + " / " + get_creators(sessions_json)[
                     i + 1] + " / " + get_players(sessions_json)[i + 1], True, WHITE)
@@ -245,6 +254,7 @@ def session(authenticator):
         # add code to make sure only joined player can leave game 
 
         for event in pygame.event.get():
+            # when the user clicks or types anything
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
