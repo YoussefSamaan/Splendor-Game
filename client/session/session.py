@@ -1,6 +1,7 @@
 import os
 import pygame
 import sys
+import operator # for tuple operations
 
 currentdir = os.path.dirname(os.path.realpath(__file__))
 parentdir = os.path.dirname(currentdir)
@@ -40,7 +41,6 @@ def get_games(sessions):
     # gets games currently stored in memory
     return list(sessions.keys())
 
-
 def get_joined_games(sessions, current_player):
     # get every game joined by the curr player
     games = []
@@ -77,6 +77,84 @@ def is_game_launched(sessions, game_name):
             return sessions[game]["launched"]
     return False
 
+# constants for game_rect, the box(es) that shows session ids and usernames
+GAME_RECT_INITIAL_TOP_LEFT = (150,450)
+GAME_RECT_INCREMENT = (0,100) # the tuple to move the top_left by
+GAME_RECT_SIZE = (400,55)
+
+# constants for del_rect, the box associated with game_rect for deleting or leaving
+DEL_RECT_INITIAL_TOP_LEFT = tuple(map(operator.add, GAME_RECT_INITIAL_TOP_LEFT, (0,405)))
+DEL_RECT_INCREMENT = (0,100)
+DEL_RECT_SIZE = (90,55)
+
+# constants for launch_rect, the box associated with game_rect for joining, launching, starting
+LAUNCH_RECT_INITIAL_TOP_LEFT = tuple(map(operator.add, GAME_RECT_INITIAL_TOP_LEFT, (0,505)))
+LAUNCH_RECT_INCREMENT = (0,100)
+LAUNCH_RECT_SIZE = (90,55)
+
+# max sessions before putting more on the next page
+MAX_SESSIONS_PER_PAGE = 3
+
+# Class for a session listing. A session listing is the game info and interaction buttons
+# associated with an existing session in the session list
+class SessionListing:
+    def __init__(self, session_id : str, session_info, index : int) -> None:
+        self.session_id = session_id
+        # Access relevant information about the session
+        self.creator = session_info["creator"] # str playername
+        self.min_plr = session_info["minSessionPlayers"] # int
+        self.max_plr = session_info["maxSessionPlayers"] # int
+        self.launched = session_info["launched"] # boolean
+        self.plr_list = session_info["players"] # list of str playernames
+        self.savegame = session_info["savegameid"] # str
+        
+        # index_order and page_number start from 0
+        # index order is the order of this listing on the page it is in
+        self.index_order = index % MAX_SESSIONS_PER_PAGE
+        # page_number is the page this listing is in
+        self.page_number = index // MAX_SESSIONS_PER_PAGE
+
+        # Rects associated with this session listing in the session list
+        # TODO: Generate here and link to click events
+        self.game_info = None
+        self.delete_button = None
+        self.launch_button = None
+    
+    # logged-in user is the creator and deletes the session
+    def del_sess(self) -> None:
+        return
+
+    # logged-in user is the creator and launches the session if there are enough players
+    def launch_sess(self) -> None:
+        return
+
+    # logged-in user is not the creator and joins the session
+    def join_sess(self) -> None:
+        return
+
+    # logged-in user starts playing in the session
+    def start_sess(self) -> None:
+        return
+
+    # logged-in user leaves the session
+    def leave_sess(self) -> None:
+        return
+
+# TODO: When ready, use this function instead of the giant if-statements in the while True loop
+# Takes sessions json and outputs a list of pygame objects to be blitzed
+def generate_session_list_buttons(sessions_json):
+    if len(get_games(sessions_json)) == 0:
+        # if there are no sessions return empty list
+        return []
+    
+    session_list = []
+    # for each existing session, create a SessionListing object
+    # it will handle the buttons, information, and events
+    for index,session in enumerate(sessions_json):
+        new_session = SessionListing(session,sessions_json[session],index)
+        session_list.append(new_session)
+    
+    return session_list
 
 def session(authenticator):
     # needs to add game to the list of games
@@ -104,6 +182,8 @@ def session(authenticator):
     create_color = color_passive
     leave_rect = pygame.Rect((655, 450, 100, 55))  # creator can't leave game
     create_text_entry = ""
+
+
 
     game_rect1 = pygame.Rect((150, 450, 400, 55))
     game_rect2 = pygame.Rect((150, 550, 400, 55))
@@ -258,15 +338,17 @@ def session(authenticator):
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                if game_rect1.collidepoint(event.pos):
+            if event.type == pygame.MOUSEBUTTONUP:
+                clicked_position = pygame.mouse.get_pos()
+
+                if game_rect1.collidepoint(clicked_position):
                     if get_creators(sessions_json)[i] != authenticator.username:
                         if get_games(sessions_json)[i] in get_joined_games(sessions_json,
                                                                            authenticator):
                             leave(get_games(sessions_json)[i])
                         else:
                             join(get_games(sessions_json)[i])
-                elif game_rect2.collidepoint(event.pos):
+                elif game_rect2.collidepoint(clicked_position):
                     if get_creators(sessions_json)[i + 1] != authenticator.username:
                         if get_games(sessions_json)[i + 1] in get_joined_games(sessions_json,
                                                                                authenticator):
@@ -276,33 +358,34 @@ def session(authenticator):
                     # print("TEST")
                     join(get_games(sessions_json)[i])
 
-                elif back_rect.collidepoint(event.pos):
+                elif back_rect.collidepoint(clicked_position):
                     screen.fill(GREY)
                     exit()
-                elif play_rect1.collidepoint(event.pos):
-                    print(get_games(sessions_json)[i])
-                    return post_session.launch_session(authenticator.get_token(),
-                                                       get_games(sessions_json)[i])
-                elif play_rect2.collidepoint(event.pos):
-                    return get_games(sessions_json)[i + 1]
-                elif del_rect1.collidepoint(event.pos):
+                #elif play_rect1.collidepoint(event.pos):
+                #    print(get_games(sessions_json)[i])
+                #    return post_session.launch_session(authenticator.get_token(),
+                #                                       get_games(sessions_json)[i])
+                #elif play_rect2.collidepoint(event.pos):
+                #    return get_games(sessions_json)[i + 1]
+                elif del_rect1.collidepoint(clicked_position):
                     print("delete")
                     delete(get_games(sessions_json)[i])
-                elif del_rect2.collidepoint(event.pos):
+                elif del_rect2.collidepoint(clicked_position):
+                    print("delete2")
                     delete(get_games(sessions_json)[i + 1])
-                elif create_input_rect.collidepoint(event.pos):
+                elif create_input_rect.collidepoint(clicked_position):
                     create_active = True
                     create_color = color_active
                     # need to add the actual code
-                elif create_rect.collidepoint(event.pos):
+                elif create_rect.collidepoint(clicked_position):
                     print("create")
                     create_game(create_text_entry)
 
-                elif launch_rect1.collidepoint(event.pos):
+                elif launch_rect1.collidepoint(clicked_position):
                     print(get_games(sessions_json)[i])
                     return post_session.launch_session(authenticator.get_token(),
                                                        get_games(sessions_json)[i])
-                elif launch_rect2.collidepoint(event.pos):
+                elif launch_rect2.collidepoint(clicked_position):
                     print(get_games(sessions_json)[i])
                     return post_session.launch_session(authenticator.get_token(),
                                                        get_games(sessions_json)[i+1])
