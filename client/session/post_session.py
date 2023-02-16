@@ -13,12 +13,13 @@ def create_session(username, access_token, savegameid):
     data = {
         "creator": username,
         "game": "splendor",
-        "savegame": savegameid
+        "savegame": "",
     }
     header = {
         "Content-Type": "application/json"
     }
     response = requests.post(url, json=data, headers=header)
+    print(response.content.decode('utf-8'))
     return response
 
 

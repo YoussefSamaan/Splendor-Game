@@ -324,7 +324,7 @@ def session(authenticator):
                     else:
                         create_text_entry += event.unicode
 
-        pygame.draw.rect(screen, create_color, create_input_rect, 3)
+        # pygame.draw.rect(screen, create_color, create_input_rect, 3)
 
         pygame.draw.rect(screen, RED, back_rect)
         # pygame.draw.rect(screen, GREEN, next_button_rect)
@@ -333,15 +333,15 @@ def session(authenticator):
 
         screen.blit(create_text, (420, 325))
 
-        create_text_surface = base_font.render(create_text_entry, True, WHITE)
-        screen.blit(create_text_surface, (create_input_rect.x + 5, create_input_rect.y + 5))
-        screen.blit(base_text, (350, 17))
+        # create_text_surface = base_font.render(create_text_entry, True, WHITE)
+        # screen.blit(create_text_surface, (create_input_rect.x + 5, create_input_rect.y + 5))
+        # screen.blit(base_text, (350, 17))
         screen.blit(back_text, (85, 125))
         # screen.blit(next_text, (655, 685))
         # screen.blit(previous_text, (185, 685))
-        screen.blit(create_text_display, (150, 225))
+        # screen.blit(create_text_display, (150, 225))
 
-        create_input_rect.w = max(600, create_text_surface.get_width() + 10)
+        # create_input_rect.w = max(600, create_text_surface.get_width() + 10)
 
         pygame.display.flip()
         clock.tick(FPS)
