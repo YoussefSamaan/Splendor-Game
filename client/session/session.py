@@ -78,6 +78,9 @@ def is_game_launched(sessions, game_name):
     return False
 
 # constants for game_rect, the box(es) that shows session ids and usernames
+GAME_RECT_INIT_X = 150
+GAME_RECT_INIT_Y = 450
+GAME_RECT_INCR_Y = 100
 GAME_RECT_INITIAL_TOP_LEFT = (150,450)
 GAME_RECT_INCREMENT = (0,100) # the tuple to move the top_left by
 GAME_RECT_SIZE = (400,55)
@@ -98,7 +101,7 @@ MAX_SESSIONS_PER_PAGE = 3
 # Class for a session listing. A session listing is the game info and interaction buttons
 # associated with an existing session in the session list
 class SessionListing:
-    def __init__(self, session_id : str, session_info, index : int) -> None:
+    def __init__(self, authenticator, session_id : str, session_info, index : int) -> None:
         self.session_id = session_id
         # Access relevant information about the session
         self.creator = session_info["creator"] # str playername
@@ -107,6 +110,8 @@ class SessionListing:
         self.launched = session_info["launched"] # boolean
         self.plr_list = session_info["players"] # list of str playernames
         self.savegame = session_info["savegameid"] # str
+
+        self.current_user = authenticator.username
         
         # index_order and page_number start from 0
         # index order is the order of this listing on the page it is in
@@ -116,10 +121,30 @@ class SessionListing:
 
         # Rects associated with this session listing in the session list
         # TODO: Generate here and link to click events
-        self.game_info = None
+        self.game_info = pygame.Rect((GAME_RECT_INIT_X,GAME_RECT_INIT_Y+GAME_RECT_INCR_Y*self.index_order),GAME_RECT_SIZE)
         self.delete_button = None
         self.launch_button = None
     
+    # get a string of the game description, to be blitted in the box later
+    def get_game_info(self) -> str:
+        return f"{self.session_id} / {self.creator} / {','.join(self.plr_list) ({self.min_plr}-{self.max_plr})}"
+    
+    def redButtonEvent(self) -> None:
+        if self.current_user == self.creator:
+            self.delete_session()
+        elif self.current_user in self.plr_list:
+            self.leave_sess()
+    
+    def greenButtonEvent(self) -> None:
+        if not self.launched:
+            # game is not yet launched; creator can launch, others can join
+            if self.current_user == self.creator:
+                self.launch_sess()
+            else:
+                self.join_sess()
+        else:
+            self.play_sess()
+
     # logged-in user is the creator and deletes the session
     def del_sess(self) -> None:
         return
@@ -133,7 +158,7 @@ class SessionListing:
         return
 
     # logged-in user starts playing in the session
-    def start_sess(self) -> None:
+    def play_sess(self) -> None:
         return
 
     # logged-in user leaves the session
@@ -142,7 +167,7 @@ class SessionListing:
 
 # TODO: When ready, use this function instead of the giant if-statements in the while True loop
 # Takes sessions json and outputs a list of pygame objects to be blitzed
-def generate_session_list_buttons(sessions_json):
+def generate_session_list_buttons(authenticator,sessions_json):
     if len(get_games(sessions_json)) == 0:
         # if there are no sessions return empty list
         return []
@@ -151,7 +176,7 @@ def generate_session_list_buttons(sessions_json):
     # for each existing session, create a SessionListing object
     # it will handle the buttons, information, and events
     for index,session in enumerate(sessions_json):
-        new_session = SessionListing(session,sessions_json[session],index)
+        new_session = SessionListing(authenticator,session,sessions_json[session],index)
         session_list.append(new_session)
     
     return session_list
@@ -160,9 +185,9 @@ def session(authenticator):
     # needs to add game to the list of games
     # some sort of scrolling game inventory
 
-    create_input_rect = pygame.Rect((150, 250, 200, 35))  # pos_x, pos_y, width, height
+    #create_input_rect = pygame.Rect((150, 250, 200, 35))  # pos_x, pos_y, width, height
 
-    create_rect = pygame.Rect((350, 300, 200, 70))
+    create_rect = pygame.Rect((350, 200, 200, 70))
     join_rect = pygame.Rect((350, 600, 200, 70))
     back_rect = pygame.Rect((50, 100, 150, 70))
     previous_button_rect = pygame.Rect((150, 660, 150, 70))
@@ -373,8 +398,8 @@ def session(authenticator):
                 elif del_rect2.collidepoint(clicked_position):
                     print("delete2")
                     delete(get_games(sessions_json)[i + 1])
-                elif create_input_rect.collidepoint(clicked_position):
-                    create_active = True
+                #elif create_input_rect.collidepoint(clicked_position):
+                    #create_active = True
                     create_color = color_active
                     # need to add the actual code
                 elif create_rect.collidepoint(clicked_position):
@@ -414,7 +439,7 @@ def session(authenticator):
         # pygame.draw.rect(screen, GREEN, previous_button_rect)
         pygame.draw.rect(screen, LIGHT_GREY, create_rect)
 
-        screen.blit(create_text, (420, 325))
+        screen.blit(create_text, (420, 225))
 
         # create_text_surface = base_font.render(create_text_entry, True, WHITE)
         # screen.blit(create_text_surface, (create_input_rect.x + 5, create_input_rect.y + 5))
