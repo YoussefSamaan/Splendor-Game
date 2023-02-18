@@ -136,7 +136,7 @@ def next_button_event() -> None:
 
 back_rect = Button(pygame.Rect((50, 100, 150, 70)), back_button_event, LIGHT_BLUE)
 previous_rect = Button(pygame.Rect((150, 660, 150, 70)), previous_button_event, LIGHT_BLUE)
-next_rect = Button(pygame.Rect((600, 150, 150, 70)), next_button_event, LIGHT_BLUE)
+next_rect = Button(pygame.Rect((600, 660, 150, 70)), next_button_event, LIGHT_BLUE)
 
 # Class for a session listing. A session listing is the game info and interaction buttons
 # associated with an existing session in the session list
@@ -377,6 +377,9 @@ def session(authenticator):
         clickable_buttons.append(back_rect)
         clickable_buttons.append(next_rect)
         clickable_buttons.append(previous_rect)
+        new_text("Back", WHITE, 85, 125)
+        new_text("Next", WHITE, 785, 125)
+        new_text("Previous", WHITE, 685, 125)
 
 
 
