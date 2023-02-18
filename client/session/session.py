@@ -36,6 +36,11 @@ color_error = pygame.Color(RED)
 
 '''ALL FUNCTIONS HERE HAVE TO BE CHANGED'''
 
+def new_text(text, color, x, y):
+    text_surface = base_font.render(text, True, color)
+    text_rect = text_surface.get_rect()
+    text_rect.topleft = (x, y)
+    screen.blit(text_surface, text_rect)
 
 def get_games(sessions):
     # gets games currently stored in memory
