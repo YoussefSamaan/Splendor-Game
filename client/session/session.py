@@ -377,11 +377,9 @@ def session(authenticator):
         clickable_buttons.append(back_rect)
         clickable_buttons.append(next_rect)
         clickable_buttons.append(previous_rect)
-        new_text("Back", WHITE, 85, 125)
-        new_text("Next", WHITE, 785, 125)
-        new_text("Previous", WHITE, 685, 125)
 
-
+        # display page number
+        new_text(str(current_page) + str(len(session_list) // MAX_SESSIONS_PER_PAGE), WHITE, 385, 125)
 
         for session_listing in session_list:
             # Display all the listings in our current page
@@ -392,7 +390,9 @@ def session(authenticator):
                 session_listing.display()
                 # This adds this visible session's buttons to the list of clickable buttons
                 clickable_buttons += session_listing.get_button_list()
-        
+        new_text("Back", WHITE, 85, 125)
+        new_text("Next", WHITE, 625, 665)
+        new_text("Previous", WHITE, 150, 665)
         # draw all the buttons on the screen
         for button in clickable_buttons:
             pygame.draw.rect(screen,button.color,button.rectangle,1)
