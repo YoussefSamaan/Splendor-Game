@@ -362,6 +362,9 @@ def session(authenticator):
 
         clickable_buttons :List[Button] = []
 
+        def create_button_event() -> None:
+            post_session.create_session(authenticator.username, authenticator.get_token())
+
         def previous_button_event() -> None:
             global current_page
             current_page = max(0, current_page - 1)
@@ -370,12 +373,14 @@ def session(authenticator):
             global current_page
             current_page = min(current_page + 1, len(session_list) // MAX_SESSIONS_PER_PAGE)
 
-        back_rect = Button(pygame.Rect((50, 100, 150, 70)), back_button_event, LIGHT_BLUE)
+        back_rect = Button(pygame.Rect((50, 100, 150, 70)), back_button_event, RED)
         previous_rect = Button(pygame.Rect((150, 660, 150, 70)), previous_button_event, LIGHT_BLUE)
         next_rect = Button(pygame.Rect((600, 660, 150, 70)), next_button_event, LIGHT_BLUE)
+        create_rect = Button(pygame.Rect((350, 660, 150, 70)), create_button_event, LIGHT_BLUE)
         clickable_buttons.append(back_rect)
         clickable_buttons.append(next_rect)
         clickable_buttons.append(previous_rect)
+        clickable_buttons.append(create_rect)
 
         # display page number
         new_text(f"{current_page+1} / {(len(session_list) // MAX_SESSIONS_PER_PAGE)+1}", WHITE, 385, 125)
@@ -389,12 +394,16 @@ def session(authenticator):
                 session_listing.display()
                 # This adds this visible session's buttons to the list of clickable buttons
                 clickable_buttons += session_listing.get_button_list()
-        new_text("Back", WHITE, 85, 125)
-        new_text("Next", WHITE, 625, 665)
-        new_text("Previous", WHITE, 150, 665)
+
         # draw all the buttons on the screen
         for button in clickable_buttons:
             pygame.draw.rect(screen,button.color,button.rectangle)
+
+        # writing text on buttons
+        new_text("Back", WHITE, 85, 125)
+        new_text("Next", WHITE, 625, 665)
+        new_text("Previous", WHITE, 150, 665)
+        new_text("Create", WHITE, 360, 675)
 
         for event in pygame.event.get():
             # when the user clicks or types anything
