@@ -1,7 +1,7 @@
 import os
 import pygame
 import sys
-from typing import List, Callable, Tuple
+from typing import List, Callable, Tuple, str
 
 currentdir = os.path.dirname(os.path.realpath(__file__))
 parentdir = os.path.dirname(currentdir)
@@ -113,9 +113,14 @@ current_page = 0
 
 
 class Button:
-    def __init__(self,rectangle : pygame.Rect, on_click_event : Callable[[None], None], color: Tuple[int,int,int] = LIGHT_GREY) -> None:
+    def __init__(self,rectangle : pygame.Rect, on_click_event : Callable[[None], None], color: Tuple[int,int,int] = LIGHT_GREY, text: str = "") -> None:
         self.rectangle = rectangle
         self.activation = on_click_event
+        self.color = color
+        self.text = text
+
+    def set_text(self, text):
+        self.text = text
 
 # action when the back button is pressed
 def back_button_event() -> None:
@@ -172,7 +177,19 @@ class SessionListing:
         game_info = self.get_game_info()
         pygame.draw.rect(screen, LIGHT_GREY, self.game_info)
         new_text(game_info, WHITE, GAME_RECT_INIT_X, GAME_RECT_INIT_Y+GAME_RECT_INCR_Y*self.index_order)
-
+        # set text for buttons
+        if self.current_user == self.creator:
+            self.red_button.set_text("Delete")
+        elif self.current_user in self.plr_list:
+            self.red_button.set_text("Leave")
+        if not self.launched:
+            if self.current_user == self.creator:
+                self.green_button.set_text("Launch")
+            else:
+                self.green_button.set_text("Join")
+        else:
+            self.green_button.set_text("Play")
+            
     def redButtonEvent(self) -> None:
         if self.current_user == self.creator:
             self.del_sess()
