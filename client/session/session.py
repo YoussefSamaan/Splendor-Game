@@ -1,7 +1,7 @@
 import os
 import pygame
 import sys
-from typing import List, Callable, Tuple, str
+from typing import List, Callable, Tuple
 
 currentdir = os.path.dirname(os.path.realpath(__file__))
 parentdir = os.path.dirname(currentdir)
