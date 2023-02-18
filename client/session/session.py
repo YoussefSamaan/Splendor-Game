@@ -214,6 +214,12 @@ def launch_button_event(session) -> None:
 def play_button_event(session) -> None:
     session.play_sess()
 
+# TODO: implement
+def previous_button_event() -> None:
+    return
+def next_button_event() -> None:
+    return
+
 # Takes sessions json and outputs a list of pygame objects to be blitted
 def generate_session_list_buttons(authenticator,sessions_json) -> List[SessionListing]:
     if len(get_games(sessions_json)) == 0:
@@ -241,10 +247,13 @@ def session(authenticator):
     # back_rect = 
     back_rect = Button(pygame.Rect((50, 100, 150, 70)), back_button_event)
     join_rect = Button(pygame.Rect((350, 600, 200, 70)), join_button_event)
+    # TODO: how does this work with the red/green buttons?
     leave_rect = Button(pygame.Rect((655, 450, 100, 55)), leave_button_event)
 
-    previous_button_rect = pygame.Rect((150, 660, 150, 70))
-    next_button_rect = pygame.Rect((600, 660, 150, 70))
+    previous_button_rect = Button(pygame.Rect((150, 660, 150, 70)), previous_button_event)
+    next_button_rect = Button(pygame.Rect((600, 150, 150, 70)), next_button_event)
+
+    #next_button_rect = pygame.Rect((600, 660, 150, 70))
     # delete_text = base_font.render("Delete", True, WHITE)
     # base_text = base_font.render("Create a new game", True, WHITE)
     # back_text = base_font.render('Log Out', True, WHITE)
@@ -368,6 +377,11 @@ def session(authenticator):
 
         clickable_buttons :List[Button] = []
         clickable_buttons += back_rect
+        clickable_buttons += next_rect
+        clickable_buttons += previous_rect
+        clickable_buttons += join_rect
+        clickable_buttons += leave_rect
+
 
         for session_listing in session_list:
             # Display all the listings in our current page
