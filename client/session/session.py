@@ -3,6 +3,7 @@ import pygame
 import sys
 import operator # for tuple operations
 from typing import List
+import time
 
 currentdir = os.path.dirname(os.path.realpath(__file__))
 parentdir = os.path.dirname(currentdir)
@@ -19,7 +20,7 @@ LIGHT_GREY = (99, 99, 99)
 LIGHT_BLUE = "lightskyblue3"
 GREEN = (0, 204, 0)
 RED = (255, 0, 0)
-FPS = 60
+FPS = 15
 
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 pygame.init()
@@ -85,9 +86,9 @@ def is_game_launched(sessions, game_name):
 
 # constants for game_rect, the box(es) that shows session ids and usernames
 GAME_RECT_INIT_X = 150
-GAME_RECT_INIT_Y = 450
+GAME_RECT_INIT_Y = 250
 GAME_RECT_INCR_Y = 100
-GAME_RECT_INITIAL_TOP_LEFT = (150,450)
+GAME_RECT_INITIAL_TOP_LEFT = (150,250)
 GAME_RECT_INCREMENT = (0,100) # the tuple to move the top_left by
 GAME_RECT_SIZE = (400,55)
 
@@ -102,7 +103,7 @@ LAUNCH_RECT_INCREMENT = (0,100)
 LAUNCH_RECT_SIZE = (90,55)
 
 # max sessions before putting more on the next page
-MAX_SESSIONS_PER_PAGE = 3
+MAX_SESSIONS_PER_PAGE = 4
 
 # Class for a session listing. A session listing is the game info and interaction buttons
 # associated with an existing session in the session list
@@ -111,8 +112,8 @@ class SessionListing:
         self.session_id = session_id
         # Access relevant information about the session
         self.creator = session_info["creator"] # str playername
-        self.min_plr = session_info["minSessionPlayers"] # int
-        self.max_plr = session_info["maxSessionPlayers"] # int
+        self.min_plr = session_info["gameParameters"]["minSessionPlayers"] # int
+        self.max_plr = session_info["gameParameters"]["maxSessionPlayers"] # int
         self.launched = session_info["launched"] # boolean
         self.plr_list = session_info["players"] # list of str playernames
         self.savegame = session_info["savegameid"] # str
@@ -133,10 +134,11 @@ class SessionListing:
     
     # get a string of the game description, to be blitted in the box later
     def get_game_info(self) -> str:
-        return f"{self.session_id} / {self.creator} / {','.join(self.plr_list) ({self.min_plr}-{self.max_plr})}"
+        return f"{self.session_id} / {self.creator} / {','.join(self.plr_list)} ({self.min_plr}-{self.max_plr})"
     
     def display(self) -> None:
         game_info = self.get_game_info()
+        pygame.draw.rect(screen, LIGHT_GREY, self.game_info)
         new_text(game_info, WHITE, GAME_RECT_INIT_X, GAME_RECT_INIT_Y+GAME_RECT_INCR_Y*self.index_order)
 
     def redButtonEvent(self) -> None:
@@ -186,6 +188,7 @@ def generate_session_list_buttons(authenticator,sessions_json) -> List[SessionLi
     # for each existing session, create a SessionListing object
     # it will handle the buttons, information, and events
     for index,session in enumerate(sessions_json):
+        # enumerate keeps track of the index, to be used for positioning and paging
         new_session = SessionListing(authenticator,session,sessions_json[session],index)
         session_list.append(new_session)
     
@@ -315,14 +318,28 @@ def session(authenticator):
     def delete(game):
         delete_session.delete_session(authenticator.get_token(), game)
 
+
+    current_page = 0
     while True:
         screen.fill(GREY)
 
         sessions_json = get_session.get_all_sessions().json()["sessions"]
         session_list = generate_session_list_buttons(authenticator,sessions_json)
 
+        # TODO: Buttons for moving between pages. It will have to change the current_page var.
+
         for session_listing in session_list:
-            session_listing.display()
+            # Display all the listings in our current page
+            if session_listing.page_number == current_page:
+                session_listing.display()
+
+        for event in pygame.event.get():
+            # when the user clicks or types anything
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.MOUSEBUTTONUP:
+                clicked_position = pygame.mouse.get_pos()
         """
         i = current_page * 2
         # if we are on i = 3, page =1 we only need to display 1 game
@@ -482,5 +499,6 @@ def session(authenticator):
 
         # create_input_rect.w = max(600, create_text_surface.get_width() + 10)
         """
+        time.sleep(1)
         pygame.display.flip()
         clock.tick(FPS)
