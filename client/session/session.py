@@ -379,7 +379,7 @@ def session(authenticator):
         clickable_buttons.append(previous_rect)
 
         # display page number
-        new_text(f"{str(current_page+1)} / {str(len(session_list) // MAX_SESSIONS_PER_PAGE)+1}", WHITE, 385, 125)
+        new_text(f"{current_page+1} / {(len(session_list) // MAX_SESSIONS_PER_PAGE)+1}", WHITE, 385, 125)
 
         for session_listing in session_list:
             # Display all the listings in our current page
