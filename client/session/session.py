@@ -172,17 +172,17 @@ def session(authenticator):
     back_rect = pygame.Rect((50, 100, 150, 70))
     previous_button_rect = pygame.Rect((150, 660, 150, 70))
     next_button_rect = pygame.Rect((600, 660, 150, 70))
-    delete_text = base_font.render("Delete", True, WHITE)
-    base_text = base_font.render("Create a new game", True, WHITE)
-    back_text = base_font.render('Log Out', True, WHITE)
-    back_text2 = base_font.render('Back', True, WHITE)
-    play_text = base_font.render('Play', True, WHITE)
-    create_text = base_font.render('Create', True, WHITE)
-    join_text = base_font.render('Join', True, WHITE)
-    launch_text = base_font.render('Launch', True, WHITE)
-    leave_text = base_font.render('Leave', True, WHITE)
-    next_text = base_font.render('Next', True, WHITE)
-    previous_text = base_font.render('Previous', True, WHITE)
+    # delete_text = base_font.render("Delete", True, WHITE)
+    # base_text = base_font.render("Create a new game", True, WHITE)
+    # back_text = base_font.render('Log Out', True, WHITE)
+    # back_text2 = base_font.render('Back', True, WHITE)
+    # play_text = base_font.render('Play', True, WHITE)
+    # create_text = base_font.render('Create', True, WHITE)
+    # join_text = base_font.render('Join', True, WHITE)
+    # launch_text = base_font.render('Launch', True, WHITE)
+    # leave_text = base_font.render('Leave', True, WHITE)
+    # next_text = base_font.render('Next', True, WHITE)
+    # previous_text = base_font.render('Previous', True, WHITE)
     create_text_display = base_font.render('Session Name', True, WHITE)
     create_color = color_passive
     leave_rect = pygame.Rect((655, 450, 100, 55))  # creator can't leave game
@@ -218,8 +218,11 @@ def session(authenticator):
 
             pygame.draw.rect(screen, GREEN, join_rect)
             screen.blit(newtext, (350, 350))
-            screen.blit(back_text2, (185, 125))
-            screen.blit(join_text, (400, 625))
+            new_text("Back", WHITE, 185, 125)
+            # screen.blit(back_text2, (185, 125))
+            # screen.blit(join_text, (400, 625))
+            new_text("Join", WHITE, 400, 625)
+
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
@@ -252,8 +255,11 @@ def session(authenticator):
 
             pygame.draw.rect(screen, RED, leave_rect)
             screen.blit(newtext, (350, 350))
-            screen.blit(back_text2, (185, 125))
-            screen.blit(leave_text, (400, 625))
+            # screen.blit(back_text2, (185, 125))            
+            new_text("Back", WHITE, 185, 125)
+
+            # screen.blit(leave_text, (400, 625))
+            new_text("Leave", WHITE, 400, 625)
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -303,17 +309,21 @@ def session(authenticator):
             if get_creators(sessions_json)[i] == authenticator.username:
                 # if you are the creator of the game
                 pygame.draw.rect(screen, RED, del_rect1)
-                screen.blit(delete_text, (del_rect1[0] + 20, del_rect1[1] + 20))
+                # screen.blit(delete_text, (del_rect1[0] + 20, del_rect1[1] + 20))
+                new_text("Delete", WHITE, del_rect1[0] + 20, del_rect1[1] + 20)
                 if is_game_launched(sessions_json, get_games(sessions_json)[i]):
                     pygame.draw.rect(screen, GREEN, play_rect1)
-                    screen.blit(play_text, (play_rect1[0] + 20, play_rect1[1] + 20))
+                    # screen.blit(play_text, (play_rect1[0] + 20, play_rect1[1] + 20))
+                    new_text("Play", WHITE, play_rect1[0] + 20, play_rect1[1] + 20)
                 else:
                     pygame.draw.rect(screen, GREEN, launch_rect1)
-                    screen.blit(launch_text, (launch_rect1[0] + 20, launch_rect1[1] + 20))
+                    # screen.blit(launch_text, (launch_rect1[0] + 20, launch_rect1[1] + 20))
+                    new_text("Launch", WHITE, launch_rect1[0] + 20, launch_rect1[1] + 20)
             elif get_games(sessions_json)[i] in get_joined_games(sessions_json, authenticator):
                 # if the game is in your joined games
                 pygame.draw.rect(screen, GREEN, launch_rect1)
-                screen.blit(launch_text, (launch_rect1[0] + 10, launch_rect1[1] + 20))
+                # screen.blit(launch_text, (launch_rect1[0] + 10, launch_rect1[1] + 20))
+                new_text("Launch", WHITE, launch_rect1[0] + 10, launch_rect1[1] + 20)
 
         if len(get_games(sessions_json)) - i > 1:
             # if there is at least two games to display
@@ -324,16 +334,20 @@ def session(authenticator):
             screen.blit(game_name2, (game_rect2[0] + 20, game_rect2[1] + 20))
             if get_creators(sessions_json)[i + 1] == authenticator.username:
                 pygame.draw.rect(screen, RED, del_rect2)
-                screen.blit(delete_text, (del_rect2[0] + 20, del_rect2[1] + 20))
+                # screen.blit(delete_text, (del_rect2[0] + 20, del_rect2[1] + 20))
+                new_text("Delete", WHITE, del_rect2[0] + 20, del_rect2[1] + 20)
                 if is_game_launched(sessions_json, get_games(sessions_json)[i + 1]):
                     pygame.draw.rect(screen, GREEN, play_rect2)
-                    screen.blit(play_text, (play_rect2[0] + 20, play_rect2[1] + 20))
+                    # screen.blit(play_text, (play_rect2[0] + 20, play_rect2[1] + 20))
+                    new_text("Play", WHITE, play_rect2[0] + 20, play_rect2[1] + 20)
                 else:
                     pygame.draw.rect(screen, GREEN, launch_rect2)
-                    screen.blit(launch_text, (launch_rect2[0] + 10, launch_rect2[1] + 20))
+                    # screen.blit(launch_text, (launch_rect2[0] + 10, launch_rect2[1] + 20))
+                    new_text("Launch", WHITE, launch_rect2[0] + 10, launch_rect2[1] + 20)
             elif get_games(sessions_json)[i + 1] in get_joined_games(sessions_json, authenticator):
                 pygame.draw.rect(screen, GREEN, launch_rect2)
-                screen.blit(launch_text, (launch_rect2[0] + 10, launch_rect2[1] + 20))
+                # screen.blit(launch_text, (launch_rect2[0] + 10, launch_rect2[1] + 20))
+                new_text("Launch", WHITE, launch_rect2[0] + 10, launch_rect2[1] + 20)
 
         # add code to make sure only creator can delete game 
         # add code to make sure only joined player can leave game 
@@ -419,12 +433,14 @@ def session(authenticator):
         # pygame.draw.rect(screen, GREEN, previous_button_rect)
         pygame.draw.rect(screen, LIGHT_GREY, create_rect)
 
-        screen.blit(create_text, (420, 325))
+        # screen.blit(create_text, (420, 325))
+        new_text("Create", WHITE, 420, 325)
 
         # create_text_surface = base_font.render(create_text_entry, True, WHITE)
         # screen.blit(create_text_surface, (create_input_rect.x + 5, create_input_rect.y + 5))
         # screen.blit(base_text, (350, 17))
-        screen.blit(back_text, (85, 125))
+        # screen.blit(back_text, (85, 125))
+        new_text("Back", WHITE, 85, 125)
         # screen.blit(next_text, (655, 685))
         # screen.blit(previous_text, (185, 685))
         # screen.blit(create_text_display, (150, 225))
