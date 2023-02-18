@@ -362,13 +362,15 @@ def session(authenticator):
         def create_button_event() -> None:
             post_session.create_session(authenticator.username, authenticator.get_token())
 
+        # current_page: 0-indexed
+        # functions for the pagination buttons
         def previous_button_event() -> None:
             global current_page
-            current_page = max(0, current_page - 1)
+            current_page = max(0, current_page-1)
 
         def next_button_event() -> None:
             global current_page
-            current_page = min(current_page + 1, (len(session_list)-1) // MAX_SESSIONS_PER_PAGE)
+            current_page = min(current_page+1, max(0,(len(session_list)-1) // MAX_SESSIONS_PER_PAGE))
 
         back_rect = Button(pygame.Rect((50, 100, 150, 70)), back_button_event, RED)
         previous_rect = Button(pygame.Rect((150, 660, 150, 70)), previous_button_event, LIGHT_BLUE)
@@ -379,8 +381,8 @@ def session(authenticator):
         clickable_buttons.append(previous_rect)
         clickable_buttons.append(create_rect)
 
-        # display page number
-        new_text(f"{current_page+1} / {((len(session_list)-1) // MAX_SESSIONS_PER_PAGE)+1}", WHITE, 385, 125)
+        # display page number: 1-indexed
+        new_text(f"{current_page+1} / {max(1,((len(session_list)-1) // MAX_SESSIONS_PER_PAGE)+1)}", WHITE, 385, 125)
 
         for session_listing in session_list:
             # Display all the listings in our current page
