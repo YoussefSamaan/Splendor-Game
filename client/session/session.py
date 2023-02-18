@@ -1,9 +1,7 @@
 import os
 import pygame
 import sys
-import operator # for tuple operations
 from typing import List, Callable, Tuple
-import time
 
 currentdir = os.path.dirname(os.path.realpath(__file__))
 parentdir = os.path.dirname(currentdir)
@@ -356,11 +354,10 @@ def session(authenticator):
 
         sessions_json = get_session.get_all_sessions().json()["sessions"]
         session_list = generate_session_list_buttons(authenticator,sessions_json)
-
-        # TODO: Buttons for moving between pages. It will have to change the current_page var.
-
+        # This is the list of buttons that should be visible. We need to draw them.
         clickable_buttons :List[Button] = []
 
+        # functions for the pagination buttons
         def previous_button_event() -> None:
             global current_page
             current_page = max(0, current_page - 1)
@@ -369,9 +366,11 @@ def session(authenticator):
             global current_page
             current_page = min(current_page + 1, len(session_list) // MAX_SESSIONS_PER_PAGE)
 
+        # These buttons are always visible regardless of page
         back_rect = Button(pygame.Rect((50, 100, 150, 70)), back_button_event, LIGHT_BLUE)
         previous_rect = Button(pygame.Rect((150, 660, 150, 70)), previous_button_event, LIGHT_BLUE)
         next_rect = Button(pygame.Rect((600, 660, 150, 70)), next_button_event, LIGHT_BLUE)
+        # Back is the logout button, not to be confused with previous
         clickable_buttons.append(back_rect)
         clickable_buttons.append(next_rect)
         clickable_buttons.append(previous_rect)
