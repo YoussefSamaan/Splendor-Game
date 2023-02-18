@@ -8,7 +8,7 @@ sys.path.insert(1, 'client\config')
 from config.config import LOBBY_SERVICE_URL
 
 
-def create_session(username, access_token, savegameid):
+def create_session(username, access_token):
     url = f"{LOBBY_SERVICE_URL}/api/sessions?access_token={access_token}"
     data = {
         "creator": username,
