@@ -211,90 +211,22 @@ class SessionListing:
 
     # logged-in user is the creator and launches the session if there are enough players
     def launch_sess(self) -> None:
-        return
+        post_session.launch_session(self.authenticator.get_token(), self.session_id)
 
     # logged-in user is not the creator and joins the session
     def join_sess(self) -> None:
-        while True:
-            screen.fill(GREY)
-            newtext = base_font.render("Joining " + self.session_id + " confirm?", True, WHITE)
+            
+        put_session.add_player(self.authenticator.get_token(), self.session_id, self.authenticator.username)
 
-            pygame.draw.rect(screen, RED, back_rect.rectangle)
-
-            # pygame.draw.rect(screen, GREEN, join_rect.rectangle)
-            screen.blit(newtext, (350, 350))
-            new_text("Back", WHITE, 185, 125)
-            # screen.blit(back_text2, (185, 125))
-            # screen.blit(join_text, (400, 625))
-            # new_text("Join", WHITE, 400, 625)
-
-            for event in pygame.event.get():
-                # when the user clicks or types anything
-                if event.type == pygame.QUIT:
-                    pygame.quit()
-                    sys.exit()
-                if event.type == pygame.MOUSEBUTTONUP:
-                    clicked_position = pygame.mouse.get_pos()
-
-                    for button in self.red_button:
-                        if button.rectangle.collidepoint(clicked_position):
-                            button.activation()
-                            break
-                    for button in self.green_button:
-                        if button.rectangle.collidepoint(clicked_position):
-                            button.activation()
-                            break
-
-                if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_ESCAPE:
-                        pygame.quit()
-                        sys.exit()
-            pygame.display.flip()
-            clock.tick(FPS)
+        session(self.authenticator)
 
     # logged-in user starts playing in the session
     def play_sess(self) -> None:
-        return
+        post_session.play_session(self.authenticator.get_token(), self.session_id)
 
     # logged-in user leaves the session
     def leave_sess(self) -> None:
-        while True:
-            screen.fill(GREY)
-            newtext = base_font.render("Leaving " + self.session_id + " confirm?", True, WHITE)
-
-            pygame.draw.rect(screen, RED, back_rect.rectangle)
-
-            # pygame.draw.rect(screen, RED, leave_rect.rectangle)
-            screen.blit(newtext, (350, 350))
-            # screen.blit(back_text2, (185, 125))            
-            new_text("Back", WHITE, 185, 125)
-
-            # screen.blit(leave_text, (400, 625))
-            # new_text("Leave", WHITE, 400, 625)
-
-            for event in pygame.event.get():
-                # when the user clicks or types anything
-                if event.type == pygame.QUIT:
-                    pygame.quit()
-                    sys.exit()
-                if event.type == pygame.MOUSEBUTTONUP:
-                    clicked_position = pygame.mouse.get_pos()
-
-                    for button in self.red_button:
-                        if button.rectangle.collidepoint(clicked_position):
-                            button.activation()
-                            break
-                    for button in self.green_button:
-                        if button.rectangle.collidepoint(clicked_position):
-                            button.activation()
-                            break
-
-                if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_ESCAPE:
-                        pygame.quit()
-                        sys.exit()
-            pygame.display.flip()
-            clock.tick(FPS)
+        delete_session.remove_player(self.authenticator.get_token(), self.session_id, self.authenticator.username)
 
 # Takes sessions json and outputs a list of pygame objects to be blitted
 def generate_session_list_buttons(authenticator,sessions_json) -> List[SessionListing]:
