@@ -2,6 +2,7 @@ import os
 import pygame
 import sys
 import operator # for tuple operations
+from typing import List
 
 currentdir = os.path.dirname(os.path.realpath(__file__))
 parentdir = os.path.dirname(currentdir)
@@ -134,6 +135,10 @@ class SessionListing:
     def get_game_info(self) -> str:
         return f"{self.session_id} / {self.creator} / {','.join(self.plr_list) ({self.min_plr}-{self.max_plr})}"
     
+    def display(self) -> None:
+        game_info = self.get_game_info()
+        new_text(game_info, WHITE, GAME_RECT_INIT_X, GAME_RECT_INIT_Y+GAME_RECT_INCR_Y*self.index_order)
+
     def redButtonEvent(self) -> None:
         if self.current_user == self.creator:
             self.delete_session()
@@ -172,7 +177,7 @@ class SessionListing:
 
 # TODO: When ready, use this function instead of the giant if-statements in the while True loop
 # Takes sessions json and outputs a list of pygame objects to be blitzed
-def generate_session_list_buttons(authenticator,sessions_json):
+def generate_session_list_buttons(authenticator,sessions_json) -> List[SessionListing]:
     if len(get_games(sessions_json)) == 0:
         # if there are no sessions return empty list
         return []
@@ -312,11 +317,16 @@ def session(authenticator):
 
     while True:
         screen.fill(GREY)
+
+        sessions_json = get_session.get_all_sessions().json()["sessions"]
+        session_list = generate_session_list_buttons(authenticator,sessions_json)
+
+        for session_listing in session_list:
+            session_listing.display()
+        """
         i = current_page * 2
         # if we are on i = 3, page =1 we only need to display 1 game
         # len getgames would be 3
-
-        sessions_json = get_session.get_all_sessions().json()["sessions"]
 
         if len(get_games(sessions_json)) == 0:
             # don't display anything if there are no games
@@ -471,6 +481,6 @@ def session(authenticator):
         # screen.blit(create_text_display, (150, 225))
 
         # create_input_rect.w = max(600, create_text_surface.get_width() + 10)
-
+        """
         pygame.display.flip()
         clock.tick(FPS)
