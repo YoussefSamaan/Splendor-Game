@@ -250,8 +250,8 @@ def session(authenticator):
     # TODO: how does this work with the red/green buttons?
     leave_rect = Button(pygame.Rect((655, 450, 100, 55)), leave_button_event)
 
-    previous_button_rect = Button(pygame.Rect((150, 660, 150, 70)), previous_button_event)
-    next_button_rect = Button(pygame.Rect((600, 150, 150, 70)), next_button_event)
+    previous_rect = Button(pygame.Rect((150, 660, 150, 70)), previous_button_event)
+    next_rect = Button(pygame.Rect((600, 150, 150, 70)), next_button_event)
 
     #next_button_rect = pygame.Rect((600, 660, 150, 70))
     # delete_text = base_font.render("Delete", True, WHITE)
