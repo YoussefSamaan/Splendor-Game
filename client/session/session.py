@@ -301,7 +301,7 @@ def session(authenticator):
         previous_rect = Button(pygame.Rect((150, 660, 150, 70)), previous_button_event, LIGHT_BLUE)
         next_rect = Button(pygame.Rect((600, 660, 150, 70)), next_button_event, LIGHT_BLUE)
         # Back is the logout button, not to be confused with previous
-        create_rect = Button(pygame.Rect((50, 760, 150, 70)), create_button_event, LIGHT_BLUE)
+        create_rect = Button(pygame.Rect((600, 100, 150, 70)), create_button_event, LIGHT_BLUE)
 
         clickable_buttons.append(back_rect)
         clickable_buttons.append(next_rect)
@@ -324,12 +324,14 @@ def session(authenticator):
         # draw all the buttons on the screen
         for button in clickable_buttons:
             pygame.draw.rect(screen,button.color,button.rectangle)
+            new_text(button.text, WHITE, button.rectangle.x + 10, button.rectangle.y + 10)
+
 
         # writing text on buttons
         new_text("Back", WHITE, 85, 125)
         new_text("Next", WHITE, 625, 665)
         new_text("Previous", WHITE, 150, 665)
-        new_text("Create", WHITE, 85, 775)
+        new_text("Create", WHITE, 625, 125)
 
         for event in pygame.event.get():
             # when the user clicks or types anything
