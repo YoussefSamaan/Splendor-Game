@@ -2,7 +2,7 @@ import os
 import pygame
 import sys
 import operator # for tuple operations
-from typing import List
+from typing import List, Callable
 import time
 
 currentdir = os.path.dirname(os.path.realpath(__file__))
@@ -38,7 +38,7 @@ color_error = pygame.Color(RED)
 
 '''ALL FUNCTIONS HERE HAVE TO BE CHANGED'''
 
-def new_button(text, color, x, y):
+def new_text(text, color, x, y):
     # rect = pygame.Rect(rectx, recty, rectwidth, rectheight)
     # pygame.draw.rect(screen, rectcolor, rect)
     text_surface = base_font.render(text, True, color)
@@ -46,6 +46,10 @@ def new_button(text, color, x, y):
     text_rect.topleft = (x, y)
     screen.blit(text_surface, text_rect)
 
+def new_button(rectx, recty, rectwidth, rectheight, rectcolor) -> pygame.Rect:
+    rect = pygame.Rect(rectx, recty, rectwidth, rectheight)
+    pygame.draw.rect(screen, rectcolor, rect)
+    return rect
 
 def get_games(sessions):
     # gets games currently stored in memory
@@ -108,6 +112,14 @@ LAUNCH_RECT_SIZE = (90,55)
 # max sessions before putting more on the next page
 MAX_SESSIONS_PER_PAGE = 4
 
+class Button:
+    def __init__(self,rectangle : pygame.Rect, on_click_event : Callable[[None], None]) -> None:
+        self.rectangle = rectangle
+        self.activation = on_click_event
+    
+    def activate(self) -> None:
+        self.activation()
+
 # Class for a session listing. A session listing is the game info and interaction buttons
 # associated with an existing session in the session list
 class SessionListing:
@@ -131,17 +143,24 @@ class SessionListing:
 
         # Rects associated with this session listing in the session list
         # TODO: Generate here and link to click events
-        self.game_info = pygame.Rect((GAME_RECT_INIT_X,GAME_RECT_INIT_Y+GAME_RECT_INCR_Y*self.index_order),GAME_RECT_SIZE)
-        self.delete_button = None
-        self.launch_button = None
+        game_info_rect = pygame.Rect((GAME_RECT_INIT_X,GAME_RECT_INIT_Y+GAME_RECT_INCR_Y*self.index_order),GAME_RECT_SIZE)
+        self.game_info = game_info_rect
+        # TODO: use button class
+        self.red_button = None
+        self.green_button = None
     
     # get a string of the game description, to be blitted in the box later
     def get_game_info(self) -> str:
         return f"{self.session_id} / {self.creator} / {','.join(self.plr_list)} ({self.min_plr}-{self.max_plr})"
     
+    # generate the list of button so they can be added to the button list in the main loop
+    def get_button_list(self) -> List[Button]:
+        return [self.red_button,self.green_button]
+    
     def display(self) -> None:
         game_info = self.get_game_info()
-        new_button(game_info, WHITE, GAME_RECT_INIT_X, GAME_RECT_INIT_Y+GAME_RECT_INCR_Y*self.index_order)
+        pygame.draw.rect(screen, LIGHT_GREY, self.game_info)
+        new_text(game_info, WHITE, GAME_RECT_INIT_X, GAME_RECT_INIT_Y+GAME_RECT_INCR_Y*self.index_order)
 
     def redButtonEvent(self) -> None:
         if self.current_user == self.creator:
@@ -179,8 +198,8 @@ class SessionListing:
     def leave_sess(self) -> None:
         return
 
-# TODO: When ready, use this function instead of the giant if-statements in the while True loop
-# Takes sessions json and outputs a list of pygame objects to be blitzed
+
+# Takes sessions json and outputs a list of pygame objects to be blitted
 def generate_session_list_buttons(authenticator,sessions_json) -> List[SessionListing]:
     if len(get_games(sessions_json)) == 0:
         # if there are no sessions return empty list
@@ -251,10 +270,10 @@ def session(authenticator):
 
             pygame.draw.rect(screen, GREEN, join_rect)
             screen.blit(newtext, (350, 350))
-            new_button("Back", WHITE, 185, 125)
+            new_text("Back", WHITE, 185, 125)
             # screen.blit(back_text2, (185, 125))
             # screen.blit(join_text, (400, 625))
-            new_button("Join", WHITE, 400, 625)
+            new_text("Join", WHITE, 400, 625)
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -289,10 +308,10 @@ def session(authenticator):
             pygame.draw.rect(screen, RED, leave_rect)
             screen.blit(newtext, (350, 350))
             # screen.blit(back_text2, (185, 125))            
-            new_button("Back", WHITE, 185, 125)
+            new_text("Back", WHITE, 185, 125)
 
             # screen.blit(leave_text, (400, 625))
-            new_button("Leave", WHITE, 400, 625)
+            new_text("Leave", WHITE, 400, 625)
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -328,10 +347,15 @@ def session(authenticator):
 
         # TODO: Buttons for moving between pages. It will have to change the current_page var.
 
+        clickable_buttons :List[Button] = []
+
         for session_listing in session_list:
             # Display all the listings in our current page
             if session_listing.page_number == current_page:
+                # display the game info string and its two buttons
                 session_listing.display()
+                # This adds this visible session's buttons to the list of clickable buttons
+                clickable_buttons += session_listing.get_button_list
 
         for event in pygame.event.get():
             # when the user clicks or types anything
@@ -340,6 +364,10 @@ def session(authenticator):
                 sys.exit()
             if event.type == pygame.MOUSEBUTTONUP:
                 clicked_position = pygame.mouse.get_pos()
+
+                for button in clickable_buttons:
+                    if button.rectangle.collidepoint(clicked_position):
+                        button.activate()
         """
         i = current_page * 2
         # if we are on i = 3, page =1 we only need to display 1 game
@@ -362,20 +390,20 @@ def session(authenticator):
                 # if you are the creator of the game
                 pygame.draw.rect(screen, RED, del_rect1)
                 # screen.blit(delete_text, (del_rect1[0] + 20, del_rect1[1] + 20))
-                new_button("Delete", WHITE, del_rect1[0] + 20, del_rect1[1] + 20)
+                new_text("Delete", WHITE, del_rect1[0] + 20, del_rect1[1] + 20)
                 if is_game_launched(sessions_json, get_games(sessions_json)[i]):
                     pygame.draw.rect(screen, GREEN, play_rect1)
                     # screen.blit(play_text, (play_rect1[0] + 20, play_rect1[1] + 20))
-                    new_button("Play", WHITE, play_rect1[0] + 20, play_rect1[1] + 20)
+                    new_text("Play", WHITE, play_rect1[0] + 20, play_rect1[1] + 20)
                 else:
                     pygame.draw.rect(screen, GREEN, launch_rect1)
                     # screen.blit(launch_text, (launch_rect1[0] + 20, launch_rect1[1] + 20))
-                    new_button("Launch", WHITE, launch_rect1[0] + 20, launch_rect1[1] + 20)
+                    new_text("Launch", WHITE, launch_rect1[0] + 20, launch_rect1[1] + 20)
             elif get_games(sessions_json)[i] in get_joined_games(sessions_json, authenticator):
                 # if the game is in your joined games
                 pygame.draw.rect(screen, GREEN, launch_rect1)
                 # screen.blit(launch_text, (launch_rect1[0] + 10, launch_rect1[1] + 20))
-                new_button("Launch", WHITE, launch_rect1[0] + 10, launch_rect1[1] + 20)
+                new_text("Launch", WHITE, launch_rect1[0] + 10, launch_rect1[1] + 20)
 
         if len(get_games(sessions_json)) - i > 1:
             # if there is at least two games to display
@@ -387,19 +415,19 @@ def session(authenticator):
             if get_creators(sessions_json)[i + 1] == authenticator.username:
                 pygame.draw.rect(screen, RED, del_rect2)
                 # screen.blit(delete_text, (del_rect2[0] + 20, del_rect2[1] + 20))
-                new_button("Delete", WHITE, del_rect2[0] + 20, del_rect2[1] + 20)
+                new_text("Delete", WHITE, del_rect2[0] + 20, del_rect2[1] + 20)
                 if is_game_launched(sessions_json, get_games(sessions_json)[i + 1]):
                     pygame.draw.rect(screen, GREEN, play_rect2)
                     # screen.blit(play_text, (play_rect2[0] + 20, play_rect2[1] + 20))
-                    new_button("Play", WHITE, play_rect2[0] + 20, play_rect2[1] + 20)
+                    new_text("Play", WHITE, play_rect2[0] + 20, play_rect2[1] + 20)
                 else:
                     pygame.draw.rect(screen, GREEN, launch_rect2)
                     # screen.blit(launch_text, (launch_rect2[0] + 10, launch_rect2[1] + 20))
-                    new_button("Launch", WHITE, launch_rect2[0] + 10, launch_rect2[1] + 20)
+                    new_text("Launch", WHITE, launch_rect2[0] + 10, launch_rect2[1] + 20)
             elif get_games(sessions_json)[i + 1] in get_joined_games(sessions_json, authenticator):
                 pygame.draw.rect(screen, GREEN, launch_rect2)
                 # screen.blit(launch_text, (launch_rect2[0] + 10, launch_rect2[1] + 20))
-                new_button("Launch", WHITE, launch_rect2[0] + 10, launch_rect2[1] + 20)
+                new_text("Launch", WHITE, launch_rect2[0] + 10, launch_rect2[1] + 20)
 
         # add code to make sure only creator can delete game 
         # add code to make sure only joined player can leave game 
@@ -486,13 +514,13 @@ def session(authenticator):
         pygame.draw.rect(screen, LIGHT_GREY, create_rect)
 
         # screen.blit(create_text, (420, 325))
-        new_button("Create", WHITE, 420, 325)
+        new_text("Create", WHITE, 420, 325)
 
         # create_text_surface = base_font.render(create_text_entry, True, WHITE)
         # screen.blit(create_text_surface, (create_input_rect.x + 5, create_input_rect.y + 5))
         # screen.blit(base_text, (350, 17))
         # screen.blit(back_text, (85, 125))
-        new_button("Back", WHITE, 85, 125)
+        new_text("Back", WHITE, 85, 125)
         # screen.blit(next_text, (655, 685))
         # screen.blit(previous_text, (185, 685))
         # screen.blit(create_text_display, (150, 225))
