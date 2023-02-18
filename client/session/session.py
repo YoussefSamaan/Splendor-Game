@@ -2,7 +2,7 @@ import os
 import pygame
 import sys
 import operator # for tuple operations
-from typing import List, Callable
+from typing import List, Callable, Tuple
 import time
 
 currentdir = os.path.dirname(os.path.realpath(__file__))
@@ -95,30 +95,31 @@ def is_game_launched(sessions, game_name):
 GAME_RECT_INIT_X = 150
 GAME_RECT_INIT_Y = 250
 GAME_RECT_INCR_Y = 100
-GAME_RECT_INITIAL_TOP_LEFT = (150,250)
-GAME_RECT_INCREMENT = (0,100) # the tuple to move the top_left by
+#GAME_RECT_INCREMENT = (0,100) # the tuple to move the top_left by
 GAME_RECT_SIZE = (400,55)
 
 # constants for del_rect, the box associated with game_rect for deleting or leaving
-DEL_RECT_INITIAL_TOP_LEFT = tuple(map(operator.add, GAME_RECT_INITIAL_TOP_LEFT, (0,405)))
-DEL_RECT_INCREMENT = (0,100)
+DEL_RECT_INIT_X = GAME_RECT_INIT_X + 405
+DEL_RECT_INIT_Y = GAME_RECT_INIT_Y
+DEL_RECT_INCR_Y = 100
+#DEL_RECT_INCREMENT = (0,100)
 DEL_RECT_SIZE = (90,55)
 
 # constants for launch_rect, the box associated with game_rect for joining, launching, starting
-LAUNCH_RECT_INITIAL_TOP_LEFT = tuple(map(operator.add, GAME_RECT_INITIAL_TOP_LEFT, (0,505)))
-LAUNCH_RECT_INCREMENT = (0,100)
+LAUNCH_RECT_INIT_X = GAME_RECT_INIT_X + 505
+LAUNCH_RECT_INIT_Y = GAME_RECT_INIT_Y
+LAUNCH_RECT_INCR_Y = 100
+#LAUNCH_RECT_INCREMENT = (0,100)
 LAUNCH_RECT_SIZE = (90,55)
 
 # max sessions before putting more on the next page
 MAX_SESSIONS_PER_PAGE = 4
 
 class Button:
-    def __init__(self,rectangle : pygame.Rect, on_click_event : Callable[[None], None]) -> None:
+    def __init__(self,rectangle : pygame.Rect, on_click_event : Callable[[None], None], color: Tuple[int,int,int]) -> None:
         self.rectangle = rectangle
         self.activation = on_click_event
-    
-    def activate(self) -> None:
-        self.activation()
+        self.color = color
 
 # Class for a session listing. A session listing is the game info and interaction buttons
 # associated with an existing session in the session list
@@ -146,13 +147,22 @@ class SessionListing:
         game_info_rect = pygame.Rect((GAME_RECT_INIT_X,GAME_RECT_INIT_Y+GAME_RECT_INCR_Y*self.index_order),GAME_RECT_SIZE)
         self.game_info = game_info_rect
         # TODO: use button class
-        self.red_button = None
-        self.green_button = None
+        self.red_button :Button = None
+        self.green_button :Button = None
     
     # get a string of the game description, to be blitted in the box later
     def get_game_info(self) -> str:
         return f"{self.session_id} / {self.creator} / {','.join(self.plr_list)} ({self.min_plr}-{self.max_plr})"
     
+    def assign_buttons(self) -> None:
+        red_rect_position = (DEL_RECT_INIT_X,DEL_RECT_INIT_Y+DEL_RECT_INCR_Y*self.index_order)
+        red_rect = pygame.Rect(red_rect_position,DEL_RECT_SIZE)
+        self.red_button = Button(red_rect,self.redButtonEvent)
+
+        green_rect_position = (LAUNCH_RECT_INIT_X,LAUNCH_RECT_INIT_Y+LAUNCH_RECT_INCR_Y*self.index_order)
+        green_rect = pygame.Rect(green_rect_position,LAUNCH_RECT_SIZE)
+        self.green_button = Button(green_rect,self.greenButtonEvent)
+
     # generate the list of button so they can be added to the button list in the main loop
     def get_button_list(self) -> List[Button]:
         return [self.red_button,self.green_button]
@@ -384,10 +394,14 @@ def session(authenticator):
         for session_listing in session_list:
             # Display all the listings in our current page
             if session_listing.page_number == current_page:
+                # init the buttons with their functions
+                session_listing.assign_buttons()
                 # display the game info string and its two buttons
                 session_listing.display()
                 # This adds this visible session's buttons to the list of clickable buttons
-                clickable_buttons += session_listing.get_button_list
+                clickable_buttons += session_listing.get_button_list()
+                for button in clickable_buttons:
+                    pygame.draw.re
 
         for event in pygame.event.get():
             # when the user clicks or types anything
