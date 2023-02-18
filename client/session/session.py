@@ -176,7 +176,7 @@ class SessionListing:
 
     def redButtonEvent(self) -> None:
         if self.current_user == self.creator:
-            self.delete_session()
+            self.del_sess()
         elif self.current_user in self.plr_list:
             self.leave_sess()
     
@@ -193,6 +193,7 @@ class SessionListing:
     # logged-in user is the creator and deletes the session
     def del_sess(self) -> None:
         delete_session.delete_session(self.authenticator.get_token(), self.session_id)
+        session(self.authenticator)
 
     # logged-in user is the creator and launches the session if there are enough players
     def launch_sess(self) -> None:
@@ -212,6 +213,7 @@ class SessionListing:
     # logged-in user leaves the session
     def leave_sess(self) -> None:
         delete_session.remove_player(self.authenticator.get_token(), self.session_id, self.authenticator.username)
+        session(self.authenticator)
 
 # Takes sessions json and outputs a list of pygame objects to be blitted
 def generate_session_list_buttons(authenticator,sessions_json) -> List[SessionListing]:
