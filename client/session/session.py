@@ -114,12 +114,30 @@ LAUNCH_RECT_SIZE = (90,55)
 
 # max sessions before putting more on the next page
 MAX_SESSIONS_PER_PAGE = 4
+current_page = 0
+
 
 class Button:
     def __init__(self,rectangle : pygame.Rect, on_click_event : Callable[[None], None], color: Tuple[int,int,int]) -> None:
         self.rectangle = rectangle
         self.activation = on_click_event
         self.color = color
+
+# action when the back button is pressed
+def back_button_event() -> None:
+    screen.fill(GREY)
+    exit()
+
+def previous_button_event() -> None:
+    current_page = max(0, current_page - 1)
+
+def next_button_event() -> None:
+    #current_page = min(current_page + 1, len(session_list) // MAX_SESSIONS_PER_PAGE)
+    current_page = current_page + 1
+
+back_rect = Button(pygame.Rect((50, 100, 150, 70)), back_button_event)
+previous_rect = Button(pygame.Rect((150, 660, 150, 70)), previous_button_event)
+next_rect = Button(pygame.Rect((600, 150, 150, 70)), next_button_event)
 
 # Class for a session listing. A session listing is the game info and interaction buttons
 # associated with an existing session in the session list
@@ -133,7 +151,7 @@ class SessionListing:
         self.launched = session_info["launched"] # boolean
         self.plr_list = session_info["players"] # list of str playernames
         self.savegame = session_info["savegameid"] # str
-
+        self.authenticator = authenticator
         self.current_user = authenticator.username
         
         # index_order and page_number start from 0
@@ -190,7 +208,7 @@ class SessionListing:
 
     # logged-in user is the creator and deletes the session
     def del_sess(self) -> None:
-        return
+        delete_session.delete_session(self.authenticator.get_token(), self.session_id)
 
     # logged-in user is the creator and launches the session if there are enough players
     def launch_sess(self) -> None:
@@ -198,7 +216,42 @@ class SessionListing:
 
     # logged-in user is not the creator and joins the session
     def join_sess(self) -> None:
-        return
+        while True:
+            screen.fill(GREY)
+            newtext = base_font.render("Joining " + self.session_id + " confirm?", True, WHITE)
+
+            pygame.draw.rect(screen, RED, back_rect.rectangle)
+
+            # pygame.draw.rect(screen, GREEN, join_rect.rectangle)
+            screen.blit(newtext, (350, 350))
+            new_text("Back", WHITE, 185, 125)
+            # screen.blit(back_text2, (185, 125))
+            # screen.blit(join_text, (400, 625))
+            # new_text("Join", WHITE, 400, 625)
+
+            for event in pygame.event.get():
+                # when the user clicks or types anything
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+                if event.type == pygame.MOUSEBUTTONUP:
+                    clicked_position = pygame.mouse.get_pos()
+
+                    for button in self.red_button:
+                        if button.rectangle.collidepoint(clicked_position):
+                            button.activate()
+                            break
+                    for button in self.green_button:
+                        if button.rectangle.collidepoint(clicked_position):
+                            button.activate()
+                            break
+
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        pygame.quit()
+                        sys.exit()
+            pygame.display.flip()
+            clock.tick(FPS)
 
     # logged-in user starts playing in the session
     def play_sess(self) -> None:
@@ -206,29 +259,43 @@ class SessionListing:
 
     # logged-in user leaves the session
     def leave_sess(self) -> None:
-        return
+        while True:
+            screen.fill(GREY)
+            newtext = base_font.render("Leaving " + self.session_id + " confirm?", True, WHITE)
 
-# action when the back button is pressed
-def back_button_event() -> None:
-    screen.fill(GREY)
-    exit()
+            pygame.draw.rect(screen, RED, back_rect.rectangle)
 
-def join_button_event(session) -> None:
-    session.join_sess()
-def leave_button_event(session) -> None:
-    session.leave_sess()
-def delete_button_event(session) -> None:
-    session.del_sess()
-def launch_button_event(session) -> None:
-    session.launch_sess()
-def play_button_event(session) -> None:
-    session.play_sess()
+            # pygame.draw.rect(screen, RED, leave_rect.rectangle)
+            screen.blit(newtext, (350, 350))
+            # screen.blit(back_text2, (185, 125))            
+            new_text("Back", WHITE, 185, 125)
 
-# TODO: implement
-def previous_button_event() -> None:
-    return
-def next_button_event() -> None:
-    return
+            # screen.blit(leave_text, (400, 625))
+            # new_text("Leave", WHITE, 400, 625)
+
+            for event in pygame.event.get():
+                # when the user clicks or types anything
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+                if event.type == pygame.MOUSEBUTTONUP:
+                    clicked_position = pygame.mouse.get_pos()
+
+                    for button in self.red_button:
+                        if button.rectangle.collidepoint(clicked_position):
+                            button.activate()
+                            break
+                    for button in self.green_button:
+                        if button.rectangle.collidepoint(clicked_position):
+                            button.activate()
+                            break
+
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        pygame.quit()
+                        sys.exit()
+            pygame.display.flip()
+            clock.tick(FPS)
 
 # Takes sessions json and outputs a list of pygame objects to be blitted
 def generate_session_list_buttons(authenticator,sessions_json) -> List[SessionListing]:
@@ -255,13 +322,6 @@ def session(authenticator):
     create_rect = pygame.Rect((350, 200, 200, 70))
     # join_rect = pygame.Rect((350, 600, 200, 70))
     # back_rect = 
-    back_rect = Button(pygame.Rect((50, 100, 150, 70)), back_button_event)
-    join_rect = Button(pygame.Rect((350, 600, 200, 70)), join_button_event)
-    # TODO: how does this work with the red/green buttons?
-    leave_rect = Button(pygame.Rect((655, 450, 100, 55)), leave_button_event)
-
-    previous_rect = Button(pygame.Rect((150, 660, 150, 70)), previous_button_event)
-    next_rect = Button(pygame.Rect((600, 150, 150, 70)), next_button_event)
 
     #next_button_rect = pygame.Rect((600, 660, 150, 70))
     # delete_text = base_font.render("Delete", True, WHITE)
@@ -289,7 +349,6 @@ def session(authenticator):
 
     play_rect1 = pygame.Rect((555, 450, 90, 55))
     play_rect2 = pygame.Rect((555, 550, 90, 55))
-    current_page = 0
 
     create_active = False  # whether you're clicked on the text input
 
@@ -299,84 +358,82 @@ def session(authenticator):
     def create_game(game):
         post_session.create_session(authenticator.username, authenticator.get_token(), game)
 
-    def join(game):
-        while True:
-            screen.fill(GREY)
-            newtext = base_font.render("Joining " + game + " confirm?", True, WHITE)
+    # def join(game):
+    #     while True:
+    #         screen.fill(GREY)
+    #         newtext = base_font.render("Joining " + game + " confirm?", True, WHITE)
 
-            pygame.draw.rect(screen, RED, back_rect.rectangle)
+    #         pygame.draw.rect(screen, RED, back_rect.rectangle)
 
-            pygame.draw.rect(screen, GREEN, join_rect.rectangle)
-            screen.blit(newtext, (350, 350))
-            new_text("Back", WHITE, 185, 125)
-            # screen.blit(back_text2, (185, 125))
-            # screen.blit(join_text, (400, 625))
-            new_text("Join", WHITE, 400, 625)
+    #         pygame.draw.rect(screen, GREEN, join_rect.rectangle)
+    #         screen.blit(newtext, (350, 350))
+    #         new_text("Back", WHITE, 185, 125)
+    #         # screen.blit(back_text2, (185, 125))
+    #         # screen.blit(join_text, (400, 625))
+    #         new_text("Join", WHITE, 400, 625)
 
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    pygame.quit()
-                    sys.exit()
-                if event.type == pygame.MOUSEBUTTONDOWN:
+    #         for event in pygame.event.get():
+    #             if event.type == pygame.QUIT:
+    #                 pygame.quit()
+    #                 sys.exit()
+    #             if event.type == pygame.MOUSEBUTTONDOWN:
 
-                    if back_rect.rectangle.collidepoint(event.pos):
-                        screen.fill(GREY)
-                        session(authenticator)
+    #                 if back_rect.rectangle.collidepoint(event.pos):
+    #                     screen.fill(GREY)
+    #                     session(authenticator)
 
-                    elif join_rect.rectangle.collidepoint(event.pos):
-                        put_session.add_player(authenticator.get_token(), game,
-                                               authenticator.username)
+    #                 elif join_rect.rectangle.collidepoint(event.pos):
+    #                     put_session.add_player(authenticator.get_token(), game,
+    #                                            authenticator.username)
 
-                        session(authenticator)
+    #                     session(authenticator)
 
-                if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_ESCAPE:
-                        pygame.quit()
-                        sys.exit()
-            pygame.display.flip()
-            clock.tick(FPS)
+    #             if event.type == pygame.KEYDOWN:
+    #                 if event.key == pygame.K_ESCAPE:
+    #                     pygame.quit()
+    #                     sys.exit()
+    #         pygame.display.flip()
+    #         clock.tick(FPS)
 
-    def leave(game):
-        while True:
-            screen.fill(GREY)
-            newtext = base_font.render("Leaving " + game + " confirm?", True, WHITE)
+    # def leave(game):
+    #     while True:
+    #         screen.fill(GREY)
+    #         newtext = base_font.render("Leaving " + game + " confirm?", True, WHITE)
 
-            pygame.draw.rect(screen, RED, back_rect.rectangle)
+    #         pygame.draw.rect(screen, RED, back_rect.rectangle)
 
-            pygame.draw.rect(screen, RED, leave_rect.rectangle)
-            screen.blit(newtext, (350, 350))
-            # screen.blit(back_text2, (185, 125))            
-            new_text("Back", WHITE, 185, 125)
+    #         # pygame.draw.rect(screen, RED, leave_rect.rectangle)
+    #         screen.blit(newtext, (350, 350))
+    #         # screen.blit(back_text2, (185, 125))            
+    #         new_text("Back", WHITE, 185, 125)
 
-            # screen.blit(leave_text, (400, 625))
-            new_text("Leave", WHITE, 400, 625)
+    #         # screen.blit(leave_text, (400, 625))
+    #         # new_text("Leave", WHITE, 400, 625)
 
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    pygame.quit()
-                    sys.exit()
-                if event.type == pygame.MOUSEBUTTONDOWN:
+    #         for event in pygame.event.get():
+    #             if event.type == pygame.QUIT:
+    #                 pygame.quit()
+    #                 sys.exit()
+    #             if event.type == pygame.MOUSEBUTTONDOWN:
 
-                    if back_rect.rectangle.collidepoint(event.pos):
-                        screen.fill(GREY)
-                        session(authenticator)
+    #                 if back_rect.rectangle.collidepoint(event.pos):
+    #                     screen.fill(GREY)
+    #                     session(authenticator)
 
-                    elif leave_rect.rectangle.collidepoint(event.pos):
-                        delete_session.remove_player(authenticator.get_token(), game,
-                                                     authenticator.username)
+    #                 elif leave_rect.rectangle.collidepoint(event.pos):
+    #                     delete_session.remove_player(authenticator.get_token(), game,
+    #                                                  authenticator.username)
 
-                if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_ESCAPE:
-                        pygame.quit()
-                        sys.exit()
-            pygame.display.flip()
-            clock.tick(FPS)
+    #             if event.type == pygame.KEYDOWN:
+    #                 if event.key == pygame.K_ESCAPE:
+    #                     pygame.quit()
+    #                     sys.exit()
+    #         pygame.display.flip()
+    #         clock.tick(FPS)
 
-    def delete(game):
-        delete_session.delete_session(authenticator.get_token(), game)
+    # def delete(game):
+    #     delete_session.delete_session(authenticator.get_token(), game)
 
-
-    current_page = 0
     while True:
         screen.fill(GREY)
 
@@ -389,6 +446,7 @@ def session(authenticator):
         clickable_buttons += back_rect
         clickable_buttons += next_rect
         clickable_buttons += previous_rect
+
 
 
         for session_listing in session_list:
@@ -573,6 +631,6 @@ def session(authenticator):
 
         # create_input_rect.w = max(600, create_text_surface.get_width() + 10)
         """
-        time.sleep(1)
+
         pygame.display.flip()
         clock.tick(FPS)
