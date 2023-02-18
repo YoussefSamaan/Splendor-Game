@@ -118,7 +118,7 @@ current_page = 0
 
 
 class Button:
-    def __init__(self,rectangle : pygame.Rect, on_click_event : Callable[[None], None], color: Tuple[int,int,int]) -> None:
+    def __init__(self,rectangle : pygame.Rect, on_click_event : Callable[[None], None], color: Tuple[int,int,int] = LIGHT_GREY) -> None:
         self.rectangle = rectangle
         self.activation = on_click_event
 
@@ -134,9 +134,9 @@ def next_button_event() -> None:
     #current_page = min(current_page + 1, len(session_list) // MAX_SESSIONS_PER_PAGE)
     current_page = current_page + 1
 
-back_rect = Button(pygame.Rect((50, 100, 150, 70)), back_button_event)
-previous_rect = Button(pygame.Rect((150, 660, 150, 70)), previous_button_event)
-next_rect = Button(pygame.Rect((600, 150, 150, 70)), next_button_event)
+back_rect = Button(pygame.Rect((50, 100, 150, 70)), back_button_event, LIGHT_BLUE)
+previous_rect = Button(pygame.Rect((150, 660, 150, 70)), previous_button_event, LIGHT_BLUE)
+next_rect = Button(pygame.Rect((600, 150, 150, 70)), next_button_event, LIGHT_BLUE)
 
 # Class for a session listing. A session listing is the game info and interaction buttons
 # associated with an existing session in the session list
@@ -174,11 +174,11 @@ class SessionListing:
     def assign_buttons(self) -> None:
         red_rect_position = (DEL_RECT_INIT_X,DEL_RECT_INIT_Y+DEL_RECT_INCR_Y*self.index_order)
         red_rect = pygame.Rect(red_rect_position,DEL_RECT_SIZE)
-        self.red_button = Button(red_rect,self.redButtonEvent)
+        self.red_button = Button(red_rect,self.redButtonEvent,RED)
 
         green_rect_position = (LAUNCH_RECT_INIT_X,LAUNCH_RECT_INIT_Y+LAUNCH_RECT_INCR_Y*self.index_order)
         green_rect = pygame.Rect(green_rect_position,LAUNCH_RECT_SIZE)
-        self.green_button = Button(green_rect,self.greenButtonEvent)
+        self.green_button = Button(green_rect,self.greenButtonEvent,GREEN)
 
     # generate the list of button so they can be added to the button list in the main loop
     def get_button_list(self) -> List[Button]:
@@ -238,11 +238,11 @@ class SessionListing:
 
                     for button in self.red_button:
                         if button.rectangle.collidepoint(clicked_position):
-                            button.activate()
+                            button.activation()
                             break
                     for button in self.green_button:
                         if button.rectangle.collidepoint(clicked_position):
-                            button.activate()
+                            button.activation()
                             break
 
                 if event.type == pygame.KEYDOWN:
@@ -282,11 +282,11 @@ class SessionListing:
 
                     for button in self.red_button:
                         if button.rectangle.collidepoint(clicked_position):
-                            button.activate()
+                            button.activation()
                             break
                     for button in self.green_button:
                         if button.rectangle.collidepoint(clicked_position):
-                            button.activate()
+                            button.activation()
                             break
 
                 if event.type == pygame.KEYDOWN:
@@ -442,9 +442,9 @@ def session(authenticator):
         # TODO: Buttons for moving between pages. It will have to change the current_page var.
 
         clickable_buttons :List[Button] = []
-        clickable_buttons += back_rect
-        clickable_buttons += next_rect
-        clickable_buttons += previous_rect
+        clickable_buttons.append(back_rect)
+        clickable_buttons.append(next_rect)
+        clickable_buttons.append(previous_rect)
 
 
 
@@ -457,8 +457,10 @@ def session(authenticator):
                 session_listing.display()
                 # This adds this visible session's buttons to the list of clickable buttons
                 clickable_buttons += session_listing.get_button_list()
-                for button in clickable_buttons:
-                    pygame.draw.re
+        
+        # draw all the buttons on the screen
+        for button in clickable_buttons:
+            pygame.draw.rect(screen,button.color,button.rectangle,1)
 
         for event in pygame.event.get():
             # when the user clicks or types anything
@@ -470,7 +472,7 @@ def session(authenticator):
 
                 for button in clickable_buttons:
                     if button.rectangle.collidepoint(clicked_position):
-                        button.activate()
+                        button.activation()
         """
         i = current_page * 2
         # if we are on i = 3, page =1 we only need to display 1 game
