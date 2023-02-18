@@ -389,7 +389,7 @@ def session(authenticator):
             if session_listing.page_number == current_page:
                 # init the buttons with their functions
                 session_listing.assign_buttons()
-                # display the game info string and its two buttons
+                # display the game info string
                 session_listing.display()
                 # This adds this visible session's buttons to the list of clickable buttons
                 clickable_buttons += session_listing.get_button_list()
