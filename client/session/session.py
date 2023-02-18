@@ -379,8 +379,6 @@ def session(authenticator):
         clickable_buttons += back_rect
         clickable_buttons += next_rect
         clickable_buttons += previous_rect
-        clickable_buttons += join_rect
-        clickable_buttons += leave_rect
 
 
         for session_listing in session_list:
