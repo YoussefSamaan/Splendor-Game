@@ -94,22 +94,19 @@ def is_game_launched(sessions, game_name):
 # constants for game_rect, the box(es) that shows session ids and usernames
 GAME_RECT_INIT_X = 150
 GAME_RECT_INIT_Y = 250
-GAME_RECT_INCR_Y = 100
-#GAME_RECT_INCREMENT = (0,100) # the tuple to move the top_left by
+GAME_RECT_INCR_Y = 100 # How much to increment Y per listing
 GAME_RECT_SIZE = (400,55)
 
 # constants for del_rect, the box associated with game_rect for deleting or leaving
 DEL_RECT_INIT_X = GAME_RECT_INIT_X + 405
 DEL_RECT_INIT_Y = GAME_RECT_INIT_Y
-DEL_RECT_INCR_Y = 100
-#DEL_RECT_INCREMENT = (0,100)
+DEL_RECT_INCR_Y = GAME_RECT_INCR_Y
 DEL_RECT_SIZE = (90,55)
 
 # constants for launch_rect, the box associated with game_rect for joining, launching, starting
 LAUNCH_RECT_INIT_X = GAME_RECT_INIT_X + 505
 LAUNCH_RECT_INIT_Y = GAME_RECT_INIT_Y
-LAUNCH_RECT_INCR_Y = 100
-#LAUNCH_RECT_INCREMENT = (0,100)
+LAUNCH_RECT_INCR_Y = GAME_RECT_INCR_Y
 LAUNCH_RECT_SIZE = (90,55)
 
 # max sessions before putting more on the next page
@@ -129,9 +126,11 @@ def back_button_event() -> None:
     exit()
 
 def previous_button_event() -> None:
+    global current_page
     current_page = max(0, current_page - 1)
 
 def next_button_event() -> None:
+    global current_page
     #current_page = min(current_page + 1, len(session_list) // MAX_SESSIONS_PER_PAGE)
     current_page = current_page + 1
 
@@ -396,7 +395,7 @@ def session(authenticator):
         new_text("Previous", WHITE, 150, 665)
         # draw all the buttons on the screen
         for button in clickable_buttons:
-            pygame.draw.rect(screen,button.color,button.rectangle,1)
+            pygame.draw.rect(screen,button.color,button.rectangle)
 
         for event in pygame.event.get():
             # when the user clicks or types anything
