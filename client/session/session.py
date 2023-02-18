@@ -198,6 +198,21 @@ class SessionListing:
     def leave_sess(self) -> None:
         return
 
+# action when the back button is pressed
+def back_button_event() -> None:
+    screen.fill(GREY)
+    exit()
+
+def join_button_event(session) -> None:
+    session.join_sess()
+def leave_button_event(session) -> None:
+    session.leave_sess()
+def delete_button_event(session) -> None:
+    session.del_sess()
+def launch_button_event(session) -> None:
+    session.launch_sess()
+def play_button_event(session) -> None:
+    session.play_sess()
 
 # Takes sessions json and outputs a list of pygame objects to be blitted
 def generate_session_list_buttons(authenticator,sessions_json) -> List[SessionListing]:
@@ -222,8 +237,12 @@ def session(authenticator):
     #create_input_rect = pygame.Rect((150, 250, 200, 35))  # pos_x, pos_y, width, height
 
     create_rect = pygame.Rect((350, 200, 200, 70))
-    join_rect = pygame.Rect((350, 600, 200, 70))
-    back_rect = pygame.Rect((50, 100, 150, 70))
+    # join_rect = pygame.Rect((350, 600, 200, 70))
+    # back_rect = 
+    back_rect = Button(pygame.Rect((50, 100, 150, 70)), back_button_event)
+    join_rect = Button(pygame.Rect((350, 600, 200, 70)), join_button_event)
+    leave_rect = Button(pygame.Rect((655, 450, 100, 55)), leave_button_event)
+
     previous_button_rect = pygame.Rect((150, 660, 150, 70))
     next_button_rect = pygame.Rect((600, 660, 150, 70))
     # delete_text = base_font.render("Delete", True, WHITE)
@@ -239,7 +258,7 @@ def session(authenticator):
     # previous_text = base_font.render('Previous', True, WHITE)
     create_text_display = base_font.render('Session Name', True, WHITE)
     create_color = color_passive
-    leave_rect = pygame.Rect((655, 450, 100, 55))  # creator can't leave game
+    # leave_rect = pygame.Rect((655, 450, 100, 55))  # creator can't leave game
     create_text_entry = ""
 
     game_rect1 = pygame.Rect((150, 450, 400, 55))
@@ -266,9 +285,9 @@ def session(authenticator):
             screen.fill(GREY)
             newtext = base_font.render("Joining " + game + " confirm?", True, WHITE)
 
-            pygame.draw.rect(screen, RED, back_rect)
+            pygame.draw.rect(screen, RED, back_rect.rectangle)
 
-            pygame.draw.rect(screen, GREEN, join_rect)
+            pygame.draw.rect(screen, GREEN, join_rect.rectangle)
             screen.blit(newtext, (350, 350))
             new_text("Back", WHITE, 185, 125)
             # screen.blit(back_text2, (185, 125))
@@ -281,11 +300,11 @@ def session(authenticator):
                     sys.exit()
                 if event.type == pygame.MOUSEBUTTONDOWN:
 
-                    if back_rect.collidepoint(event.pos):
+                    if back_rect.rectangle.collidepoint(event.pos):
                         screen.fill(GREY)
                         session(authenticator)
 
-                    elif join_rect.collidepoint(event.pos):
+                    elif join_rect.rectangle.collidepoint(event.pos):
                         put_session.add_player(authenticator.get_token(), game,
                                                authenticator.username)
 
@@ -303,9 +322,9 @@ def session(authenticator):
             screen.fill(GREY)
             newtext = base_font.render("Leaving " + game + " confirm?", True, WHITE)
 
-            pygame.draw.rect(screen, RED, back_rect)
+            pygame.draw.rect(screen, RED, back_rect.rectangle)
 
-            pygame.draw.rect(screen, RED, leave_rect)
+            pygame.draw.rect(screen, RED, leave_rect.rectangle)
             screen.blit(newtext, (350, 350))
             # screen.blit(back_text2, (185, 125))            
             new_text("Back", WHITE, 185, 125)
@@ -319,11 +338,11 @@ def session(authenticator):
                     sys.exit()
                 if event.type == pygame.MOUSEBUTTONDOWN:
 
-                    if back_rect.collidepoint(event.pos):
+                    if back_rect.rectangle.collidepoint(event.pos):
                         screen.fill(GREY)
                         session(authenticator)
 
-                    elif leave_rect.collidepoint(event.pos):
+                    elif leave_rect.rectangle.collidepoint(event.pos):
                         delete_session.remove_player(authenticator.get_token(), game,
                                                      authenticator.username)
 
@@ -348,6 +367,7 @@ def session(authenticator):
         # TODO: Buttons for moving between pages. It will have to change the current_page var.
 
         clickable_buttons :List[Button] = []
+        clickable_buttons += back_rect
 
         for session_listing in session_list:
             # Display all the listings in our current page
