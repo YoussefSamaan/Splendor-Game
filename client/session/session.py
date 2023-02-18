@@ -125,19 +125,6 @@ def back_button_event() -> None:
     screen.fill(GREY)
     exit()
 
-def previous_button_event() -> None:
-    global current_page
-    current_page = max(0, current_page - 1)
-
-def next_button_event() -> None:
-    global current_page
-    #current_page = min(current_page + 1, len(session_list) // MAX_SESSIONS_PER_PAGE)
-    current_page = current_page + 1
-
-back_rect = Button(pygame.Rect((50, 100, 150, 70)), back_button_event, LIGHT_BLUE)
-previous_rect = Button(pygame.Rect((150, 660, 150, 70)), previous_button_event, LIGHT_BLUE)
-next_rect = Button(pygame.Rect((600, 660, 150, 70)), next_button_event, LIGHT_BLUE)
-
 # Class for a session listing. A session listing is the game info and interaction buttons
 # associated with an existing session in the session list
 class SessionListing:
@@ -374,6 +361,18 @@ def session(authenticator):
         # TODO: Buttons for moving between pages. It will have to change the current_page var.
 
         clickable_buttons :List[Button] = []
+
+        def previous_button_event() -> None:
+            global current_page
+            current_page = max(0, current_page - 1)
+
+        def next_button_event() -> None:
+            global current_page
+            current_page = min(current_page + 1, len(session_list) // MAX_SESSIONS_PER_PAGE)
+
+        back_rect = Button(pygame.Rect((50, 100, 150, 70)), back_button_event, LIGHT_BLUE)
+        previous_rect = Button(pygame.Rect((150, 660, 150, 70)), previous_button_event, LIGHT_BLUE)
+        next_rect = Button(pygame.Rect((600, 660, 150, 70)), next_button_event, LIGHT_BLUE)
         clickable_buttons.append(back_rect)
         clickable_buttons.append(next_rect)
         clickable_buttons.append(previous_rect)
