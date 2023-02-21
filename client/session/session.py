@@ -142,12 +142,12 @@ class SessionListing:
         pygame.draw.rect(screen, LIGHT_GREY, self.game_info)
         new_text(game_info, WHITE, GAME_RECT_INIT_X, GAME_RECT_INIT_Y+GAME_RECT_INCR_Y*self.index_order)
         # set text for buttons
-        if self.current_user == self.creator:
+        if self.current_user == self.creator and not self.launched:
             self.red_button.set_text("Delete")
-        elif self.current_user in self.plr_list:
+        elif self.current_user in self.plr_list and not self.launched:
             self.red_button.set_text("Leave")
         if not self.launched:
-            if self.current_user == self.creator:
+            if self.current_user == self.creator and len(self.plr_list) >= self.min_plr:
                 self.green_button.set_text("Launch")
             else:
                 self.green_button.set_text("Join")
