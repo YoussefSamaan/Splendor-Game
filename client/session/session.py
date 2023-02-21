@@ -1,7 +1,6 @@
 import os
 import pygame
 import sys
-from game import splendor
 from typing import List, Callable, Tuple
 
 currentdir = os.path.dirname(os.path.realpath(__file__))
@@ -53,42 +52,6 @@ def new_button(rectx, recty, rectwidth, rectheight, rectcolor) -> pygame.Rect:
 def get_games(sessions):
     # gets games currently stored in memory
     return list(sessions.keys())
-
-def get_joined_games(sessions, current_player):
-    # get every game joined by the curr player
-    games = []
-    for game in sessions:
-        if current_player.username in sessions[game]['players']:
-            games.append(game)
-    return games
-
-
-def get_players(sessions):
-    # gets players currently stored in memory
-    players = []
-    for game in sessions:
-        p = list(sessions[game]['players'])
-        p.pop(0)  # don't include creator in list of players to reduce clutter
-        p_clean = ', '.join(p)  # remove brackets from e.g. ['maex', 'linus'] to get maex, linus
-        players.append(str(p_clean))
-    return players
-
-
-# This function gets the creators of all games. Is this intended?
-def get_creators(sessions):
-    # gets creator of the game
-    creators = []
-    for game in sessions:
-        creator = sessions[game]['creator']
-        creators.append(str(creator))
-    return creators
-
-
-def is_game_launched(sessions, game_name):
-    for game in sessions:
-        if sessions[game]["savegameid"] == game_name:
-            return sessions[game]["launched"]
-    return False
 
 # constants for game_rect, the box(es) that shows session ids and usernames
 GAME_RECT_INIT_X = 150
@@ -197,7 +160,7 @@ class SessionListing:
         elif self.current_user in self.plr_list:
             self.leave_sess()
     
-    def greenButtonEvent(self) -> None:
+    def greenButtonEvent(self):
         if not self.launched:
             # game is not yet launched; creator can launch, others can join
             if self.current_user == self.creator:
@@ -205,7 +168,7 @@ class SessionListing:
             else:
                 self.join_sess()
         else:
-            self.play_sess()
+            return self.play_sess()
 
     # logged-in user is the creator and deletes the session
     def del_sess(self) -> None:
@@ -226,7 +189,7 @@ class SessionListing:
     # logged-in user starts playing in the session
     def play_sess(self) -> None:
         #post_session.play_session(self.authenticator.get_token(), self.session_id)
-        splendor.play(authenticator=self.authenticator, game_id=self.session_id)
+        return self.session_id
 
     # logged-in user leaves the session
     def leave_sess(self) -> None:
@@ -318,7 +281,9 @@ def session(authenticator :Authenticator) -> int:
 
                 for button in clickable_buttons:
                     if button.rectangle.collidepoint(clicked_position):
-                        button.activation()
+                        button_return = button.activation()
+                        if not (button_return is None):
+                            return button_return
 
         pygame.display.flip()
         clock.tick(FPS)
