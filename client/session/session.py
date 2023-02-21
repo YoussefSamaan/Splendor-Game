@@ -1,6 +1,7 @@
 import os
 import pygame
 import sys
+from game import splendor
 from typing import List, Callable, Tuple
 
 currentdir = os.path.dirname(os.path.realpath(__file__))
@@ -224,7 +225,8 @@ class SessionListing:
 
     # logged-in user starts playing in the session
     def play_sess(self) -> None:
-        post_session.play_session(self.authenticator.get_token(), self.session_id)
+        #post_session.play_session(self.authenticator.get_token(), self.session_id)
+        splendor.play(authenticator=self.authenticator, game_id=self.session_id)
 
     # logged-in user leaves the session
     def leave_sess(self) -> None:
@@ -247,7 +249,7 @@ def generate_session_list_buttons(authenticator,sessions_json) -> List[SessionLi
     
     return session_list
 
-def session(authenticator):
+def session(authenticator :Authenticator) -> int:
     # needs to add game to the list of games
     # some sort of scrolling game inventory
 
