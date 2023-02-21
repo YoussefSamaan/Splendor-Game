@@ -192,6 +192,7 @@ class SessionListing:
             self.green_button.set_text("Play")
             
     def redButtonEvent(self) -> None:
+        # game is not yet launched; creator can delete, others can leave
         if self.current_user == self.creator and not self.launched:
             self.del_sess()
         elif self.current_user in self.plr_list and not self.launched:
