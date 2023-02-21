@@ -29,10 +29,11 @@ def launch_session(access_token, session):
     print(response)
     if response.status_code == 200:
         print("SUCCESSS!!!!!!!")
+        print(response.content)
         return session
     else:
+        print("FAIL")
         print(response.content)
-    return session
 
 # test_access_token = "h9UONiYVQ43aYWAGFBEv2tsbqiY="
 # create_session("maex", test_access_token, "")
