@@ -248,34 +248,7 @@ def generate_session_list_buttons(authenticator,sessions_json) -> List[SessionLi
     return session_list
 
 def session(authenticator):
-    # needs to add game to the list of games
-    # some sort of scrolling game inventory
-
-    #create_input_rect = pygame.Rect((150, 250, 200, 35))  # pos_x, pos_y, width, height
-
-    create_text_display = base_font.render('Session Name', True, WHITE)
-    create_color = color_passive
-    # leave_rect = pygame.Rect((655, 450, 100, 55))  # creator can't leave game
-    create_text_entry = ""
-
-    game_rect1 = pygame.Rect((150, 450, 400, 55))
-    game_rect2 = pygame.Rect((150, 550, 400, 55))
-    del_rect1 = pygame.Rect((555, 450, 90, 55))
-    del_rect2 = pygame.Rect((555, 550, 90, 55))
-    launch_rect1 = pygame.Rect((655, 450, 90, 55))
-    launch_rect2 = pygame.Rect((655, 550, 90, 55))
-
-    play_rect1 = pygame.Rect((555, 450, 90, 55))
-    play_rect2 = pygame.Rect((555, 550, 90, 55))
-
-    create_active = False  # whether you're clicked on the text input
-
-    def play_game(game_name):
-        return
-
-    def create_game(game):
-        post_session.create_session(authenticator.username, authenticator.get_token(), game)
-
+ 
     while True:
         screen.fill(GREY)
 
