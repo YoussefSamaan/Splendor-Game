@@ -192,9 +192,9 @@ class SessionListing:
             self.green_button.set_text("Play")
             
     def redButtonEvent(self) -> None:
-        if self.current_user == self.creator:
+        if self.current_user == self.creator and not self.launched:
             self.del_sess()
-        elif self.current_user in self.plr_list:
+        elif self.current_user in self.plr_list and not self.launched:
             self.leave_sess()
     
     def greenButtonEvent(self) -> None:
