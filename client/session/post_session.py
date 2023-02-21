@@ -30,7 +30,8 @@ def launch_session(access_token, session):
     if response.status_code == 200:
         print("SUCCESSS!!!!!!!")
         return session
-    print("FAILLL")
+    else:
+        print(response.content)
     return session
 
 # test_access_token = "h9UONiYVQ43aYWAGFBEv2tsbqiY="
