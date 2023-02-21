@@ -166,7 +166,7 @@ class SessionListing:
             # game is not yet launched; creator can launch, others can join
             if self.current_user == self.creator:
                 self.launch_sess()
-            else:
+            elif self.current_user not in self.plr_list:
                 self.join_sess()
         else:
             return self.play_sess()
