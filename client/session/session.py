@@ -149,7 +149,7 @@ class SessionListing:
         if not self.launched:
             if self.current_user == self.creator and len(self.plr_list) >= self.min_plr:
                 self.green_button.set_text("Launch")
-            else:
+            elif self.current_user not in self.plr_list and len(self.plr_list) < self.max_plr:
                 self.green_button.set_text("Join")
         else:
             self.green_button.set_text("Play")
@@ -168,7 +168,7 @@ class SessionListing:
                 self.launch_sess()
             elif self.current_user not in self.plr_list:
                 self.join_sess()
-        else:
+        elif self.launched:
             return self.play_sess()
 
     # logged-in user is the creator and deletes the session
