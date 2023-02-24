@@ -7,6 +7,8 @@ import javax.naming.InsufficientResourcesException;
 import splendor.model.game.Color;
 import splendor.model.game.SplendorGame;
 import splendor.model.game.card.DevelopmentCardI;
+import splendor.model.game.card.Noble;
+import splendor.model.game.card.SpecialActions;
 import splendor.model.game.card.SplendorCard;
 import splendor.model.game.payment.Cost;
 import splendor.model.game.payment.Token;
@@ -20,6 +22,8 @@ public class Player implements PlayerReadOnly, SplendorPlayer {
   private final Inventory inventory;
   private int prestigePoints = 0;
 
+  private List<SpecialActions> nextActions;
+
   /**
    * Creates a new player.
    *
@@ -29,6 +33,7 @@ public class Player implements PlayerReadOnly, SplendorPlayer {
   public Player(String name, String color) {
     this.name = name;
     this.color = color;
+    nextActions = new ArrayList<>();
     //FIXME: Only for demo
     this.inventory = Inventory.getDemoInventory();
   }
@@ -107,5 +112,36 @@ public class Player implements PlayerReadOnly, SplendorPlayer {
   @Override
   public boolean canAfford(SplendorCard card) {
     return card.getCost().isAffordable(inventory.getResources());
+  }
+
+  public void addNextAction(SpecialActions action) {
+    nextActions.add(action);
+  }
+
+  /**
+   * used to get the next action that has to be done by the player.
+   *
+   * @return special action if they have to do one. Otherwise, null.
+   */
+  public SpecialActions nextAction() {
+    if (nextActions.size() == 0) {
+      return null;
+    } else {
+      return nextActions.get(nextActions.size() - 1);
+    }
+  }
+
+  public List<DevelopmentCardI> getCardsBought() {
+    return this.inventory.getBoughtCards();
+  }
+
+  public void addNoble(Noble noble) {
+    this.inventory.addNoble(noble);
+    this.prestigePoints += noble.getPrestigePoints();
+  }
+
+  public void addCard(DevelopmentCardI card) {
+    this.inventory.addBoughtCard(card);
+    this.prestigePoints += card.getPrestigePoints();
   }
 }
