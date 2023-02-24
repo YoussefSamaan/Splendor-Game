@@ -23,7 +23,7 @@ public class BuyCardAction extends CardAction {
    * @param card the card.
    */
   protected BuyCardAction(SplendorCard card) {
-    super(ActionType.BUY, card);
+    super(CardActionType.BUY, card);
   }
 
 
