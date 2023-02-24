@@ -4,11 +4,10 @@ import java.util.List;
 import javax.naming.InsufficientResourcesException;
 import org.junit.jupiter.api.*;
 import splendor.controller.lobbyservice.GameInfo;
-import splendor.model.game.action.Action;
-import splendor.model.game.action.ActionData;
-import splendor.model.game.action.ActionGenerator;
+import splendor.controller.action.Action;
+import splendor.controller.action.ActionData;
+import splendor.controller.action.ActionGenerator;
 import splendor.model.game.card.DevelopmentCard;
-import splendor.model.game.card.SplendorCard;
 import splendor.model.game.player.Player;
 
 public class SplendorGameTest {

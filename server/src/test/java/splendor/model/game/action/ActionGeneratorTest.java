@@ -7,6 +7,10 @@ import org.junit.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
+
+import splendor.controller.action.Action;
+import splendor.controller.action.ActionGenerator;
+import splendor.controller.action.InvalidAction;
 import splendor.controller.lobbyservice.GameInfo;
 import splendor.model.game.Board;
 import splendor.model.game.SplendorGame;
