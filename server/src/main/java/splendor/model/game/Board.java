@@ -144,4 +144,32 @@ public class Board {
     tokens.forEach(color -> IntStream.range(0, card.getCost().getValue(color))
         .forEach(i -> bank.add(Token.of(color))));
   }
+
+
+  public List<Noble> getNobles() {
+    return this.nobles;
+  }
+
+
+  public void removeNoble(Noble noble) {
+    this.nobles.remove(noble);
+  }
+
+  /**
+   * removes the card from the deck.
+   *
+   * @param card the card that need to be removed.
+   */
+  public void removeCard(SplendorCard card) {
+    for (SplendorDeck deck : decks) {
+      int pos = deck.isFaceUp((DevelopmentCardI) card);
+      if (pos != -1) {
+        deck.takeCard(pos);
+      }
+    }
+  }
+
+  public boolean hasGoldToken() {
+    return this.bank.contains(Token.of(Color.GOLD));
+  }
 }
