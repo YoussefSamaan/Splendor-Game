@@ -23,7 +23,7 @@ public class ReserveCardAction extends CardAction {
    * @param card the card
    */
   protected ReserveCardAction(SplendorCard card) {
-    super(ActionType.RESERVE, card);
+    super(CardActionType.RESERVE, card);
   }
 
   /**
