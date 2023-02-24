@@ -5,13 +5,13 @@ import java.util.List;
 import javax.naming.InsufficientResourcesException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import splendor.controller.action.Action;
+import splendor.controller.action.ActionData;
+import splendor.controller.action.ActionGenerator;
+import splendor.controller.action.InvalidAction;
 import splendor.controller.lobbyservice.GameInfo;
 import splendor.model.game.Board;
 import splendor.model.game.SplendorGame;
-import splendor.model.game.action.Action;
-import splendor.model.game.action.ActionData;
-import splendor.model.game.action.ActionGenerator;
-import splendor.model.game.action.InvalidAction;
 import splendor.model.game.player.SplendorPlayer;
 
 /**
