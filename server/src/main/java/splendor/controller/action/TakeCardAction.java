@@ -22,7 +22,7 @@ public class TakeCardAction extends CardAction {
    * @param card the card
    */
   protected TakeCardAction(SplendorCard card) {
-    super(CardActionType.TAKE_CARD, card);
+    super(ActionType.TAKE_CARD, card);
   }
 
   @Override
