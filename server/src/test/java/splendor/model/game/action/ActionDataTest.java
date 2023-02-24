@@ -3,6 +3,7 @@ package splendor.model.game.action;
 import java.util.HashMap;
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
+import splendor.controller.action.ActionData;
 import splendor.model.game.Color;
 
 public class ActionDataTest {
