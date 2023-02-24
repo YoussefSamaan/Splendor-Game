@@ -120,4 +120,9 @@ public class Inventory {
     int toPay = amount - discount;
     IntStream.range(0, toPay).forEach(i -> tokens.remove(Token.of(color)));
   }
+
+
+  public List<DevelopmentCardI> getBoughtCards() {
+    return this.boughtCards;
+  }
 }
