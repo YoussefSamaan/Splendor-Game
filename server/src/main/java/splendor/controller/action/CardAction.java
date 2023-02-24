@@ -9,7 +9,7 @@ import splendor.model.game.card.SplendorCard;
 public abstract class CardAction implements Action {
 
   private final SplendorCard card;
-  private final CardActionType actionType;
+  private final ActionType actionType;
 
   private final long actionId;
 
@@ -20,7 +20,7 @@ public abstract class CardAction implements Action {
    * @param actionType the type of the action
    * @param card the card
    */
-  protected CardAction(CardActionType actionType, SplendorCard card) {
+  protected CardAction(ActionType actionType, SplendorCard card) {
     this.actionType = actionType;
     this.card = card;
     // generate a random id for the action
