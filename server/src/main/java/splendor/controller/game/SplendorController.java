@@ -1,7 +1,6 @@
 package splendor.controller.game;
 
 import com.google.gson.Gson;
-import java.lang.reflect.Field;
 import java.util.logging.Logger;
 import javax.naming.AuthenticationException;
 import javax.naming.InsufficientResourcesException;
@@ -12,12 +11,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
+import splendor.controller.action.ActionData;
+import splendor.controller.action.InvalidAction;
 import splendor.controller.helper.Authenticator;
-import splendor.model.game.Bank;
-import splendor.model.game.Board;
-import splendor.model.game.action.ActionData;
-import splendor.model.game.action.InvalidAction;
-import splendor.model.game.payment.Token;
 
 /**
  * Controller responsible for all HTTP requests specific to a game.
