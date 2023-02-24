@@ -27,7 +27,7 @@ public class TakeNobleAction extends CardAction {
    */
   protected TakeNobleAction(SplendorCard card) {
 
-    super(ActionType.TAKE_NOBLE, card);
+    super(CardActionType.TAKE_NOBLE, card);
   }
 
   @Override
