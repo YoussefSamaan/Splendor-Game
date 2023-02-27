@@ -46,4 +46,8 @@ public class TokenBank implements Bank<Token> {
   public int count(Token element) {
     return tokens.getOrDefault(element.getColor(), 0);
   }
+
+  public HashMap<Color, Integer> getTokens() {
+    return tokens;
+  }
 }
