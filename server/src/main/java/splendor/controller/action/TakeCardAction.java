@@ -21,8 +21,8 @@ public class TakeCardAction extends CardAction {
    *
    * @param card the card
    */
-  protected TakeCardAction(SplendorCard card) {
-    super(ActionType.TAKE_CARD, card);
+  protected TakeCardAction(ActionType actionType, SplendorCard card) {
+    super(actionType, card);
   }
 
   @Override
@@ -46,13 +46,13 @@ public class TakeCardAction extends CardAction {
 
       for (DevelopmentCardI card : yellowCards.getFaceUpCards()) {
         if (card != null) {
-          actions.add(new ReserveCardAction(card));
+          actions.add(new TakeCardAction(ActionType.TAKE_CARD_1,card));
         }
       }
 
       for (DevelopmentCardI card : red2Cards.getFaceUpCards()) {
         if (card != null) {
-          actions.add(new ReserveCardAction(card));
+          actions.add(new TakeCardAction(ActionType.TAKE_CARD_1,card));
         }
       }
 
@@ -62,13 +62,13 @@ public class TakeCardAction extends CardAction {
 
       for (DevelopmentCardI card : greenCards.getFaceUpCards()) {
         if (card != null) {
-          actions.add(new ReserveCardAction(card));
+          actions.add(new TakeCardAction(ActionType.TAKE_CARD_2,card));
+
         }
       }
-
       for (DevelopmentCardI card : red1Cards.getFaceUpCards()) {
         if (card != null) {
-          actions.add(new ReserveCardAction(card));
+          actions.add(new TakeCardAction(ActionType.TAKE_CARD_2,card));
         }
       }
 
