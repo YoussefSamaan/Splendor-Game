@@ -1,11 +1,12 @@
 package splendor.model.game.player;
 
+import java.util.HashMap;
 import java.util.List;
 import javax.naming.InsufficientResourcesException;
+import splendor.controller.action.ActionType;
 import splendor.model.game.Color;
 import splendor.model.game.SplendorGame;
 import splendor.model.game.card.DevelopmentCardI;
-import splendor.model.game.card.SpecialActions;
 import splendor.model.game.card.SplendorCard;
 
 /**
@@ -33,7 +34,9 @@ public interface SplendorPlayer {
    */
   String getName();
 
-  SpecialActions nextAction();
+  ActionType nextAction();
 
   List<DevelopmentCardI> getCardsBought();
+
+  HashMap<Color, Integer> getTokens();
 }
