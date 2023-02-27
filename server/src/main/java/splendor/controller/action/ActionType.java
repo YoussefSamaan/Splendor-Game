@@ -8,6 +8,8 @@ public enum ActionType {
   RESERVE,
   TAKE_NOBLE,
   TAKE_TOKENS,
-  TAKE_CARD,
-  RETURN_TOKENS
+  TAKE_CARD_1,
+  TAKE_CARD_2,
+  RETURN_TOKENS,
+  CLONE_CARD,
 }
