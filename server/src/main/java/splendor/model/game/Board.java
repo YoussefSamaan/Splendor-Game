@@ -1,6 +1,7 @@
 package splendor.model.game;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.IntStream;
@@ -171,5 +172,25 @@ public class Board {
 
   public boolean hasGoldToken() {
     return this.bank.contains(Token.of(Color.GOLD));
+  }
+
+  public void addTokens(HashMap<Color, Integer> tokens){
+    for (Color c: tokens.keySet()) {
+      for (int i=0; i< tokens.get(c); i++){
+        this.bank.add(Token.of(c));
+      }
+    }
+  }
+
+  public HashMap<Color, Integer> getTokens() {
+    return this.bank.getTokens();
+  }
+
+  public void removeTokens(HashMap<Color, Integer> tokens) {
+    for (Color c: tokens.keySet()) {
+      for (int i=0; i<tokens.get(c); i++){
+        this.bank.remove(Token.of(c));
+      }
+    }
   }
 }
