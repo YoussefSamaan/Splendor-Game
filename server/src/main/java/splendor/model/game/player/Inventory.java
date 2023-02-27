@@ -125,4 +125,16 @@ public class Inventory {
   public List<DevelopmentCardI> getBoughtCards() {
     return this.boughtCards;
   }
+
+  public HashMap<Color, Integer> getTokens() {
+    return tokens.getTokens();
+  }
+
+  public void removeTokens(HashMap<Color, Integer> tokens){
+    for (Color c: tokens.keySet()) {
+      for (int i=0; i< tokens.get(c); i++){
+        this.tokens.remove(Token.of(c));
+      }
+    }
+  }
 }

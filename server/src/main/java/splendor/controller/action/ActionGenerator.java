@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import org.springframework.stereotype.Component;
 import splendor.model.game.SplendorGame;
-import splendor.model.game.card.SpecialActions;
 import splendor.model.game.player.SplendorPlayer;
 
 /**
@@ -33,15 +32,17 @@ public class ActionGenerator {
     }
     // TODO: ADD more actions
     if (player.nextAction() == null) {
-      // add take tokens
+      actions.addAll(TakeTokensAction.getLegalActions(game));
       actions.addAll(ReserveCardAction.getLegalActions(game, player));
       actions.addAll(BuyCardAction.getLegalActions(game, player));
-    } else if (player.nextAction() == SpecialActions.TakeFreeLevel2) {
+    } else if (player.nextAction() == ActionType.TAKE_CARD_2) {
       actions.addAll(TakeCardAction.getLegalActions(game, 2));
-    } else if (player.nextAction() == SpecialActions.TakeFreeLevel1) {
+    } else if (player.nextAction() == ActionType.TAKE_CARD_1) {
       actions.addAll(TakeCardAction.getLegalActions(game, 1));
-    } else if (player.nextAction() == SpecialActions.ChooseNoble) {
+    } else if (player.nextAction() == ActionType.TAKE_NOBLE) {
       actions.addAll(TakeNobleAction.getLegalActions(game, player, false));
+    } else if (player.nextAction() == ActionType.RETURN_TOKENS) {
+      actions.addAll(ReturnTokensAction.getLegalActions(player));
     } else {
       actions.addAll(TakeNobleAction.getLegalActions(game, player, true));
     }
