@@ -264,6 +264,7 @@ def perform_action(obj):
     elif isinstance(obj, Token):
         # obj.take_token(Player.instance(id=CURR_PLAYER))
         # TODO: add token menu
+        get_token_selection()
         set_flash_message('Opened token menu')
     elif isinstance(obj, Noble):
         obj.take_noble(Sidebar.instance(), Player.instance(id=CURR_PLAYER))
