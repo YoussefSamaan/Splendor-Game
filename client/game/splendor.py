@@ -49,7 +49,7 @@ class IndividualTokenSelection:
         def decrementEvent():
             if self.amount > 0:
                 self.amount -= 1
-        X_SHIFT = 10
+        X_SHIFT = 60
         Y_SHIFT = 0
         BUTTON_WIDTH = 90
         BUTTON_HEIGHT = 55
@@ -281,7 +281,7 @@ class TokenMenu:
         self.menu_rect = self.menu.get_rect()
         self.menu_rect.center = (WIDTH / 2, HEIGHT / 2)
         self.buttonlist :List[IndividualTokenSelection] = [] 
-        self.confirm_button = Button(pygame.Rect(WIDTH/2,HEIGHT/2,WIDTH/4,HEIGHT/4), "Confirm", self.check_enough_tokens)
+        self.confirm_button = Button(pygame.Rect(WIDTH/2,HEIGHT/2,90,55), "Confirm", self.check_enough_tokens)
         # todo: add +/- buttons for each token
         # add buy button
         
@@ -319,7 +319,7 @@ class TokenMenu:
                     clicked_position = pygame.mouse.get_pos()
                     # button is individual token selection class
                     if self.confirm_button.collidepoint(clicked_position):
-                        return self.check_enough_tokens()
+                        return self.confirm_button.activation()
                     for button in self.buttonlist:
                         if button.incrementButton.rectangle.collidepoint(clicked_position):
                             button.incrementButton.activation()
