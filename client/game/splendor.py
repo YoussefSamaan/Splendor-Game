@@ -37,7 +37,7 @@ def initialize_game(board_json):
     initialize_board()
     initialize_cards()
     initialize_tokens()
-    initialize_nobles()
+    initialize_nobles(board_json)
     initialize_players(board_json)
     initialize_sidebar()
 
