@@ -33,19 +33,35 @@ CURR_PLAYER = 0
 action_manager = None
 has_initialized = False
 
-class Button:
-    def __init__(self,rectangle : pygame.Rect, on_click_event : Callable[[None], None], color: Tuple[int,int,int] = LIGHT_GREY, text: str = "") -> None:
-        self.rectangle = rectangle
-        self.activation = on_click_event
-        self.color = color
-        self.text = text
+class IndividualTokenSelection:
+    def __init__(self, token: Token, x_pos: int, y_pos: int) -> None:
+        self.x_pos = x_pos
+        self.y_pos = y_pos
+        self.token = token
+
         self.amount = 0 # how many tokens are selected
         # TODO: make these buttons automatically based on position of button
-        self.increment = Button(green_rect,incrementEvent,GREEN)
-        self.decrement = Button(red_rect,decrementEvent,RED)
 
-    def set_text(self, text):
-        self.text = text
+        def incrementEvent():
+            if self.amount < 3:
+                self.amount += 1
+
+        def decrementEvent():
+            if self.amount > 0:
+                self.amount -= 1
+        X_SHIFT = 10
+        Y_SHIFT = 0
+        BUTTON_WIDTH = 90
+        BUTTON_HEIGHT = 55
+        green_rect = pygame.Rect(x_pos-X_SHIFT,y_pos,BUTTON_WIDTH,BUTTON_HEIGHT)
+        red_rect = pygame.Rect(x_pos+X_SHIFT,y_pos,BUTTON_WIDTH,BUTTON_HEIGHT)
+        self.incrementButton = Button(green_rect,incrementEvent,GREEN)
+        self.decrementButton = Button(red_rect,decrementEvent,RED)
+    
+    def display(self):
+        self.token.draw(DISPLAYSURF,self.x_pos,self.y_pos,amount=self.amount)
+        self.incrementButton.display()
+        self.decrementButton.display()
 
 
 def initialize_game(board_json):
@@ -267,17 +283,18 @@ class TokenMenu:
         # todo: add +/- buttons for each token
         # add buy button
         
-    def generate_buttons(self):
-        colorlist = [Color.WHITE, Color.BLUE, Color.GREEN, Color.RED, Color.BLACK, Color.GOLD]
-        colorstringlist = ["white", "blue", "green", "red", "black", "gold"]
-        for i in range(0, 7):
-            newbutton = Button(LOCATION, DUMMY EVENT, colorstringlist[i], 0)
-            self.buttonlist.append(newbutton)
+    def generate_buttons(self) -> List[Button]:
+        # generate a list of buttons for the token menu        
+        button_list = []
+        for token in Token.flyweights.values():
+            tokenSelection = IndividualTokenSelection(token,WIDTH/4,HEIGHT/2)
+            tokenSelection.display()
+            button_list.append(tokenSelection.decrementButton)
+            button_list.append(tokenSelection.incrementButton)
+        return button_list
 
     def display(self):
         DISPLAYSURF.blit(self.menu, self.menu_rect)
-        self.buy_button.display()
-        self.reserve_button.display()
     
     def check_enough_tokens(self):
         """ checks if the input corresponds to a valid token selection """
