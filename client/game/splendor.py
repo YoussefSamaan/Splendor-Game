@@ -279,7 +279,8 @@ class TokenMenu:
         self.menu.set_alpha(200)
         self.menu_rect = self.menu.get_rect()
         self.menu_rect.center = (WIDTH / 2, HEIGHT / 2)
-        self.buttonlist = []
+        self.buttonlist :List[IndividualTokenSelection] = [] 
+        self.buy_button = Button(WIDTH/2,HEIGHT/2,WIDTH/4,HEIGHT/4, "Buy", self.check_enough_tokens)
         # todo: add +/- buttons for each token
         # add buy button
         
@@ -289,41 +290,46 @@ class TokenMenu:
         for token in Token.flyweights.values():
             tokenSelection = IndividualTokenSelection(token,WIDTH/4,HEIGHT/2)
             tokenSelection.display()
-            button_list.append(tokenSelection.decrementButton)
-            button_list.append(tokenSelection.incrementButton)
+            button_list.append(tokenSelection)
+            #button_list.append(tokenSelection.incrementButton)
         return button_list
 
     def display(self):
         DISPLAYSURF.blit(self.menu, self.menu_rect)
     
-    def check_enough_tokens(self):
-        """ checks if the input corresponds to a valid token selection """
+    def check_enough_tokens(self) -> Dict[Token]:
+        """ checks if the input corresponds to a valid token selection
+        returns the token selection if valid, None if not valid """
         pass
 
     def get_user_selection(self):
         while True:
+            self.generate_buttons()
+            self.display()
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     quit()
+
                 elif event.type == MOUSEBUTTONDOWN:
+                    clicked_position = pygame.mouse.get_pos()
+                    # button is individual token selection class
+                    if self.buy_button.collidepoint(clicked_position):
+                        return self.check_enough_tokens()
                     for button in self.buttonlist:
-                        if button.plus_button.is_clicked(event.pos):
-                            return TokenAction.INCREMENT
-                        elif button.minus_button.is_clicked(event.pos):
-                            return TokenAction.DECREMENT
+                        if button.incrementButton.rectangle.collidepoint(clicked_position):
+                            button.incrementButton.activation()
+                        elif button.decrementButton.rectangle.collidepoint(clicked_position):
+                            button.decrementButton.activation()
             return None
 
 def get_token_selection():
     """RETURNS WHAT TOKENS PLAYER CHOSE"""
-    # create a box to display the options
-    selection_box, selection_box_rect = get_selection_box(DISPLAYSURF)
+
     # draw the 7 buttons 
-    for i in range(0, 7):
-        pygame.draw.rect(selection_box, WHITE, (10, 10 + i * 50, 100, 40))
+    TokenMenu().get_user_selection()
 
 
-    DISPLAYSURF.blit(selection_box, selection_box_rect)
     pygame.display.update()
     # wait for user to click on a button
     while True:
