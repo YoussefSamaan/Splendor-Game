@@ -298,7 +298,7 @@ class TokenMenu:
     def display(self):
         DISPLAYSURF.blit(self.menu, self.menu_rect)
     
-    def check_enough_tokens(self) -> Dict[Token]:
+    def check_enough_tokens(self) -> Dict[Token,int]:
         """ checks if the input corresponds to a valid token selection
         returns the token selection if valid, None if not valid """
         pass
@@ -329,25 +329,8 @@ def get_token_selection():
 
     # draw the 7 buttons 
     TokenMenu().get_user_selection()
-
-
     pygame.display.update()
     # wait for user to click on a button
-    while True:
-        for event in pygame.event.get():
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                if buy_button.collidepoint(event.pos):
-                    return TokenAction.BUY
-
-                    
-                else:
-                    return TokenAction.CANCEL
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_ESCAPE:
-                    return TokenAction.CANCEL
-            elif event.type == pygame.QUIT:
-                pygame.quit()
-                quit()
 
 def check_toggle(mouse_pos):
     sidebar = Sidebar.instance()
