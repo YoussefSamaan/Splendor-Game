@@ -7,7 +7,6 @@ import splendor.model.game.Board;
 import splendor.model.game.Color;
 import splendor.model.game.SplendorGame;
 import splendor.model.game.player.Player;
-import splendor.model.game.player.SplendorPlayer;
 
 /**
  * take tokens action class.
@@ -33,21 +32,21 @@ public class TakeTokensAction implements Action {
     List<HashMap<Color, Integer>> combinations = new ArrayList<>();
     Color[] colors = Color.tokenColors();
 
-    for (int i = 0; i < colors.length; i++) {
+    for (int i = 0; i < colors.length-1; i++) {
       Color color1 = colors[i];
       int count1 = tokens.getOrDefault(color1, 0);
       if (count1 == 0) {
         continue; // skip colors with no tokens
       }
 
-      for (int j = i + 1; j < colors.length; j++) {
+      for (int j = i + 1; j < colors.length-1; j++) {
         Color color2 = colors[j];
         int count2 = tokens.getOrDefault(color2, 0);
         if (count2 == 0) {
           continue; // skip colors with no tokens
         }
 
-        for (int k = j + 1; k < colors.length; k++) {
+        for (int k = j + 1; k < colors.length-1; k++) {
           Color color3 = colors[k];
           int count3 = tokens.getOrDefault(color3, 0);
           if (count3 == 0) {
@@ -66,14 +65,14 @@ public class TakeTokensAction implements Action {
 
     // Handle case where we only take 2 tokens
     if (combinations.size() == 0) {
-      for (int i = 0; i < colors.length; i++) {
+      for (int i = 0; i < colors.length-1; i++) {
         Color color1 = colors[i];
         int count1 = tokens.getOrDefault(color1, 0);
         if (count1 == 0) {
           continue; // skip colors with no tokens
         }
 
-        for (int j = i + 1; j < colors.length; j++) {
+        for (int j = i + 1; j < colors.length-1; j++) {
           Color color2 = colors[j];
           int count2 = tokens.getOrDefault(color2, 0);
           if (count2 == 0) {
@@ -91,7 +90,7 @@ public class TakeTokensAction implements Action {
 
     // Handle case where we only take 1 token
     if (combinations.size() == 0) {
-      for (int i = 0; i < colors.length; i++) {
+      for (int i = 0; i < colors.length-1; i++) {
         Color color1 = colors[i];
         int count1 = tokens.getOrDefault(color1, 0);
         if (count1 == 0) {
@@ -114,7 +113,7 @@ public class TakeTokensAction implements Action {
     List<HashMap<Color, Integer>> combinations = new ArrayList<>();
     Color[] colors = Color.tokenColors();
 
-    for (int i = 0; i < colors.length; i++) {
+    for (int i = 0; i < colors.length-1; i++) {
       Color color1 = colors[i];
       int count1 = tokens.getOrDefault(color1, 0);
       if (count1 <= (2 + limit)) {
