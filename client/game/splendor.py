@@ -4,8 +4,9 @@ import threading
 
 from pygame.locals import *
 from win32api import GetSystemMetrics
-
+from typing import List, Callable, Tuple
 from action import Action
+from token_action import TokenAction
 from game import server_manager
 from game.action_manager import ActionManager
 from deck import *
@@ -30,6 +31,20 @@ NUM_PLAYERS = 4  # For now
 CURR_PLAYER = 0
 action_manager = None
 has_initialized = False
+
+class Button:
+    def __init__(self,rectangle : pygame.Rect, on_click_event : Callable[[None], None], color: Tuple[int,int,int] = LIGHT_GREY, text: str = "") -> None:
+        self.rectangle = rectangle
+        self.activation = on_click_event
+        self.color = color
+        self.text = text
+        self.amount = 0 # how many tokens are selected
+        # TODO: make these buttons automatically based on position of button
+        self.increment = Button(green_rect,incrementEvent,GREEN)
+        self.decrement = Button(red_rect,decrementEvent,RED)
+
+    def set_text(self, text):
+        self.text = text
 
 
 def initialize_game(board_json):
@@ -230,14 +245,76 @@ def perform_action(obj):
     if isinstance(obj, Card):
         get_user_card_selection(obj)
     elif isinstance(obj, Token):
-        obj.take_token(Player.instance(id=CURR_PLAYER))
-        set_flash_message('Took a token')
+        # obj.take_token(Player.instance(id=CURR_PLAYER))
+        # TODO: add token menu
+        set_flash_message('Opened token menu')
     elif isinstance(obj, Noble):
         obj.take_noble(Sidebar.instance(), Player.instance(id=CURR_PLAYER))
         set_flash_message('Took a noble')
     elif isinstance(obj, Player):
         Sidebar.instance().switch_player(obj)
 
+class TokenMenu:
+    """generates all the buttons, remembers which tokens user picked, checks if legal"""
+    def __init__(self):
+        self.menu = pygame.Surface((WIDTH, HEIGHT))
+        self.menu.fill((0, 0, 0))
+        self.menu.set_alpha(200)
+        self.menu_rect = self.menu.get_rect()
+        self.menu_rect.center = (WIDTH / 2, HEIGHT / 2)
+        self.buttonlist = []
+        # todo: add +/- buttons for each token
+        # add buy button
+        
+    def display(self):
+        DISPLAYSURF.blit(self.menu, self.menu_rect)
+        self.buy_button.display()
+        self.reserve_button.display()
+    
+    def check_enough_tokens(self):
+        """ checks if the input corresponds to a valid token selection """
+        pass
+
+    def get_user_selection(self):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+            elif event.type == MOUSEBUTTONDOWN:
+                for button in self.buttonlist:
+                    if button.plus_button.is_clicked(event.pos):
+                        return TokenAction.INCREMENT
+                    elif button.minus_button.is_clicked(event.pos):
+                        return TokenAction.DECREMENT
+        return None
+
+def get_token_selection():
+    """RETURNS WHAT TOKENS PLAYER CHOSE"""
+    # create a box to display the options
+    selection_box, selection_box_rect = get_selection_box(DISPLAYSURF)
+    # draw the 7 buttons 
+    for i in range(0, 7):
+        pygame.draw.rect(selection_box, WHITE, (10, 10 + i * 50, 100, 40))
+
+
+    DISPLAYSURF.blit(selection_box, selection_box_rect)
+    pygame.display.update()
+    # wait for user to click on a button
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if buy_button.collidepoint(event.pos):
+                    return TokenAction.BUY
+
+                    
+                else:
+                    return TokenAction.CANCEL
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    return TokenAction.CANCEL
+            elif event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
 
 def check_toggle(mouse_pos):
     sidebar = Sidebar.instance()
