@@ -231,7 +231,7 @@ def get_clicked_object(pos):
     return None
 
 
-def get_user_card_selection(card):
+def get_user_card_selection(card :Card):
     """
     Allow user to choose whether to buy or reserve the card
     :param card:
@@ -304,8 +304,11 @@ class TokenMenu:
 
     def get_user_selection(self):
         while True:
-            self.generate_buttons()
+            buttons_generated: List[Button] = self.generate_buttons()
             self.display()
+
+            for button in buttons_generated:
+                button.display()
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
