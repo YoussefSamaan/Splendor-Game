@@ -25,10 +25,9 @@ class ActionManager:
             return -1
         print(self.actions)
         for action in self.actions:
-            if action['cardType'] != 'DevelopmentCard' or action['actionType'] != action_type.value\
-                    or action['card']['cardId'] != card.get_id():
-                continue
-            return action['actionId']
+            if "card" in action and action["card"]["cardId"] == card.get_id()\
+                and action["actionType"] == action_type.value:
+                return action["actionId"]
         return -1
 
     def perform_action(self, action_id: int):
