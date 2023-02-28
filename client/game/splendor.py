@@ -71,8 +71,8 @@ def initialize_tokens():
     Token.initialize()
 
 
-def initialize_nobles():
-    Noble.initialize(n=5)
+def initialize_nobles(board_json):
+    Noble.initialize(board_json['nobles'])
 
 
 def show_flash_message():
