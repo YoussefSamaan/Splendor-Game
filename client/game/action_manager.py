@@ -23,6 +23,7 @@ class ActionManager:
         if player_name != self.last_updated_player:
             # Not player's turn
             return -1
+        print(self.actions)
         for action in self.actions:
             if action['cardType'] != 'DevelopmentCard' or action['actionType'] != action_type.value\
                     or action['card']['cardId'] != card.get_id():
