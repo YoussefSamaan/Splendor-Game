@@ -23,8 +23,8 @@ class Noble:
         self.isOnDisplay = True
 
     @staticmethod
-    def initialize(n):
-        ids = random.sample(range(1, 11), n)
+    def initialize(ids):
+        
         # Create n nobles with the chosen ids
         for id in ids:
             Noble.instance(id=id)
