@@ -12,6 +12,7 @@ from game.action_manager import ActionManager
 from deck import *
 from sidebar import *
 from splendorToken import Token
+from color import Color
 
 os.chdir(os.path.dirname(
     os.path.abspath(__file__)))  # to make image imports start from current directory
@@ -267,6 +268,13 @@ class TokenMenu:
         # todo: add +/- buttons for each token
         # add buy button
         
+    def generate_buttons(self):
+        colorlist = [Color.WHITE, Color.BLUE, Color.GREEN, Color.RED, Color.BLACK, Color.GOLD]
+        colorstringlist = ["white", "blue", "green", "red", "black", "gold"]
+        for i in range(0, 7):
+            newbutton = Button(LOCATION, DUMMY EVENT, colorstringlist[i], 0)
+            self.buttonlist.append(newbutton)
+
     def display(self):
         DISPLAYSURF.blit(self.menu, self.menu_rect)
         self.buy_button.display()
@@ -277,17 +285,18 @@ class TokenMenu:
         pass
 
     def get_user_selection(self):
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                quit()
-            elif event.type == MOUSEBUTTONDOWN:
-                for button in self.buttonlist:
-                    if button.plus_button.is_clicked(event.pos):
-                        return TokenAction.INCREMENT
-                    elif button.minus_button.is_clicked(event.pos):
-                        return TokenAction.DECREMENT
-        return None
+        while True:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    quit()
+                elif event.type == MOUSEBUTTONDOWN:
+                    for button in self.buttonlist:
+                        if button.plus_button.is_clicked(event.pos):
+                            return TokenAction.INCREMENT
+                        elif button.minus_button.is_clicked(event.pos):
+                            return TokenAction.DECREMENT
+            return None
 
 def get_token_selection():
     """RETURNS WHAT TOKENS PLAYER CHOSE"""
