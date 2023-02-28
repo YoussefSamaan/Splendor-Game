@@ -60,8 +60,8 @@ class IndividualTokenSelection:
     
     def display(self):
         self.token.draw(DISPLAYSURF,self.x_pos,self.y_pos,amount=self.amount)
-        self.incrementButton.display()
-        self.decrementButton.display()
+        self.incrementButton.display(DISPLAYSURF)
+        self.decrementButton.display(DISPLAYSURF)
 
 
 def initialize_game(board_json):
@@ -281,7 +281,7 @@ class TokenMenu:
         self.menu_rect = self.menu.get_rect()
         self.menu_rect.center = (WIDTH / 2, HEIGHT / 2)
         self.buttonlist :List[IndividualTokenSelection] = [] 
-        self.buy_button = Button(WIDTH/2,HEIGHT/2,WIDTH/4,HEIGHT/4, "Buy", self.check_enough_tokens)
+        self.confirm_button = Button(pygame.Rect(WIDTH/2,HEIGHT/2,WIDTH/4,HEIGHT/4), "Confirm", self.check_enough_tokens)
         # todo: add +/- buttons for each token
         # add buy button
         
@@ -318,7 +318,7 @@ class TokenMenu:
                 elif event.type == MOUSEBUTTONDOWN:
                     clicked_position = pygame.mouse.get_pos()
                     # button is individual token selection class
-                    if self.buy_button.collidepoint(clicked_position):
+                    if self.confirm_button.collidepoint(clicked_position):
                         return self.check_enough_tokens()
                     for button in self.buttonlist:
                         if button.incrementButton.rectangle.collidepoint(clicked_position):
