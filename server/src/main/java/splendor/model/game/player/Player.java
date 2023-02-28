@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import javax.naming.InsufficientResourcesException;
+import splendor.controller.action.ActionType;
 import splendor.model.game.Color;
 import splendor.model.game.SplendorGame;
 import splendor.model.game.card.DevelopmentCardI;
 import splendor.model.game.card.Noble;
-import splendor.model.game.card.SpecialActions;
 import splendor.model.game.card.SplendorCard;
 import splendor.model.game.payment.Cost;
 import splendor.model.game.payment.Token;
@@ -22,7 +22,7 @@ public class Player implements PlayerReadOnly, SplendorPlayer {
   private final Inventory inventory;
   private int prestigePoints = 0;
 
-  private List<SpecialActions> nextActions;
+  private List<ActionType> nextActions;
 
   /**
    * Creates a new player.
@@ -114,7 +114,7 @@ public class Player implements PlayerReadOnly, SplendorPlayer {
     return card.getCost().isAffordable(inventory.getResources());
   }
 
-  public void addNextAction(SpecialActions action) {
+  public void addNextAction(ActionType action) {
     nextActions.add(action);
   }
 
@@ -123,7 +123,7 @@ public class Player implements PlayerReadOnly, SplendorPlayer {
    *
    * @return special action if they have to do one. Otherwise, null.
    */
-  public SpecialActions nextAction() {
+  public ActionType nextAction() {
     if (nextActions.size() == 0) {
       return null;
     } else {
@@ -143,5 +143,19 @@ public class Player implements PlayerReadOnly, SplendorPlayer {
   public void addCard(DevelopmentCardI card) {
     this.inventory.addBoughtCard(card);
     this.prestigePoints += card.getPrestigePoints();
+  }
+
+  public HashMap<Color, Integer> getTokens(){
+    return inventory.getTokens();
+  }
+
+  public void removeTokens(HashMap<Color, Integer> tokens){
+    inventory.removeTokens(tokens);
+  }
+
+  public void addTokens(HashMap<Color, Integer> tokens){
+    for (Color c: tokens.keySet()) {
+      inventory.addTokens(Token.of(c), tokens.get(c));
+    }
   }
 }
