@@ -139,7 +139,7 @@ public class ReturnTokensAction implements Action {
 
   @Override
   public long getId() {
-    return 0;
+    return this.actionId;
   }
 
   @Override
