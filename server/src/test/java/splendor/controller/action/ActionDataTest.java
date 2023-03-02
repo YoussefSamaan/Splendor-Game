@@ -1,4 +1,4 @@
-package splendor.model.game.action;
+package splendor.controller.action;
 
 import java.util.HashMap;
 import org.junit.Test;

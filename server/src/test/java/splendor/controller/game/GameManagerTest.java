@@ -1,6 +1,36 @@
-package splendor.controller.game;
-
-public class GameManagerTest {
+//package splendor.controller.game;
+//
+//import static org.junit.jupiter.api.Assertions.assertEquals;
+//import static org.junit.jupiter.api.Assertions.assertFalse;
+//import static org.junit.jupiter.api.Assertions.assertThrows;
+//import static org.junit.jupiter.api.Assertions.assertTrue;
+//import static org.mockito.Mockito.doNothing;
+//import static org.mockito.Mockito.mock;
+//import static org.mockito.Mockito.verify;
+//import static org.mockito.Mockito.when;
+//
+//import java.lang.reflect.Constructor;
+//import java.lang.reflect.Field;
+//import java.lang.reflect.InvocationTargetException;
+//import java.util.Collections;
+//import java.util.HashMap;
+//import javax.naming.InsufficientResourcesException;
+//import org.junit.Before;
+//import org.junit.Test;
+//import org.mockito.Mockito;
+//import splendor.controller.action.Action;
+//import splendor.controller.action.ActionData;
+//import splendor.controller.action.ActionGenerator;
+//import splendor.controller.action.InvalidAction;
+//import splendor.controller.action.ReserveCardAction;
+//import splendor.controller.lobbyservice.GameInfo;
+//import splendor.model.game.SplendorGame;
+//import splendor.model.game.TokenBank;
+//import splendor.model.game.card.DevelopmentCard;
+//import splendor.model.game.card.SplendorCard;
+//import splendor.model.game.player.Player;
+//
+//public class GameManagerTest {
 //  ActionGenerator actionGenerator = mock(ActionGenerator.class);
 //
 //  ActionData actionData = mock(ActionData.class);
@@ -37,15 +67,15 @@ public class GameManagerTest {
 //  @Before
 //  public void setUp() throws InvalidAction, InvocationTargetException, InstantiationException, IllegalAccessException {
 //    // use reflection to make DevelopmentCardAction constructor public
-//    Constructor<DevelopmentCardAction> constructor;
+//    Constructor<ReserveCardAction> constructor;
 //    try {
-//      constructor = DevelopmentCardAction.class
-//          .getDeclaredConstructor(CardActionType.class, SplendorCard.class);
+//      constructor = ReserveCardAction.class
+//          .getDeclaredConstructor(SplendorCard.class);
 //      constructor.setAccessible(true);
 //    } catch (NoSuchMethodException e) {
 //      throw new RuntimeException(e);
 //    }
-//    Action action = constructor.newInstance(CardActionType.RESERVE, DevelopmentCard.get(1));
+//    Action action = constructor.newInstance(DevelopmentCard.get(1));
 //    when(actionGenerator.generateActions(Mockito.any(), Mockito.anyLong(), Mockito.any()))
 //        .thenReturn(Collections.singletonList(action));
 //    when(actionGenerator.getGeneratedAction(Mockito.anyLong(), Mockito.anyLong()))
@@ -139,7 +169,8 @@ public class GameManagerTest {
 //  }
 //
 //  @Test
-//  public void testPerformActionInvalidAction() throws NoSuchFieldException, IllegalAccessException, InvalidAction {
+//  public void testPerformActionInvalidAction() throws NoSuchFieldException, IllegalAccessException,
+//      InvalidAction {
 //    SplendorGame game = mock(SplendorGame.class);
 //    ActionGenerator actionGenerator = mock(ActionGenerator.class);
 //    GameManager gameManager = new GameManager(actionGenerator);
@@ -169,4 +200,4 @@ public class GameManagerTest {
 //    games.setAccessible(true);
 //    ((HashMap<Long, SplendorGame>) games.get(gameManager)).put(gameId, game);
 //  }
-}
+//}
