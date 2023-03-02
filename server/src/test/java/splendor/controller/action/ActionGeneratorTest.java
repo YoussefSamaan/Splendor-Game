@@ -88,9 +88,6 @@ public class ActionGeneratorTest {
       throw new RuntimeException(e);
     }
     List<Action> actions = actionGenerator.generateActions(game, gameId, player1);
-    for (Action a: actions) {
-      System.out.println(a);
-    }
     assertEquals(16, actions.size()); // reserve + takeTokens
   }
 
@@ -149,5 +146,53 @@ public class ActionGeneratorTest {
     } catch (InvalidAction e) {
       assertTrue(true);
     }
+  }
+
+  @Test
+  public void takeCardLevel2(){
+    long gameId = 1;
+    player1.addNextAction(ActionType.TAKE_CARD_2);
+    List<Action> actions = actionGenerator.generateActions(game, gameId, player1);
+    assertEquals(1, actions.size()); // take level 2 card
+  }
+
+  @Test
+  public void takeCardLevel1(){ // should work?
+    long gameId = 1;
+    player1.addNextAction(ActionType.TAKE_CARD_1);
+    List<Action> actions = actionGenerator.generateActions(game, gameId, player1);
+    assertEquals(1, actions.size()); // take level 1 card
+  }
+
+  @Test
+  public void takeNoble(){
+    long gameId = 1;
+    player1.addNextAction(ActionType.TAKE_NOBLE);
+    List<Action> actions = actionGenerator.generateActions(game, gameId, player1);
+    assertEquals(0, actions.size()); // take Noble
+  }
+
+  @Test
+  public void reserveNoble(){ // should work once we have nobles in the model.
+    long gameId = 1;
+    player1.addNextAction(ActionType.RESERVE_NOBLE);
+    List<Action> actions = actionGenerator.generateActions(game, gameId, player1);
+    assertEquals(1, actions.size()); // reserve Noble
+  }
+
+  @Test
+  public void returnTokens(){ // need to check after we took tokens
+    long gameId = 1;
+    player1.addNextAction(ActionType.RETURN_TOKENS);
+    List<Action> actions = actionGenerator.generateActions(game, gameId, player1);
+    assertEquals(0, actions.size()); // no tokens to return
+  }
+
+  @Test
+  public void cloneCard(){ // need to check after we get a card
+    long gameId = 1;
+    player1.addNextAction(ActionType.CLONE_CARD);
+    List<Action> actions = actionGenerator.generateActions(game, gameId, player1);
+    assertEquals(0, actions.size()); // no card to clone
   }
 }
