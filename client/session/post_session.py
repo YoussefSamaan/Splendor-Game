@@ -8,17 +8,18 @@ sys.path.insert(1, 'client\config')
 from config.config import LOBBY_SERVICE_URL
 
 
-def create_session(username, access_token, savegameid):
+def create_session(username, access_token):
     url = f"{LOBBY_SERVICE_URL}/api/sessions?access_token={access_token}"
     data = {
         "creator": username,
         "game": "splendor",
-        "savegame": savegameid
+        "savegame": "",
     }
     header = {
         "Content-Type": "application/json"
     }
     response = requests.post(url, json=data, headers=header)
+    print(response.content.decode('utf-8'))
     return response
 
 
@@ -28,9 +29,11 @@ def launch_session(access_token, session):
     print(response)
     if response.status_code == 200:
         print("SUCCESSS!!!!!!!")
+        print(response.content)
         return session
-    print("FAILLL")
-    return session
+    else:
+        print("FAIL")
+        print(response.content)
 
 # test_access_token = "h9UONiYVQ43aYWAGFBEv2tsbqiY="
 # create_session("maex", test_access_token, "")
