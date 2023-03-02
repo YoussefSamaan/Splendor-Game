@@ -12,4 +12,5 @@ public enum ActionType {
   TAKE_CARD_2,
   RETURN_TOKENS,
   CLONE_CARD,
+  RESERVE_NOBLE
 }
