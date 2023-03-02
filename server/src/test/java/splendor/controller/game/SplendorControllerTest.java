@@ -1,6 +1,39 @@
-package splendor.controller.game;
-
-public class SplendorControllerTest {
+//package splendor.controller.game;
+//
+//import static org.junit.jupiter.api.Assertions.assertEquals;
+//import static org.junit.jupiter.api.Assertions.assertFalse;
+//import static org.junit.jupiter.api.Assertions.assertTrue;
+//import static org.junit.jupiter.api.Assertions.fail;
+//import static org.mockito.ArgumentMatchers.any;
+//import static org.mockito.ArgumentMatchers.anyLong;
+//import static org.mockito.ArgumentMatchers.anyString;
+//import static org.mockito.Mockito.doNothing;
+//import static org.mockito.Mockito.doThrow;
+//import static org.mockito.Mockito.mock;
+//import static org.mockito.Mockito.when;
+//
+//import com.google.gson.Gson;
+//import java.lang.reflect.Constructor;
+//import java.lang.reflect.InvocationTargetException;
+//import java.util.Collections;
+//import javax.naming.AuthenticationException;
+//import javax.naming.InsufficientResourcesException;
+//import javax.servlet.http.HttpServletRequest;
+//import javax.servlet.http.HttpServletResponse;
+//import org.junit.Before;
+//import org.junit.Test;
+//import org.springframework.http.ResponseEntity;
+//import splendor.controller.action.Action;
+//import splendor.controller.action.ActionType;
+//import splendor.controller.action.BuyCardAction;
+//import splendor.controller.action.InvalidAction;
+//import splendor.controller.helper.Authenticator;
+//import splendor.model.game.Board;
+//import splendor.model.game.card.DevelopmentCard;
+//import splendor.model.game.card.SplendorCard;
+//import splendor.model.game.player.Player;
+//
+//public class SplendorControllerTest {
 //  private GameManager gameManager = mock(GameManager.class);
 //  private Authenticator authenticator = mock(Authenticator.class);
 //  private SplendorController splendorController = new SplendorController(gameManager, authenticator);
@@ -11,7 +44,8 @@ public class SplendorControllerTest {
 //  private Action action;
 //
 //  @Before
-//  public void setUp() throws AuthenticationException, InvalidAction, InsufficientResourcesException {
+//  public void setUp() throws AuthenticationException, InvalidAction,
+//      InsufficientResourcesException {
 //    players[0] = new Player("player1", "blue");
 //    players[1] = new Player("player2", "red");
 //    board = new Board(players);
@@ -26,10 +60,10 @@ public class SplendorControllerTest {
 //
 //  private Action getAction() {
 //    try {
-//      Constructor<DevelopmentCardAction> constructor = DevelopmentCardAction.class
-//          .getDeclaredConstructor(CardActionType.class, SplendorCard.class);
+//      Constructor<BuyCardAction> constructor = BuyCardAction.class
+//          .getDeclaredConstructor(ActionType.class, SplendorCard.class);
 //      constructor.setAccessible(true);
-//      return constructor.newInstance(CardActionType.BUY, DevelopmentCard.get(1));
+//      return constructor.newInstance(ActionType.BUY, DevelopmentCard.get(1));
 //    } catch (NoSuchMethodException | InvocationTargetException | InstantiationException |
 //             IllegalAccessException e) {
 //      throw new RuntimeException(e);
@@ -121,4 +155,4 @@ public class SplendorControllerTest {
 //        String.valueOf(action.getId()));
 //    assertEquals(response.getStatusCodeValue(), 400);
 //  }
-}
+//}

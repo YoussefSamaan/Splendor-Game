@@ -1,16 +1,13 @@
-package splendor.model.game.action;
+package splendor.controller.action;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.lang.reflect.Field;
 import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
-
-import splendor.controller.action.Action;
-import splendor.controller.action.ActionGenerator;
-import splendor.controller.action.InvalidAction;
 import splendor.controller.lobbyservice.GameInfo;
 import splendor.model.game.Board;
 import splendor.model.game.SplendorGame;
@@ -79,7 +76,7 @@ public class ActionGeneratorTest {
   public void testGenerateActions() {
     long gameId = 1;
     List<Action> actions = actionGenerator.generateActions(game, gameId, player1);
-    assertEquals(2, actions.size()); // buy and reserve
+    assertEquals(17, actions.size()); // buy and reserve and takeTokens
   }
 
   @Test
@@ -91,7 +88,10 @@ public class ActionGeneratorTest {
       throw new RuntimeException(e);
     }
     List<Action> actions = actionGenerator.generateActions(game, gameId, player1);
-    assertEquals(1, actions.size()); // only reserve
+    for (Action a: actions) {
+      System.out.println(a);
+    }
+    assertEquals(16, actions.size()); // reserve + takeTokens
   }
 
   @Test
