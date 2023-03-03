@@ -74,6 +74,7 @@ def initialize_game(board_json):
     initialize_nobles(board_json)
     initialize_players(board_json)
     initialize_sidebar()
+    print(board_json)
 
 
 def initialize_players(board_json):
@@ -266,8 +267,9 @@ def perform_action(obj):
     elif isinstance(obj, Token):
         # obj.take_token(Player.instance(id=CURR_PLAYER))
         # TODO: add token menu
+        # set_flash_message('Opened token menu')
         get_token_selection()
-        set_flash_message('Opened token menu')
+        
     elif isinstance(obj, Noble):
         obj.take_noble(Sidebar.instance(), Player.instance(id=CURR_PLAYER))
         set_flash_message('Took a noble')
@@ -333,7 +335,6 @@ class TokenMenu:
                 same_color_chosen = True
             if current_count > 2:
                 valid_selection = False
-                return
             total_tokens += current_count
         
         # Can only take 2 tokens total if taken from the same color
@@ -361,7 +362,7 @@ class TokenMenu:
 
         return
 
-    def get_user_selection(self) -> Action:
+    def get_user_token_selection(self) -> Action:
             DISPLAYSURF.blit(self.selection_box, self.selection_box_rect)
             components_generated: Tuple[List[IndividualTokenSelection],List[Button]] = self.generate_selection_and_buttons()
             individual_token_list: List[IndividualTokenSelection] = components_generated[0]
@@ -374,8 +375,6 @@ class TokenMenu:
                 pygame.draw.rect(self.selection_box,token_selection.color,token_selection.rectangle)
                 #self.selection_box.blit(button.rectangle)
                 #button.display()
-            
-            
 
             while True:
                 for event in pygame.event.get():
@@ -405,7 +404,7 @@ def get_token_selection():
     """RETURNS WHAT TOKENS PLAYER CHOSE"""
 
     # draw the 7 buttons 
-    TokenMenu().get_user_selection()
+    TokenMenu().get_user_token_selection()
     pygame.display.update()
     # wait for user to click on a button
 
