@@ -133,11 +133,19 @@ def update(authenticator, game_id):
         initialize_game(board_json)
     global action_manager
     action_manager.update(Player.instance(id=CURR_PLAYER).name)
+    # TODO: add cascading buy for cards]
+    # if we need to cascade, we don't chance players
+    check_cascade()
     update_turn_player(board_json)
     update_players(board_json)
     update_decks(board_json)
     update_tokens(board_json)
+    
 
+def check_cascade():
+    """Checks if we need to cascade a card purchase.
+      If so, let the next card bought be bought for free"""
+    pass
 
 def update_tokens(board_json):
     Token.update_all(board_json['bank']['tokens'])
