@@ -24,6 +24,7 @@ class Noble:
 
     @staticmethod
     def initialize(ids):
+        """get ids from json server"""
         
         # Create n nobles with the chosen ids
         for id in ids:
