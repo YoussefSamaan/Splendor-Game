@@ -2,6 +2,7 @@ import os
 import pygame
 import sys
 from typing import List, Callable, Tuple
+from typing import List, Callable, Tuple
 
 currentdir = os.path.dirname(os.path.realpath(__file__))
 parentdir = os.path.dirname(currentdir)
@@ -36,6 +37,18 @@ color_error = pygame.Color(RED)
 
 '''ALL FUNCTIONS HERE HAVE TO BE CHANGED'''
 
+def new_text(text, color, x, y):
+    # rect = pygame.Rect(rectx, recty, rectwidth, rectheight)
+    # pygame.draw.rect(screen, rectcolor, rect)
+    text_surface = base_font.render(text, True, color)
+    text_rect = text_surface.get_rect()
+    text_rect.topleft = (x, y)
+    screen.blit(text_surface, text_rect)
+
+def new_button(rectx, recty, rectwidth, rectheight, rectcolor) -> pygame.Rect:
+    rect = pygame.Rect(rectx, recty, rectwidth, rectheight)
+    pygame.draw.rect(screen, rectcolor, rect)
+    return rect
 def new_text(text, color, x, y):
     # rect = pygame.Rect(rectx, recty, rectwidth, rectheight)
     # pygame.draw.rect(screen, rectcolor, rect)
