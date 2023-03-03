@@ -117,21 +117,6 @@ class Sidebar:
         button_rect.y = y
         return button_rect
 
-    # def add_noble(self, noble):
-    #     self.current_player.nobles[noble] = self.current_player.last_position_noble
-    #     self.current_player.last_position_noble = (
-    #     self.current_player.last_position_noble[0], self.current_player.last_position_noble[1] + self.noble_size[1])
-
-    # def add_card(self, card):
-    #     self.current_player.cards_bought[card] = self.current_player.last_position_card
-    #     self.current_player.last_position_card = (
-    #     self.current_player.last_position_card[0], self.current_player.last_position_card[1] + self.card_size[1])
-
-    # def reserve_card(self, reserved):
-    #     self.current_player.reserved_cards[reserved] = self.current_player.last_position_reserved
-    #     self.current_player.last_position_reserved = (self.current_player.last_position_reserved[0],
-    #                                                   self.current_player.last_position_reserved[1] + self.card_size[1])
-
     def update_positions(self, amount):
         # updating the last values for new cards_bought
         self.current_player.last_position_card = (
@@ -183,7 +168,7 @@ class Sidebar:
             # ==2  must be reserved card -
             if not self.current_player.reserved_cards.items():
                 return
-            if (direction < 0 and self.current_player.last_position_reserved[1] < 2 * self.card_size[1]):
+            if (direction < 0 and self.current_player.last_position_reserved[1] < 1 * self.card_size[1]):
                 return
             elif (direction > 0 and list(self.current_player.reserved_cards.items())[0][1][1] > (
                     Board.instance().height - 3 * self.card_size[1])):
