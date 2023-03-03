@@ -41,6 +41,7 @@ class Player:
         self.cards_bought = {}  # to store the bought cards
         self.nobles = {}  # to store the reserved nobles
         self.reserved_cards = {}  # to store the reserved cards
+        self.trade_routes = {} # to store unlocked trade routes
         self.pos = id
 
         # for sidebar
