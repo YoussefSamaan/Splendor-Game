@@ -203,21 +203,6 @@ class Player:
     def remove_prestige(self, card):
         self.prestige_points -= card.get_prestige_points()
 
-    def reserve_card(self, card):
-        # TODO: rename this to avoid confusion. This function is for adding a card to the player's reserved_cards_list.
-        # self.reserved_cards_list.append(card)
-        gold_token = Token.get_token_from_board(Color.GOLD)
-        if gold_token is not None:
-            gold_token.take_token(self)
-        self.reserve_card_to_sidebar(card)
-
-    def reserve_noble(self, noble_card):
-        # reserves a noble. 
-        # TODO: Figure out noble card. Current noble class does not have prestige attribute.
-        # self.nobles_list.append(noble_card)
-        self.add_prestige(noble_card)
-        self.add_noble_to_sidebar(noble_card)
-
     def show_name(self, inventory: pygame.Surface):
         surface = pygame.Surface((inventory.get_width(), inventory.get_height() * self.NAME_RATIO))
         surface.fill(self.BACKGROUND_COLOR)
