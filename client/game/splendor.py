@@ -73,8 +73,13 @@ def initialize_game(board_json):
     initialize_tokens()
     initialize_nobles(board_json)
     initialize_players(board_json)
+    initialize_trade_routes(board_json)
     initialize_sidebar()
     print(board_json)
+
+def initialize_trade_routes(board_json):
+    trade_routes = board_json['tradeRoutes']
+    pass
 
 
 def initialize_players(board_json):
