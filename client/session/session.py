@@ -2,7 +2,6 @@ import os
 import pygame
 import sys
 from typing import List, Callable, Tuple
-from typing import List, Callable, Tuple
 
 currentdir = os.path.dirname(os.path.realpath(__file__))
 parentdir = os.path.dirname(currentdir)
@@ -37,18 +36,6 @@ color_error = pygame.Color(RED)
 
 '''ALL FUNCTIONS HERE HAVE TO BE CHANGED'''
 
-def new_text(text, color, x, y):
-    # rect = pygame.Rect(rectx, recty, rectwidth, rectheight)
-    # pygame.draw.rect(screen, rectcolor, rect)
-    text_surface = base_font.render(text, True, color)
-    text_rect = text_surface.get_rect()
-    text_rect.topleft = (x, y)
-    screen.blit(text_surface, text_rect)
-
-def new_button(rectx, recty, rectwidth, rectheight, rectcolor) -> pygame.Rect:
-    rect = pygame.Rect(rectx, recty, rectwidth, rectheight)
-    pygame.draw.rect(screen, rectcolor, rect)
-    return rect
 def new_text(text, color, x, y):
     # rect = pygame.Rect(rectx, recty, rectwidth, rectheight)
     # pygame.draw.rect(screen, rectcolor, rect)
@@ -226,7 +213,7 @@ def generate_session_list_buttons(authenticator,sessions_json) -> List[SessionLi
     
     return session_list
 
-def session(authenticator):
+def session(authenticator :Authenticator) -> int:
  
     while True:
         screen.fill(GREY)
@@ -249,6 +236,7 @@ def session(authenticator):
             global current_page
             current_page = min(current_page+1, max(0,(len(session_list)-1) // MAX_SESSIONS_PER_PAGE))
 
+        # These buttons are always visible regardless of page
         back_rect = Button(pygame.Rect((50, 100, 150, 70)), back_button_event, RED)
         previous_rect = Button(pygame.Rect((150, 660, 150, 70)), previous_button_event, LIGHT_BLUE)
         next_rect = Button(pygame.Rect((600, 660, 150, 70)), next_button_event, LIGHT_BLUE)
