@@ -130,8 +130,9 @@ public class ReturnTokensAction implements Action {
   public static List<Action> getLegalActions(SplendorPlayer player) {
     List<Action> actions = new ArrayList<>();
     int numOfTokensToReturn = getNumOfTokens(player.getTokens());
-    List<HashMap<Color, Integer>> possibleActions = getTokensToRemove(player.getTokens(), numOfTokensToReturn-10);
-    for (HashMap<Color, Integer> pa: possibleActions) {
+    List<HashMap<Color, Integer>> possibleActions = getTokensToRemove(player.getTokens(),
+                                                            numOfTokensToReturn - 10);
+    for (HashMap<Color, Integer> pa : possibleActions) {
       actions.add(new ReturnTokensAction(ActionType.RETURN_TOKENS, pa));
     }
     return actions;

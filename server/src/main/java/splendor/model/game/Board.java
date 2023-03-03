@@ -174,9 +174,15 @@ public class Board {
     return this.bank.contains(Token.of(Color.GOLD));
   }
 
-  public void addTokens(HashMap<Color, Integer> tokens){
-    for (Color c: tokens.keySet()) {
-      for (int i=0; i< tokens.get(c); i++){
+
+  /**
+   * adds tokens to the board.
+   *
+   * @param tokens  a hashmap of the color and the tokens to return to the bank.
+   */
+  public void addTokens(HashMap<Color, Integer> tokens) {
+    for (Color c : tokens.keySet()) {
+      for (int i = 0; i < tokens.get(c); i++) {
         this.bank.add(Token.of(c));
       }
     }
@@ -186,9 +192,14 @@ public class Board {
     return this.bank.getTokens();
   }
 
+  /**
+   * removes tokens form the board.
+   *
+   * @param tokens  a hashmap of the color and the tokens to remove from the bank.
+   */
   public void removeTokens(HashMap<Color, Integer> tokens) {
-    for (Color c: tokens.keySet()) {
-      for (int i=0; i<tokens.get(c); i++){
+    for (Color c : tokens.keySet()) {
+      for (int i = 0; i < tokens.get(c); i++) {
         this.bank.remove(Token.of(c));
       }
     }

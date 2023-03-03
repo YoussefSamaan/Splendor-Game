@@ -145,16 +145,21 @@ public class Player implements PlayerReadOnly, SplendorPlayer {
     this.prestigePoints += card.getPrestigePoints();
   }
 
-  public HashMap<Color, Integer> getTokens(){
+  public HashMap<Color, Integer> getTokens() {
     return inventory.getTokens();
   }
 
-  public void removeTokens(HashMap<Color, Integer> tokens){
+  public void removeTokens(HashMap<Color, Integer> tokens) {
     inventory.removeTokens(tokens);
   }
 
-  public void addTokens(HashMap<Color, Integer> tokens){
-    for (Color c: tokens.keySet()) {
+  /**
+   * gives tokens to the player.
+   *
+   * @param tokens  a hashmap of the color and the tokens to give to the player.
+   */
+  public void addTokens(HashMap<Color, Integer> tokens) {
+    for (Color c : tokens.keySet()) {
       inventory.addTokens(Token.of(c), tokens.get(c));
     }
   }
