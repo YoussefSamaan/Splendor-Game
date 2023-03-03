@@ -19,7 +19,7 @@ class ActionManager:
         self.last_updated_player = player_name
         self.actions = server_manager.get_actions(self.authenticator, self.game_id, player_name)
 
-    def get_card_action_id(self, card: Card, player_name: str, action_type: Action):
+    def get_card_action_id(self, card: Card, player_name: str, action_type: Action) -> int:
         if action_type == Action.CANCEL:
             return 0
         if player_name != self.last_updated_player:
@@ -32,7 +32,7 @@ class ActionManager:
         return -1
 
     # Given a Dict[Token,int], return the action id
-    def get_token_action_id(self, token_selection: Dict[Token,int], player_name: str, action_type: Action):
+    def get_token_action_id(self, token_selection: Dict[Token,int], player_name: str, action_type: Action) -> int:
         if action_type == Action.CANCEL:
             return 0
         if player_name != self.last_updated_player:
@@ -50,7 +50,7 @@ class ActionManager:
             if "tokens" in action and action["tokens"] == color_key_dict\
                 and action["actionType"] == action_type.value:
                 return action["actionId"]
-        return -1
+        return -2
         
 
     def perform_action(self, action_id: int):
