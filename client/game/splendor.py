@@ -288,30 +288,78 @@ class TokenMenu:
         self.menu_rect.center = (WIDTH / 2, HEIGHT / 2)
 
         self.token_selection_list :List[IndividualTokenSelection] = [] 
-        self.confirm_button = Button(pygame.Rect(WIDTH/2,HEIGHT*3/4,90,55), self.check_enough_tokens, text="Confirm")
+        self.confirm_button = Button(pygame.Rect(WIDTH/2,HEIGHT*3/5,90,55), self.check_enough_tokens, text="Confirm")
         # todo: add +/- buttons for each token
         # add buy button
         
     def generate_selection_and_buttons(self) -> Tuple[List[IndividualTokenSelection],List[Button]]:
         # generate a list of buttons for the token menu   
-        ind_token_selection_list = []     
+        self.token_selection_list = []     
         button_list = []
-        for index,token in enumerate(Token.flyweights.values()):
-            tokenSelection = IndividualTokenSelection(token,WIDTH/6+index*200,HEIGHT/2)
+        for index,token in enumerate(Token.get_all_token_colors()):
+            tokenSelection = IndividualTokenSelection(token,WIDTH/10+index*200,HEIGHT/2)
             tokenSelection.display()
-            ind_token_selection_list.append(tokenSelection)
+            self.token_selection_list.append(tokenSelection)
             button_list.append(tokenSelection.incrementButton)
             button_list.append(tokenSelection.decrementButton)
-        return ind_token_selection_list,button_list
+        return self.token_selection_list,button_list
 
     def display(self):
         self.selection_box.blit(self.menu, self.menu_rect)
         
     
-    def check_enough_tokens(self) -> Dict[Token,int]:
+    def check_enough_tokens(self) -> None:
         """ checks if the input corresponds to a valid token selection
         returns the token selection if valid, None if not valid """
-        return None
+        global FLASH_MESSAGE, FLASH_TIMER, CURR_PLAYER, action_manager
+
+        valid_selection = True
+
+        
+        # Logic to validate tokens on client
+        total_tokens = 0
+        same_color_chosen = False
+        user_selection: Dict[Token,int] = {}
+        for token_selection in self.token_selection_list:
+            
+            current_token = token_selection.token
+            current_count = token_selection.amount
+
+            print(current_token)
+            print(current_count)
+
+            user_selection[current_token] = current_count
+            if current_count == 2:
+                same_color_chosen = True
+            if current_count > 2:
+                valid_selection = False
+                return
+            total_tokens += current_count
+        
+        # Can only take 2 tokens total if taken from the same color
+        if total_tokens > 2 and same_color_chosen:
+            valid_selection = False
+        
+        # Can take up to 3 colors
+        if total_tokens > 3:
+            valid_selection = False
+
+        # Return to the flow if invalid
+        if not valid_selection:
+            set_flash_message('Invalid selection', color=RED)
+            return
+
+        # Find the action id and perform it if it's valid
+        take_token_action_id: int = action_manager.get_token_action_id(user_selection,Player.instance(id=CURR_PLAYER).name,Action.TAKE_TOKENS)
+
+        # Return to the flow if invalid
+        if take_token_action_id < 0:
+            set_flash_message('Illegal selection', color=RED)
+            return
+        
+        action_manager.perform_action(take_token_action_id)
+
+        return
 
     def get_user_selection(self) -> Action:
             DISPLAYSURF.blit(self.selection_box, self.selection_box_rect)
@@ -320,12 +368,14 @@ class TokenMenu:
             button_list: List[Button] = components_generated[1]
             self.display()
 
-            
+            self.confirm_button.display(DISPLAYSURF)
             pygame.display.update()
             for token_selection in button_list:
                 pygame.draw.rect(self.selection_box,token_selection.color,token_selection.rectangle)
                 #self.selection_box.blit(button.rectangle)
                 #button.display()
+            
+            
 
             while True:
                 for event in pygame.event.get():
@@ -363,13 +413,6 @@ def check_toggle(mouse_pos):
     sidebar = Sidebar.instance()
     page_num = sidebar.is_clicked_toggle(mouse_pos)
     sidebar.toggle(page_num)
-
-
-def check_toggle(mouse_pos):
-    sidebar = Sidebar.instance()
-    page_num = sidebar.is_clicked_toggle(mouse_pos)
-    sidebar.toggle(page_num)
-
 
 def play(authenticator, game_id):
     last_update = pygame.time.get_ticks()  # force update on first loop
