@@ -17,6 +17,7 @@ import splendor.model.game.payment.Cost;
 public abstract class AbstractCard implements SplendorCard {
 
   private static final String CARDS_JSON = "src/main/resources/cards.json";
+  private static final String NOBLES_JSON = "src/main/resources/nobles.json";
   private static JSONObject json;
   private final int cardId; // 1 indexed
   private final transient Cost cost;
@@ -110,14 +111,12 @@ public abstract class AbstractCard implements SplendorCard {
    * @return the card json object.
    */
   protected JSONObject getCardJson() {
-    JSONArray cards = getJson().getJSONArray("cards");
-    // TODO: replace above by below when nobles are added to json:
-    // if (this instanceof Noble) {
-    //   cards = getJson().getJSONArray("nobles");
-    // }
-    // else {
-    //   cards = getJson().getJSONArray("cards");
-    // }
+    JSONArray cards;
+    if (this instanceof Noble) {
+      cards = getJson().getJSONArray("nobles");
+    } else {
+      cards = getJson().getJSONArray("cards");
+    }
     return cards.getJSONObject(cardId - 1); // -1 because cardId is 1 indexed
   }
 
@@ -127,13 +126,14 @@ public abstract class AbstractCard implements SplendorCard {
    * @return the json object.
    */
   protected JSONObject getJson() {
+    String path = this instanceof Noble ? NOBLES_JSON : CARDS_JSON;
     try {
       if (json == null) {
-        json = new JSONObject(new JSONTokener(new FileReader(CARDS_JSON)));
+        json = new JSONObject(new JSONTokener(new FileReader(path)));
       }
       return json;
     } catch (FileNotFoundException e) {
-      throw new RuntimeException("Could not find cards.json");
+      throw new RuntimeException(String.format("Could not find file %s", path));
     }
   }
 }

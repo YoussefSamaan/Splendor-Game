@@ -87,7 +87,9 @@ public class SplendorGame {
       throws InsufficientResourcesException {
     // No use of action data for now, system automatically decides tokens to use for payment
     Player player = getPlayer(username);
-    if (!isTurnPlayer(player)) { return; }
+    if (!isTurnPlayer(player)) {
+      return;
+    }
 
     action.preformAction(player, board);
 
