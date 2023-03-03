@@ -32,21 +32,21 @@ public class TakeTokensAction implements Action {
     List<HashMap<Color, Integer>> combinations = new ArrayList<>();
     Color[] colors = Color.tokenColors();
 
-    for (int i = 0; i < colors.length-1; i++) {
+    for (int i = 0; i < colors.length - 1; i++) {
       Color color1 = colors[i];
       int count1 = tokens.getOrDefault(color1, 0);
       if (count1 == 0) {
         continue; // skip colors with no tokens
       }
 
-      for (int j = i + 1; j < colors.length-1; j++) {
+      for (int j = i + 1; j < colors.length - 1; j++) {
         Color color2 = colors[j];
         int count2 = tokens.getOrDefault(color2, 0);
         if (count2 == 0) {
           continue; // skip colors with no tokens
         }
 
-        for (int k = j + 1; k < colors.length-1; k++) {
+        for (int k = j + 1; k < colors.length - 1; k++) {
           Color color3 = colors[k];
           int count3 = tokens.getOrDefault(color3, 0);
           if (count3 == 0) {
@@ -65,14 +65,14 @@ public class TakeTokensAction implements Action {
 
     // Handle case where we only take 2 tokens
     if (combinations.size() == 0) {
-      for (int i = 0; i < colors.length-1; i++) {
+      for (int i = 0; i < colors.length - 1; i++) {
         Color color1 = colors[i];
         int count1 = tokens.getOrDefault(color1, 0);
         if (count1 == 0) {
           continue; // skip colors with no tokens
         }
 
-        for (int j = i + 1; j < colors.length-1; j++) {
+        for (int j = i + 1; j < colors.length - 1; j++) {
           Color color2 = colors[j];
           int count2 = tokens.getOrDefault(color2, 0);
           if (count2 == 0) {
@@ -90,7 +90,7 @@ public class TakeTokensAction implements Action {
 
     // Handle case where we only take 1 token
     if (combinations.size() == 0) {
-      for (int i = 0; i < colors.length-1; i++) {
+      for (int i = 0; i < colors.length - 1; i++) {
         Color color1 = colors[i];
         int count1 = tokens.getOrDefault(color1, 0);
         if (count1 == 0) {
@@ -113,7 +113,7 @@ public class TakeTokensAction implements Action {
     List<HashMap<Color, Integer>> combinations = new ArrayList<>();
     Color[] colors = Color.tokenColors();
 
-    for (int i = 0; i < colors.length-1; i++) {
+    for (int i = 0; i < colors.length - 1; i++) {
       Color color1 = colors[i];
       int count1 = tokens.getOrDefault(color1, 0);
       if (count1 <= (2 + limit)) {
@@ -137,12 +137,15 @@ public class TakeTokensAction implements Action {
   public static List<Action> getLegalActions(SplendorGame game) {
     List<Action> actions = new ArrayList<>();
     List<HashMap<Color, Integer>> taking3Tokens = get3Tokens(game.getBoard().getTokens());
-    List<HashMap<Color, Integer>> taking2Tokens = get2Tokens(game.getBoard().getTokens(), 2, false); // need to replace it depending on the number of players in the game
-    for (HashMap<Color, Integer> tk: taking3Tokens) {
+    // need to replace it depending on the number of players in the game
+    List<HashMap<Color, Integer>> taking2Tokens = get2Tokens(game.getBoard().getTokens(),
+                                                        2,
+                                                  false);
+    for (HashMap<Color, Integer> tk : taking3Tokens) {
       actions.add(new TakeTokensAction(ActionType.TAKE_TOKENS, tk));
     }
 
-    for (HashMap<Color, Integer> tk: taking2Tokens) {
+    for (HashMap<Color, Integer> tk : taking2Tokens) {
       actions.add(new TakeTokensAction(ActionType.TAKE_TOKENS, tk));
     }
 

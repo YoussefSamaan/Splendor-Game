@@ -130,9 +130,14 @@ public class Inventory {
     return tokens.getTokens();
   }
 
-  public void removeTokens(HashMap<Color, Integer> tokens){
-    for (Color c: tokens.keySet()) {
-      for (int i=0; i< tokens.get(c); i++){
+  /**
+   * removes tokens from the inventory.
+   *
+   * @param tokens  a hashmap of the color and the tokens to remove.
+   */
+  public void removeTokens(HashMap<Color, Integer> tokens) {
+    for (Color c : tokens.keySet()) {
+      for (int i = 0; i < tokens.get(c); i++) {
         this.tokens.remove(Token.of(c));
       }
     }
