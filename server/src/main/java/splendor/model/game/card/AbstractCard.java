@@ -18,7 +18,8 @@ public abstract class AbstractCard implements SplendorCard {
 
   private static final String CARDS_JSON = "src/main/resources/cards.json";
   private static final String NOBLES_JSON = "src/main/resources/nobles.json";
-  private static JSONObject json;
+  private static JSONObject cards_json;
+  private static JSONObject nobles_json;
   private final int cardId; // 1 indexed
   private final transient Cost cost;
   private final transient int prestigePoints;
@@ -126,14 +127,38 @@ public abstract class AbstractCard implements SplendorCard {
    * @return the json object.
    */
   protected JSONObject getJson() {
-    String path = this instanceof Noble ? NOBLES_JSON : CARDS_JSON;
-    try {
-      if (json == null) {
-        json = new JSONObject(new JSONTokener(new FileReader(path)));
+    return this instanceof Noble ? getNoblesJson() : getCardsJson();
+  }
+
+  /**
+   * Returns the json object of the cards file.
+   *
+   * @return the json object.
+   */
+  protected static JSONObject getCardsJson() {
+    if (cards_json == null) {
+      try {
+        cards_json = new JSONObject(new JSONTokener(new FileReader(CARDS_JSON)));
+      } catch (FileNotFoundException e) {
+        e.printStackTrace();
       }
-      return json;
-    } catch (FileNotFoundException e) {
-      throw new RuntimeException(String.format("Could not find file %s", path));
     }
+    return cards_json;
+  }
+
+  /**
+   * Returns the json object of the nobles file.
+   *
+   * @return the json object.
+   */
+  protected static JSONObject getNoblesJson() {
+    if (nobles_json == null) {
+      try {
+        nobles_json = new JSONObject(new JSONTokener(new FileReader(NOBLES_JSON)));
+      } catch (FileNotFoundException e) {
+        e.printStackTrace();
+      }
+    }
+    return nobles_json;
   }
 }

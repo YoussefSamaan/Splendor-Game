@@ -58,6 +58,4 @@ public class BuyCardAction extends CardAction {
     board.removeCard(this.getCard());
     // if
   }
-
-
 }

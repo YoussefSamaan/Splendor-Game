@@ -34,7 +34,7 @@ public class DevelopmentCard extends AbstractCard implements DevelopmentCardI {
   private DevelopmentCard(int cardId) {
     super(cardId);
     color = getColorFromJson(cardId);
-    setSpecialAbilityFromJson(cardId);
+    setSpecialAbilityFromJson();
   }
 
   @Override
@@ -83,8 +83,8 @@ public class DevelopmentCard extends AbstractCard implements DevelopmentCardI {
     throw new IllegalArgumentException("The card id must be between 1 and " + NUMBER_OF_CARDS);
   }
 
-  private void setSpecialAbilityFromJson(int cardId) {
-    JSONObject cardJson = super.getJson().getJSONArray("cards").getJSONObject(cardId - 1);
+  private void setSpecialAbilityFromJson() {
+    JSONObject cardJson = super.getCardJson();
     if (cardJson.has("special")) {
       cardJson.getJSONArray("special").forEach((action) -> {
         specialActions.add(ACTION_TYPE_MAP.get(action));
