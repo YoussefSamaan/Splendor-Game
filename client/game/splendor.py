@@ -390,6 +390,9 @@ class TokenMenu:
                 pygame.draw.rect(self.selection_box,token_selection.color,token_selection.rectangle)
                 #self.selection_box.blit(button.rectangle)
                 #button.display()
+            
+            # Check the list of actions when we click the tokens
+            action_manager.get_actions_json()
 
             while True:
                 for event in pygame.event.get():
