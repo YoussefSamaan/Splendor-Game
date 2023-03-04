@@ -282,9 +282,7 @@ def perform_action(obj, user):
         if isinstance(obj, Card):
             get_user_card_selection(obj)
         elif isinstance(obj, Token):
-            # obj.take_token(Player.instance(id=CURR_PLAYER))
-            # TODO: add token menu
-            # set_flash_message('Opened token menu')
+            # opens token selection menu
             get_token_selection()
             
         elif isinstance(obj, Noble):
@@ -311,9 +309,9 @@ class TokenMenu:
         self.menu_rect.center = (WIDTH / 2, HEIGHT / 2)
 
         self.token_selection_list :List[IndividualTokenSelection] = [] 
+        # button for confirming token selection
         self.confirm_button = Button(pygame.Rect(WIDTH/2,HEIGHT*3/5,90,55), self.check_enough_tokens, text="Confirm")
-        # todo: add +/- buttons for each token
-        # add buy button
+
         
     def generate_selection_and_buttons(self) -> Tuple[List[IndividualTokenSelection],List[Button]]:
         # generate a list of buttons for the token menu   
