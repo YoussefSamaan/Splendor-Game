@@ -49,13 +49,14 @@ public class BuyCardAction extends CardAction {
 
   @Override
   public void preformAction(Player player, Board board) {
+    DevelopmentCardI card;
     try {
-      player.buyCard((DevelopmentCardI) this.getCard()); // should always work
+      card = (DevelopmentCardI) this.getCard();
+      player.buyCard(card); // should always work
     } catch (InsufficientResourcesException e) {
       throw new RuntimeException(e);
     }
     board.removeCard(this.getCard());
+    card.getSpecialActions().forEach(player::addNextAction); // add special actions to player
   }
-
-
 }

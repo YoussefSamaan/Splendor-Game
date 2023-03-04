@@ -1,5 +1,7 @@
 package splendor.model.game.card;
 
+import java.util.List;
+import splendor.controller.action.ActionType;
 import splendor.model.game.Color;
 
 /**
@@ -7,4 +9,6 @@ import splendor.model.game.Color;
  */
 public interface DevelopmentCardI extends SplendorCard {
   Color getColor();
+
+  List<ActionType> getSpecialActions();
 }

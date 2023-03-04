@@ -1,6 +1,7 @@
 package splendor.model.game;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
@@ -10,6 +11,7 @@ import splendor.model.game.card.DevelopmentCardI;
 import splendor.model.game.card.Noble;
 import splendor.model.game.card.SplendorCard;
 import splendor.model.game.deck.Deck;
+import splendor.model.game.deck.NobleDeck;
 import splendor.model.game.deck.SplendorDeck;
 import splendor.model.game.payment.Token;
 import splendor.model.game.player.Player;
@@ -22,7 +24,7 @@ public class Board {
   private final Player[] players;
   private int currentTurn;
   private final SplendorDeck[] decks = new SplendorDeck[6];
-  private final List<Noble> nobles = new ArrayList<>();
+  private final NobleDeck nobleDeck = new NobleDeck();
   private final TokenBank bank = new TokenBank(true);
 
   /**
@@ -148,12 +150,13 @@ public class Board {
 
 
   public List<Noble> getNobles() {
-    return this.nobles;
+    Noble[] nobles = nobleDeck.getNobles();
+    return new ArrayList<>(Arrays.asList(nobles));
   }
 
 
   public void removeNoble(Noble noble) {
-    this.nobles.remove(noble);
+    nobleDeck.removeNoble(noble);
   }
 
   /**
