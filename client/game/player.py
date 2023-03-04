@@ -276,18 +276,25 @@ class Player:
             return inventory['discounts'][color]
         else:
             return 0
-        
+    
+    # handle tokens 
     def update_player_inventory(self, player_json):
         self.prestige_points = player_json['prestigePoints']
         inventory = player_json['inventory']
         newtokens = inventory['tokens']['tokens']
 
-        self.tokens[Color.BROWN] = newtokens['BROWN']
-        self.tokens[Color.GOLD] = newtokens['GOLD']
-        self.tokens[Color.GREEN] = newtokens['GREEN']
-        self.tokens[Color.BLUE] = newtokens['BLUE']
-        self.tokens[Color.RED] = newtokens['RED']
-        self.tokens[Color.WHITE] = newtokens['WHITE']
+        if 'BROWN' in newtokens:
+            self.tokens[Color.BROWN] = newtokens['BROWN']
+        if 'GOLD' in newtokens:
+            self.tokens[Color.GOLD] = newtokens['GOLD']
+        if 'GREEN' in newtokens:
+            self.tokens[Color.GREEN] = newtokens['GREEN']
+        if 'BLUE' in newtokens:
+            self.tokens[Color.BLUE] = newtokens['BLUE']
+        if 'RED' in newtokens:
+            self.tokens[Color.RED] = newtokens['RED']
+        if 'WHITE' in newtokens:
+            self.tokens[Color.WHITE] = newtokens['WHITE']
 
         # for noble in inventory['nobles']:
         #     if noble not in self.nobles.keys():
