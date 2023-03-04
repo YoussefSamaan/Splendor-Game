@@ -119,4 +119,39 @@ public class BoardTest {
 		testBoard.nextTurn();
 		Assertions.assertTrue(testBoard.isTurnPlayer(player2));
 	}
+
+	@Test
+	void preserveCard(){
+		testBoard = new Board(player1,player2,player3,player4);
+		testBoard.nextTurn();
+
+	}
+
+	@Test
+	void reserveDevelopmentCard(){
+
+	}
+
+	@Test
+	void removeNoble(){
+
+	}
+
+	@Test
+	void removeCard(){
+
+	}
+
+	@Test
+	void hasGoldToken(){
+
+
+	}
+
+	@Test
+	void addTokens(){
+
+	}
+
+
 }
