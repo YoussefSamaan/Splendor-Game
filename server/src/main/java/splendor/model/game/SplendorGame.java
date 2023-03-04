@@ -93,7 +93,8 @@ public class SplendorGame {
 
     action.preformAction(player, board);
 
-    // add logic to next turn
-    board.nextTurn();
+    if (player.nextAction() == null) {
+      board.nextTurn();
+    }
   }
 }
