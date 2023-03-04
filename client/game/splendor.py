@@ -273,21 +273,23 @@ def get_user_card_selection(card :Card):
         set_flash_message('Invalid action', color=RED)
 
 
-def perform_action(obj):
+def perform_action(obj, user):
     if obj is None:
         return
     global CURR_PLAYER
-    if isinstance(obj, Card):
-        get_user_card_selection(obj)
-    elif isinstance(obj, Token):
-        # obj.take_token(Player.instance(id=CURR_PLAYER))
-        # TODO: add token menu
-        # set_flash_message('Opened token menu')
-        get_token_selection()
-        
-    elif isinstance(obj, Noble):
-        obj.take_noble(Sidebar.instance(), Player.instance(id=CURR_PLAYER))
-        set_flash_message('Took a noble')
+    # make sure it's the current user's turn, otherwise cannot take cards
+    if user == Player.instance(id=CURR_PLAYER).name:
+        if isinstance(obj, Card):
+            get_user_card_selection(obj)
+        elif isinstance(obj, Token):
+            # obj.take_token(Player.instance(id=CURR_PLAYER))
+            # TODO: add token menu
+            # set_flash_message('Opened token menu')
+            get_token_selection()
+            
+        elif isinstance(obj, Noble):
+            obj.take_noble(Sidebar.instance(), Player.instance(id=CURR_PLAYER))
+            set_flash_message('Took a noble')
     elif isinstance(obj, Player):
         Sidebar.instance().switch_player(obj)
 
@@ -436,6 +438,7 @@ def play(authenticator, game_id):
     global action_manager
     action_manager = ActionManager(authenticator=authenticator, game_id=game_id)
     update(authenticator, game_id)
+    logged_in_user = authenticator.username
     while True:
         # update every 5 seconds on a separate thread
         if pygame.time.get_ticks() - last_update > 5000:
@@ -471,7 +474,7 @@ def play(authenticator, game_id):
                     position = pygame.mouse.get_pos()
                     check_toggle(position)
                     obj = get_clicked_object(position)
-                    perform_action(obj)
+                    perform_action(obj, logged_in_user)
                     with threading.Lock():
                         threading.Thread(target=update, args=(authenticator, game_id)).start()
 
