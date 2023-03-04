@@ -26,7 +26,7 @@ public class TakeCardAction extends CardAction {
   }
 
   @Override
-  public void preformAction(Player player, Board board) {
+  public void performAction(Player player, Board board) {
     player.addCard((DevelopmentCardI) this.getCard());
     board.removeCard(this.getCard());
   }

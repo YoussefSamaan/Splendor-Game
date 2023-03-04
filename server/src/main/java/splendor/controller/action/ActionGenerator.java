@@ -31,6 +31,7 @@ public class ActionGenerator {
       return gameActions.get(gameId);
     }
     // TODO: ADD more actions
+    System.out.println(player.nextAction());
     if (player.nextAction() == null) {
       actions.addAll(TakeTokensAction.getLegalActions(game));
       actions.addAll(ReserveCardAction.getLegalActions(game, player));

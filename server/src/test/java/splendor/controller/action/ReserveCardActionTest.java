@@ -51,7 +51,7 @@ public class ReserveCardActionTest {
     long gameId = 1;
     List<Action> actions = actionGenerator.generateActions(game, gameId, player1);
     Action action = actions.get(17); // should be reserve card
-    action.preformAction(player1, game.getBoard());
+    action.performAction(player1, game.getBoard());
     assertEquals(1, (int) player1.getTokens().get(Color.GOLD));
 //    assertTrue(player1.getCardsReserved().size()  == 1); // should work when we have a method for it.
   }

@@ -49,7 +49,7 @@ public class TakeTokensActionTest {
     long gameId = 1;
     List<Action> actions = actionGenerator.generateActions(game, gameId, player1);
     Action action = actions.get(0);
-    action.preformAction(player1, game.getBoard());
+    action.performAction(player1, game.getBoard());
 
     int numOfTokens = 3;
     for (Color c : player1.getTokens().keySet()){

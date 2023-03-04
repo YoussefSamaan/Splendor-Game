@@ -47,7 +47,7 @@ public class ReserveCardAction extends CardAction {
 
 
   @Override
-  public void preformAction(Player player, Board board) {
+  public void performAction(Player player, Board board) {
     board.removeCard(this.getCard());
     boolean hasGoldToken = board.hasGoldToken();
     player.reserveCard((DevelopmentCardI) this.getCard(), hasGoldToken);

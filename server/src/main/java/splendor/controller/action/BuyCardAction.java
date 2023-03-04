@@ -48,7 +48,7 @@ public class BuyCardAction extends CardAction {
 
 
   @Override
-  public void preformAction(Player player, Board board) {
+  public void performAction(Player player, Board board) {
     try {
       player.buyCard((DevelopmentCardI) this.getCard()); // should always work
     } catch (InsufficientResourcesException e) {
