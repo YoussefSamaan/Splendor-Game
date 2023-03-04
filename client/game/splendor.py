@@ -77,8 +77,10 @@ def initialize_game(board_json):
     initialize_sidebar()
     print(board_json)
 
+# Trade routes visual will be able to be accessed via a button
+# Not yet implemented
 def initialize_trade_routes(board_json):
-    trade_routes = board_json['tradeRoutes']
+    #trade_routes = board_json['tradeRoutes']
     pass
 
 
