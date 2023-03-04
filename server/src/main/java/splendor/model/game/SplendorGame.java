@@ -60,9 +60,6 @@ public class SplendorGame {
     board.buyCard(player, card);
   }
 
-  public void reserveCard(SplendorPlayer player, SplendorCard card) {
-    board.reserveCard(player, card);
-  }
 
   /**
    * Checks if it's a player's turn.
