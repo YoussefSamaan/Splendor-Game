@@ -1098,9 +1098,8 @@
         "blue": 2
       },
       "bonus": {
-        "bag": 1
-      }
-
+      },
+       "special": ["clone"]
     },
 
     {
@@ -1111,7 +1110,6 @@
       "bonus": {
         "gold": 2
       }
-
     },
 
     {
@@ -1121,8 +1119,8 @@
         "red": 2
       },
       "bonus": {
-        "bag": 1
-      }
+      },
+       "special": ["clone"]
     },
 
     {
@@ -1165,9 +1163,8 @@
         "green": 2
       },
       "bonus": {
-        "bag": 1
-      }
-
+      },
+       "special": ["clone"]
     },
 
     {
@@ -1177,10 +1174,8 @@
         "green": 3
       },
       "bonus": {
-        "bag": 1
-      }
-
-
+      },
+       "special": ["clone"]
     },
 
     {
@@ -1190,9 +1185,8 @@
         "white": 2
       },
       "bonus": {
-        "bag": 1
-      }
-
+      },
+       "special": ["clone"]
     },
 
     {
@@ -1217,8 +1211,8 @@
       "bonus": {
         "green": 1
       },
+      "special": ["reserve_noble"],
       "prestige_points": 1
-
     },
 
     {
@@ -1232,6 +1226,7 @@
       "bonus": {
         "red": 1
       },
+      "special": ["reserve_noble"],
       "prestige_points": 1
 
     },
@@ -1244,9 +1239,8 @@
         "brown":1
       },
       "bonus": {
-        "bag": 1
-      }
-
+      },
+       "special": ["clone", "cascade_1"]
     },
 
     {
@@ -1257,10 +1251,8 @@
         "brown":1
       },
       "bonus": {
-        "bag": 1
-
-      }
-
+      },
+      "special": ["clone", "cascade_1"]
     },
 
     {
@@ -1308,10 +1300,9 @@
         "brown": 2
       },
       "bonus": {
-        "white": 1,
-        "noble": 1
-      }
-
+        "white": 1
+      },
+      "special": ["reserve_noble"]
     },
 
     {
@@ -1347,7 +1338,8 @@
       },
       "bonus": {
         "blue": 1
-      }
+      },
+      "special": ["cascade_2"]
     },
     {
       "id": 112,
@@ -1358,7 +1350,8 @@
       },
       "bonus": {
         "green": 1
-      }
+      },
+      "special": ["cascade_2"]
     },
     {
       "id": 113,
@@ -1369,7 +1362,8 @@
       },
       "bonus": {
         "red": 1
-      }
+      },
+      "special": ["cascade_2"]
     },
     {
       "id": 114,
@@ -1380,7 +1374,8 @@
       },
       "bonus": {
         "brown": 1
-      }
+      },
+      "special": ["cascade_2"]
     },
     {
       "id": 115,
@@ -1421,7 +1416,8 @@
       },
       "bonus": {
         "white": 1
-      }
+      },
+      "special": ["cascade_2"]
     },
     {
       "id": 119,
@@ -1445,7 +1441,7 @@
     }
   ],
   "color_map": {
-    "green": [1, 20],
+    "green": [1, 40],
     "yellow": [41, 70],
     "blue": [71, 90],
     "red1": [91, 100],

@@ -43,7 +43,7 @@ public class ActionGenerator {
       actions.addAll(TakeNobleAction.getLegalActions(game, player, false));
     } else if (player.nextAction() == ActionType.RETURN_TOKENS) {
       actions.addAll(ReturnTokensAction.getLegalActions(player));
-    } else {
+    } else if (player.nextAction() == ActionType.RESERVE_NOBLE) {
       actions.addAll(TakeNobleAction.getLegalActions(game, player, true));
     }
     gameActions.put(gameId, actions); // save the actions for later validation
