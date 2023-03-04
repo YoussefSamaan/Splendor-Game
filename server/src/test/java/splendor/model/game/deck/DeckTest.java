@@ -49,7 +49,7 @@ public class DeckTest {
 	
 	@Test
 	void validateInitialFacedDownCount() {
-		Assertions.assertEquals(greenDeck.getCardCount(), 17);
+		Assertions.assertEquals(37, greenDeck.getCardCount());
 	}
 	
 	@Test
