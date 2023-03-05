@@ -297,6 +297,9 @@ def perform_action(obj, user):
         
         elif isinstance(obj, Player):
             Sidebar.instance().switch_player(obj)
+        elif isinstance(obj, TradeRoute):
+            TradeRoute.instance().open_trade_route_menu()
+            set_flash_message('opened trade routes')
     # When it's not the user's turn, still allow switching between sidebars
     elif isinstance(obj, Player):
         Sidebar.instance().switch_player(obj)
