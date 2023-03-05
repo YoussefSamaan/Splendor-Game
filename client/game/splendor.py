@@ -183,11 +183,11 @@ def update_players(board_json):
         player.update_player_inventory(players[i])
 
 
-def display():
+def display_everything(current_user):
     # reset the display and re-display everything
     DISPLAYSURF.fill((0, 0, 0))
     display_sidebar()
-    display_players()
+    display_players(current_user)
     display_board()
     display_decks()
     display_tokens()
@@ -226,10 +226,11 @@ def display_nobles():
     Noble.display_all(DISPLAYSURF)
 
 
-def display_players():
+def display_players(logged_in_player):
     for i in range(NUM_PLAYERS):
         highlight = i == CURR_PLAYER
-        Player.instance(id=i).display(DISPLAYSURF, NUM_PLAYERS, highlight)
+        is_current = i == logged_in_player
+        Player.instance(id=i).display(DISPLAYSURF, NUM_PLAYERS, highlight, is_current)
 
 
 def get_clicked_object(pos):
@@ -519,6 +520,6 @@ def play(authenticator, game_id):
                     with threading.Lock():
                         threading.Thread(target=update, args=(authenticator, game_id)).start()
 
-        display()
+        display_everything(logged_in_user)
         pygame.display.update()
         FPSCLOCK.tick(FPS)
