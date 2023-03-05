@@ -10,6 +10,7 @@ from flyweight import Flyweight
 from noble import Noble
 from splendorToken import Token
 from utils import write_on, SIDEBAR_IMAGE_SCALE
+import utils
 
 @Flyweight
 class Player:
@@ -204,14 +205,14 @@ class Player:
     def remove_prestige(self, card):
         self.prestige_points -= card.get_prestige_points()
 
-    def show_name(self, inventory: pygame.Surface, is_current: bool = False):
+    def show_name(self, inventory: pygame.Surface, client_username: str):
         surface = pygame.Surface((inventory.get_width(), inventory.get_height() * self.NAME_RATIO))
         surface.fill(self.BACKGROUND_COLOR)
-        if not is_current:
+        if self.name != client_username:
             # other players have black name
             write_on(surface, self.name)
         else:
-            write_on(surface, self.name, color=Color.RED)
+            write_on(surface, self.name, color=utils.RED)
         inventory.blit(surface, (inventory.get_width() / 2 - surface.get_width() / 2, 0))
 
     def show_tokens(self, inventory: pygame.Surface):
@@ -240,7 +241,7 @@ class Player:
         self.discounts.draw(surface, len(self.reserved_cards), Color.YELLOW)
         inventory.blit(surface, (0, inventory.get_height() * (self.NAME_RATIO + self.TOKENS_RATIO)))
 
-    def display(self, screen: pygame.Surface, num_players: int, highlighted: bool = False, is_user: bool = False):
+    def display(self, screen: pygame.Surface, num_players: int, client_username: str, highlighted: bool = False):
         """
         Draw the player's Inventory.
         :param highlighted: whether the player is the current player
@@ -265,7 +266,7 @@ class Player:
         inventory = pygame.Surface((width - 2 * self.BORDER_SIZE, height - 2 * self.BORDER_SIZE))
         inventory.fill(self.BACKGROUND_COLOR)
 
-        self.show_name(inventory, is_user)
+        self.show_name(inventory, client_username)
         self.show_tokens(inventory)
         self.show_prestige_points(inventory)
         self.show_discounts(inventory)

@@ -226,11 +226,10 @@ def display_nobles():
     Noble.display_all(DISPLAYSURF)
 
 
-def display_players(logged_in_player):
+def display_players(logged_in_player_username):
     for i in range(NUM_PLAYERS):
         highlight = i == CURR_PLAYER
-        is_current = i == logged_in_player
-        Player.instance(id=i).display(DISPLAYSURF, NUM_PLAYERS, highlight, is_current)
+        Player.instance(id=i).display(DISPLAYSURF, NUM_PLAYERS, logged_in_player_username, highlighted=highlight)
 
 
 def get_clicked_object(pos):
@@ -298,12 +297,14 @@ def perform_action(obj, user):
         elif isinstance(obj, Player):
             Sidebar.instance().switch_player(obj)
         elif isinstance(obj, TradeRoute):
+            print("clicked on trade route button")
             TradeRoute.instance().open_trade_route_menu()
             set_flash_message('opened trade routes')
     # When it's not the user's turn, still allow switching between sidebars
     elif isinstance(obj, Player):
         Sidebar.instance().switch_player(obj)
     elif isinstance(obj, TradeRoute):
+        print("clicked on trade route button")
         TradeRoute.instance().open_trade_route_menu()
         set_flash_message('opened trade routes')
 
