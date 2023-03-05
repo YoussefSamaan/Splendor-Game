@@ -162,4 +162,14 @@ public class TakeTokensAction implements Action {
     player.addTokens(this.tokens);
     board.removeTokens(this.tokens);
   }
+
+  /**
+   * Returns the type of the action.
+   *
+   * @return the type of the action
+   */
+  @Override
+  public ActionType getActionType() {
+    return actionType;
+  }
 }

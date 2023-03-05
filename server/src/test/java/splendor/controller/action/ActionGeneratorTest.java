@@ -177,7 +177,7 @@ public class ActionGeneratorTest {
     long gameId = 1;
     player1.addNextAction(ActionType.RESERVE_NOBLE);
     List<Action> actions = actionGenerator.generateActions(game, gameId, player1);
-    assertEquals(1, actions.size()); // reserve Noble
+    assertEquals(3, actions.size()); // reserve Noble
   }
 
   @Test

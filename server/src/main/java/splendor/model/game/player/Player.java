@@ -2,7 +2,9 @@ package splendor.model.game.player;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import javax.naming.InsufficientResourcesException;
 import splendor.controller.action.ActionType;
 import splendor.model.game.Color;
@@ -10,6 +12,7 @@ import splendor.model.game.SplendorGame;
 import splendor.model.game.card.DevelopmentCardI;
 import splendor.model.game.card.Noble;
 import splendor.model.game.card.SplendorCard;
+import splendor.model.game.payment.CoatOfArms;
 import splendor.model.game.payment.Cost;
 import splendor.model.game.payment.Token;
 
@@ -23,6 +26,8 @@ public class Player implements PlayerReadOnly, SplendorPlayer {
   private int prestigePoints = 0;
 
   private List<ActionType> nextActions;
+
+  private Set<CoatOfArms> coatOfArms = new HashSet<>();
 
   /**
    * Creates a new player.
@@ -150,6 +155,33 @@ public class Player implements PlayerReadOnly, SplendorPlayer {
     return inventory.getTokens();
   }
 
+  /**
+   * Returns the number of prestige points the player has.
+   *
+   * @return the number of prestige points
+   */
+  public int getPrestigePoints() {
+    return prestigePoints;
+  }
+
+  /**
+   * Returns all the resources of a player (tokens + discounts).
+   *
+   * @return a hashmap of the color and the number of resources
+   */
+  public HashMap<Color, Integer> getResources() {
+    return inventory.getResources();
+  }
+
+  /**
+   * get the number of nobles the player has.
+   *
+   * @return the number of nobles
+   */
+  public int getNoblesCount() {
+    return inventory.getNoblesCount();
+  }
+
   public void removeTokens(HashMap<Color, Integer> tokens) {
     inventory.removeTokens(tokens);
   }
@@ -163,5 +195,32 @@ public class Player implements PlayerReadOnly, SplendorPlayer {
     for (Color c : tokens.keySet()) {
       inventory.addTokens(Token.of(c), tokens.get(c));
     }
+  }
+
+  /**
+   * get the bonuses of a player.
+   *
+   * @return a hashmap of the color and the number of bonuses
+   */
+  public HashMap<Color, Integer> getBonuses() {
+    return inventory.getBonuses();
+  }
+
+  /**
+   * add coat of arms to the player.
+   *
+   * @param coatOfArms the coat of arms to add
+   */
+  public void addUnlockedCoatOfArms(CoatOfArms coatOfArms) {
+    this.coatOfArms.add(coatOfArms);
+  }
+
+  /**
+   * get the coat of arms of the player.
+   *
+   * @return the coat of arms
+   */
+  public Set<CoatOfArms> getCoatOfArms() {
+    return coatOfArms;
   }
 }

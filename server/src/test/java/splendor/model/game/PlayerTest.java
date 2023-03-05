@@ -3,7 +3,6 @@ package splendor.model.game;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import splendor.model.game.card.DevelopmentCard;
-import splendor.model.game.card.Noble;
 import splendor.model.game.player.Player;
 
 public class PlayerTest {
