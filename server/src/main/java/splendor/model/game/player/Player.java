@@ -135,6 +135,7 @@ public class Player implements PlayerReadOnly, SplendorPlayer {
     return this.inventory.getBoughtCards();
   }
 
+
   public void addNoble(Noble noble) {
     this.inventory.addNoble(noble);
     this.prestigePoints += noble.getPrestigePoints();
