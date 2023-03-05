@@ -42,7 +42,7 @@ class Player:
         self.nobles = {}  # to store the reserved nobles
         self.reserved_cards = {}  # to store the reserved cards
         self.trade_routes = {} # to store unlocked trade routes
-        self.pos = id
+        self.pos = id # 0-indexed, from 0 to MAX_PLAYERS last excluded
 
         # for sidebar
         self.last_position_card = (0, Card.get_card_size()[1] / 4 + 10)
