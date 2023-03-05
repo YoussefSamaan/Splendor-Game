@@ -1,5 +1,6 @@
 package splendor.model.game;
 import java.lang.reflect.Field;
+import java.util.HashMap;
 import org.junit.jupiter.api.*;
 import splendor.model.game.card.DevelopmentCard;
 import splendor.model.game.card.Noble;
@@ -36,7 +37,46 @@ public class BoardTest {
 			e.printStackTrace();
 		}
 	}
-	
+
+	private void addBonusToPlayer(Player player, HashMap<Color, Integer> bonus) throws NoSuchFieldException {
+		Inventory inventory = getPlayerInventory(player);
+		HashMap<Color, Integer> inventoryBonuses = getInventoryBonuses(inventory);
+		for (Color color : bonus.keySet()) {
+			inventoryBonuses.put(color, bonus.get(color));
+		}
+	}
+
+	private Inventory getPlayerInventory(Player player) throws NoSuchFieldException {
+		Field inventory = player.getClass().getDeclaredField("inventory");
+		inventory.setAccessible(true);
+		try {
+			return (Inventory) inventory.get(player);
+		} catch (IllegalAccessException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	private HashMap<Color, Integer> getInventoryBonuses(Inventory inventory) throws NoSuchFieldException {
+		// use reflection to get the bonuses
+		Field bonuses = inventory.getClass().getDeclaredField("discounts");
+		bonuses.setAccessible(true);
+		try {
+			return (HashMap<Color, Integer>) bonuses.get(inventory);
+		} catch (IllegalAccessException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	private int nonNullCount(Object[] array) {
+		int count = 0;
+		for (Object o : array) {
+			if (o != null) {
+				count++;
+			}
+		}
+		return count;
+	}
+
 	@Test
 	void initBoardWithOnePlayer() {
 		Assertions.assertThrows(IllegalArgumentException.class, () -> {
@@ -163,6 +203,31 @@ public class BoardTest {
 	void removeNobleSuccess(){
 		testBoard = new Board(player1,player2,player3,player4);
 		testBoard.nextTurn();
+	}
 
+	@Test
+	void updateNoblesNoUpdate() {
+		testBoard = new Board(player1,player2,player3,player4);
+		testBoard.updateNobles(player1);
+		Assertions.assertEquals(3, nonNullCount(testBoard.getNobles().toArray()));
+	}
+
+	@Test
+	void updateNoblesUpdate() {
+		testBoard = new Board(player1,player2,player3,player4);
+
+		HashMap<Color, Integer> bonus = new HashMap<>();
+		bonus.put(Color.RED, 10);
+		bonus.put(Color.WHITE, 10);
+		bonus.put(Color.GREEN, 10);
+		bonus.put(Color.BLUE, 10);
+		bonus.put(Color.BROWN, 10);
+		try {
+			addBonusToPlayer(player1, bonus);
+		} catch (NoSuchFieldException e) {
+			throw new RuntimeException(e);
+		}
+		testBoard.updateNobles(player1);
+		Assertions.assertEquals(2, nonNullCount(testBoard.getNobles().toArray()));
 	}
 }
