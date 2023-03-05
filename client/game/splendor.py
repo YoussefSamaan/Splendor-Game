@@ -11,6 +11,7 @@ from game import server_manager
 from game.action_manager import ActionManager
 from deck import *
 from sidebar import *
+from trade_route import * 
 from splendorToken import Token
 from color import Color
 
@@ -81,6 +82,7 @@ def initialize_game(board_json):
 # Not yet implemented
 def initialize_trade_routes(board_json):
     #trade_routes = board_json['tradeRoutes']
+    TradeRoute.instance(WIDTH)
     pass
 
 
@@ -190,10 +192,13 @@ def display():
     display_decks()
     display_tokens()
     display_nobles()
+    display_trade_routes()
 
     show_flash_message()  # last so it's on top
     pygame.display.update()
 
+def display_trade_routes():
+    TradeRoute.instance().display(DISPLAYSURF)
 
 def display_board():
     Board.instance().display(DISPLAYSURF)
@@ -294,6 +299,9 @@ def perform_action(obj, user):
     # When it's not the user's turn, still allow switching between sidebars
     elif isinstance(obj, Player):
         Sidebar.instance().switch_player(obj)
+    elif isinstance(obj, TradeRoute):
+        TradeRoute.instance().open_trade_route_menu()
+        set_flash_message('opened trade routes')
 
 class TokenMenu:
     """generates all the buttons, remembers which tokens user picked, checks if legal"""
