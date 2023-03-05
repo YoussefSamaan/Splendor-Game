@@ -3,6 +3,7 @@ package splendor.model.game;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import splendor.model.game.card.DevelopmentCard;
+import splendor.model.game.payment.CoatOfArms;
 import splendor.model.game.player.Player;
 
 public class PlayerTest {
@@ -32,6 +33,19 @@ public class PlayerTest {
         player3.removeTokens(player3.getTokens());
         int num_red_token_after_removal = player3.getTokens().get(Color.RED);
         Assertions.assertTrue(  num_red_token_after_removal == 0);
+    }
+
+    @Test
+    void addUnlockedCoatOfArmsTest(){
+        player4.addUnlockedCoatOfArms(CoatOfArms.get(1));
+        Assertions.assertTrue(player4.getCoatOfArms().contains(CoatOfArms.get(1)));
+    }
+
+    @Test
+    void addUnlockedCoatOfArmsTestAppliesThePower(){
+        int ppBefore = player4.getPrestigePoints();
+        player4.addUnlockedCoatOfArms(CoatOfArms.get(5));
+        Assertions.assertEquals(ppBefore + 1, player4.getPrestigePoints());
     }
 
 }
