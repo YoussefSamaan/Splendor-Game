@@ -1,6 +1,11 @@
 package splendor.model.game.card;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 import org.json.JSONObject;
+import splendor.controller.action.ActionType;
 import splendor.model.game.Color;
 
 /**
@@ -11,6 +16,16 @@ public class DevelopmentCard extends AbstractCard implements DevelopmentCardI {
   private static final int NUMBER_OF_CARDS = 120;
   private static final DevelopmentCard[] CARDS = new DevelopmentCard[NUMBER_OF_CARDS];
 
+  private final ArrayList<ActionType> specialActions = new ArrayList<>();
+  private static final HashMap<String, ActionType> ACTION_TYPE_MAP = new HashMap<>();
+
+  static {
+    ACTION_TYPE_MAP.put("cascade_1", ActionType.TAKE_CARD_1);
+    ACTION_TYPE_MAP.put("cascade_2", ActionType.TAKE_CARD_2);
+    ACTION_TYPE_MAP.put("clone", ActionType.CLONE_CARD);
+    ACTION_TYPE_MAP.put("reserve_noble", ActionType.RESERVE_NOBLE);
+  }
+
   /**
    * Creates a new card. The Card values are based on the cardId.
    *
@@ -19,11 +34,22 @@ public class DevelopmentCard extends AbstractCard implements DevelopmentCardI {
   private DevelopmentCard(int cardId) {
     super(cardId);
     color = getColorFromJson(cardId);
+    setSpecialAbilityFromJson();
   }
 
   @Override
   public Color getColor() {
     return color;
+  }
+
+  /**
+   * Returns the special actions of the card.
+   *
+   * @return special actions of the card.
+   */
+  @Override
+  public List<ActionType> getSpecialActions() {
+    return Collections.unmodifiableList(specialActions);
   }
 
   /**
@@ -55,5 +81,14 @@ public class DevelopmentCard extends AbstractCard implements DevelopmentCardI {
       }
     }
     throw new IllegalArgumentException("The card id must be between 1 and " + NUMBER_OF_CARDS);
+  }
+
+  private void setSpecialAbilityFromJson() {
+    JSONObject cardJson = super.getCardJson();
+    if (cardJson.has("special")) {
+      cardJson.getJSONArray("special").forEach((action) -> {
+        specialActions.add(ACTION_TYPE_MAP.get(action));
+      });
+    }
   }
 }

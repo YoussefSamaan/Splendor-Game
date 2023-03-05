@@ -24,7 +24,9 @@ public class Noble extends AbstractCard {
    */
   public static Noble get(int cardId) {
     if (cardId < 1 || cardId > NUMBER_OF_NOBLES) {
-      throw new IllegalArgumentException("The card id must be between 1 and " + NUMBER_OF_NOBLES);
+      throw new IllegalArgumentException(
+          "The card id must be between 1 and " + NUMBER_OF_NOBLES + " got " + cardId
+      );
     }
     int index = cardId - 1; // to get the index of the array
     if (NOBLES[index] == null) {

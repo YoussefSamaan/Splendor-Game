@@ -78,5 +78,6 @@
       },
       "prestige_points": 3
     }
-  ]
+  ],
+  "deckSize": 3
 }
