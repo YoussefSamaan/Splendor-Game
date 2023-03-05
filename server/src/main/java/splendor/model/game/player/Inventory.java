@@ -138,7 +138,8 @@ public class Inventory {
    */
   public void removeTokens(HashMap<Color, Integer> tokens) {
     for (Color c : tokens.keySet()) {
-      for (int i = 0; i < tokens.get(c); i++) {
+      int value = tokens.get(c);
+      for (int i = 0; i < value; i++) {
         this.tokens.remove(Token.of(c));
       }
     }
