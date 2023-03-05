@@ -23,6 +23,6 @@ public interface Action {
    * @param player the player that preforming the action.
    * @param board  the board that the player is playing on.
    */
-  void preformAction(Player player, Board board);
+  void performAction(Player player, Board board);
 
 }

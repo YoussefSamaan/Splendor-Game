@@ -74,18 +74,6 @@ public class Board {
     buyDevelopmentCard(player, (DevelopmentCardI) card);
   }
 
-  /**
-   * Reserve a card from the deck.
-   *
-   * @param player the player reserving the card
-   * @param card the card to reserve
-   */
-  public void reserveCard(SplendorPlayer player, SplendorCard card) {
-    if (card instanceof Noble) {
-      throw new IllegalArgumentException("Cannot reserve a noble yet");
-    }
-    reserveDevelopmentCard(player, (DevelopmentCardI) card);
-  }
 
   private void buyDevelopmentCard(SplendorPlayer player, DevelopmentCardI card)
       throws InsufficientResourcesException {
@@ -96,16 +84,6 @@ public class Board {
     takeCardFromDeck(card);
     player.buyCard(card);
     giveBackTokens(card.getCost(), card);
-  }
-
-  private void reserveDevelopmentCard(SplendorPlayer player, DevelopmentCardI card) {
-    takeCardFromDeck(card);
-    boolean addGoldToken = false;
-    if (bank.contains(Token.of(Color.GOLD))) {
-      bank.remove(Token.of(Color.GOLD));
-      addGoldToken = true;
-    }
-    player.reserveCard(card, addGoldToken);
   }
 
   private boolean takeCardFromDeck(DevelopmentCardI card) {

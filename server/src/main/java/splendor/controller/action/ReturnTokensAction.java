@@ -144,7 +144,7 @@ public class ReturnTokensAction implements Action {
   }
 
   @Override
-  public void preformAction(Player player, Board board) {
+  public void performAction(Player player, Board board) {
     player.removeTokens(this.tokens);
     board.addTokens(this.tokens);
   }

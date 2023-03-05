@@ -31,7 +31,7 @@ public class TakeNobleAction extends CardAction {
   }
 
   @Override
-  public void preformAction(Player player, Board board) {
+  public void performAction(Player player, Board board) {
     if (TakeNobleAction.canAfford(player.getCardsBought(), this.getCard().getCost())) {
       player.addNoble((Noble) this.getCard());
       board.removeNoble((Noble) this.getCard());
