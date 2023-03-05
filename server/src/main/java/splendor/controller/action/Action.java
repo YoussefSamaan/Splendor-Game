@@ -25,4 +25,11 @@ public interface Action {
    */
   void performAction(Player player, Board board);
 
+  /**
+   * Returns the type of the action.
+   *
+   * @return the type of the action
+   */
+  ActionType getActionType();
+
 }

@@ -6,6 +6,7 @@ import splendor.controller.action.Action;
 import splendor.controller.action.ActionData;
 import splendor.controller.lobbyservice.GameInfo;
 import splendor.model.game.card.SplendorCard;
+import splendor.model.game.payment.CoatOfArms;
 import splendor.model.game.player.Player;
 import splendor.model.game.player.SplendorPlayer;
 
@@ -87,7 +88,8 @@ public class SplendorGame {
     if (!isTurnPlayer(player)) {
       return;
     }
-    action.preformAction(player, board);
+    action.performAction(player, board);
+    CoatOfArms.addUnlockedCoatOfArms(player);
 
     if (player.nextAction() == null) {
       board.nextTurn();

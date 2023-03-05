@@ -45,4 +45,14 @@ public abstract class CardAction implements Action {
   public long getId() {
     return actionId;
   }
+
+  /**
+   * Returns the type of the action.
+   *
+   * @return the type of the action
+   */
+  @Override
+  public ActionType getActionType() {
+    return actionType;
+  }
 }

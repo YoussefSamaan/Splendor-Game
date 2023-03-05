@@ -148,4 +148,14 @@ public class ReturnTokensAction implements Action {
     player.removeTokens(this.tokens);
     board.addTokens(this.tokens);
   }
+
+  /**
+   * Returns the type of the action.
+   *
+   * @return the type of the action
+   */
+  @Override
+  public ActionType getActionType() {
+    return actionType;
+  }
 }
