@@ -1,8 +1,10 @@
 package splendor.model.game;
+import java.lang.reflect.Field;
 import org.junit.jupiter.api.*;
 import splendor.model.game.card.DevelopmentCard;
 import splendor.model.game.card.Noble;
 import splendor.model.game.deck.SplendorDeck;
+import splendor.model.game.player.Inventory;
 import splendor.model.game.player.Player;
 import javax.naming.InsufficientResourcesException;
 
@@ -23,6 +25,16 @@ public class BoardTest {
 	
 	@BeforeAll
 	static void setUp() throws Exception {
+	}
+
+	private void clearPlayerTokens(Player player) throws NoSuchFieldException {
+		Field inventory = player.getClass().getDeclaredField("inventory");
+		inventory.setAccessible(true);
+		try {
+			inventory.set(player, new Inventory());
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	@Test
@@ -103,9 +115,14 @@ public class BoardTest {
 	}
 
 	@Test
-	public void cannotAffordDevelopmentCard() {
+	public void cannotAffordDevelopmentCard(){
 		Player player5 = new Player("alpha", "Yellow");
 		testBoard = new Board(player1, player2, player3, player5);
+		try {
+			clearPlayerTokens(player5);
+		} catch (NoSuchFieldException e) {
+			e.printStackTrace();
+		}
 		DevelopmentCard card1 = DevelopmentCard.get(1);
 		Assertions.assertThrows(InsufficientResourcesException.class, () -> {
 			testBoard.buyCard(player5, card1);
@@ -115,7 +132,7 @@ public class BoardTest {
 	@Test
 	void validateRemoveNoble() {
 		testBoard = new Board(player1,player2,player3,player4);
-		Noble noble1 = Noble.get(1);
+		Noble noble1 = testBoard.getNobles().get(1);
 		testBoard.removeNoble(noble1);
 		Assertions.assertFalse(testBoard.getNobles().contains(noble1));
 	}
