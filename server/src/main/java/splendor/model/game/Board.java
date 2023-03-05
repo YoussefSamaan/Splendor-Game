@@ -185,4 +185,19 @@ public class Board {
       }
     }
   }
+
+  /**
+   * Checks if the player can unlock a noble, and if so, unlocks it.
+   *
+   * @param player the player
+   */
+  public void updateNobles(Player player) {
+    for (Noble noble : getNobles()) {
+      if (player.canAfford(noble)) {
+        player.addNoble(noble);
+        removeNoble(noble);
+        return; // only unlock one noble per turn?
+      }
+    }
+  }
 }
