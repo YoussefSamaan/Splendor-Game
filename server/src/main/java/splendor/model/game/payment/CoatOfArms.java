@@ -83,4 +83,35 @@ public class CoatOfArms {
         .filter(coatOfArms -> coatOfArms.canUnlock(player))
         .forEach(player::addUnlockedCoatOfArms);
   }
+
+  /**
+   * Returns true if the coat of arms can only be used once.
+   *
+   * @return true if the coat of arms can only be used once
+   */
+  public boolean appliesOnce() {
+    return id == 4 || id == 5;
+  }
+
+  /**
+   * Applies the coat of arms to the player.
+   *
+   * @param player the player
+   */
+  public void apply(Player player) {
+    if (!appliesOnce()) {
+      return;
+    }
+    switch (id) {
+      case 4:
+        player.addPrestigePoints(5);
+        break;
+      case 5:
+        int pp = player.getCoatOfArms().size();
+        player.addPrestigePoints(pp);
+        break;
+      default:
+        break;
+    }
+  }
 }

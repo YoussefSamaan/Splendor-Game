@@ -25,9 +25,9 @@ public class Player implements PlayerReadOnly, SplendorPlayer {
   private final Inventory inventory;
   private int prestigePoints = 0;
 
-  private List<ActionType> nextActions;
+  private final List<ActionType> nextActions;
 
-  private Set<CoatOfArms> coatOfArms = new HashSet<>();
+  private final Set<CoatOfArms> coatOfArms = new HashSet<>();
 
   /**
    * Creates a new player.
@@ -212,7 +212,11 @@ public class Player implements PlayerReadOnly, SplendorPlayer {
    * @param coatOfArms the coat of arms to add
    */
   public void addUnlockedCoatOfArms(CoatOfArms coatOfArms) {
+    boolean alreadyUnlocked = this.coatOfArms.contains(coatOfArms);
     this.coatOfArms.add(coatOfArms);
+    if (!alreadyUnlocked && coatOfArms.appliesOnce()) {
+      coatOfArms.apply(this);
+    }
   }
 
   /**
@@ -222,5 +226,14 @@ public class Player implements PlayerReadOnly, SplendorPlayer {
    */
   public Set<CoatOfArms> getCoatOfArms() {
     return coatOfArms;
+  }
+
+  /**
+   * add prestige points to the player.
+   *
+   * @param prestigePoints the number of prestige points to add
+   */
+  public void addPrestigePoints(int prestigePoints) {
+    this.prestigePoints += prestigePoints;
   }
 }
