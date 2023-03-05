@@ -21,6 +21,12 @@ class TradeRoute:
         self.coat_of_arms_list = []
         for player in range(0,3):
             self.coat_of_arms_list.append(self._get_coat_image(player))
+
+    def check_click(self, pos, screen):
+        """checks if the trade route button is clicked"""
+        if self.trade_route_button.collidepoint(pos):
+            self.open_trade_route_menu(screen)
+        
         
     def display(self, screen):
         """displays the trade route button"""

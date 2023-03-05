@@ -296,17 +296,11 @@ def perform_action(obj, user):
         
         elif isinstance(obj, Player):
             Sidebar.instance().switch_player(obj)
-        elif isinstance(obj, TradeRoute):
-            print("clicked on trade route button")
-            TradeRoute.instance().open_trade_route_menu()
-            set_flash_message('opened trade routes')
+
     # When it's not the user's turn, still allow switching between sidebars
     elif isinstance(obj, Player):
         Sidebar.instance().switch_player(obj)
-    elif isinstance(obj, TradeRoute):
-        print("clicked on trade route button")
-        TradeRoute.instance().open_trade_route_menu()
-        set_flash_message('opened trade routes')
+
 
 class TokenMenu:
     """generates all the buttons, remembers which tokens user picked, checks if legal"""
@@ -519,6 +513,7 @@ def play(authenticator, game_id):
                     # check if it's the sidebar toggle
                     position = pygame.mouse.get_pos()
                     check_toggle(position)
+                    TradeRoute.instance().check_click(position)
                     obj = get_clicked_object(position)
                     perform_action(obj, logged_in_user)
                     with threading.Lock():
