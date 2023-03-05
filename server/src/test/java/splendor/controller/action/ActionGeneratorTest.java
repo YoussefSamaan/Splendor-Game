@@ -157,11 +157,11 @@ public class ActionGeneratorTest {
   }
 
   @Test
-  public void takeCardLevel1(){ // should work?
+  public void takeCardLevel1(){
     long gameId = 1;
     player1.addNextAction(ActionType.TAKE_CARD_1);
     List<Action> actions = actionGenerator.generateActions(game, gameId, player1);
-    assertEquals(1, actions.size()); // take level 1 card
+    assertEquals(0, actions.size()); // take level 1 card does not exist since there is only one dev card
   }
 
   @Test
