@@ -114,7 +114,7 @@ def initialize_tokens():
 
 
 def initialize_nobles(board_json):
-    Noble.initialize(board_json['nobles'])
+    Noble.initialize(board_json['nobleDeck']['nobles'])
 
 
 def show_flash_message():
