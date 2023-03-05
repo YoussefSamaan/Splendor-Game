@@ -41,6 +41,7 @@ class Player:
         self.cards_bought = {}  # to store the bought cards
         self.nobles = {}  # to store the reserved nobles
         self.reserved_cards = {}  # to store the reserved cards
+        self.trade_routes = {} # to store unlocked trade routes
         self.pos = id
 
         # for sidebar
@@ -203,21 +204,6 @@ class Player:
     def remove_prestige(self, card):
         self.prestige_points -= card.get_prestige_points()
 
-    def reserve_card(self, card):
-        # TODO: rename this to avoid confusion. This function is for adding a card to the player's reserved_cards_list.
-        # self.reserved_cards_list.append(card)
-        gold_token = Token.get_token_from_board(Color.GOLD)
-        if gold_token is not None:
-            gold_token.take_token(self)
-        self.reserve_card_to_sidebar(card)
-
-    def reserve_noble(self, noble_card):
-        # reserves a noble. 
-        # TODO: Figure out noble card. Current noble class does not have prestige attribute.
-        # self.nobles_list.append(noble_card)
-        self.add_prestige(noble_card)
-        self.add_noble_to_sidebar(noble_card)
-
     def show_name(self, inventory: pygame.Surface):
         surface = pygame.Surface((inventory.get_width(), inventory.get_height() * self.NAME_RATIO))
         surface.fill(self.BACKGROUND_COLOR)
@@ -290,18 +276,25 @@ class Player:
             return inventory['discounts'][color]
         else:
             return 0
-        
+    
+    # handle tokens 
     def update_player_inventory(self, player_json):
         self.prestige_points = player_json['prestigePoints']
         inventory = player_json['inventory']
         newtokens = inventory['tokens']['tokens']
 
-        self.tokens[Color.BROWN] = newtokens['BROWN']
-        self.tokens[Color.GOLD] = newtokens['GOLD']
-        self.tokens[Color.GREEN] = newtokens['GREEN']
-        self.tokens[Color.BLUE] = newtokens['BLUE']
-        self.tokens[Color.RED] = newtokens['RED']
-        self.tokens[Color.WHITE] = newtokens['WHITE']
+        if 'BROWN' in newtokens:
+            self.tokens[Color.BROWN] = newtokens['BROWN']
+        if 'GOLD' in newtokens:
+            self.tokens[Color.GOLD] = newtokens['GOLD']
+        if 'GREEN' in newtokens:
+            self.tokens[Color.GREEN] = newtokens['GREEN']
+        if 'BLUE' in newtokens:
+            self.tokens[Color.BLUE] = newtokens['BLUE']
+        if 'RED' in newtokens:
+            self.tokens[Color.RED] = newtokens['RED']
+        if 'WHITE' in newtokens:
+            self.tokens[Color.WHITE] = newtokens['WHITE']
 
         # for noble in inventory['nobles']:
         #     if noble not in self.nobles.keys():

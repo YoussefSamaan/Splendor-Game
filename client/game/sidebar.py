@@ -16,16 +16,19 @@ class Sidebar:
         self.width = screen_width - Board.instance().get_rect().width
         self.height = 10000  # min(screenHeight, 800)
         self.sidebar_rect = pygame.Rect(0, 0, self.width, self.height)
-
+        self.trade_route_last_position = (0, Card.get_card_size()[1] / 4 + 10)
+        self.trade_route_amount = 5
         self.current_player = Player.instance(0)
 
         self.current_display = 0
         self.bought_button = pygame.Rect(0, 0,
-                                         self.width / 3, self.card_size[1] / 4)
-        self.nobles_button = pygame.Rect(self.width / 3, 0,
-                                         self.width / 3, self.card_size[1] / 4)
-        self.reserve_button = pygame.Rect(self.width * 2 / 3, 0,
-                                          self.width / 3, self.card_size[1] / 4)
+                                         self.width / 4, self.card_size[1] / 4)
+        self.nobles_button = pygame.Rect(self.width / 4, 0,
+                                         self.width / 4, self.card_size[1] / 4)
+        self.reserve_button = pygame.Rect(self.width * 2 / 4, 0,
+                                          self.width / 4, self.card_size[1] / 4)
+        self.trade_route_button = pygame.Rect(self.width * 3 / 4, self.card_size[1] / 4,
+                                              self.width / 4, self.card_size[1] / 4)
 
         self.display_color_active = LIGHT_BLUE
 
@@ -36,7 +39,8 @@ class Sidebar:
     def toggle(self, num):
         if type(num) != int:
             return
-        elif -1 < num < 4:
+        elif -1 < num < 5:
+            # 4 is trade route
             self.current_display = num
 
     def display(self, screen):
@@ -62,14 +66,22 @@ class Sidebar:
             self.draw_nobles_button(screen, self.display_color_active)
             self.draw_reserved_button(screen)
             self.draw_bought_button(screen)
+            self.draw_trade_route_button(screen)
         elif self.current_display == 2:
             self.draw_nobles_button(screen)
             self.draw_reserved_button(screen, self.display_color_active)
             self.draw_bought_button(screen)
-        else:
+            self.draw_trade_route_button(screen)
+        elif self.current_display == 3:
+            self.draw_nobles_button(screen)
+            self.draw_reserved_button(screen)
+            self.draw_bought_button(screen)
+            self.draw_trade_route_button(screen, self.display_color_active)
+        else: # must be bought
             self.draw_nobles_button(screen)
             self.draw_reserved_button(screen)
             self.draw_bought_button(screen, self.display_color_active)
+            self.draw_trade_route_button(screen)
 
     def draw_nobles_button(self, surface: pygame.Surface, color=LIGHT_GREY):
         """
@@ -77,9 +89,24 @@ class Sidebar:
         :param surface:
         :return:
         """
-        buy_button = button('Nobles', width=self.width / 3, height=self.card_size[1] / 4, color=color)
-        x = self.width / 3
+        buy_button = button('Nobles', width=self.width / 4, height=self.card_size[1] / 4, color=color)
+        x = self.width / 4
         y = 0
+        surface.blit(buy_button, (x, y))
+        button_rect = buy_button.get_rect()
+        button_rect.x = x
+        button_rect.y = y
+        return button_rect
+    
+    def draw_trade_route_button(self, surface: pygame.Surface, color=LIGHT_GREY):
+        """
+        The x and y coordinates returned are relative to the surface.
+        :param surface:
+        :return:
+        """
+        buy_button = button('Trade Route', width=self.width / 4, height=self.card_size[1] / 4, color=color)
+        x = self.width * 3 / 4
+        y = self.card_size[1] / 4
         surface.blit(buy_button, (x, y))
         button_rect = buy_button.get_rect()
         button_rect.x = x
@@ -93,8 +120,8 @@ class Sidebar:
         :return:
         """
         # this is a toggle button that switches between bought and reserved
-        buy_button = button('Reserved', width=self.width / 3, height=self.card_size[1] / 4, color=color)
-        x = self.width * 2 / 3
+        buy_button = button('Reserved', width=self.width / 4, height=self.card_size[1] / 4, color=color)
+        x = self.width * 2 / 4
         y = 0
         surface.blit(buy_button, (x, y))
         button_rect = buy_button.get_rect()
@@ -108,7 +135,7 @@ class Sidebar:
         :param surface:
         :return:
         """
-        buy_button = button('Bought', width=self.width / 3, height=self.card_size[1] / 4, color=color)
+        buy_button = button('Bought', width=self.width / 4, height=self.card_size[1] / 4, color=color)
         x = 0
         y = 0
         surface.blit(buy_button, (x, y))
@@ -116,21 +143,6 @@ class Sidebar:
         button_rect.x = x
         button_rect.y = y
         return button_rect
-
-    # def add_noble(self, noble):
-    #     self.current_player.nobles[noble] = self.current_player.last_position_noble
-    #     self.current_player.last_position_noble = (
-    #     self.current_player.last_position_noble[0], self.current_player.last_position_noble[1] + self.noble_size[1])
-
-    # def add_card(self, card):
-    #     self.current_player.cards_bought[card] = self.current_player.last_position_card
-    #     self.current_player.last_position_card = (
-    #     self.current_player.last_position_card[0], self.current_player.last_position_card[1] + self.card_size[1])
-
-    # def reserve_card(self, reserved):
-    #     self.current_player.reserved_cards[reserved] = self.current_player.last_position_reserved
-    #     self.current_player.last_position_reserved = (self.current_player.last_position_reserved[0],
-    #                                                   self.current_player.last_position_reserved[1] + self.card_size[1])
 
     def update_positions(self, amount):
         # updating the last values for new cards_bought
@@ -179,11 +191,20 @@ class Sidebar:
             # else:
             #     self.update_positions(direction)
             #     self.sidebar_rect.move_ip(0, direction)
+        elif (self.current_display == 3):
+            """this is for trade route which is displayed for all players """
+            # TODO: idk if this works 
+            if (direction < 0 and self.trade_route_last_position[1] < 1 * self.card_size[1]):
+                return
+            elif (direction > 0 and self.trade_route_amount > (
+                    Board.instance().height - 3 * self.card_size[1])):
+                return
+
         else:
             # ==2  must be reserved card -
             if not self.current_player.reserved_cards.items():
                 return
-            if (direction < 0 and self.current_player.last_position_reserved[1] < 2 * self.card_size[1]):
+            if (direction < 0 and self.current_player.last_position_reserved[1] < 1 * self.card_size[1]):
                 return
             elif (direction > 0 and list(self.current_player.reserved_cards.items())[0][1][1] > (
                     Board.instance().height - 3 * self.card_size[1])):

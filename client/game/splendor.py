@@ -4,13 +4,15 @@ import threading
 
 from pygame.locals import *
 from win32api import GetSystemMetrics
-
+from typing import List, Callable, Tuple
 from action import Action
+from token_action import TokenAction
 from game import server_manager
 from game.action_manager import ActionManager
 from deck import *
 from sidebar import *
 from splendorToken import Token
+from color import Color
 
 os.chdir(os.path.dirname(
     os.path.abspath(__file__)))  # to make image imports start from current directory
@@ -31,6 +33,38 @@ CURR_PLAYER = 0
 action_manager = None
 has_initialized = False
 
+class IndividualTokenSelection:
+    def __init__(self, token: Token, x_pos: int, y_pos: int) -> None:
+        self.x_pos = x_pos
+        self.y_pos = y_pos
+        self.token = token
+
+        self.amount = 0 # how many tokens are selected
+        # TODO: make these buttons automatically based on position of button
+
+        def incrementEvent():
+            if self.amount < 3:
+                self.amount += 1
+                self.display()
+
+        def decrementEvent():
+            if self.amount > 0:
+                self.amount -= 1
+                self.display()
+        X_SHIFT = 60
+        Y_SHIFT = 0
+        BUTTON_WIDTH = 90
+        BUTTON_HEIGHT = 55
+        green_rect = pygame.Rect(x_pos-X_SHIFT,y_pos,BUTTON_WIDTH,BUTTON_HEIGHT)
+        red_rect = pygame.Rect(x_pos+X_SHIFT,y_pos,BUTTON_WIDTH,BUTTON_HEIGHT)
+        self.incrementButton = Button(green_rect,incrementEvent,GREEN)
+        self.decrementButton = Button(red_rect,decrementEvent,RED)
+    
+    def display(self):
+        self.token.draw(DISPLAYSURF,self.x_pos,self.y_pos,amount=self.amount)
+        self.incrementButton.display(DISPLAYSURF)
+        self.decrementButton.display(DISPLAYSURF)
+
 
 def initialize_game(board_json):
     pygame.display.set_mode((WIDTH, HEIGHT), pygame.FULLSCREEN)
@@ -39,7 +73,15 @@ def initialize_game(board_json):
     initialize_tokens()
     initialize_nobles(board_json)
     initialize_players(board_json)
+    initialize_trade_routes(board_json)
     initialize_sidebar()
+    print(board_json)
+
+# Trade routes visual will be able to be accessed via a button
+# Not yet implemented
+def initialize_trade_routes(board_json):
+    #trade_routes = board_json['tradeRoutes']
+    pass
 
 
 def initialize_players(board_json):
@@ -98,11 +140,19 @@ def update(authenticator, game_id):
         initialize_game(board_json)
     global action_manager
     action_manager.update(Player.instance(id=CURR_PLAYER).name)
+    # TODO: add cascading buy for cards]
+    # if we need to cascade, we don't chance players
+    check_cascade()
     update_turn_player(board_json)
     update_players(board_json)
     update_decks(board_json)
     update_tokens(board_json)
+    
 
+def check_cascade():
+    """Checks if we need to cascade a card purchase.
+      If so, let the next card bought be bought for free"""
+    pass
 
 def update_tokens(board_json):
     Token.update_all(board_json['bank']['tokens'])
@@ -199,7 +249,7 @@ def get_clicked_object(pos):
     return None
 
 
-def get_user_card_selection(card):
+def get_user_card_selection(card :Card):
     """
     Allow user to choose whether to buy or reserve the card
     :param card:
@@ -223,39 +273,205 @@ def get_user_card_selection(card):
         set_flash_message('Invalid action', color=RED)
 
 
-def perform_action(obj):
+def perform_action(obj, user):
     if obj is None:
         return
     global CURR_PLAYER
-    if isinstance(obj, Card):
-        get_user_card_selection(obj)
-    elif isinstance(obj, Token):
-        obj.take_token(Player.instance(id=CURR_PLAYER))
-        set_flash_message('Took a token')
-    elif isinstance(obj, Noble):
-        obj.take_noble(Sidebar.instance(), Player.instance(id=CURR_PLAYER))
-        set_flash_message('Took a noble')
+    # make sure it's the current user's turn, otherwise cannot take cards
+    if user == Player.instance(id=CURR_PLAYER).name:
+        if isinstance(obj, Card):
+            get_user_card_selection(obj)
+        elif isinstance(obj, Token):
+            # opens token selection menu
+            get_token_selection()
+            
+        elif isinstance(obj, Noble):
+            obj.take_noble(Sidebar.instance(), Player.instance(id=CURR_PLAYER))
+            set_flash_message('Took a noble')
+        
+        elif isinstance(obj, Player):
+            Sidebar.instance().switch_player(obj)
+    # When it's not the user's turn, still allow switching between sidebars
     elif isinstance(obj, Player):
         Sidebar.instance().switch_player(obj)
 
+class TokenMenu:
+    """generates all the buttons, remembers which tokens user picked, checks if legal"""
+    def __init__(self):
+        selection_box, selection_box_rect = get_selection_box(DISPLAYSURF)
+        self.selection_box = selection_box
+        self.selection_box_rect = selection_box_rect
+
+        self.menu = pygame.Surface((WIDTH, HEIGHT))
+        self.menu.fill((0, 0, 0))
+        self.menu.set_alpha(200)
+        self.menu_rect = self.menu.get_rect()
+        self.menu_rect.center = (WIDTH / 2, HEIGHT / 2)
+
+        self.token_selection_list :List[IndividualTokenSelection] = [] 
+        # button for confirming token selection
+        self.confirm_take_button = Button(pygame.Rect(WIDTH/2-100,HEIGHT*3/5,90,55), self.confirm_take_token, text="Take Token")
+        self.confirm_return_button = Button(pygame.Rect(WIDTH/2+100,HEIGHT*3/5,90,55), self.confirm_return_token, text="Return Token")
+
+        
+    def generate_selection_and_buttons(self) -> Tuple[List[IndividualTokenSelection],List[Button]]:
+        # generate a list of buttons for the token menu   
+        self.token_selection_list = []     
+        button_list = []
+        for index,token in enumerate(Token.get_all_token_colors()):
+            tokenSelection = IndividualTokenSelection(token,WIDTH/10+index*200,HEIGHT/2)
+            tokenSelection.display()
+            self.token_selection_list.append(tokenSelection)
+            button_list.append(tokenSelection.incrementButton)
+            button_list.append(tokenSelection.decrementButton)
+        return self.token_selection_list,button_list
+
+    def display(self):
+        self.selection_box.blit(self.menu, self.menu_rect)
+        
+    
+    def confirm_take_token(self) -> None:
+        """ checks if the input corresponds to a valid token selection
+        returns the token selection if valid, None if not valid """
+        global FLASH_MESSAGE, FLASH_TIMER, CURR_PLAYER, action_manager
+
+        valid_selection = True
+
+        
+        # Logic to validate tokens on client
+        total_tokens = 0
+        same_color_chosen = False
+        user_selection: Dict[Token,int] = {}
+        for token_selection in self.token_selection_list:
+            
+            current_token = token_selection.token
+            current_count = token_selection.amount
+
+            print(current_token)
+            print(current_count)
+
+            user_selection[current_token] = current_count
+            if current_count == 2:
+                same_color_chosen = True
+            if current_count > 2:
+                valid_selection = False
+            total_tokens += current_count
+        
+        # Can only take 2 tokens total if taken from the same color
+        if total_tokens > 2 and same_color_chosen:
+            valid_selection = False
+        
+        # Can take up to 3 colors
+        if total_tokens > 3:
+            valid_selection = False
+
+        # Return to the flow if invalid
+        if not valid_selection:
+            set_flash_message('Invalid selection', color=RED)
+            return
+
+        # Find the action id and perform it if it's valid
+        take_token_action_id: int = action_manager.get_token_action_id(user_selection,Player.instance(id=CURR_PLAYER).name,Action.TAKE_TOKENS)
+
+        # Return to the flow if invalid
+        if take_token_action_id < 0:
+            set_flash_message('Illegal selection', color=RED)
+            return
+        
+        action_manager.perform_action(take_token_action_id)
+
+        return
+    
+    def confirm_return_token(self) -> None:
+        """ checks if the input corresponds to a valid token selection for RETURNING
+        returns the token selection if valid, None if not valid """
+        global FLASH_MESSAGE, FLASH_TIMER, CURR_PLAYER, action_manager
+        
+        # Logic to validate tokens on client
+        user_selection: Dict[Token,int] = {}
+        for token_selection in self.token_selection_list:
+            
+            current_token = token_selection.token
+            current_count = token_selection.amount
+
+            user_selection[current_token] = current_count
+
+        # Find the action id and perform it if it's valid
+        take_token_action_id: int = action_manager.get_token_action_id(user_selection,Player.instance(id=CURR_PLAYER).name,Action.RETURN_TOKENS)
+
+        # Return to the flow if invalid
+        if take_token_action_id < 0:
+            set_flash_message('Illegal selection', color=RED)
+            return
+        
+        action_manager.perform_action(take_token_action_id)
+
+        return
+
+    def get_user_token_selection(self) -> Action:
+            DISPLAYSURF.blit(self.selection_box, self.selection_box_rect)
+            components_generated: Tuple[List[IndividualTokenSelection],List[Button]] = self.generate_selection_and_buttons()
+            individual_token_list: List[IndividualTokenSelection] = components_generated[0]
+            button_list: List[Button] = components_generated[1]
+            self.display()
+
+            self.confirm_take_button.display(DISPLAYSURF)
+            self.confirm_return_button.display(DISPLAYSURF)
+            pygame.display.update()
+            for token_selection in button_list:
+                pygame.draw.rect(self.selection_box,token_selection.color,token_selection.rectangle)
+                #self.selection_box.blit(button.rectangle)
+                #button.display()
+            
+            # Check the list of actions when we click the tokens
+            action_manager.get_actions_json()
+
+            while True:
+                for event in pygame.event.get():
+                    if event.type == pygame.KEYDOWN:
+                        if event.key == pygame.K_ESCAPE:
+                            return Action.CANCEL
+                    elif event.type == pygame.QUIT:
+                        pygame.quit()
+                        quit()
+
+                    elif event.type == MOUSEBUTTONDOWN:
+                        clicked_position = pygame.mouse.get_pos()
+                        # button is individual token selection class
+                        if self.confirm_take_button.rectangle.collidepoint(clicked_position):
+                            print("confirm take")
+                            return self.confirm_take_button.activation()
+                        if self.confirm_return_button.rectangle.collidepoint(clicked_position):
+                            print("confirm return")
+                            return self.confirm_return_button.activation()
+                        for token_selection in individual_token_list:
+                            if token_selection.incrementButton.rectangle.collidepoint(clicked_position):
+                                print("increment")
+                                token_selection.incrementButton.activation()
+                            elif token_selection.decrementButton.rectangle.collidepoint(clicked_position):
+                                print("decrement")
+                                token_selection.decrementButton.activation()
+                        pygame.display.update()
+
+def get_token_selection():
+    """RETURNS WHAT TOKENS PLAYER CHOSE"""
+
+    # draw the 7 buttons 
+    TokenMenu().get_user_token_selection()
+    pygame.display.update()
+    # wait for user to click on a button
 
 def check_toggle(mouse_pos):
     sidebar = Sidebar.instance()
     page_num = sidebar.is_clicked_toggle(mouse_pos)
     sidebar.toggle(page_num)
-
-
-def check_toggle(mouse_pos):
-    sidebar = Sidebar.instance()
-    page_num = sidebar.is_clicked_toggle(mouse_pos)
-    sidebar.toggle(page_num)
-
 
 def play(authenticator, game_id):
     last_update = pygame.time.get_ticks()  # force update on first loop
     global action_manager
     action_manager = ActionManager(authenticator=authenticator, game_id=game_id)
     update(authenticator, game_id)
+    logged_in_user = authenticator.username
     while True:
         # update every 5 seconds on a separate thread
         if pygame.time.get_ticks() - last_update > 5000:
@@ -291,7 +507,7 @@ def play(authenticator, game_id):
                     position = pygame.mouse.get_pos()
                     check_toggle(position)
                     obj = get_clicked_object(position)
-                    perform_action(obj)
+                    perform_action(obj, logged_in_user)
                     with threading.Lock():
                         threading.Thread(target=update, args=(authenticator, game_id)).start()
 
