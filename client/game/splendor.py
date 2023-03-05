@@ -311,7 +311,8 @@ class TokenMenu:
         self.menu_rect.center = (WIDTH / 2, HEIGHT / 2)
 
         self.token_selection_list :List[IndividualTokenSelection] = [] 
-        self.confirm_button = Button(pygame.Rect(WIDTH/2,HEIGHT*3/5,90,55), self.check_enough_tokens, text="Confirm")
+        self.confirm_take_button = Button(pygame.Rect(WIDTH/2-100,HEIGHT*3/5,90,55), self.confirm_take_token, text="Take Token")
+        self.confirm_return_button = Button(pygame.Rect(WIDTH/2+100,HEIGHT*3/5,90,55), self.confirm_return_token, text="Return Token")
         # todo: add +/- buttons for each token
         # add buy button
         
@@ -331,7 +332,7 @@ class TokenMenu:
         self.selection_box.blit(self.menu, self.menu_rect)
         
     
-    def check_enough_tokens(self) -> None:
+    def confirm_take_token(self) -> None:
         """ checks if the input corresponds to a valid token selection
         returns the token selection if valid, None if not valid """
         global FLASH_MESSAGE, FLASH_TIMER, CURR_PLAYER, action_manager
@@ -382,6 +383,32 @@ class TokenMenu:
         action_manager.perform_action(take_token_action_id)
 
         return
+    
+    def confirm_return_token(self) -> None:
+        """ checks if the input corresponds to a valid token selection for RETURNING
+        returns the token selection if valid, None if not valid """
+        global FLASH_MESSAGE, FLASH_TIMER, CURR_PLAYER, action_manager
+        
+        # Logic to validate tokens on client
+        user_selection: Dict[Token,int] = {}
+        for token_selection in self.token_selection_list:
+            
+            current_token = token_selection.token
+            current_count = token_selection.amount
+
+            user_selection[current_token] = current_count
+
+        # Find the action id and perform it if it's valid
+        take_token_action_id: int = action_manager.get_token_action_id(user_selection,Player.instance(id=CURR_PLAYER).name,Action.RETURN_TOKENS)
+
+        # Return to the flow if invalid
+        if take_token_action_id < 0:
+            set_flash_message('Illegal selection', color=RED)
+            return
+        
+        action_manager.perform_action(take_token_action_id)
+
+        return
 
     def get_user_token_selection(self) -> Action:
             DISPLAYSURF.blit(self.selection_box, self.selection_box_rect)
@@ -390,7 +417,8 @@ class TokenMenu:
             button_list: List[Button] = components_generated[1]
             self.display()
 
-            self.confirm_button.display(DISPLAYSURF)
+            self.confirm_take_button.display(DISPLAYSURF)
+            self.confirm_return_button.display(DISPLAYSURF)
             pygame.display.update()
             for token_selection in button_list:
                 pygame.draw.rect(self.selection_box,token_selection.color,token_selection.rectangle)
@@ -412,9 +440,12 @@ class TokenMenu:
                     elif event.type == MOUSEBUTTONDOWN:
                         clicked_position = pygame.mouse.get_pos()
                         # button is individual token selection class
-                        if self.confirm_button.rectangle.collidepoint(clicked_position):
-                            print("confirm")
-                            return self.confirm_button.activation()
+                        if self.confirm_take_button.rectangle.collidepoint(clicked_position):
+                            print("confirm take")
+                            return self.confirm_take_button.activation()
+                        if self.confirm_return_button.rectangle.collidepoint(clicked_position):
+                            print("confirm return")
+                            return self.confirm_return_button.activation()
                         for token_selection in individual_token_list:
                             if token_selection.incrementButton.rectangle.collidepoint(clicked_position):
                                 print("increment")
