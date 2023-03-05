@@ -82,7 +82,7 @@ def initialize_game(board_json):
 # Not yet implemented
 def initialize_trade_routes(board_json):
     #trade_routes = board_json['tradeRoutes']
-    TradeRoute.instance(WIDTH)
+    TradeRoute.instance()
     pass
 
 
