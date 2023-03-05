@@ -57,9 +57,7 @@ public class TakeNobleAction extends CardAction {
 
     if (all) {
       for (Noble n : nobles) {
-        if (TakeNobleAction.canAfford(cards, n.getCost())) {
-          actions.add(new TakeNobleAction(n));
-        }
+        actions.add(new TakeNobleAction(n));
       }
     } else {
       for (Noble n : nobles) {
