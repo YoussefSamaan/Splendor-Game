@@ -33,6 +33,20 @@ class Token:
     xSeparationRatio = 1 / 20
 
     @staticmethod
+    def get_all_token_colors():
+        unique_token_list = []
+
+        color_list = Color.get_token_colors()
+        for token in Token.flyweights.values():
+            for token in Token.flyweights.values():
+                token_color = token.get_color()
+                if token_color in color_list:
+                    color_list.remove(token_color)
+                    unique_token_list.append(token)
+        
+        return unique_token_list
+
+    @staticmethod
     def get_token(color: Color):
         for token in Token.flyweights.values():
             if token.get_color() == color:

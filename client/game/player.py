@@ -10,6 +10,7 @@ from flyweight import Flyweight
 from noble import Noble
 from splendorToken import Token
 from utils import write_on, SIDEBAR_IMAGE_SCALE
+import utils
 
 @Flyweight
 class Player:
@@ -41,7 +42,8 @@ class Player:
         self.cards_bought = {}  # to store the bought cards
         self.nobles = {}  # to store the reserved nobles
         self.reserved_cards = {}  # to store the reserved cards
-        self.pos = id
+        self.trade_routes = {} # to store unlocked trade routes
+        self.pos = id # 0-indexed, from 0 to MAX_PLAYERS last excluded
 
         # for sidebar
         self.last_position_card = (0, Card.get_card_size()[1] / 4 + 10)
@@ -203,25 +205,14 @@ class Player:
     def remove_prestige(self, card):
         self.prestige_points -= card.get_prestige_points()
 
-    def reserve_card(self, card):
-        # TODO: rename this to avoid confusion. This function is for adding a card to the player's reserved_cards_list.
-        # self.reserved_cards_list.append(card)
-        gold_token = Token.get_token_from_board(Color.GOLD)
-        if gold_token is not None:
-            gold_token.take_token(self)
-        self.reserve_card_to_sidebar(card)
-
-    def reserve_noble(self, noble_card):
-        # reserves a noble. 
-        # TODO: Figure out noble card. Current noble class does not have prestige attribute.
-        # self.nobles_list.append(noble_card)
-        self.add_prestige(noble_card)
-        self.add_noble_to_sidebar(noble_card)
-
-    def show_name(self, inventory: pygame.Surface):
+    def show_name(self, inventory: pygame.Surface, client_username: str):
         surface = pygame.Surface((inventory.get_width(), inventory.get_height() * self.NAME_RATIO))
         surface.fill(self.BACKGROUND_COLOR)
-        write_on(surface, self.name)
+        if self.name != client_username:
+            # other players have black name
+            write_on(surface, self.name)
+        else:
+            write_on(surface, self.name, color=utils.RED)
         inventory.blit(surface, (inventory.get_width() / 2 - surface.get_width() / 2, 0))
 
     def show_tokens(self, inventory: pygame.Surface):
@@ -250,7 +241,7 @@ class Player:
         self.discounts.draw(surface, len(self.reserved_cards), Color.YELLOW)
         inventory.blit(surface, (0, inventory.get_height() * (self.NAME_RATIO + self.TOKENS_RATIO)))
 
-    def display(self, screen: pygame.Surface, num_players: int, highlighted: bool = False):
+    def display(self, screen: pygame.Surface, num_players: int, client_username: str, highlighted: bool = False):
         """
         Draw the player's Inventory.
         :param highlighted: whether the player is the current player
@@ -275,7 +266,7 @@ class Player:
         inventory = pygame.Surface((width - 2 * self.BORDER_SIZE, height - 2 * self.BORDER_SIZE))
         inventory.fill(self.BACKGROUND_COLOR)
 
-        self.show_name(inventory)
+        self.show_name(inventory, client_username)
         self.show_tokens(inventory)
         self.show_prestige_points(inventory)
         self.show_discounts(inventory)
@@ -290,18 +281,25 @@ class Player:
             return inventory['discounts'][color]
         else:
             return 0
-        
+    
+    # handle tokens 
     def update_player_inventory(self, player_json):
         self.prestige_points = player_json['prestigePoints']
         inventory = player_json['inventory']
         newtokens = inventory['tokens']['tokens']
 
-        self.tokens[Color.BROWN] = newtokens['BROWN']
-        self.tokens[Color.GOLD] = newtokens['GOLD']
-        self.tokens[Color.GREEN] = newtokens['GREEN']
-        self.tokens[Color.BLUE] = newtokens['BLUE']
-        self.tokens[Color.RED] = newtokens['RED']
-        self.tokens[Color.WHITE] = newtokens['WHITE']
+        if 'BROWN' in newtokens:
+            self.tokens[Color.BROWN] = newtokens['BROWN']
+        if 'GOLD' in newtokens:
+            self.tokens[Color.GOLD] = newtokens['GOLD']
+        if 'GREEN' in newtokens:
+            self.tokens[Color.GREEN] = newtokens['GREEN']
+        if 'BLUE' in newtokens:
+            self.tokens[Color.BLUE] = newtokens['BLUE']
+        if 'RED' in newtokens:
+            self.tokens[Color.RED] = newtokens['RED']
+        if 'WHITE' in newtokens:
+            self.tokens[Color.WHITE] = newtokens['WHITE']
 
         # for noble in inventory['nobles']:
         #     if noble not in self.nobles.keys():
@@ -324,7 +322,7 @@ class Player:
                     color = color
                     break
             card = Card.instance(id=card_json['cardId'], color=color)
-            if card not in self.cards_bought.keys():
+            if card not in self.reserved_cards.keys():
                 self.reserve_card_to_sidebar(card)
 
         discounts = inventory['discounts']

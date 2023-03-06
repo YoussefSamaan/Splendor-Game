@@ -47,7 +47,7 @@ class Deck:
 
         :param: decks_json: The json data of the decks
         """
-        deck_json = self.find_deck_by_color(decks_json)
+        deck_json = self.find_deck_by_color_and_level(decks_json)
         self.num_remaining_cards = deck_json["numRemainingCards"]
         for i, card in enumerate(deck_json["faceUpCards"], start=1):
             self.cardsOnDisplay[i] = Card.instance(id=card["cardId"], color=self.get_color())
@@ -214,9 +214,9 @@ class Deck:
                                        (int(Card.get_card_size(self.board)[0]), int(Card.get_card_size(self.board)[1])))
         screen.blit(image, (x, y))
 
-    def find_deck_by_color(self, decks_json):
+    def find_deck_by_color_and_level(self, decks_json):
         for deck in decks_json:
-            if deck['color'] == self.color.name.upper():
+            if deck['color'] == self.color.name.upper() and deck['level'] == self.level:
                 return deck
 
 

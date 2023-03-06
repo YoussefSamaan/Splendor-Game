@@ -57,6 +57,7 @@ public class Inventory {
    */
   public void addNoble(Noble noble) {
     nobles.add(noble);
+    addBonus(Collections.singletonList(noble), this.discounts);
   }
 
   /**
@@ -78,12 +79,12 @@ public class Inventory {
    * @return the resources
    */
   public HashMap<Color, Integer> getResources() {
+    HashMap<Color, Integer> tokens = this.tokens.getTokens();
+    HashMap<Color, Integer> bonuses = getBonuses();
+    // return the merge of the two maps
     HashMap<Color, Integer> resources = new HashMap<>();
-    for (Color color : Color.tokenColors()) {
-      resources.put(color, tokens.count(Token.of(color)));
-    }
-    addBonus(boughtCards, resources);
-    addBonus(nobles, resources);
+    tokens.forEach((k, v) -> resources.merge(k, v, Integer::sum));
+    bonuses.forEach((k, v) -> resources.merge(k, v, Integer::sum));
     return resources;
   }
 
@@ -119,5 +120,46 @@ public class Inventory {
     discount += boughtCards.stream().mapToInt(card -> card.getBonus().getBonus(color)).sum();
     int toPay = amount - discount;
     IntStream.range(0, toPay).forEach(i -> tokens.remove(Token.of(color)));
+  }
+
+
+  public List<DevelopmentCardI> getBoughtCards() {
+    return this.boughtCards;
+  }
+
+  public HashMap<Color, Integer> getTokens() {
+    return tokens.getTokens();
+  }
+
+  /**
+   * removes tokens from the inventory.
+   *
+   * @param tokens  a hashmap of the color and the tokens to remove.
+   */
+  public void removeTokens(HashMap<Color, Integer> tokens) {
+    for (Color c : tokens.keySet()) {
+      int value = tokens.get(c);
+      for (int i = 0; i < value; i++) {
+        this.tokens.remove(Token.of(c));
+      }
+    }
+  }
+
+  /**
+   * get number of nobles in the inventory.
+   *
+   * @return the number of nobles
+   */
+  public int getNoblesCount() {
+    return this.nobles.size();
+  }
+
+  /**
+   * get bonuses of a player from cards and nobles.
+   *
+   * @return the bonuses
+   */
+  public HashMap<Color, Integer> getBonuses() {
+    return discounts;
   }
 }

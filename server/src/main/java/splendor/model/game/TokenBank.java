@@ -34,7 +34,7 @@ public class TokenBank implements Bank<Token> {
   @Override
   public void remove(Token element) {
     assert contains(element);
-    tokens.put(element.getColor(), tokens.getOrDefault(element.getColor(), 0) - 1);
+    tokens.replace(element.getColor(), tokens.get(element.getColor()) - 1);
   }
 
   @Override
@@ -45,5 +45,9 @@ public class TokenBank implements Bank<Token> {
   @Override
   public int count(Token element) {
     return tokens.getOrDefault(element.getColor(), 0);
+  }
+
+  public HashMap<Color, Integer> getTokens() {
+    return tokens;
   }
 }

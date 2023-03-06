@@ -1,4 +1,5 @@
 import pygame
+from typing import List, Callable, Tuple
 
 GREEN = (0, 255, 0)
 RED = (255, 0, 0)
@@ -119,3 +120,16 @@ def outlined_text(surface, text, outline_color=BLACK, color=WHITE, font='Arial',
     # TEXT FILL
 
     write_on(surface, text, color, font, font_size, center)
+
+class Button:
+    def __init__(self,rectangle : pygame.Rect, on_click_event : Callable[[None], None], color: Tuple[int,int,int] = LIGHT_GREY, text: str = "") -> None:
+        self.rectangle = rectangle
+        self.activation = on_click_event
+        self.color = color
+        self.text = text
+
+    def set_text(self, text):
+        self.text = text
+    
+    def display(self, screen):
+        pygame.draw.rect(screen,self.color,self.rectangle)

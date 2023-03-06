@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.ResponseEntity;
 import splendor.controller.game.GameManager;
-import splendor.model.game.action.ActionGenerator;
+import splendor.controller.action.ActionGenerator;
 import splendor.model.game.player.Player;
 
 public class GameHandlerTest {

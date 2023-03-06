@@ -2,12 +2,11 @@ package splendor.model.game;
 
 import java.util.Arrays;
 import javax.naming.InsufficientResourcesException;
+import splendor.controller.action.Action;
+import splendor.controller.action.ActionData;
 import splendor.controller.lobbyservice.GameInfo;
-import splendor.model.game.action.Action;
-import splendor.model.game.action.ActionData;
-import splendor.model.game.action.CardActionType;
-import splendor.model.game.action.DevelopmentCardAction;
 import splendor.model.game.card.SplendorCard;
+import splendor.model.game.payment.CoatOfArms;
 import splendor.model.game.player.Player;
 import splendor.model.game.player.SplendorPlayer;
 
@@ -62,9 +61,6 @@ public class SplendorGame {
     board.buyCard(player, card);
   }
 
-  public void reserveCard(SplendorPlayer player, SplendorCard card) {
-    board.reserveCard(player, card);
-  }
 
   /**
    * Checks if it's a player's turn.
@@ -89,16 +85,15 @@ public class SplendorGame {
       throws InsufficientResourcesException {
     // No use of action data for now, system automatically decides tokens to use for payment
     Player player = getPlayer(username);
-    if (action instanceof DevelopmentCardAction) {
-      DevelopmentCardAction cardAction = (DevelopmentCardAction) action;
-      if (cardAction.getType() == CardActionType.BUY) {
-        buyCard(player, ((DevelopmentCardAction) action).getCard());
-      } else {
-        reserveCard(player, ((DevelopmentCardAction) action).getCard());
-      }
-    } else {
-      throw new IllegalArgumentException("Not yet implemented");
+    if (!isTurnPlayer(player)) {
+      return;
     }
-    board.nextTurn();
+    action.performAction(player, board);
+    CoatOfArms.addUnlockedCoatOfArms(player);
+    board.updateNobles(player);
+
+    if (player.nextAction() == null) {
+      board.nextTurn();
+    }
   }
 }

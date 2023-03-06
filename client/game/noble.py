@@ -23,11 +23,12 @@ class Noble:
         self.isOnDisplay = True
 
     @staticmethod
-    def initialize(n):
-        ids = random.sample(range(1, 11), n)
+    def initialize(nobles):
+        """get ids from json server"""
+        
         # Create n nobles with the chosen ids
-        for id in ids:
-            Noble.instance(id=id)
+        for noble in nobles:
+            Noble.instance(id=noble['cardId'])
 
     @staticmethod
     def display_all(screen):

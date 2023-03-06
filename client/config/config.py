@@ -1,7 +1,7 @@
 import hashlib
 
 LOBBY_SERVICE_URL = 'http://localhost:4242'
-SERVER_URL = 'http://192.168.0.126:8000'
+SERVER_URL = 'http://192.168.1.7:8000' # replace this line with your local ip
 
 
 def get_hash(value):

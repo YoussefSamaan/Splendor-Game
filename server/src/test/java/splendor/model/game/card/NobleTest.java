@@ -24,20 +24,20 @@ public class NobleTest {
 	@Test
 	void validateGetCost() {
 		Cost testCost = Noble.get(4).getCost();
-		Assertions.assertEquals(testCost.getValue(Color.BROWN), 4);
+		Assertions.assertEquals(3, testCost.getValue(Color.BROWN));
 	}
 	
 	@Test
 	void validateGetBonus() {
 		Bonus testBonus = Noble.get(4).getBonus();
-		Assertions.assertEquals(testBonus.getBonus(Color.GREEN), 1);
+		Assertions.assertEquals(0, testBonus.getBonus(Color.GREEN));
 	}
 	
 	// TODO: Test non-zero prestige points when JSON file is complete
 	@Test
 	void validateGetPrestigePoints() {
 		int testPrestigePoints = Noble.get(1).getPrestigePoints();
-		Assertions.assertEquals(testPrestigePoints, 0);
+		Assertions.assertEquals(3, testPrestigePoints);
 	}
 	
 	@Test
