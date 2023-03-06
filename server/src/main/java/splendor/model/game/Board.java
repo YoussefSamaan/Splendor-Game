@@ -193,7 +193,7 @@ public class Board {
    */
   public void updateNobles(Player player) {
     for (Noble noble : getNobles()) {
-      if (player.canAfford(noble)) {
+      if (noble.getCost().isAffordable(player.getBonuses())) {
         player.addNoble(noble);
         removeNoble(noble);
         return; // only unlock one noble per turn?

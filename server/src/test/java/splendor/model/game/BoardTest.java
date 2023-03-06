@@ -38,7 +38,7 @@ public class BoardTest {
 		}
 	}
 
-	private void addBonusToPlayer(Player player, HashMap<Color, Integer> bonus) throws NoSuchFieldException {
+	private void setPlayerBonus(Player player, HashMap<Color, Integer> bonus) throws NoSuchFieldException {
 		Inventory inventory = getPlayerInventory(player);
 		HashMap<Color, Integer> inventoryBonuses = getInventoryBonuses(inventory);
 		for (Color color : bonus.keySet()) {
@@ -208,6 +208,17 @@ public class BoardTest {
 	@Test
 	void updateNoblesNoUpdate() {
 		testBoard = new Board(player1,player2,player3,player4);
+		HashMap<Color, Integer> bonus = new HashMap<>();
+		bonus.put(Color.RED, 0);
+		bonus.put(Color.WHITE, 0);
+		bonus.put(Color.GREEN, 0);
+		bonus.put(Color.BLUE, 0);
+		bonus.put(Color.BROWN, 0);
+		try {
+			setPlayerBonus(player1, bonus);
+		} catch (NoSuchFieldException e) {
+			throw new RuntimeException(e);
+		}
 		testBoard.updateNobles(player1);
 		Assertions.assertEquals(3, nonNullCount(testBoard.getNobles().toArray()));
 	}
@@ -223,7 +234,7 @@ public class BoardTest {
 		bonus.put(Color.BLUE, 10);
 		bonus.put(Color.BROWN, 10);
 		try {
-			addBonusToPlayer(player1, bonus);
+			setPlayerBonus(player1, bonus);
 		} catch (NoSuchFieldException e) {
 			throw new RuntimeException(e);
 		}
