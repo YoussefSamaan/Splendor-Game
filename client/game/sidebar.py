@@ -39,8 +39,7 @@ class Sidebar:
     def toggle(self, num):
         if type(num) != int:
             return
-        elif -1 < num < 4:
-            # 4 is trade route
+        elif -1 < num < 3:
             self.current_display = num
 
     def display(self, screen):
@@ -200,7 +199,7 @@ class Sidebar:
         #             Board.instance().height - 3 * self.card_size[1])):
         #         return
 
-        else:
+        elif (self.current_display == 2):
             # ==2  must be reserved card -
             if not self.current_player.reserved_cards.items():
                 return
