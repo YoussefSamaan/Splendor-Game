@@ -90,6 +90,7 @@ public class SplendorGame {
     }
     action.performAction(player, board);
     CoatOfArms.addUnlockedCoatOfArms(player);
+    board.updateNobles(player);
 
     if (player.nextAction() == null) {
       board.nextTurn();
