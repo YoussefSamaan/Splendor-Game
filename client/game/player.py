@@ -322,7 +322,7 @@ class Player:
                     color = color
                     break
             card = Card.instance(id=card_json['cardId'], color=color)
-            if card not in self.cards_bought.keys():
+            if card not in self.reserved_cards.keys():
                 self.reserve_card_to_sidebar(card)
 
         discounts = inventory['discounts']
