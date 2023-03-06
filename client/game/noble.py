@@ -28,7 +28,7 @@ class Noble:
         
         # Create n nobles with the chosen ids
         for noble in nobles:
-            Noble.instance(id=noble['cardId'])
+            Noble.instance(id=noble)
 
     @staticmethod
     def display_all(screen):

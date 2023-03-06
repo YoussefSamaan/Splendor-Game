@@ -38,6 +38,36 @@ def draw_buy_button(surface: pygame.Surface):
     button_rect.y = y
     return button_rect
 
+def draw_take_button(surface: pygame.Surface):
+    """
+    The x and y coordinates returned are relative to the surface.
+    :param surface:
+    :return:
+    """
+    take_button = button('Unlock', width=surface.get_width() / 6, height=surface.get_height() / 8, color=GREEN)
+    x = surface.get_width() / 2 - take_button.get_width() * SIDEBAR_IMAGE_SCALE - 10
+    y = surface.get_height() - take_button.get_height() * SIDEBAR_IMAGE_SCALE
+    surface.blit(take_button, (x, y))
+    button_rect = take_button.get_rect()
+    button_rect.x = x
+    button_rect.y = y
+    return button_rect
+
+def draw_cancel_button(surface: pygame.Surface):
+    """
+    The x and y coordinates returned are relative to the surface.
+    :param surface:
+    :return:
+    """
+    cancel_button = button('Cancel', width=surface.get_width() / 6, height=surface.get_height() / 8, color=RED)
+    x = surface.get_width() / 2 + 10
+    y = surface.get_height() - cancel_button.get_height() * SIDEBAR_IMAGE_SCALE
+    surface.blit(cancel_button, (x, y))
+    button_rect = cancel_button.get_rect()
+    button_rect.x = x
+    button_rect.y = y
+    return button_rect
+
 
 @Flyweight
 class Card:
@@ -165,6 +195,51 @@ class Card:
                 elif event.type == pygame.QUIT:
                     pygame.quit()
                     quit()
+
+    def get_user_cascade_selection(self, screen) -> Action:
+        """
+        Shows a box to the user with all the card's information.
+        Allows user to choose if they want to take the card for free, or cancel
+        """
+        selection_box, selection_box_rect = get_selection_box(screen)
+
+        # draw the reserve button
+        take_button = draw_take_button(selection_box)
+        # get the true position of the button
+        take_button.x += selection_box_rect.x
+        take_button.y += selection_box_rect.y
+        # draw the buy button
+        cancel_button = draw_cancel_button(selection_box)
+        # get the true position of the button
+        cancel_button.x += selection_box_rect.x
+        cancel_button.y += selection_box_rect.y
+
+        card_width, card_height = Card.get_card_size(Board.instance())
+        card_width *= 2  # make the card wider
+        card_height = take_button.y - selection_box_rect.y - 20  # height of card is from top of box to buy button
+        self.draw(selection_box,
+                  selection_box_rect.width / 2 - card_width / 2,
+                  10,
+                  width=card_width, height=card_height)
+
+        screen.blit(selection_box, selection_box_rect)
+        pygame.display.update()
+        # wait for user to click on a button
+        while True:
+            for event in pygame.event.get():
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if cancel_button.collidepoint(event.pos):
+                        return Action.CANCEL
+                    elif take_button.collidepoint(event.pos):
+                        return Action.CASCADE
+                    else:
+                        return Action.CANCEL
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        return Action.CANCEL
+                elif event.type == pygame.QUIT:
+                    pygame.quit()
+                    quit()      
 
     def __str__(self):
         return "Color: {}, id: {}".format(self._color, self._id)

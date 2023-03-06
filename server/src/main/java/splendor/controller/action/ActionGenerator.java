@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import org.springframework.stereotype.Component;
 import splendor.model.game.SplendorGame;
+import splendor.model.game.player.Player;
 import splendor.model.game.player.SplendorPlayer;
 
 /**
@@ -46,6 +47,7 @@ public class ActionGenerator {
     } else if (player.nextAction() == ActionType.RESERVE_NOBLE) {
       actions.addAll(TakeNobleAction.getLegalActions(game, player, true));
     }
+    player.resetNextActions();
     gameActions.put(gameId, actions); // save the actions for later validation
     return actions;
   }

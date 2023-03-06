@@ -50,8 +50,10 @@ class Deck:
         deck_json = self.find_deck_by_color_and_level(decks_json)
         self.num_remaining_cards = deck_json["numRemainingCards"]
         for i, card in enumerate(deck_json["faceUpCards"], start=1):
+            if card is None:
+              # skip loop if card is None
+              continue
             self.cardsOnDisplay[i] = Card.instance(id=card["cardId"], color=self.get_color())
-        print("Deck updated")
 
     def is_empty(self):
         """

@@ -29,10 +29,12 @@ FLASH_MESSAGE = None
 FLASH_TIMER = 0
 FLASH_START = 0
 FLASH_COLOR = GREEN
+PERSISTENT_MESSAGE = None
 NUM_PLAYERS = 4  # For now
 CURR_PLAYER = 0
 action_manager = None
 has_initialized = False
+cascade = False
 
 class IndividualTokenSelection:
     def __init__(self, token: Token, x_pos: int, y_pos: int) -> None:
@@ -127,6 +129,12 @@ def show_flash_message():
     flash_message(DISPLAYSURF, FLASH_MESSAGE,
                   color=FLASH_COLOR, opacity=255 * (1 - time_diff / FLASH_TIMER))
 
+def show_persistent_message(color=GREEN):
+    if PERSISTENT_MESSAGE is None:
+        return flash_right_side(DISPLAYSURF, "", color=GREEN, opacity=0)
+
+    flash_right_side(DISPLAYSURF, PERSISTENT_MESSAGE, color=color, opacity=255)
+
 
 def set_flash_message(text, color=GREEN, timer=5):
     global FLASH_MESSAGE, FLASH_TIMER, FLASH_START, FLASH_COLOR
@@ -155,7 +163,14 @@ def update(authenticator, game_id):
 def check_cascade():
     """Checks if we need to cascade a card purchase.
       If so, let the next card bought be bought for free"""
-    pass
+    global action_manager, cascade, PERSISTENT_MESSAGE
+
+    if action_manager.has_unlocked_cascade(Player.instance(id=CURR_PLAYER).name):
+      cascade = True
+      PERSISTENT_MESSAGE = "You Unlocked a Cascade! Choose a card to buy for free!"
+    else:
+        cascade = False
+        PERSISTENT_MESSAGE = None
 
 def update_tokens(board_json):
     Token.update_all(board_json['bank']['tokens'])
@@ -196,6 +211,7 @@ def display_everything(current_user):
     display_trade_routes()
 
     show_flash_message()  # last so it's on top
+    show_persistent_message()
     pygame.display.update()
 
 def display_trade_routes():
@@ -266,17 +282,42 @@ def get_user_card_selection(card :Card):
     global FLASH_MESSAGE, FLASH_TIMER, CURR_PLAYER, action_manager
     server_action_id = action_manager.get_card_action_id(card, Player.instance(id=CURR_PLAYER).name,
                                                          action)
-    if server_action_id > -1:
-        if action == Action.BUY:
-            action_manager.perform_action(server_action_id)
-            set_flash_message('Bought a card')
-        elif action == Action.RESERVE:
-            action_manager.perform_action(server_action_id)
-            set_flash_message('Reserved a card')
-        else:
-            return
-    else:
+    if server_action_id == 0:
+        return
+    if server_action_id <= -1:
         set_flash_message('Invalid action', color=RED)
+        return
+
+    action_manager.perform_action(server_action_id)
+    if action == Action.RESERVE:
+        set_flash_message('Reserved a card')
+    else:
+        set_flash_message('Bought a card')
+    action_manager.force_update(Player.instance(id=CURR_PLAYER).name)
+
+def get_user_cascade_selection(card :Card):
+    """
+    Allow user to choose whether to get a card for free or not
+    :param card:
+    :return:
+    """
+    dim_screen(DISPLAYSURF)
+    action = card.get_user_cascade_selection(DISPLAYSURF)
+    print(action.value)
+    global FLASH_MESSAGE, FLASH_TIMER, CURR_PLAYER, action_manager, cascade
+    server_action_id = action_manager.get_card_action_id(card, Player.instance(id=CURR_PLAYER).name,
+                                                         action)
+    if server_action_id == 0:
+        return
+    if server_action_id <= -1:
+        set_flash_message('Invalid action', color=RED)
+        return
+        
+    action_manager.perform_action(server_action_id)
+    set_flash_message('You got a free card!')
+    global PERMANENT_MESSAGE
+    PERMANENT_MESSAGE = None
+    action_manager.force_update(Player.instance(id=CURR_PLAYER).name)
 
 
 def perform_action(obj, user):
@@ -286,7 +327,11 @@ def perform_action(obj, user):
     # make sure it's the current user's turn, otherwise cannot take cards
     if user == Player.instance(id=CURR_PLAYER).name:
         if isinstance(obj, Card):
-            get_user_card_selection(obj)
+            global cascade
+            if cascade:
+                get_user_cascade_selection(obj)
+            else:
+                get_user_card_selection(obj)
         elif isinstance(obj, Token):
             # opens token selection menu
             get_token_selection()
