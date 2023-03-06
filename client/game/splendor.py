@@ -513,7 +513,7 @@ def play(authenticator, game_id):
                     # check if it's the sidebar toggle
                     position = pygame.mouse.get_pos()
                     check_toggle(position)
-                    TradeRoute.instance().check_click(position)
+                    TradeRoute.instance().check_click(position,DISPLAYSURF)
                     obj = get_clicked_object(position)
                     perform_action(obj, logged_in_user)
                     with threading.Lock():

@@ -1,5 +1,6 @@
 import pygame
 
+from pygame.locals import *
 from board import Board
 from card import Card
 from color import Color
@@ -33,10 +34,25 @@ class TradeRoute:
         pygame.draw.rect(screen, (0,0,0,0), self.trade_route_button)
         outlined_text(screen, text="Trade Routes", center=self.trade_route_button.center)
 
-    def open_trade_route_menu(self, screen):
+    def open_trade_route_menu(self, screen: pygame.Surface):
         """opens the trade route menu after clicking on button"""
-        screen.blit(self.trade_route_menu)
-        pass
+        while True:
+            screen.blit(self.trade_route_menu, dest=(0,0))
+
+            # Logic for displaying the coat of arms
+            # TODO
+
+            pygame.display.update()
+
+            for event in pygame.event.get():
+                if event.type == pygame.KEYDOWN:
+                    return
+                elif event.type == pygame.QUIT:
+                    pygame.quit()
+                    quit()
+
+                elif event.type == MOUSEBUTTONDOWN:
+                    return
     
 
 
