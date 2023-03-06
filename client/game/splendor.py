@@ -83,7 +83,6 @@ def initialize_game(board_json):
 def initialize_trade_routes(board_json):
     #trade_routes = board_json['tradeRoutes']
     TradeRoute.instance()
-    pass
 
 
 def initialize_players(board_json):
@@ -149,6 +148,7 @@ def update(authenticator, game_id):
     update_players(board_json)
     update_decks(board_json)
     update_tokens(board_json)
+    TradeRoute.instance().update(board_json)
     
 
 def check_cascade():
