@@ -15,6 +15,7 @@ import splendor.model.game.card.SplendorCard;
 import splendor.model.game.deck.Deck;
 import splendor.model.game.deck.NobleDeck;
 import splendor.model.game.deck.SplendorDeck;
+import splendor.model.game.payment.Cost;
 import splendor.model.game.payment.Token;
 import splendor.model.game.player.Player;
 import splendor.model.game.player.SplendorPlayer;
@@ -85,7 +86,7 @@ public class Board {
 
     takeCardFromDeck(card);
     player.buyCard(card);
-    giveBackTokens(card.getCost(), card);
+    giveBackTokens(card.getCost());
   }
 
   private boolean takeCardFromDeck(DevelopmentCardI card) {
@@ -120,12 +121,13 @@ public class Board {
   /**
    * give back tokens to the bank.
    *
-   * @param tokens the tokens to give back
-   * @param card the card that was bought
+   * @param cost the tokens to give back
    */
-  private void giveBackTokens(Iterable<Color> tokens, SplendorCard card) {
-    tokens.forEach(color -> IntStream.range(0, card.getCost().getValue(color))
-        .forEach(i -> bank.add(Token.of(color))));
+  private void giveBackTokens(Cost cost) {
+    for (Color color : cost) {
+      IntStream.range(0, cost.getValue(color))
+          .forEach(i -> bank.add(Token.of(color)));
+    }
   }
 
   /**
