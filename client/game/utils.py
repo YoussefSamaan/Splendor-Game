@@ -74,7 +74,7 @@ def flash_message(screen, text, color=GREEN, opacity=255):
     write_on(box, text)
     screen.blit(box, (screen.get_width() / 2 - box.get_width() / 2, 0))
 
-def flash_right_side(screen, text, color=GREEN, opacity=255):
+def flash_right_side(screen, text, color=GREEN, opacity=255, font_size=20):
     """
     Display a message in the top right corner
     :param color: the color of the box
@@ -82,12 +82,18 @@ def flash_right_side(screen, text, color=GREEN, opacity=255):
     :param text: the text to display
     :param: color: the color of the text
     :param opacity: the opacity of the box
+    :param font_size: the size of the font
     """
-    box = pygame.Surface((screen.get_width() / 5, screen.get_height() / 10))
+    font = pygame.font.Font(None, font_size)
+    text_surface = font.render(text, True, color)
+    box_width = text_surface.get_rect().width + 10
+    box_height = screen.get_height() / 10
+    box = pygame.Surface((box_width, box_height))
     box.set_alpha(opacity)
     box.fill(color)
-    write_on(box, text)
-    screen.blit(box, (screen.get_width() - box.get_width(), 0))
+    write_on(box, text, font_size=font_size)
+    screen.blit(box, (screen.get_width() - box.get_width() - 30, 0))
+
 
 def write_on(surface, text, color=BLACK, font='Arial', font_size=20, center=None):
     """
