@@ -13,7 +13,6 @@ import splendor.model.game.card.DevelopmentCardI;
 import splendor.model.game.card.Noble;
 import splendor.model.game.card.SplendorCard;
 import splendor.model.game.payment.CoatOfArms;
-import splendor.model.game.payment.Cost;
 import splendor.model.game.payment.Token;
 
 /**
@@ -64,6 +63,7 @@ public class Player implements PlayerReadOnly, SplendorPlayer {
 
   /**
    * Equals function to compare Player objects.
+   *
    * @param o is a Player object
    * @return whether the players are equal or not
    */
@@ -105,6 +105,7 @@ public class Player implements PlayerReadOnly, SplendorPlayer {
 
   /**
    * Adds a reserved card and, optionally, a gold token to the player inventory.
+   *
    * @param card the reserved card
    * @param addGoldToken whether to add a gold token or not
    */
@@ -200,9 +201,9 @@ public class Player implements PlayerReadOnly, SplendorPlayer {
   }
 
   /**
-   * Retrieves the tokens in the player's inventory
+   * Retrieves the tokens in the player's inventory.
    *
-   * @return tokens in player's inventory
+   * @return tokens in player's inventory.
    */
   public HashMap<Color, Integer> getTokens() {
     return inventory.getTokens();

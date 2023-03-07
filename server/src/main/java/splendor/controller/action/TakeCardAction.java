@@ -19,6 +19,7 @@ public class TakeCardAction extends CardAction {
   /**
    * Creates a new card action.
    *
+   * @param actionType  type of action
    * @param card the card
    */
   protected TakeCardAction(ActionType actionType, SplendorCard card) {

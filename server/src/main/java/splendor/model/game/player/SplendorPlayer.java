@@ -34,11 +34,29 @@ public interface SplendorPlayer {
    */
   String getName();
 
+  /**
+   * gets the next action that needs to be done by the player.
+   *
+   * @return  a list of the next actions.
+   */
   ActionType nextAction();
 
+  /**
+   * resets the next action.
+   */
   void resetNextActions();
 
+  /**
+   * returns a lost of the cards bought by the player.
+   *
+   * @return  the cards bought by the player.
+   */
   List<DevelopmentCardI> getCardsBought();
 
+  /**
+   * get a hashmap of the tokens of the player.
+   *
+   * @return  a hashmap of tokens.
+   */
   HashMap<Color, Integer> getTokens();
 }

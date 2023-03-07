@@ -47,7 +47,7 @@ public class BuyCardAction extends CardAction {
   }
 
   /**
-   * Performs the BuyCard action for a player
+   * Performs the BuyCard action for a player.
    *
    * @param player the player we are performing an action for.
    * @param board the board where we are performing the action.

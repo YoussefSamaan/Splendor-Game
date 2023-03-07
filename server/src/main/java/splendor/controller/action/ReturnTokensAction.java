@@ -117,7 +117,7 @@ public class ReturnTokensAction implements Action {
   }
 
   /**
-   * Returns the number of tokens
+   * Returns the number of tokens.
    *
    * @param tokens a list of tokens and their respective counts
    * @return the number of tokens
