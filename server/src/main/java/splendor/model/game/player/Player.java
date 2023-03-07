@@ -123,6 +123,15 @@ public class Player implements PlayerReadOnly, SplendorPlayer {
     nextActions.add(action);
   }
 
+
+  /**
+   * resets the next actions so game is not stuck in a loop.
+   *
+   */
+  public void resetNextActions() {
+    nextActions.clear();
+  }
+
   /**
    * used to get the next action that has to be done by the player.
    *

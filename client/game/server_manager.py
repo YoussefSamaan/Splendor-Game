@@ -49,6 +49,7 @@ def perform_action(authenticator: Authenticator, game_id: str, player_name: str,
     :param action_id: The id of the action.
     :return: The actions of the game.
     """
+    print("Performing action with id {}".format(action_id))
     url = config.SERVER_URL + '/api/games/' + game_id + '/players/' + player_name + '/actions/' \
           + str(action_id)
     data = {
