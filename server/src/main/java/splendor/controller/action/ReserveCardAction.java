@@ -61,7 +61,7 @@ public class ReserveCardAction extends CardAction {
     if (hasGoldToken) {
       HashMap<Color, Integer> tokens = new HashMap<>();
       tokens.put(Color.GOLD, 1);
-      board.giveBackTokens(tokens);
+      board.removeTokens(tokens);
     }
   }
 }
