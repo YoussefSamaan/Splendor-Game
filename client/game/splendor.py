@@ -477,6 +477,9 @@ class TokenMenu:
 
             self.confirm_take_button.display(DISPLAYSURF)
             self.confirm_return_button.display(DISPLAYSURF)
+
+            write_on(DISPLAYSURF,self.confirm_take_button.text,center=self.confirm_take_button.rectangle.center)
+            write_on(DISPLAYSURF,self.confirm_return_button.text,center=self.confirm_return_button.rectangle.center)
             pygame.display.update()
             for token_selection in button_list:
                 pygame.draw.rect(self.selection_box,token_selection.color,token_selection.rectangle)
