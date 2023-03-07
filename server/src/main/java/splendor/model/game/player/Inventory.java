@@ -88,7 +88,12 @@ public class Inventory {
     return resources;
   }
 
-
+  /**
+   * Adds the bonus points and resources of a list of cards to the provided hash map (resources).
+   *
+   * @param cards     the list of cards to process
+   * @param resources the HashMap of resources to which the bonus points and resources will be added
+   */
   private void addBonus(List<? extends SplendorCard> cards, HashMap<Color, Integer> resources) {
     for (SplendorCard card : cards) {
       Bonus bonus = card.getBonus();
@@ -100,6 +105,8 @@ public class Inventory {
 
   /**
    * For the demo.
+   *
+   * @return inventory
    */
   public static Inventory getDemoInventory() {
     Inventory inventory = new Inventory();
@@ -124,10 +131,20 @@ public class Inventory {
   }
 
 
+  /**
+   * Getter for the bought cards.
+   *
+   * @return bought cards of this inventory
+   */
   public List<DevelopmentCardI> getBoughtCards() {
     return this.boughtCards;
   }
 
+  /**
+   * Getter for the tokens in this inventory.
+   *
+   * @return tokens in this inventory
+   */
   public HashMap<Color, Integer> getTokens() {
     return tokens.getTokens();
   }
