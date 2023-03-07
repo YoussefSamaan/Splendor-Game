@@ -1,9 +1,11 @@
 package splendor.controller.action;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import javax.naming.InsufficientResourcesException;
 import splendor.model.game.Board;
+import splendor.model.game.Color;
 import splendor.model.game.SplendorGame;
 import splendor.model.game.card.DevelopmentCardI;
 import splendor.model.game.card.SplendorCard;
@@ -57,7 +59,8 @@ public class BuyCardAction extends CardAction {
     DevelopmentCardI card;
     try {
       card = (DevelopmentCardI) this.getCard();
-      player.buyCard(card); // should always work
+      HashMap<Color, Integer> tokensToGiveBack = player.buyCard(card); // should always work
+      board.giveBackTokens(tokensToGiveBack);
     } catch (InsufficientResourcesException e) {
       throw new RuntimeException(e);
     }

@@ -123,7 +123,7 @@ public class Board {
    *
    * @param tokens the tokens to give back
    */
-  private void giveBackTokens(HashMap<Color, Integer> tokens) {
+  public void giveBackTokens(HashMap<Color, Integer> tokens) {
     for (Color color : tokens.keySet()) {
       IntStream.range(0, tokens.get(color))
           .forEach(i -> bank.add(Token.of(color)));
