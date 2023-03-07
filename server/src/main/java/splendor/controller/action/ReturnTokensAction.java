@@ -30,6 +30,13 @@ public class ReturnTokensAction implements Action {
     this.actionId = (long) (Math.random() * Long.MAX_VALUE);
   }
 
+  /**
+   * Generates all possible token combinations to remove based on the number of tokens required.
+   *
+   * @param tokens the tokens and their respective counts.
+   * @param numOfTokens the number of tokens required to form a combination.
+   * @return all the valid combinations of tokens to remove.
+   */
   private static List<HashMap<Color, Integer>> getTokensToRemove(HashMap<Color, Integer> tokens,
                                                           int numOfTokens) {
     List<HashMap<Color, Integer>> combinations = new ArrayList<>();
@@ -109,6 +116,12 @@ public class ReturnTokensAction implements Action {
     return combinations;
   }
 
+  /**
+   * Returns the number of tokens
+   *
+   * @param tokens a list of tokens and their respective counts
+   * @return the number of tokens
+   */
   private static int getNumOfTokens(HashMap<Color, Integer> tokens) {
     int numOfTokens = 0;
     Color[] colors = Color.tokenColors();
@@ -138,11 +151,22 @@ public class ReturnTokensAction implements Action {
     return actions;
   }
 
+  /**
+   * Retrieves the action id.
+   *
+   * @return the action id.
+   */
   @Override
   public long getId() {
     return this.actionId;
   }
 
+  /**
+   * Performs the ReturnTokens action.
+   *
+   * @param player the player from which tokens are removed.
+   * @param board  the board to which tokens are returned.
+   */
   @Override
   public void performAction(Player player, Board board) {
     player.removeTokens(this.tokens);

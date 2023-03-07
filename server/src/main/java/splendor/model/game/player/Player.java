@@ -52,11 +52,21 @@ public class Player implements PlayerReadOnly, SplendorPlayer {
     return name;
   }
 
+  /**
+   * Getter for player's preferred colour.
+   *
+   * @return player's colour
+   */
   @Override
   public String getPreferredColour() {
     return color;
   }
 
+  /**
+   * Equals function to compare Player objects.
+   * @param o is a Player object
+   * @return whether the players are equal or not
+   */
   @Override
   public boolean equals(Object o) {
     if (o == this) {
@@ -93,6 +103,11 @@ public class Player implements PlayerReadOnly, SplendorPlayer {
     prestigePoints += card.getPrestigePoints();
   }
 
+  /**
+   * Adds a reserved card and, optionally, a gold token to the player inventory.
+   * @param card the reserved card
+   * @param addGoldToken whether to add a gold token or not
+   */
   @Override
   public void reserveCard(DevelopmentCardI card, boolean addGoldToken) {
     inventory.addReservedCard(card);
@@ -101,16 +116,33 @@ public class Player implements PlayerReadOnly, SplendorPlayer {
     }
   }
 
+  /**
+   * The player takes a token.
+   *
+   * @param color the colour of the token taken
+   * @param game the game where this action takes place.
+   */
   @Override
   public void takeToken(Color color, SplendorGame game) {
 
   }
 
+  /**
+   * Decides if a player can afford a card.
+   *
+   * @param card the card to buy
+   * @return whether the player can afford a card or not.
+   */
   @Override
   public boolean canAfford(SplendorCard card) {
     return card.getCost().isAffordable(inventory.getResources());
   }
 
+  /**
+   * Adds a future action that the player can make during their turn.
+   *
+   * @param action to add to the nextActions list
+   */
   public void addNextAction(ActionType action) {
     nextActions.add(action);
   }
@@ -137,21 +169,41 @@ public class Player implements PlayerReadOnly, SplendorPlayer {
     }
   }
 
+  /**
+   * Getter for bought cards.
+   *
+   * @return cards that player has bought
+   */
   public List<DevelopmentCardI> getCardsBought() {
     return this.inventory.getBoughtCards();
   }
 
 
+  /**
+   * Adds noble and corresponding prestige points to player inventory.
+   *
+   * @param noble that gets added.
+   */
   public void addNoble(Noble noble) {
     this.inventory.addNoble(noble);
     this.prestigePoints += noble.getPrestigePoints();
   }
 
+  /**
+   * Adds card and corresponding prestige points to player inventory.
+   *
+   * @param card that gets added.
+   */
   public void addCard(DevelopmentCardI card) {
     this.inventory.addBoughtCard(card);
     this.prestigePoints += card.getPrestigePoints();
   }
 
+  /**
+   * Retrieves the tokens in the player's inventory
+   *
+   * @return tokens in player's inventory
+   */
   public HashMap<Color, Integer> getTokens() {
     return inventory.getTokens();
   }

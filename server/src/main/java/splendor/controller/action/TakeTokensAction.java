@@ -28,6 +28,12 @@ public class TakeTokensAction implements Action {
     this.actionId = (long) (Math.random() * Long.MAX_VALUE);
   }
 
+  /**
+   * Retrieves the possible combinations to take 3 tokens of different colours.
+   *
+   * @param tokens the tokens to calculate the combinations from
+   * @return the possible combinations of 3 tokens of different colours
+   */
   private static List<HashMap<Color, Integer>> get3Tokens(HashMap<Color, Integer> tokens) {
     List<HashMap<Color, Integer>> combinations = new ArrayList<>();
     Color[] colors = Color.tokenColors();
@@ -106,6 +112,14 @@ public class TakeTokensAction implements Action {
     return combinations;
   }
 
+  /**
+   * Retrieves the possible combinations to take 2 tokens of the same colour.
+   *
+   * @param tokens the tokens to calculate the combinations from
+   * @param limit maximum number of tokens of a given colour used for a combination
+   * @param specialPower modifier from the coat of arms (tradingroutes extension)
+   * @return the possible combinations of 2 tokens of the same colour
+   */
   // need to add logic for the special power.
   private static List<HashMap<Color, Integer>> get2Tokens(HashMap<Color, Integer> tokens,
                                                    int limit,
@@ -152,11 +166,22 @@ public class TakeTokensAction implements Action {
     return actions;
   }
 
+  /**
+   * Returns the id of this TakeTokens action.
+   *
+   * @return the id of this TakeTokens action
+   */
   @Override
   public long getId() {
     return this.actionId;
   }
 
+  /**
+   * Performs the TakeTokens action.
+   *
+   * @param player the player who takes tokens.
+   * @param board  the board from which tokens are removed to "give" to the player.
+   */
   @Override
   public void performAction(Player player, Board board) {
     player.addTokens(this.tokens);

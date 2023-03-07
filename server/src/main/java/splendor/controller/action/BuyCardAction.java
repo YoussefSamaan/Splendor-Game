@@ -12,7 +12,7 @@ import splendor.model.game.player.Player;
 import splendor.model.game.player.SplendorPlayer;
 
 /**
- * buying a card action class.
+ * Buying a card action class.
  */
 public class BuyCardAction extends CardAction {
   private static CardType cardType = CardType.DevelopmentCard;
@@ -46,7 +46,12 @@ public class BuyCardAction extends CardAction {
     return actions;
   }
 
-
+  /**
+   * Performs the BuyCard action for a player
+   *
+   * @param player the player we are performing an action for.
+   * @param board the board where we are performing the action.
+   */
   @Override
   public void performAction(Player player, Board board) {
     DevelopmentCardI card;
