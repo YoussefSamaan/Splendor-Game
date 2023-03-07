@@ -68,6 +68,13 @@ class Noble:
         return self._id
 
     @staticmethod
+    def update_all(noble_ids):
+        for noble in Noble.flyweights.values():
+            if noble._id not in noble_ids:
+                noble.isOnDisplay = False
+            
+
+    @staticmethod
     def get_card_size():
         board = Board.instance()
         width = board.get_width() * Noble.x_ratio

@@ -117,7 +117,7 @@ def initialize_tokens():
 
 
 def initialize_nobles(board_json):
-    ids = [noble['cardId'] for noble in board_json['nobleDeck']['nobles']]
+    ids = [noble['cardId'] for noble in board_json['nobleDeck']['nobles']  if noble is not None]
     Noble.initialize(ids)
 
 
@@ -157,6 +157,7 @@ def update(authenticator, game_id):
     update_players(board_json)
     update_decks(board_json)
     update_tokens(board_json)
+    update_nobles(board_json)
     TradeRoute.instance().update(board_json)
     
 
@@ -171,6 +172,10 @@ def check_cascade():
     else:
         cascade = False
         PERSISTENT_MESSAGE = None
+
+def update_nobles(board_json):
+    ids = [noble['cardId'] for noble in board_json['nobleDeck']['nobles'] if noble is not None]
+    Noble.update_all(ids)
 
 def update_tokens(board_json):
     Token.update_all(board_json['bank']['tokens'])

@@ -301,11 +301,11 @@ class Player:
         if 'WHITE' in newtokens:
             self.tokens[Color.WHITE] = newtokens['WHITE']
 
-        # for noble in inventory['nobles']:
-        #     if noble not in self.nobles.keys():
-        #         #noble = Noble.instance(id=noble['cardId'])
-        #         self.add_noble_to_sidebar(noble)
-        #         #noble.isOnDisplay = False
+        for nobleJson in inventory['nobles']:
+            noble = Noble.instance(id=nobleJson['cardId'])
+            if noble not in self.nobles.keys():
+                self.add_noble_to_sidebar(noble)
+                noble.isOnDisplay = False
         for card_json in inventory['boughtCards']:
             for color in Color:
                 if str(color).split('.')[1] == card_json['color']:
