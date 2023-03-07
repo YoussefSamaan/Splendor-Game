@@ -342,6 +342,8 @@ def perform_action(obj, user):
             get_token_selection()
             
         elif isinstance(obj, Noble):
+            pass
+        # players shouldn't click on nobles
             obj.take_noble(Sidebar.instance(), Player.instance(id=CURR_PLAYER))
             set_flash_message('Took a noble')
         
