@@ -98,7 +98,8 @@ public class Player implements PlayerReadOnly, SplendorPlayer {
    * @throws InsufficientResourcesException if player does not have enough resources
    */
   @Override
-  public HashMap<Color, Integer> buyCard(DevelopmentCardI card) throws InsufficientResourcesException {
+  public HashMap<Color, Integer> buyCard(DevelopmentCardI card)
+      throws InsufficientResourcesException {
     HashMap<Color, Integer> tokens = inventory.payFor(card.getCost());
     inventory.addBoughtCard(card);
     prestigePoints += card.getPrestigePoints();
@@ -238,6 +239,11 @@ public class Player implements PlayerReadOnly, SplendorPlayer {
     return inventory.getNoblesCount();
   }
 
+  /**
+   * Removes tokens from player inventory.
+   *
+   * @param tokens to remove
+   */
   public void removeTokens(HashMap<Color, Integer> tokens) {
     inventory.removeTokens(tokens);
   }

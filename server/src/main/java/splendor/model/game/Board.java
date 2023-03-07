@@ -1,6 +1,5 @@
 package splendor.model.game;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -15,7 +14,6 @@ import splendor.model.game.card.SplendorCard;
 import splendor.model.game.deck.Deck;
 import splendor.model.game.deck.NobleDeck;
 import splendor.model.game.deck.SplendorDeck;
-import splendor.model.game.payment.Cost;
 import splendor.model.game.payment.Token;
 import splendor.model.game.player.Player;
 import splendor.model.game.player.SplendorPlayer;
@@ -78,6 +76,13 @@ public class Board {
   }
 
 
+  /**
+   * Performs BuyDevelopmentCard action on board.
+   *
+   * @param player player buying the card
+   * @param card card being bought
+   * @throws InsufficientResourcesException when player cannot afford the card
+   */
   private void buyDevelopmentCard(SplendorPlayer player, DevelopmentCardI card)
       throws InsufficientResourcesException {
     if (!player.canAfford(card)) {
@@ -89,6 +94,12 @@ public class Board {
     giveBackTokens(tokensToGiveBack);
   }
 
+  /**
+   * Retrieves a card from the deck in the board.
+   *
+   * @param card taken from deck
+   * @return true if position is not -1
+   */
   private boolean takeCardFromDeck(DevelopmentCardI card) {
     for (SplendorDeck deck : decks) {
       int pos = deck.isFaceUp(card);
@@ -143,6 +154,11 @@ public class Board {
   }
 
 
+  /**
+   * Removes noble from the nobleDeck on the board.
+   *
+   * @param noble being removed
+   */
   public void removeNoble(Noble noble) {
     nobleDeck.removeNoble(noble);
   }
@@ -161,6 +177,11 @@ public class Board {
     }
   }
 
+  /**
+   * Checks if the bank contains any gold tokens.
+   *
+   * @return true if bank contains at least 1 gold token, false otherwise
+   */
   public boolean hasGoldToken() {
     return this.bank.contains(Token.of(Color.GOLD));
   }
@@ -179,6 +200,11 @@ public class Board {
     }
   }
 
+  /**
+   * Getter for tokens.
+   *
+   * @return tokens from bank on board
+   */
   public HashMap<Color, Integer> getTokens() {
     return this.bank.getTokens();
   }

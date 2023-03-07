@@ -26,6 +26,12 @@ public class TakeCardAction extends CardAction {
     super(actionType, card);
   }
 
+  /**
+   * Performs the TakeCard action.
+   *
+   * @param player the player that takes the card.
+   * @param board  the board where this action takes place.
+   */
   @Override
   public void performAction(Player player, Board board) {
     DevelopmentCardI card = (DevelopmentCardI) this.getCard();

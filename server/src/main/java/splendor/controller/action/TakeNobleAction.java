@@ -30,6 +30,12 @@ public class TakeNobleAction extends CardAction {
     super(ActionType.TAKE_NOBLE, card);
   }
 
+  /**
+   * Performs TakeNoble action.
+   *
+   * @param player the player that is taking the noble.
+   * @param board  the board where this action takes place.
+   */
   @Override
   public void performAction(Player player, Board board) {
     if (TakeNobleAction.canAfford(player.getCardsBought(), this.getCard().getCost())) {

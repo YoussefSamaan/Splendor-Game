@@ -37,21 +37,41 @@ public abstract class AbstractCard implements SplendorCard {
     this.bonus = getBonusFromJson();
   }
 
+  /**
+   * Getter for cost.
+   *
+   * @return cost
+   */
   @Override
   public Cost getCost() {
     return cost;
   }
 
+  /**
+   * Getter for prestige points.
+   *
+   * @return prestige points
+   */
   @Override
   public int getPrestigePoints() {
     return prestigePoints;
   }
 
+  /**
+   * Getter for card id.
+   *
+   * @return card id
+   */
   @Override
   public int getCardId() {
     return cardId;
   }
 
+  /**
+   * Getter for bonus.
+   *
+   * @return bonus
+   */
   @Override
   public Bonus getBonus() {
     // Creates a copy to keep cards immutable.
@@ -95,6 +115,12 @@ public abstract class AbstractCard implements SplendorCard {
     return new Bonus(bonusMap);
   }
 
+  /**
+   * Returns hash map of bonuses from the json input.
+   *
+   * @param bonus json
+   * @return bonuses
+   */
   private HashMap<Color, Integer> getMapFromJson(JSONObject bonus) {
     HashMap<Color, Integer> bonusMap = new HashMap<>();
     for (Color color : Color.values()) {

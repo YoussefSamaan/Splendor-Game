@@ -52,6 +52,12 @@ public class CoatOfArms {
     return COATS_OF_ARMS.get(id);
   }
 
+  /**
+   * Checks if player can unlock a coat of arms.
+   *
+   * @param player that we are checking
+   * @return true if the player can unlock
+   */
   private boolean canUnlock(Player player) {
     HashMap<Color, Integer> bonusMap = player.getBonuses();
     switch (id) {
