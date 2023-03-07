@@ -344,8 +344,8 @@ def perform_action(obj, user):
         elif isinstance(obj, Noble):
             pass
         # players shouldn't click on nobles
-            obj.take_noble(Sidebar.instance(), Player.instance(id=CURR_PLAYER))
-            set_flash_message('Took a noble')
+            # obj.take_noble(Sidebar.instance(), Player.instance(id=CURR_PLAYER))
+            # set_flash_message('Took a noble')
         
         elif isinstance(obj, Player):
             Sidebar.instance().switch_player(obj)
