@@ -1,6 +1,5 @@
 package splendor.model.game;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -15,7 +14,6 @@ import splendor.model.game.card.SplendorCard;
 import splendor.model.game.deck.Deck;
 import splendor.model.game.deck.NobleDeck;
 import splendor.model.game.deck.SplendorDeck;
-import splendor.model.game.payment.Cost;
 import splendor.model.game.payment.Token;
 import splendor.model.game.player.Player;
 import splendor.model.game.player.SplendorPlayer;
@@ -136,7 +134,7 @@ public class Board {
    *
    * @param tokens the tokens to give back
    */
-  private void giveBackTokens(HashMap<Color, Integer> tokens) {
+  public void giveBackTokens(HashMap<Color, Integer> tokens) {
     for (Color color : tokens.keySet()) {
       IntStream.range(0, tokens.get(color))
           .forEach(i -> bank.add(Token.of(color)));

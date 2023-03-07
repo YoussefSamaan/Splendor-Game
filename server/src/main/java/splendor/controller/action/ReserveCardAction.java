@@ -1,8 +1,10 @@
 package splendor.controller.action;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import splendor.model.game.Board;
+import splendor.model.game.Color;
 import splendor.model.game.SplendorGame;
 import splendor.model.game.card.DevelopmentCardI;
 import splendor.model.game.card.SplendorCard;
@@ -56,5 +58,10 @@ public class ReserveCardAction extends CardAction {
     board.removeCard(this.getCard());
     boolean hasGoldToken = board.hasGoldToken();
     player.reserveCard((DevelopmentCardI) this.getCard(), hasGoldToken);
+    if (hasGoldToken) {
+      HashMap<Color, Integer> tokens = new HashMap<>();
+      tokens.put(Color.GOLD, 1);
+      board.removeTokens(tokens);
+    }
   }
 }
