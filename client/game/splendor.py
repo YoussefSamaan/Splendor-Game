@@ -370,8 +370,8 @@ class TokenMenu:
 
         self.token_selection_list :List[IndividualTokenSelection] = [] 
         # button for confirming token selection
-        self.confirm_take_button = Button(pygame.Rect(WIDTH/2-100,HEIGHT*3/5,90,55), self.confirm_take_token, text="Take Token")
-        self.confirm_return_button = Button(pygame.Rect(WIDTH/2+100,HEIGHT*3/5,90,55), self.confirm_return_token, text="Return Token")
+        self.confirm_take_button = Button(pygame.Rect(WIDTH/2-100,HEIGHT*7/10,90,55), self.confirm_take_token, text="Take Token")
+        self.confirm_return_button = Button(pygame.Rect(WIDTH/2+100,HEIGHT*7/10,90,55), self.confirm_return_token, text="Return Token")
 
         
     def generate_selection_and_buttons(self) -> Tuple[List[IndividualTokenSelection],List[Button]]:
