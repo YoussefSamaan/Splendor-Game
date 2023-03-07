@@ -85,8 +85,8 @@ public class Board {
     }
 
     takeCardFromDeck(card);
-    player.buyCard(card);
-    giveBackTokens(card.getCost());
+    HashMap<Color, Integer> tokensToGiveBack = player.buyCard(card);
+    giveBackTokens(tokensToGiveBack);
   }
 
   private boolean takeCardFromDeck(DevelopmentCardI card) {
@@ -121,11 +121,11 @@ public class Board {
   /**
    * give back tokens to the bank.
    *
-   * @param cost the tokens to give back
+   * @param tokens the tokens to give back
    */
-  private void giveBackTokens(Cost cost) {
-    for (Color color : cost) {
-      IntStream.range(0, cost.getValue(color))
+  private void giveBackTokens(HashMap<Color, Integer> tokens) {
+    for (Color color : tokens.keySet()) {
+      IntStream.range(0, tokens.get(color))
           .forEach(i -> bank.add(Token.of(color)));
     }
   }

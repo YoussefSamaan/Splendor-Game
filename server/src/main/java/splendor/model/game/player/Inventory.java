@@ -122,10 +122,12 @@ public class Inventory {
    *
    * @param cost the cost to pay
    * @pre player has enough resources
+   * @return the tokens used for the payment
    */
-  public void payFor(Cost cost) {
+  public HashMap<Color, Integer> payFor(Cost cost) {
     // apply discounts
     HashMap<Color, Integer> discountedCosts = getDiscountedCosts(cost);
+    HashMap<Color, Integer> tokensUsed = new HashMap<>();
 
     for (Color color : discountedCosts.keySet()) {
       int amount = discountedCosts.get(color);
@@ -138,11 +140,14 @@ public class Inventory {
         // use gold tokens to pay for the difference
         IntStream.range(0, difference).forEach(i -> tokens.remove(Token.of(Color.GOLD)));
         remaining = amount - difference;
+        tokensUsed.put(Color.GOLD, tokensUsed.getOrDefault(Color.GOLD, 0) + difference);
       } else {
         remaining = amount;
       }
       IntStream.range(0, remaining).forEach(i -> tokens.remove(Token.of(color)));
+      tokensUsed.put(color, remaining);
     }
+    return tokensUsed;
   }
 
   /**

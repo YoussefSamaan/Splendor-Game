@@ -13,7 +13,7 @@ import splendor.model.game.card.SplendorCard;
  * Interface for a splendor player. Can buy/reserve cards and nobles, and can take tokens.
  */
 public interface SplendorPlayer {
-  void buyCard(DevelopmentCardI card) throws InsufficientResourcesException;
+  HashMap<Color, Integer> buyCard(DevelopmentCardI card) throws InsufficientResourcesException;
 
   void reserveCard(DevelopmentCardI card, boolean addGoldToken);
 

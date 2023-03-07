@@ -94,13 +94,15 @@ public class Player implements PlayerReadOnly, SplendorPlayer {
    * Updates prestige points.
    *
    * @param card the card to buy
+   * @return hashmap of tokens to return to the bank
    * @throws InsufficientResourcesException if player does not have enough resources
    */
   @Override
-  public void buyCard(DevelopmentCardI card) throws InsufficientResourcesException {
-    inventory.payFor(card.getCost());
+  public HashMap<Color, Integer> buyCard(DevelopmentCardI card) throws InsufficientResourcesException {
+    HashMap<Color, Integer> tokens = inventory.payFor(card.getCost());
     inventory.addBoughtCard(card);
     prestigePoints += card.getPrestigePoints();
+    return tokens;
   }
 
   /**

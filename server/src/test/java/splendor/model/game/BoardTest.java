@@ -1,10 +1,12 @@
 package splendor.model.game;
 import java.lang.reflect.Field;
 import java.util.HashMap;
+import java.util.stream.IntStream;
 import org.junit.jupiter.api.*;
 import splendor.model.game.card.DevelopmentCard;
 import splendor.model.game.card.Noble;
 import splendor.model.game.deck.SplendorDeck;
+import splendor.model.game.payment.Token;
 import splendor.model.game.player.Inventory;
 import splendor.model.game.player.Player;
 import javax.naming.InsufficientResourcesException;
@@ -64,6 +66,41 @@ public class BoardTest {
 			return (HashMap<Color, Integer>) bonuses.get(inventory);
 		} catch (IllegalAccessException e) {
 			throw new RuntimeException(e);
+		}
+	}
+
+	private void setPlayerTokens(Player player, HashMap<Color, Integer> tokens) throws NoSuchFieldException {
+		Inventory inventory = getPlayerInventory(player);
+		Field tokensField = inventory.getClass().getDeclaredField("tokens");
+		tokensField.setAccessible(true);
+		try {
+			tokensField.set(inventory, new TokenBank(false));
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		}
+		TokenBank tokenBank = getInventoryTokens(inventory);
+		for (Color color : tokens.keySet()) {
+			IntStream.range(0, tokens.get(color)).forEach(i -> tokenBank.add(Token.of(color)));
+		}
+	}
+
+	private TokenBank getInventoryTokens(Inventory inventory) throws NoSuchFieldException {
+		Field tokens = inventory.getClass().getDeclaredField("tokens");
+		tokens.setAccessible(true);
+		try {
+			return (TokenBank) tokens.get(inventory);
+		} catch (IllegalAccessException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	private void resetTokenBank(Board board) throws NoSuchFieldException {
+		Field tokenBank = board.getClass().getDeclaredField("bank");
+		tokenBank.setAccessible(true);
+		try {
+			tokenBank.set(board, new TokenBank(false));
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
 		}
 	}
 
@@ -240,5 +277,60 @@ public class BoardTest {
 		}
 		testBoard.updateNobles(player1);
 		Assertions.assertEquals(2, nonNullCount(testBoard.getNobles().toArray()));
+	}
+
+	@Test
+	public void buyingDevCardReturnsTokensToBoard() throws NoSuchFieldException {
+		testBoard = new Board(player1, player2, player3, player4);
+		resetTokenBank(testBoard);
+		assert testBoard.getTokens().getOrDefault(Color.RED, 0) == 0;
+		DevelopmentCard card1 = DevelopmentCard.get(1); // 2 blue 2 red cost
+
+		try {
+			clearPlayerTokens(player1);
+		} catch (NoSuchFieldException e) {
+			e.printStackTrace();
+		}
+		HashMap<Color, Integer> bonus = new HashMap<>();
+		bonus.put(Color.RED, 10);
+		bonus.put(Color.WHITE, 10);
+		bonus.put(Color.GREEN, 10);
+		bonus.put(Color.BLUE, 10);
+		bonus.put(Color.BROWN, 10);
+		try {
+			setPlayerBonus(player1, bonus);
+		} catch (NoSuchFieldException e) {
+			throw new RuntimeException(e);
+		}
+		try {
+			testBoard.buyCard(player1, card1);
+		} catch (InsufficientResourcesException e) {
+			e.printStackTrace();
+		}
+		// Doesn't give back tokens because player has bonus
+		Assertions.assertEquals(0, (int) testBoard.getTokens().getOrDefault(Color.RED, 0));
+	}
+
+
+	@Test
+	public void testBuyDevCardGivesBackTokens2() throws NoSuchFieldException {
+		testBoard = new Board(player1, player2, player3, player4);
+		resetTokenBank(testBoard);
+		assert testBoard.getTokens().getOrDefault(Color.RED, 0) == 0;
+		DevelopmentCard card1 = DevelopmentCard.get(1); // 2 blue 2 red cost
+		HashMap<Color, Integer> tokens = new HashMap<>();
+		tokens.put(Color.RED, 2);
+		tokens.put(Color.BLUE, 2);
+		try {
+			setPlayerTokens(player1, tokens);
+		} catch (NoSuchFieldException e) {
+			e.printStackTrace();
+		}
+		try {
+			testBoard.buyCard(player1, card1);
+		} catch (InsufficientResourcesException e) {
+			e.printStackTrace();
+		}
+		Assertions.assertEquals(2, (int) testBoard.getTokens().getOrDefault(Color.RED, 0));
 	}
 }
