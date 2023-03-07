@@ -60,26 +60,50 @@ public class GameServiceParameters {
     return new Gson().toJson(map);
   }
 
+  /**
+   * Getter for game service name
+   * @return the name
+   */
   public String getName() {
     return gameServiceName;
   }
 
+  /**
+   * Getter for the lobby service url and port
+   * @return The lobby service location
+   */
   public String getLobbyServiceLocation() {
     return lobbyServiceLocation;
   }
 
+  /**
+   * Getter for game service display name
+   * @return The name
+   */
   public String getGameServiceDsiplayName() {
     return gameServiceDsiplayName;
   }
 
+  /**
+   * Getter for game service name
+   * @return The name
+   */
   public String getGameServiceName() {
     return gameServiceName;
   }
 
+  /**
+   * Getter for oauth2 name
+   * @return The name
+   */
   public String getOauth2Name() {
     return oauth2Name;
   }
 
+  /**
+   * Getter for oauth2 password
+   * @return The password
+   */
   public String getOauth2Password() {
     return oauth2Password;
   }
