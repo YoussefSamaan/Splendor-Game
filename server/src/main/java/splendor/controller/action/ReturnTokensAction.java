@@ -66,16 +66,14 @@ public class ReturnTokensAction implements Action {
 
             HashMap<Color, Integer> combination = new HashMap<>();
             combination.put(color1, 1);
-            combination.put(color2, 1);
-            combination.put(color3, 1);
+            combination.put(color2, combination.getOrDefault(color2, 0) + 1);
+            combination.put(color3, combination.getOrDefault(color3, 0) + 1);
             combinations.add(combination);
 
           }
         }
       }
-    }
-
-    if (numOfTokens == 2) {
+    } else if (numOfTokens == 2) {
       for (int i = 0; i < colors.length; i++) {
         Color color1 = colors[i];
         int count1 = tokens.getOrDefault(color1, 0);
@@ -92,14 +90,12 @@ public class ReturnTokensAction implements Action {
 
           HashMap<Color, Integer> combination = new HashMap<>();
           combination.put(color1, 1);
-          combination.put(color2, 1);
+          combination.put(color2, combination.getOrDefault(color2, 0) + 1);
           combinations.add(combination);
 
         }
       }
-    }
-
-    if (numOfTokens == 1) {
+    } else if (numOfTokens == 1) {
       for (int i = 0; i < colors.length; i++) {
         Color color1 = colors[i];
         int count1 = tokens.getOrDefault(color1, 0);
