@@ -40,7 +40,7 @@ public class TakeCardAction extends CardAction {
   public static List<Action> getLegalActions(SplendorGame game, int level) {
     List<Action> actions = new ArrayList<>();
     SplendorDeck[] decks = game.getBoard().getDecks();
-    if (level == 1) {
+    if (level == 2) {
       SplendorDeck yellowCards = decks[1];
       SplendorDeck red2Cards = decks[4];
 
@@ -56,7 +56,7 @@ public class TakeCardAction extends CardAction {
         }
       }
 
-    } else if (level == 2) {
+    } else if (level == 1) {
       SplendorDeck greenCards = decks[0];
       SplendorDeck red1Cards = decks[3];
 

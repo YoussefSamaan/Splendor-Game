@@ -28,7 +28,7 @@ class Noble:
         
         # Create n nobles with the chosen ids
         for noble in nobles:
-            Noble.instance(id=noble['cardId'])
+            Noble.instance(id=noble)
 
     @staticmethod
     def display_all(screen):
@@ -66,6 +66,13 @@ class Noble:
 
     def get_id(self):
         return self._id
+
+    @staticmethod
+    def update_all(noble_ids):
+        for noble in Noble.flyweights.values():
+            if noble._id not in noble_ids:
+                noble.isOnDisplay = False
+            
 
     @staticmethod
     def get_card_size():

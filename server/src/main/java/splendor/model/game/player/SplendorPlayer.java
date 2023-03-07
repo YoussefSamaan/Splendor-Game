@@ -36,6 +36,8 @@ public interface SplendorPlayer {
 
   ActionType nextAction();
 
+  void resetNextActions();
+
   List<DevelopmentCardI> getCardsBought();
 
   HashMap<Color, Integer> getTokens();
