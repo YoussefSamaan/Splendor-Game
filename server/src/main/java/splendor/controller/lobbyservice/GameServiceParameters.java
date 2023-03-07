@@ -61,7 +61,8 @@ public class GameServiceParameters {
   }
 
   /**
-   * Getter for game service name
+   * Getter for game service name.
+   *
    * @return the name
    */
   public String getName() {
@@ -69,7 +70,8 @@ public class GameServiceParameters {
   }
 
   /**
-   * Getter for the lobby service url and port
+   * Getter for the lobby service url and port.
+   *
    * @return The lobby service location
    */
   public String getLobbyServiceLocation() {
@@ -77,7 +79,8 @@ public class GameServiceParameters {
   }
 
   /**
-   * Getter for game service display name
+   * Getter for game service display name.
+   *
    * @return The name
    */
   public String getGameServiceDsiplayName() {
@@ -85,7 +88,8 @@ public class GameServiceParameters {
   }
 
   /**
-   * Getter for game service name
+   * Getter for game service name.
+   *
    * @return The name
    */
   public String getGameServiceName() {
@@ -93,7 +97,8 @@ public class GameServiceParameters {
   }
 
   /**
-   * Getter for oauth2 name
+   * Getter for oauth2 name.
+   *
    * @return The name
    */
   public String getOauth2Name() {
@@ -101,7 +106,8 @@ public class GameServiceParameters {
   }
 
   /**
-   * Getter for oauth2 password
+   * Getter for oauth2 password.
+   *
    * @return The password
    */
   public String getOauth2Password() {

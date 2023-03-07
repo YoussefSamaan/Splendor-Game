@@ -39,7 +39,7 @@ public class Bonus implements Iterable<Color> {
   }
 
   /**
-   * Iterator function
+   * Iterator function.
    *
    * @return iterator for bonus map
    */

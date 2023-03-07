@@ -62,7 +62,7 @@ public class Cost implements Iterable<Color> {
   }
 
   /**
-   * Iterator function for cost map
+   * Iterator function for cost map.
    *
    * @return iterator
    */

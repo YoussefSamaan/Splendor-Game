@@ -38,7 +38,7 @@ public abstract class AbstractCard implements SplendorCard {
   }
 
   /**
-   * Getter for cost
+   * Getter for cost.
    *
    * @return cost
    */
@@ -48,7 +48,7 @@ public abstract class AbstractCard implements SplendorCard {
   }
 
   /**
-   * Getter for prestige points
+   * Getter for prestige points.
    *
    * @return prestige points
    */
@@ -58,7 +58,7 @@ public abstract class AbstractCard implements SplendorCard {
   }
 
   /**
-   * Getter for card id
+   * Getter for card id.
    *
    * @return card id
    */
@@ -68,7 +68,7 @@ public abstract class AbstractCard implements SplendorCard {
   }
 
   /**
-   * Getter for bonus
+   * Getter for bonus.
    *
    * @return bonus
    */
@@ -116,7 +116,7 @@ public abstract class AbstractCard implements SplendorCard {
   }
 
   /**
-   * Returns hash map of bonuses from the json input
+   * Returns hash map of bonuses from the json input.
    *
    * @param bonus json
    * @return bonuses

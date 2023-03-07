@@ -53,9 +53,9 @@ public class CoatOfArms {
   }
 
   /**
-   * Checks if player can unlock a coat of arms
+   * Checks if player can unlock a coat of arms.
    *
-   * @param player
+   * @param player that we are checking
    * @return true if the player can unlock
    */
   private boolean canUnlock(Player player) {

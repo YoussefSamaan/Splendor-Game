@@ -47,7 +47,7 @@ public class Deck implements SplendorDeck {
   }
 
   /**
-   * creates the deck
+   * creates the deck.
    */
   private void initDeck() {
     try {
@@ -100,7 +100,7 @@ public class Deck implements SplendorDeck {
   }
 
   /**
-   * Returns card count
+   * Returns card count.
    *
    * @return number of cards
    */
@@ -110,8 +110,9 @@ public class Deck implements SplendorDeck {
   }
 
   /**
-   * Checks if a card is face up or face down
-   * @param card
+   * Checks if a card is face up or face down.
+   *
+   * @param card that we are checking
    * @return -1 if a card is face down, positive number if a card is face up
    */
   @Override
@@ -126,7 +127,7 @@ public class Deck implements SplendorDeck {
   }
 
   /**
-   * Retrieves face up cards
+   * Retrieves face up cards.
    *
    * @return face up cards
    */
@@ -136,7 +137,7 @@ public class Deck implements SplendorDeck {
   }
 
   /**
-   * Getter for color
+   * Getter for color.
    *
    * @return color
    */
@@ -146,7 +147,7 @@ public class Deck implements SplendorDeck {
   }
 
   /**
-   * Getter for level
+   * Getter for level.
    *
    * @return level
    */
@@ -176,7 +177,7 @@ public class Deck implements SplendorDeck {
   }
 
   /**
-   * Retrieves the start and end ids
+   * Retrieves the start and end ids.
    *
    * @return start and end ids
    */

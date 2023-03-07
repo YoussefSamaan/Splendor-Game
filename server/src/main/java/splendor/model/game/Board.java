@@ -78,11 +78,11 @@ public class Board {
 
 
   /**
-   * Performs BuyDevelopmentCard action on board
+   * Performs BuyDevelopmentCard action on board.
    *
-   * @param player
-   * @param card
-   * @throws InsufficientResourcesException
+   * @param player player buying the card
+   * @param card card being bought
+   * @throws InsufficientResourcesException when player cannot afford the card
    */
   private void buyDevelopmentCard(SplendorPlayer player, DevelopmentCardI card)
       throws InsufficientResourcesException {
@@ -96,10 +96,10 @@ public class Board {
   }
 
   /**
-   * Retrieves a card from the deck in the board
+   * Retrieves a card from the deck in the board.
    *
-   * @param card
-   * @return
+   * @param card taken from deck
+   * @return true if position is not -1
    */
   private boolean takeCardFromDeck(DevelopmentCardI card) {
     for (SplendorDeck deck : decks) {
@@ -155,9 +155,9 @@ public class Board {
 
 
   /**
-   * Removes noble from the nobleDeck on the board
+   * Removes noble from the nobleDeck on the board.
    *
-   * @param noble
+   * @param noble being removed
    */
   public void removeNoble(Noble noble) {
     nobleDeck.removeNoble(noble);
@@ -178,7 +178,8 @@ public class Board {
   }
 
   /**
-   * Checks if the bank contains any gold tokens
+   * Checks if the bank contains any gold tokens.
+   *
    * @return true if bank contains at least 1 gold token, false otherwise
    */
   public boolean hasGoldToken() {
@@ -200,7 +201,7 @@ public class Board {
   }
 
   /**
-   * Getter for tokens
+   * Getter for tokens.
    *
    * @return tokens from bank on board
    */
