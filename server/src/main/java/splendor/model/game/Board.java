@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import javax.naming.InsufficientResourcesException;
 import splendor.model.game.card.DevelopmentCardI;
@@ -126,10 +128,16 @@ public class Board {
         .forEach(i -> bank.add(Token.of(color))));
   }
 
-
+  /**
+   * Returns a list of the nobles. Removes nulls.
+   *
+   * @return a list of the nobles.
+   */
   public List<Noble> getNobles() {
     Noble[] nobles = nobleDeck.getNobles();
-    return new ArrayList<>(Arrays.asList(nobles));
+    return Arrays.stream(nobles)
+        .filter(Objects::nonNull)
+        .collect(Collectors.toList());
   }
 
 

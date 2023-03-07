@@ -11,6 +11,7 @@ import splendor.model.game.card.DevelopmentCardI;
 import splendor.model.game.card.Noble;
 import splendor.model.game.card.SplendorCard;
 import splendor.model.game.payment.Bonus;
+import splendor.model.game.payment.Cost;
 import splendor.model.game.payment.Token;
 
 
@@ -109,17 +110,46 @@ public class Inventory {
   }
 
   /**
-   * To make a payment of some color.
+   * Make a payment for a cost.
    *
-   * @param color the color to pay
-   * @param amount the amount to pay
+   * @param cost the cost to pay
    * @pre player has enough resources
    */
-  public void payFor(Color color, int amount) {
-    int discount = nobles.stream().mapToInt(noble -> noble.getBonus().getBonus(color)).sum();
-    discount += boughtCards.stream().mapToInt(card -> card.getBonus().getBonus(color)).sum();
-    int toPay = amount - discount;
-    IntStream.range(0, toPay).forEach(i -> tokens.remove(Token.of(color)));
+  public void payFor(Cost cost) {
+    // apply discounts
+    HashMap<Color, Integer> discountedCosts = getDiscountedCosts(cost);
+
+    for (Color color : discountedCosts.keySet()) {
+      int amount = discountedCosts.get(color);
+      if (amount <= 0) {
+        continue;
+      }
+      int difference = amount - tokens.count(Token.of(color));
+      int remaining = amount - difference;
+      if (difference > 0) { // pre is that player has enough resources
+        // use gold tokens to pay for the difference
+        IntStream.range(0, difference).forEach(i -> tokens.remove(Token.of(Color.GOLD)));
+      }
+      IntStream.range(0, remaining).forEach(i -> tokens.remove(Token.of(color)));
+    }
+  }
+
+  /**
+   * Gets the discounted costs of a cost.
+   *
+   * @param cost the cost to pay
+   * @return the discounted costs
+   */
+  public HashMap<Color, Integer> getDiscountedCosts(Cost cost) {
+    HashMap<Color, Integer> discount = getBonuses();
+    HashMap<Color, Integer> discountedCosts = new HashMap<>();
+    for (Color color : cost) {
+      int originalCost = cost.getValue(color);
+      int discountForColor = discount.getOrDefault(color, 0);
+      int discountedCost = Math.max(0, originalCost - discountForColor);
+      discountedCosts.put(color, discountedCost);
+    }
+    return discountedCosts;
   }
 
 

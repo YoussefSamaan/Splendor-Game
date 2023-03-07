@@ -72,5 +72,37 @@ public class CostTest {
 		testIterator.next();
 		Assertions.assertFalse(testIterator.hasNext());
 	}
-	
+
+	@Test
+	void testUsingGoldToPay() {
+		HashMap<Color, Integer> resources = new HashMap<Color, Integer>();
+		resources.put(Color.BLUE, 3);
+		resources.put(Color.GOLD, 2);
+
+		Assertions.assertTrue(testCost.isAffordable(resources));
+	}
+
+	@Test
+	void testUsingGoldToPayNotEnough() {
+		HashMap<Color, Integer> resources = new HashMap<Color, Integer>();
+		resources.put(Color.BLUE, 3);
+		resources.put(Color.GOLD, 1);
+
+		Assertions.assertFalse(testCost.isAffordable(resources));
+	}
+
+	@Test
+	void testUsingGoldToPayMultiple() {
+		HashMap<Color, Integer> resources = new HashMap<Color, Integer>();
+		resources.put(Color.BLUE, 3);
+		resources.put(Color.GREEN, 3);
+		resources.put(Color.GOLD, 2);
+
+		HashMap<Color, Integer> cost = new HashMap<Color, Integer>();
+		testCardCost.put(Color.BLUE, 4);
+		testCardCost.put(Color.GREEN, 4);
+		Cost testCost = new Cost(cost);
+
+		Assertions.assertTrue(testCost.isAffordable(resources));
+	}
 }
