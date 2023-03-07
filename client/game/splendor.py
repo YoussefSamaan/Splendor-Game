@@ -532,7 +532,7 @@ def play(authenticator, game_id):
     logged_in_user = authenticator.username
     while True:
         # update every 5 seconds on a separate thread
-        if pygame.time.get_ticks() - last_update > 5000:
+        if pygame.time.get_ticks() - last_update > 2000:
             last_update = pygame.time.get_ticks()
             # start a new thread
             with threading.Lock():

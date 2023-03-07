@@ -88,15 +88,7 @@ public class Player implements PlayerReadOnly, SplendorPlayer {
    */
   @Override
   public void buyCard(DevelopmentCardI card) throws InsufficientResourcesException {
-    Cost cost = card.getCost();
-    HashMap<Color, Integer> resources = inventory.getResources();
-    List<Token> totalPaidTokens = new ArrayList<>();
-    for (Color color : cost) {
-      if (resources.getOrDefault(color, 0) < cost.getValue(color)) {
-        throw new InsufficientResourcesException("Not enough resources to buy card");
-      }
-      inventory.payFor(color, cost.getValue(color));
-    }
+    inventory.payFor(card.getCost());
     inventory.addBoughtCard(card);
     prestigePoints += card.getPrestigePoints();
   }

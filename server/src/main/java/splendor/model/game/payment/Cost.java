@@ -35,13 +35,32 @@ public class Cost implements Iterable<Color> {
    * @return true if the given resources are sufficient to pay this cost
    */
   public boolean isAffordable(HashMap<Color, Integer> resources) {
+    HashMap<Color, Integer> remainingCosts = new HashMap<>(costMap);
+    int goldCount = resources.getOrDefault(Color.GOLD, 0);
+
     for (Color color : costMap.keySet()) {
-      if (resources.getOrDefault(color, 0) < costMap.get(color)) {
-        return false;
+      int requiredCount = remainingCosts.getOrDefault(color, 0);
+      int availableCount = resources.getOrDefault(color, 0);
+
+      if (color == Color.GOLD) {
+        continue; // skip gold cost
+      }
+
+      if (availableCount < requiredCount) {
+        int goldNeeded = requiredCount - availableCount;
+        if (goldCount < goldNeeded) {
+          return false;
+        }
+        goldCount -= goldNeeded;
+        remainingCosts.put(color, 0);
+      } else {
+        remainingCosts.put(color, 0);
       }
     }
+
     return true;
   }
+
 
   @Override
   public Iterator<Color> iterator() {
