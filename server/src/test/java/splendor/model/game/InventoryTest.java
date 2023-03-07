@@ -1,10 +1,10 @@
 package splendor.model.game;
 
+import static org.junit.Assert.assertEquals;
+
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.stream.IntStream;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
@@ -183,6 +183,32 @@ public class InventoryTest {
     inventory.payFor(cost);
     for (Color color : tokens.keySet()) {
       assertEquals(1, (int) inventory.getTokens().get(color));
+    }
+  }
+
+  @Test
+  public void testErrorPayFor() {
+    HashMap<Color, Integer> tokens = new HashMap<>();
+    tokens.put(Color.BLUE, 10);
+    tokens.put(Color.GREEN, 10);
+    tokens.put(Color.RED, 10);
+    tokens.put(Color.WHITE, 10);
+    tokens.put(Color.BROWN, 10);
+    try {
+      setPlayerTokens(player, tokens);
+    } catch (NoSuchFieldException e) {
+      e.printStackTrace();
+    }
+    HashMap<Color, Integer> costMap = new HashMap<>();
+    costMap.put(Color.BLUE, 1);
+    costMap.put(Color.GREEN, 1);
+    costMap.put(Color.RED, 1);
+    costMap.put(Color.WHITE, 1);
+    costMap.put(Color.BROWN, 1);
+    Cost cost = new Cost(costMap);
+    inventory.payFor(cost);
+    for (Color color : tokens.keySet()) {
+      assertEquals(9, (int) inventory.getTokens().get(color));
     }
   }
 }

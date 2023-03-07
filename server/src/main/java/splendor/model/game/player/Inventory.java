@@ -133,10 +133,13 @@ public class Inventory {
         continue;
       }
       int difference = amount - tokens.count(Token.of(color));
-      int remaining = amount - difference;
+      int remaining;
       if (difference > 0) { // pre is that player has enough resources
         // use gold tokens to pay for the difference
         IntStream.range(0, difference).forEach(i -> tokens.remove(Token.of(Color.GOLD)));
+        remaining = amount - difference;
+      } else {
+        remaining = amount;
       }
       IntStream.range(0, remaining).forEach(i -> tokens.remove(Token.of(color)));
     }
