@@ -54,12 +54,12 @@ class IndividualTokenSelection:
             if self.amount > 0:
                 self.amount -= 1
                 self.display()
-        X_SHIFT = 60
-        Y_SHIFT = 0
+        X_SHIFT = 40
+        Y_SHIFT = 60
         BUTTON_WIDTH = 90
         BUTTON_HEIGHT = 55
-        green_rect = pygame.Rect(x_pos-X_SHIFT,y_pos,BUTTON_WIDTH,BUTTON_HEIGHT)
-        red_rect = pygame.Rect(x_pos+X_SHIFT,y_pos,BUTTON_WIDTH,BUTTON_HEIGHT)
+        green_rect = pygame.Rect(x_pos-X_SHIFT,y_pos+Y_SHIFT,BUTTON_WIDTH,BUTTON_HEIGHT)
+        red_rect = pygame.Rect(x_pos+X_SHIFT,y_pos+Y_SHIFT,BUTTON_WIDTH,BUTTON_HEIGHT)
         self.incrementButton = Button(green_rect,incrementEvent,GREEN)
         self.decrementButton = Button(red_rect,decrementEvent,RED)
     
@@ -342,8 +342,10 @@ def perform_action(obj, user):
             get_token_selection()
             
         elif isinstance(obj, Noble):
-            obj.take_noble(Sidebar.instance(), Player.instance(id=CURR_PLAYER))
-            set_flash_message('Took a noble')
+            pass
+        # players shouldn't click on nobles
+            # obj.take_noble(Sidebar.instance(), Player.instance(id=CURR_PLAYER))
+            # set_flash_message('Took a noble')
         
         elif isinstance(obj, Player):
             Sidebar.instance().switch_player(obj)
@@ -475,6 +477,9 @@ class TokenMenu:
 
             self.confirm_take_button.display(DISPLAYSURF)
             self.confirm_return_button.display(DISPLAYSURF)
+
+            write_on(DISPLAYSURF,self.confirm_take_button.text,center=self.confirm_take_button.rectangle.center)
+            write_on(DISPLAYSURF,self.confirm_return_button.text,center=self.confirm_return_button.rectangle.center)
             pygame.display.update()
             for token_selection in button_list:
                 pygame.draw.rect(self.selection_box,token_selection.color,token_selection.rectangle)
