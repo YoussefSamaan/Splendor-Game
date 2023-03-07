@@ -46,6 +46,9 @@ public class Deck implements SplendorDeck {
     initDeck();
   }
 
+  /**
+   * creates the deck
+   */
   private void initDeck() {
     try {
       if (cardsJson == null) {
@@ -96,11 +99,21 @@ public class Deck implements SplendorDeck {
     return card;
   }
 
+  /**
+   * Returns card count
+   *
+   * @return number of cards
+   */
   @Override
   public int getCardCount() {
     return faceDown.size();
   }
 
+  /**
+   * Checks if a card is face up or face down
+   * @param card
+   * @return -1 if a card is face down, positive number if a card is face up
+   */
   @Override
   public int isFaceUp(DevelopmentCardI card) {
     for (int i = 0; i < faceUpCards.length; i++) {
@@ -112,16 +125,31 @@ public class Deck implements SplendorDeck {
     return -1;
   }
 
+  /**
+   * Retrieves face up cards
+   *
+   * @return face up cards
+   */
   @Override
   public DevelopmentCardI[] getFaceUpCards() {
     return new DevelopmentCardI[] {faceUpCards[0], faceUpCards[1], faceUpCards[2]};
   }
 
+  /**
+   * Getter for color
+   *
+   * @return color
+   */
   @Override
   public Color getColor() {
     return color;
   }
 
+  /**
+   * Getter for level
+   *
+   * @return level
+   */
   @Override
   public int getLevel() {
     return level;
@@ -147,6 +175,11 @@ public class Deck implements SplendorDeck {
     }
   }
 
+  /**
+   * Retrieves the start and end ids
+   *
+   * @return start and end ids
+   */
   private int[] getStartAndEndIds() {
     JSONArray json = cardsJson
             .getJSONObject("color_map")

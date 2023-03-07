@@ -38,6 +38,11 @@ public class Bonus implements Iterable<Color> {
     return bonusMap.getOrDefault(color, 0);
   }
 
+  /**
+   * Iterator function
+   *
+   * @return iterator for bonus map
+   */
   @Override
   public Iterator<Color> iterator() {
     return bonusMap.keySet().iterator();

@@ -37,6 +37,11 @@ public class DevelopmentCard extends AbstractCard implements DevelopmentCardI {
     setSpecialAbilityFromJson();
   }
 
+  /**
+   * Getter for color
+   *
+   * @return color
+   */
   @Override
   public Color getColor() {
     return color;
@@ -69,6 +74,16 @@ public class DevelopmentCard extends AbstractCard implements DevelopmentCardI {
     return CARDS[index];
   }
 
+  /**
+   * Retrieves color of a card using the cardid
+   *
+   * @return
+   */
+  /**
+   *
+   * @param cardId
+   * @return
+   */
   private Color getColorFromJson(int cardId) {
     JSONObject map = super.getJson().getJSONObject("color_map");
     for (String key : map.keySet()) {

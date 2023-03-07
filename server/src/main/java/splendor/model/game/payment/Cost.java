@@ -61,7 +61,11 @@ public class Cost implements Iterable<Color> {
     return true;
   }
 
-
+  /**
+   * Iterator function for cost map
+   *
+   * @return iterator
+   */
   @Override
   public Iterator<Color> iterator() {
     return costMap.keySet().iterator();
