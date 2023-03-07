@@ -78,6 +78,6 @@ public class SplendorGameTest {
 	@Test
 	public void testPerformingActionUpdatesTurn() {
 		testPerformAction();
-		Assertions.assertFalse(testSplendorGame.isTurnPlayer(player1));
+		Assertions.assertTrue(testSplendorGame.isTurnPlayer(player1)); // returning
 	}
 }

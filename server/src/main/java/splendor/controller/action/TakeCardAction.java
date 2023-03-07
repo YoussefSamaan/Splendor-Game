@@ -28,8 +28,10 @@ public class TakeCardAction extends CardAction {
 
   @Override
   public void performAction(Player player, Board board) {
-    player.addCard((DevelopmentCardI) this.getCard());
+    DevelopmentCardI card = (DevelopmentCardI) this.getCard();
+    player.addCard(card);
     board.removeCard(this.getCard());
+    card.getSpecialActions().forEach(player::addNextAction); // add special actions to player
   }
 
   /**

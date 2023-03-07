@@ -249,6 +249,13 @@ public class Player implements PlayerReadOnly, SplendorPlayer {
     for (Color c : tokens.keySet()) {
       inventory.addTokens(Token.of(c), tokens.get(c));
     }
+    int i = 0;
+    for (Color c : inventory.getTokens().keySet()) {
+      i += inventory.getTokens().get(c);
+    }
+    if (i > 10) {
+      this.nextActions.add(ActionType.RETURN_TOKENS);
+    }
   }
 
   /**
