@@ -329,8 +329,10 @@ def perform_action(obj, user):
     if obj is None:
         return
     global CURR_PLAYER
+    global action_manager
     # make sure it's the current user's turn, otherwise cannot take cards
     if user == Player.instance(id=CURR_PLAYER).name:
+        action_manager.update(Player.instance(id=CURR_PLAYER).name)
         if isinstance(obj, Card):
             global cascade
             if cascade:
