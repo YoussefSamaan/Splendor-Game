@@ -238,6 +238,10 @@ public class Player implements PlayerReadOnly, SplendorPlayer {
     return inventory.getNoblesCount();
   }
 
+  /**
+   * Removes tokens from player inventory
+   * @param tokens to remove
+   */
   public void removeTokens(HashMap<Color, Integer> tokens) {
     inventory.removeTokens(tokens);
   }
