@@ -88,6 +88,7 @@ public class Inventory {
     return resources;
   }
 
+
   private void addBonus(List<? extends SplendorCard> cards, HashMap<Color, Integer> resources) {
     for (SplendorCard card : cards) {
       Bonus bonus = card.getBonus();

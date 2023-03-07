@@ -18,9 +18,9 @@ public interface Action {
 
 
   /**
-   * Preforms the action depending on the which action is being called.
+   * Performs the action depending on the which action is being called.
    *
-   * @param player the player that preforming the action.
+   * @param player the player that is performing the action.
    * @param board  the board that the player is playing on.
    */
   void performAction(Player player, Board board);

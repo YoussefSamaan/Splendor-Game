@@ -70,6 +70,13 @@ public class TakeNobleAction extends CardAction {
     return actions;
   }
 
+  /**
+   * Checks if the player can afford the noble.
+   *
+   * @param cards the player's cards, used to calculate all the player's bonuses.
+   * @param cost the cost of the noble
+   * @return whether the bonuses in the cards reach the cost of the noble
+   */
   private static boolean canAfford(List<DevelopmentCardI> cards, Cost cost) {
     HashMap<Color, Integer> costCopy = new HashMap<>();
     for (Color c : cost) {

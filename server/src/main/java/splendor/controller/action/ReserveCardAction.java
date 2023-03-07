@@ -45,7 +45,12 @@ public class ReserveCardAction extends CardAction {
     return actions;
   }
 
-
+  /**
+   * Performs the ReserveCard action for a player
+   *
+   * @param player the player we are performing an action for.
+   * @param board the board where we are performing the action.
+   */
   @Override
   public void performAction(Player player, Board board) {
     board.removeCard(this.getCard());
