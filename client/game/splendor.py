@@ -54,12 +54,12 @@ class IndividualTokenSelection:
             if self.amount > 0:
                 self.amount -= 1
                 self.display()
-        X_SHIFT = 60
-        Y_SHIFT = 0
+        X_SHIFT = 40
+        Y_SHIFT = 60
         BUTTON_WIDTH = 90
         BUTTON_HEIGHT = 55
-        green_rect = pygame.Rect(x_pos-X_SHIFT,y_pos,BUTTON_WIDTH,BUTTON_HEIGHT)
-        red_rect = pygame.Rect(x_pos+X_SHIFT,y_pos,BUTTON_WIDTH,BUTTON_HEIGHT)
+        green_rect = pygame.Rect(x_pos-X_SHIFT,y_pos+Y_SHIFT,BUTTON_WIDTH,BUTTON_HEIGHT)
+        red_rect = pygame.Rect(x_pos+X_SHIFT,y_pos+Y_SHIFT,BUTTON_WIDTH,BUTTON_HEIGHT)
         self.incrementButton = Button(green_rect,incrementEvent,GREEN)
         self.decrementButton = Button(red_rect,decrementEvent,RED)
     
