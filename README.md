@@ -56,13 +56,13 @@ Board Game Platform (BGP) = Lobby Service + Lobby Service Web UI + Sample Game, 
 
 Fill e.g. names + link to github profiles in list below.
 
- * Youssef Samaan - [https://github.com/YoussefSamaan2]
- * Kevin Yu - [https://github.com/iveykun]
- * Wassim Wazzi- [https://github.com/wassimwazzi]
- * Rui Cong Su - [https://github.com/a-lil-birb]
- * Felicia Sun - [https://github.com/Felicia-Sun]
- * Jessie Xu - [https://github.com/XiaoyuJessieXu1]
- * Maximilian Schiedermeier - [https://github.com/m5c]
+ * [Youssef Samaan](https://github.com/YoussefSamaan2)
+ * [Kevin Yu](https://github.com/iveykun)
+ * [Wassim Wazzi](https://github.com/wassimwazzi)
+ * [Rui Cong Su](https://github.com/a-lil-birb)
+ * [Felicia Sun](https://github.com/Felicia-Sun)
+ * [Jessie Xu](https://github.com/XiaoyuJessieXu1)
+ * [Maximilian Schiedermeier](https://github.com/m5c)
  
 
 
