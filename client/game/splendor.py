@@ -35,6 +35,8 @@ CURR_PLAYER = 0
 action_manager = None
 has_initialized = False
 cascade = False
+TRADING_POST_ENABLED = True 
+CITIES_ENABLED = False
 
 class IndividualTokenSelection:
     def __init__(self, token: Token, x_pos: int, y_pos: int) -> None:
@@ -74,9 +76,15 @@ def initialize_game(board_json):
     initialize_board()
     initialize_cards()
     initialize_tokens()
-    initialize_nobles(board_json)
+    
     initialize_players(board_json)
-    initialize_trade_routes(board_json)
+    if TRADING_POST_ENABLED:
+        initialize_trade_routes(board_json)
+    if CITIES_ENABLED:
+        pass
+        #initialize_cities(board_json)
+    else:
+        initialize_nobles(board_json)
     initialize_sidebar()
     print(board_json)
 
@@ -157,9 +165,14 @@ def update(authenticator, game_id):
     update_players(board_json)
     update_decks(board_json)
     update_tokens(board_json)
-    update_nobles(board_json)
-    TradeRoute.instance().update(board_json)
     
+    if TRADING_POST_ENABLED:
+        TradeRoute.instance().update(board_json)
+    if CITIES_ENABLED:
+        pass
+        #update_cities(board_json)
+    else:
+        update_nobles(board_json)
 
 def check_cascade():
     """Checks if we need to cascade a card purchase.
@@ -212,8 +225,13 @@ def display_everything(current_user):
     display_board()
     display_decks()
     display_tokens()
-    display_nobles()
-    display_trade_routes()
+    if CITIES_ENABLED:
+        pass
+        #display_cities()
+    else:
+        display_nobles()
+    if TRADING_POST_ENABLED:
+        display_trade_routes()
 
     show_flash_message()  # last so it's on top
     show_persistent_message()
@@ -345,6 +363,8 @@ def perform_action(obj, user):
             
         elif isinstance(obj, Noble):
             pass
+        #elif isinstance(obj, City):
+            #pass
         # players shouldn't click on nobles
             # obj.take_noble(Sidebar.instance(), Player.instance(id=CURR_PLAYER))
             # set_flash_message('Took a noble')
@@ -571,7 +591,8 @@ def play(authenticator, game_id):
                     # check if it's the sidebar toggle
                     position = pygame.mouse.get_pos()
                     check_toggle(position)
-                    TradeRoute.instance().check_click(position,DISPLAYSURF)
+                    if TRADING_POST_ENABLED:
+                        TradeRoute.instance().check_click(position,DISPLAYSURF)
                     obj = get_clicked_object(position)
                     perform_action(obj, logged_in_user)
                     with threading.Lock():
