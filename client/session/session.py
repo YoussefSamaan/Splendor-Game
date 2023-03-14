@@ -75,7 +75,6 @@ LAUNCH_RECT_SIZE = (90,55)
 MAX_SESSIONS_PER_PAGE = 4
 current_page = 0
 
-
 class Button:
     def __init__(self,rectangle : pygame.Rect, on_click_event : Callable[[None], None], color: Tuple[int,int,int] = LIGHT_GREY, text: str = "") -> None:
         self.rectangle = rectangle
@@ -85,6 +84,20 @@ class Button:
 
     def set_text(self, text):
         self.text = text
+
+class Checkbox(Button): # a button that stays pressed until pressed again
+    def __init__(self,rectangle : pygame.Rect, on_click_event : Callable[[None], None], color: Tuple[int,int,int] = LIGHT_GREY, text: str = "") -> None:
+        super().__init__(rectangle, on_click_event, color, text)
+        self.pressed = False
+    
+    def is_pressed(self):
+        return self.pressed
+def press_checkbox(checkbox : Checkbox) -> None:
+    checkbox.pressed = not checkbox.pressed
+    checkbox.color = color_active if checkbox.pressed else color_passive
+
+trade_rect = Checkbox(pygame.Rect((200, 100, 150, 70)), press_checkbox)
+cities_rect = Checkbox(pygame.Rect((400, 100, 150, 70)), press_checkbox)
 
 # action when the back button is pressed
 def back_button_event() -> None:
@@ -224,6 +237,9 @@ def session(authenticator :Authenticator) -> int:
         clickable_buttons :List[Button] = []
 
         def create_button_event() -> None:
+            trade_enabled = trade_rect.is_pressed()
+            cities_enabled = cities_rect.is_pressed()
+            # TODO: implement switching trade/cities on off
             post_session.create_session(authenticator.username, authenticator.get_token())
 
         # current_page: 0-indexed
@@ -237,7 +253,7 @@ def session(authenticator :Authenticator) -> int:
             current_page = min(current_page+1, max(0,(len(session_list)-1) // MAX_SESSIONS_PER_PAGE))
 
         # These buttons are always visible regardless of page
-        back_rect = Button(pygame.Rect((50, 100, 150, 70)), back_button_event, RED)
+        back_rect = Button(pygame.Rect((50, 100, 100, 70)), back_button_event, RED)
         previous_rect = Button(pygame.Rect((150, 660, 150, 70)), previous_button_event, LIGHT_BLUE)
         next_rect = Button(pygame.Rect((600, 660, 150, 70)), next_button_event, LIGHT_BLUE)
         # Back is the logout button, not to be confused with previous
@@ -247,6 +263,8 @@ def session(authenticator :Authenticator) -> int:
         clickable_buttons.append(next_rect)
         clickable_buttons.append(previous_rect)
         clickable_buttons.append(create_rect)
+        clickable_buttons.append(trade_rect)
+        clickable_buttons.append(cities_rect)
 
         # display page number: 1-indexed
         new_text(f"{current_page+1} / {max(1,((len(session_list)-1) // MAX_SESSIONS_PER_PAGE)+1)}", WHITE, 385, 125)
@@ -267,10 +285,12 @@ def session(authenticator :Authenticator) -> int:
             new_text(button.text, WHITE, button.rectangle.x + 10, button.rectangle.y + 10)
 
         # writing text on buttons
-        new_text("Back", WHITE, 85, 125)
+        new_text("Back", WHITE, 80, 125)
         new_text("Next", WHITE, 625, 665)
         new_text("Previous", WHITE, 150, 665)
         new_text("Create", WHITE, 625, 125)
+        new_text("T.R.", WHITE, 225, 125)
+        new_text("Cities", WHITE, 425, 125)
 
         for event in pygame.event.get():
             # when the user clicks or types anything
