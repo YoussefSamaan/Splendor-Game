@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import org.springframework.stereotype.Component;
 import splendor.model.game.SplendorGame;
-import splendor.model.game.player.Player;
 import splendor.model.game.player.SplendorPlayer;
 
 /**
@@ -36,6 +35,7 @@ public class ActionGenerator {
       actions.addAll(TakeTokensAction.getLegalActions(game));
       actions.addAll(ReserveCardAction.getLegalActions(game, player));
       actions.addAll(BuyCardAction.getLegalActions(game, player));
+      actions.addAll(BuyReservedCardAction.getLegalActions(player));
     } else if (player.nextAction() == ActionType.TAKE_CARD_2) {
       actions.addAll(TakeCardAction.getLegalActions(game, 2));
     } else if (player.nextAction() == ActionType.TAKE_CARD_1) {
