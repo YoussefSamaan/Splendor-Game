@@ -222,4 +222,8 @@ public class Inventory {
   public List<DevelopmentCardI> getReservedCards(){
     return this.reservedCards;
   }
+
+  public void removeReservedCard(DevelopmentCardI card){
+    this.reservedCards.remove(card);
+  }
 }
