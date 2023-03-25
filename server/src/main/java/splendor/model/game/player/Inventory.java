@@ -218,4 +218,8 @@ public class Inventory {
   public HashMap<Color, Integer> getBonuses() {
     return discounts;
   }
+
+  public List<DevelopmentCardI> getReservedCards(){
+    return this.reservedCards;
+  }
 }

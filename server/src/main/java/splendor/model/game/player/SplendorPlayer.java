@@ -59,4 +59,6 @@ public interface SplendorPlayer {
    * @return  a hashmap of tokens.
    */
   HashMap<Color, Integer> getTokens();
+
+  List<DevelopmentCardI> getReservedCards();
 }

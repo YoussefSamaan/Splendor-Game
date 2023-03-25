@@ -305,4 +305,8 @@ public class Player implements PlayerReadOnly, SplendorPlayer {
   public void addPrestigePoints(int prestigePoints) {
     this.prestigePoints += prestigePoints;
   }
+
+  public List<DevelopmentCardI> getReservedCards(){
+    return this.inventory.getReservedCards();
+  }
 }

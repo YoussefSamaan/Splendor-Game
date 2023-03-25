@@ -37,6 +37,9 @@ public class ReserveCardAction extends CardAction {
    */
   public static List<Action> getLegalActions(SplendorGame game, SplendorPlayer player) {
     List<Action> actions = new ArrayList<>();
+    if (player.getReservedCards().size() == 3){
+      return actions;
+    }
     for (SplendorDeck deck : game.getBoard().getDecks()) {
       for (DevelopmentCardI card : deck.getFaceUpCards()) {
         if (card != null) {
