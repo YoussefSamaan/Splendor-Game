@@ -1,5 +1,6 @@
 package splendor.model.game;
 
+import eu.kartoffelquadrat.asyncrestlib.BroadcastContent;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -21,7 +22,7 @@ import splendor.model.game.player.SplendorPlayer;
 /**
  * The board of the game. Contains the players, the nobles, the decks, and the tokens
  */
-public class Board {
+public class Board implements BroadcastContent {
   private final Player[] players;
   private int currentTurn;
   private final SplendorDeck[] decks = new SplendorDeck[6];
@@ -235,5 +236,15 @@ public class Board {
         return; // only unlock one noble per turn?
       }
     }
+  }
+
+  /**
+   * I don't know what this is for.  ¯\_(ツ)_/¯.
+   *
+   * @return false
+   */
+  @Override
+  public boolean isEmpty() {
+    return false;
   }
 }

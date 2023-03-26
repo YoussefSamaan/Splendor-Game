@@ -1,6 +1,8 @@
 package splendor.controller.game;
 
 import com.google.gson.Gson;
+import eu.kartoffelquadrat.asyncrestlib.BroadcastContentManager;
+import eu.kartoffelquadrat.asyncrestlib.ResponseGenerator;
 import java.util.logging.Logger;
 import javax.naming.AuthenticationException;
 import javax.naming.InsufficientResourcesException;
@@ -9,11 +11,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.context.request.async.DeferredResult;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import splendor.controller.action.ActionData;
 import splendor.controller.action.InvalidAction;
 import splendor.controller.helper.Authenticator;
+import splendor.model.game.Board;
 
 /**
  * Controller responsible for all HTTP requests specific to a game.
@@ -23,6 +28,10 @@ public class SplendorController extends HandlerInterceptorAdapter {
   private static final Logger LOGGER = Logger.getLogger(SplendorController.class.getName());
   private final GameManager gameManager;
   private final Authenticator authenticator;
+
+  private final int longPollTimeout = 60000;
+
+  private BroadcastContentManager<Board> broadcastContentManager;
 
   public SplendorController(@Autowired GameManager gameManager,
                             @Autowired Authenticator authenticator) {
@@ -68,9 +77,37 @@ public class SplendorController extends HandlerInterceptorAdapter {
       return ResponseEntity.badRequest().body(String.format("Game with id %d does not exist",
           gameId));
     }
+
     LOGGER.info(String.format("Returning board of game with id %d", gameId));
     String body = new Gson().toJson(gameManager.getBoard(gameId));
     return ResponseEntity.ok().body(body);
+  }
+
+  /**
+   * Get the board of a specific game. Use long polling to wait for the board to change.
+   *
+   * @param gameId the id of the game.
+   * @return the board of the game.
+   */
+  @GetMapping(value = "/api/games/{gameId}/board/longpoll")
+  public DeferredResult<ResponseEntity<String>>
+      getBoardLongPoll(@PathVariable long gameId,
+                     @RequestParam(required = false) String hash) {
+    LOGGER.info(String.format("Received long poll request for board of game with id %d", gameId));
+    DeferredResult<ResponseEntity<String>> result;
+    if (!gameManager.exists(gameId)) {
+      LOGGER.warning(String.format("Game with id %d does not exist", gameId));
+      result = new DeferredResult<>();
+      result.setResult(ResponseEntity.badRequest().body(String.format(
+          "Game with id %d does not exist", gameId)));
+      return result;
+    }
+    if (hash == null || hash.isEmpty()) {
+      result = ResponseGenerator.getAsyncUpdate(longPollTimeout, broadcastContentManager);
+    } else {
+      result = ResponseGenerator.getHashBasedUpdate(longPollTimeout, broadcastContentManager, hash);
+    }
+    return result;
   }
 
   /**
