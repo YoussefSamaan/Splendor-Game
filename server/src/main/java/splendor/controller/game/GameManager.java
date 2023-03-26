@@ -1,5 +1,6 @@
 package splendor.controller.game;
 
+import eu.kartoffelquadrat.asyncrestlib.BroadcastContentManager;
 import java.util.HashMap;
 import java.util.List;
 import javax.naming.InsufficientResourcesException;
@@ -21,6 +22,8 @@ import splendor.model.game.player.SplendorPlayer;
 @Component
 public class GameManager {
   private final HashMap<Long, SplendorGame> games = new HashMap<>();
+
+  private final HashMap<Long, BroadcastContentManager<Board>> boardManagers = new HashMap<>();
   private final ActionGenerator actionGenerator;
 
   public GameManager(@Autowired ActionGenerator actionGenerator) {
@@ -62,6 +65,7 @@ public class GameManager {
       throw new IllegalArgumentException("GameInfo cannot be null");
     }
     games.put(gameId, new SplendorGame(gameInfo));
+    boardManagers.put(gameId, new BroadcastContentManager<>(getBoard(gameId)));
   }
 
   /**
@@ -113,5 +117,15 @@ public class GameManager {
     Action action = actionGenerator.getGeneratedAction(gameId, Long.parseLong(actionId));
     games.get(gameId).performAction(action, username, actionData);
     actionGenerator.removeActions(gameId);
+  }
+
+  /**
+   * Returns the board manager for a specific game.
+   *
+   * @param gameId the id of the game
+   * @return the board manager for the game
+   */
+  public BroadcastContentManager<Board> getBoardManager(long gameId) {
+    return boardManagers.get(gameId);
   }
 }

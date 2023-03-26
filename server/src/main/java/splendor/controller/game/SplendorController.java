@@ -31,8 +31,6 @@ public class SplendorController extends HandlerInterceptorAdapter {
 
   private final int longPollTimeout = 60000;
 
-  private BroadcastContentManager<Board> broadcastContentManager;
-
   public SplendorController(@Autowired GameManager gameManager,
                             @Autowired Authenticator authenticator) {
     this.gameManager = gameManager;
@@ -102,6 +100,7 @@ public class SplendorController extends HandlerInterceptorAdapter {
           "Game with id %d does not exist", gameId)));
       return result;
     }
+    BroadcastContentManager<Board> broadcastContentManager = gameManager.getBoardManager(gameId);
     if (hash == null || hash.isEmpty()) {
       result = ResponseGenerator.getAsyncUpdate(longPollTimeout, broadcastContentManager);
     } else {
