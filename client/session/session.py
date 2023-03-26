@@ -173,17 +173,17 @@ class SessionListing:
 
     # logged-in user is the creator and deletes the session
     def del_sess(self) -> None:
-        delete_session.delete_session(self.authenticator.get_token(), self.session_id)
+        delete_session.delete_session(self.authenticator.get_token(escape=True), self.session_id)
         session(self.authenticator)
 
     # logged-in user is the creator and launches the session if there are enough players
     def launch_sess(self) -> None:
-        post_session.launch_session(self.authenticator.get_token(), self.session_id)
+        post_session.launch_session(self.authenticator.get_token(escape=True), self.session_id)
 
     # logged-in user is not the creator and joins the session
     def join_sess(self) -> None:
             
-        put_session.add_player(self.authenticator.get_token(), self.session_id, self.authenticator.username)
+        put_session.add_player(self.authenticator.get_token(escape=True), self.session_id, self.authenticator.username)
 
         session(self.authenticator)
 
@@ -194,7 +194,7 @@ class SessionListing:
 
     # logged-in user leaves the session
     def leave_sess(self) -> None:
-        delete_session.remove_player(self.authenticator.get_token(), self.session_id, self.authenticator.username)
+        delete_session.remove_player(self.authenticator.get_token(escape=True), self.session_id, self.authenticator.username)
         session(self.authenticator)
 
 # Takes sessions json and outputs a list of pygame objects to be blitted
@@ -224,7 +224,7 @@ def session(authenticator :Authenticator) -> int:
         clickable_buttons :List[Button] = []
 
         def create_button_event() -> None:
-            post_session.create_session(authenticator.username, authenticator.get_token())
+            post_session.create_session(authenticator.username, authenticator.get_token(escape=True))
 
         # current_page: 0-indexed
         # functions for the pagination buttons

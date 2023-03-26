@@ -15,7 +15,7 @@ def get_board(authenticator: Authenticator, game_id: str):
         "username": authenticator.username,
         "access_token": authenticator.get_token()
     }
-    response = requests.get(url, data=data)
+    response = requests.get(url, params=data)
     if response.status_code == 200:
         return response.json()
     raise Exception("Could not get board")
@@ -34,7 +34,7 @@ def get_actions(authenticator: Authenticator, game_id: str, player_name: str):
         "username": authenticator.username,
         "access_token": authenticator.get_token()
     }
-    response = requests.get(url, data=data)
+    response = requests.get(url, params=data)
     if response.status_code == 200:
         return response.json()
     raise Exception("Could not get actions")
@@ -57,7 +57,7 @@ def perform_action(authenticator: Authenticator, game_id: str, player_name: str,
         "access_token": authenticator.get_token(),
     }
     headers = {"Content-Type": "application/json; charset=utf-8"}
-    response = requests.post(url, data=data, headers=headers, json={})
+    response = requests.post(url, params=data, headers=headers, json={})
     if response.status_code == 200:
         return
     raise Exception("Could not perform action")
