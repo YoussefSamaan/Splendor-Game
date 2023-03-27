@@ -10,6 +10,7 @@ import splendor.model.game.SplendorGame;
 import splendor.model.game.card.DevelopmentCardI;
 import splendor.model.game.card.SplendorCard;
 import splendor.model.game.deck.SplendorDeck;
+import splendor.model.game.payment.CoatOfArms;
 import splendor.model.game.player.Player;
 import splendor.model.game.player.SplendorPlayer;
 
@@ -120,5 +121,10 @@ public class BuyCardAction extends CardAction {
     }
     board.removeCard(this.getCard());
     card.getSpecialActions().forEach(player::addNextAction); // add special actions to player
+
+    // coat of arms special power
+    if (player.getCoatOfArms().contains(CoatOfArms.get(1))) {
+      player.addNextAction(ActionType.TAKE_ONE_TOKEN);
+    }
   }
 }
