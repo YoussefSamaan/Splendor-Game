@@ -2,12 +2,14 @@ package splendor.model.game.player;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 import javax.naming.InsufficientResourcesException;
 import splendor.controller.action.ActionType;
 import splendor.model.game.Color;
 import splendor.model.game.SplendorGame;
 import splendor.model.game.card.DevelopmentCardI;
 import splendor.model.game.card.SplendorCard;
+import splendor.model.game.payment.CoatOfArms;
 
 /**
  * Interface for a splendor player. Can buy/reserve cards and nobles, and can take tokens.
@@ -65,4 +67,6 @@ public interface SplendorPlayer {
   void removeReservedCard(DevelopmentCardI card);
 
   HashMap<Color, Integer> getBonuses();
+
+  Set<CoatOfArms> getCoatOfArms();
 }

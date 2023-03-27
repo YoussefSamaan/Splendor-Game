@@ -32,7 +32,7 @@ public class ActionGenerator {
     }
     // TODO: ADD more actions
     if (player.nextAction() == null) {
-      actions.addAll(TakeTokensAction.getLegalActions(game));
+      actions.addAll(TakeTokensAction.getLegalActions(game, player));
       actions.addAll(ReserveCardAction.getLegalActions(game, player));
       actions.addAll(BuyCardAction.getLegalActions(game, player));
       actions.addAll(BuyReservedCardAction.getLegalActions(player));

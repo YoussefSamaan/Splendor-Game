@@ -6,7 +6,9 @@ import java.util.List;
 import splendor.model.game.Board;
 import splendor.model.game.Color;
 import splendor.model.game.SplendorGame;
+import splendor.model.game.payment.CoatOfArms;
 import splendor.model.game.player.Player;
+import splendor.model.game.player.SplendorPlayer;
 
 /**
  * take tokens action class.
@@ -134,9 +136,24 @@ public class TakeTokensAction implements Action {
         continue; // skip colors
       }
 
-      HashMap<Color, Integer> combination = new HashMap<>();
-      combination.put(color1, 2);
-      combinations.add(combination);
+      if (specialPower) {
+        for (int j = 0; j < colors.length - 1; j++) {
+          Color color2 = colors[j];
+          if (color1 != color2) {
+            int count2 = tokens.getOrDefault(color2, 0);
+            if (count2 > 0) {
+              HashMap<Color, Integer> combination = new HashMap<>();
+              combination.put(color1, 2);
+              combination.put(color2, 1);
+              combinations.add(combination);
+            }
+          }
+        }
+      } else {
+        HashMap<Color, Integer> combination = new HashMap<>();
+        combination.put(color1, 2);
+        combinations.add(combination);
+      }
     }
 
     return combinations;
@@ -148,13 +165,17 @@ public class TakeTokensAction implements Action {
    * @param game The game that the player is playing in.
    * @return  a list of possible action that the player can take.
    */
-  public static List<Action> getLegalActions(SplendorGame game) {
+  public static List<Action> getLegalActions(SplendorGame game, SplendorPlayer player) {
     List<Action> actions = new ArrayList<>();
     List<HashMap<Color, Integer>> taking3Tokens = get3Tokens(game.getBoard().getTokens());
     // need to replace it depending on the number of players in the game
+    boolean specialPower = false;
+    if (player.getCoatOfArms().contains(CoatOfArms.get(3))) {
+      specialPower = true;
+    }
     List<HashMap<Color, Integer>> taking2Tokens = get2Tokens(game.getBoard().getTokens(),
                                                         2,
-                                                  false);
+                                                  specialPower);
     for (HashMap<Color, Integer> tk : taking3Tokens) {
       actions.add(new TakeTokensAction(ActionType.TAKE_TOKENS, tk));
     }
