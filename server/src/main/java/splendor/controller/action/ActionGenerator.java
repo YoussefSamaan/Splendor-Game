@@ -48,6 +48,8 @@ public class ActionGenerator {
       actions.addAll(TakeNobleAction.getLegalActions(game, player, true));
     } else if (player.nextAction() == ActionType.CLONE_CARD) {
       actions.addAll(CloneCardAction.getLegalActions(player));
+    } else if (player.nextAction() == ActionType.TAKE_ONE_TOKEN) {
+      actions.addAll(TakeOneTokenAction.getLegalActions(game));
     }
     player.resetNextActions();
     gameActions.put(gameId, actions); // save the actions for later validation
