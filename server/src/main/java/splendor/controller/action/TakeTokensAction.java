@@ -170,7 +170,7 @@ public class TakeTokensAction implements Action {
     List<HashMap<Color, Integer>> taking3Tokens = get3Tokens(game.getBoard().getTokens());
     // need to replace it depending on the number of players in the game
     boolean specialPower = false;
-    if (player.getCoatOfArms().contains(CoatOfArms.get(3))) {
+    if (player.getCoatOfArms().contains(CoatOfArms.get(2))) {
       specialPower = true;
     }
     List<HashMap<Color, Integer>> taking2Tokens = get2Tokens(game.getBoard().getTokens(),
