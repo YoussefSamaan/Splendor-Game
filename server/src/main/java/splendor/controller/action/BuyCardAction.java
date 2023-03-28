@@ -10,6 +10,7 @@ import splendor.model.game.SplendorGame;
 import splendor.model.game.card.DevelopmentCardI;
 import splendor.model.game.card.SplendorCard;
 import splendor.model.game.deck.SplendorDeck;
+import splendor.model.game.payment.Bonus;
 import splendor.model.game.payment.CoatOfArms;
 import splendor.model.game.player.Player;
 import splendor.model.game.player.SplendorPlayer;
@@ -19,16 +20,18 @@ import splendor.model.game.player.SplendorPlayer;
  */
 public class BuyCardAction extends CardAction {
   private static CardType cardType = CardType.DevelopmentCard;
-  private HashMap<Color, Integer> payment;
+  private HashMap<Color, Integer> tokenPayment;
+  private List<DevelopmentCardI> cardPayment;
 
   /**
    * Creates a new card action.
    *
    * @param card the card.
    */
-  protected BuyCardAction(SplendorCard card, HashMap<Color, Integer> cost) {
+  protected BuyCardAction(SplendorCard card, HashMap<Color, Integer> tokenPayment, List<DevelopmentCardI> cardPayment) {
     super(ActionType.BUY, card);
-    this.payment = cost;
+    this.tokenPayment = tokenPayment;
+    this.cardPayment = cardPayment;
   }
 
   private static List<HashMap<Color, Integer>> getDifferentWaysToPayForCard(HashMap<Color, Integer> cost, int numberOfGoldTokens){
@@ -79,6 +82,37 @@ public class BuyCardAction extends CardAction {
     }
     return newCost;
   }
+
+  // assumes the payment with cards is only with 2 cards
+  private static List<List<DevelopmentCardI>> differentWaysToPayWithCards(List<DevelopmentCardI> playerCards, HashMap<Color, Integer> cardCost){
+    List<List<DevelopmentCardI>> differentWaysToPay = new ArrayList<>();
+    Color color = null;
+    for (Color c : cardCost.keySet()) {
+      if (cardCost.getOrDefault(c, 0) != 0) {
+        color = c;
+        break;
+      }
+    }
+    List<DevelopmentCardI> cardsOfSameColor = new ArrayList<>();
+    for (DevelopmentCardI c : playerCards) {
+      Bonus bonus = c.getBonus();
+      if (c.getBonus().getBonus(color) != 0) {
+        cardsOfSameColor.add(c);
+      }
+    }
+    // create different ways to pay for the card and send them back.
+    for (int i=0; i<cardsOfSameColor.size(); i++) {
+      for (int j=i; j<cardsOfSameColor.size(); j++) {
+        List<DevelopmentCardI> cards = new ArrayList<>();
+        cards.add(cardsOfSameColor.get(i));
+        cards.add(cardsOfSameColor.get(j));
+        differentWaysToPay.add(cards);
+      }
+    }
+
+    return differentWaysToPay;
+  }
+
   /**
    * Generates the list of buy actions for the player.
    *
@@ -90,10 +124,21 @@ public class BuyCardAction extends CardAction {
     List<Action> actions = new ArrayList<>();
     for (SplendorDeck deck : game.getBoard().getDecks()) {
       for (DevelopmentCardI card : deck.getFaceUpCards()) {
-        if (card != null && player.canAfford(card)) {
-          HashMap<Color,Integer> newCost = newCardCost(player.getBonuses(), card.getCost().getCost());
-          for (HashMap<Color, Integer> h : getDifferentWaysToPayForCard(newCost, newCost.getOrDefault(Color.GOLD,0) - player.getTokens().getOrDefault(Color.GOLD, 0))) {
-            actions.add(new BuyCardAction(card, h));
+        if (card != null) {
+          int cid = card.getCardId();
+          // placeholder for now
+          if (cid == 115 || cid == 116 || cid == 117 || cid == 119 || cid == 120 ) {
+            List<List<DevelopmentCardI>> waysToPayWithCards = differentWaysToPayWithCards(player.getCardsBought(), card.getCost()
+                .getCost());
+            for (List<DevelopmentCardI> cards : waysToPayWithCards) {
+              actions.add(new BuyCardAction(card, null, cards));
+            }
+
+          } else if (player.canAfford(card)) {
+            HashMap<Color,Integer> newCost = newCardCost(player.getBonuses(), card.getCost().getCost());
+            for (HashMap<Color, Integer> h : getDifferentWaysToPayForCard(newCost, newCost.getOrDefault(Color.GOLD,0) - player.getTokens().getOrDefault(Color.GOLD, 0))) {
+              actions.add(new BuyCardAction(card, h, null));
+            }
           }
         }
       }
