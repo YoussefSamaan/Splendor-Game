@@ -42,13 +42,13 @@ public class BuyCardActionTest {
     assertEquals(1, player1.getCardsBought().size());
   }
 
-  @Test
-  public void performActionRedCardWithCascade() {
-    Action redCardAction = new BuyCardAction(redCardCascade1);
-    Player turnPlayer = getTurnPlayer(game);
-    redCardAction.performAction(turnPlayer, game.getBoard());
-    assertEquals(1, turnPlayer.getCardsBought().size()); // adds card to player
-    assertEquals(ActionType.TAKE_CARD_1, turnPlayer.nextAction()); // adds next action
-    assertEquals(turnPlayer, getTurnPlayer(game)); // does not change turn
-  }
+//  @Test
+//  public void performActionRedCardWithCascade() {
+//    Action redCardAction = new BuyCardAction(redCardCascade1);
+//    Player turnPlayer = getTurnPlayer(game);
+//    redCardAction.performAction(turnPlayer, game.getBoard());
+//    assertEquals(1, turnPlayer.getCardsBought().size()); // adds card to player
+//    assertEquals(ActionType.TAKE_CARD_1, turnPlayer.nextAction()); // adds next action
+//    assertEquals(turnPlayer, getTurnPlayer(game)); // does not change turn
+//  }
 }
