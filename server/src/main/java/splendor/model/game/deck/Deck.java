@@ -57,7 +57,8 @@ public class Deck implements SplendorDeck {
         cardsJson = new JSONObject(new JSONTokener(new FileReader(CARDS_JSON)));
       }
     } catch (FileNotFoundException e) {
-      throw new RuntimeException("Could not find cards.json");
+      String currentDirectory = System.getProperty("user.dir");
+      throw new RuntimeException("Could not find " + CARDS_JSON + " in " + currentDirectory);
     }
     addAllCards();
     shuffle(faceDown);

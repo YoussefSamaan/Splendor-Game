@@ -166,7 +166,8 @@ public abstract class AbstractCard implements SplendorCard {
       try {
         cards_json = new JSONObject(new JSONTokener(new FileReader(CARDS_JSON)));
       } catch (FileNotFoundException e) {
-        e.printStackTrace();
+        String currentDirectory = System.getProperty("user.dir");
+        throw new RuntimeException("Could not find " + CARDS_JSON + " in " + currentDirectory);
       }
     }
     return cards_json;
@@ -182,7 +183,8 @@ public abstract class AbstractCard implements SplendorCard {
       try {
         nobles_json = new JSONObject(new JSONTokener(new FileReader(NOBLES_JSON)));
       } catch (FileNotFoundException e) {
-        e.printStackTrace();
+        String currentDirectory = System.getProperty("user.dir");
+        throw new RuntimeException("Could not find " + NOBLES_JSON + " in " + currentDirectory);
       }
     }
     return nobles_json;

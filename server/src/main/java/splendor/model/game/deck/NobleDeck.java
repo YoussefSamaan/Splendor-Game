@@ -94,7 +94,8 @@ public class NobleDeck implements NobleDeckI {
         noblesJson = new JSONObject(new JSONTokener(new FileReader(NOBLES_JSON)));
       }
     } catch (FileNotFoundException e) {
-      throw new RuntimeException("Could not find nobles.json");
+      String currentDirectory = System.getProperty("user.dir");
+      throw new RuntimeException("Could not find " + NOBLES_JSON + " in " + currentDirectory);
     }
     return noblesJson;
   }
