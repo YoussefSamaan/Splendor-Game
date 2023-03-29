@@ -1,56 +1,56 @@
-# COMP 361 Project
+# COMP 361 Project - Splendor
 
- > See also [my video instuctions](https://www.cs.mcgill.ca/~mschie3/COMP361/Repository-Best-Practices.mp4) in the screencasts section on MyCourses.
+## Table of Contents
 
-## The Rules
+ * [Project Description](#project-description)
+ * [Project Structure](#project-structure)
+ * [Useful Links](#useful-links)
+    * [Code Style and Tools](#code-style-and-tools)
+    * [Requirements](#requirements)
+ * [Authors](#authors)
 
- * Feel free to edit/replace this file.
- * Do not delete or rename the [reports](reports), [client](client), [server](server) or [docs](docs) directories.  
-See [Static Content](#static-content)
- * Don't clutter your repo, update your [```.gitignore```](.gitignore) file, depending on your client language / technology.
-    * Don't commit binaries. (Images, jar files, class files, etc...)
-    * Don't commit buffer files. (Vim buffer files, IDE meta files etc...)
- * Place your documentation in [```docs```](docs) on [master](branch).
- * Commit frequently, commit fine grained.
- * Use branches
- * **Don't push on master!**
-    * Create a new branch for your feature.
-    * Work until stable / tested.
-    * Merge / rebase your temporary branch back to master.
-    * Delete your temporary branch.
+## Project Description
+Splendor is a board game for 2-4 players. More information about the game can be found [here]
+(https://boardgamegeek.com/boardgame/148228/splendor). <br>
+In addition, we added expansions to the game. The expansions are listed below:
+* (Cities expansion)[https://www.ultraboardgames.com/splendor/cites-of-splendor.php]
+* (Trader expansion)[https://boardgamegeek.com/thread/1889165/trade-routes-expansion-trigger-sell-goods]
 
-## Static content
+## Project Structure
 
- * [```.gitignore```](.gitignore): Preliminary git exclusion instructions. Visit [Toptal's generator](https://www.toptal.com/developers/gitignore) to update.
- * [```reports```](reports): Base directory for automatic report collection. Your weekly reports go here. Must be uploaded every monday noon **to master** and follow correct date string ```YYYY-MM-DD.md```. Use [template](reports/YYYY-MM-DD.md) for your own reports. Do not resubmit same report / copy paste.
- * [```docs```](docs): source directory for your [enabled GitHub Pages](https://comp361.github.io/f2022-hexanome-00/). (Update number in link). Configure IDE to generate API docs into this directory or build your own webpage (optional).
- *  [```client```](client): Place your client sources into this directory. Do not use a separate repository for your work.
- * [```server```](server): Place your Spring Boot Game Server sources in this directory. Do not use a separate repository for your work.
+### Server
 
-## Useful Links
+Contains the server side of the game. The server is a Spring Boot application that has multiple 
+REST API endpoints that can be used to interact with the game.
+See the [API documentation](docs/rest_interface_description.pdf).
 
-### Code Style and Tools
+### Client
+The client is a pygame application that can be used to play the game. The client can be run in 
+two ways:
+* Running the main.py file in the client directory
+* Running the docker container
 
- * [Chrome MarkDown Plugin](https://chrome.google.com/webstore/detail/markdown-viewer/ckkdlimhmcjmikdlpkmbgfkaikojcbjk?hl=en).
-    * Don't forget to enable ```file://``` in ```advanced settings```.
- * [IntelliJ Checkstyle Plugin](https://plugins.jetbrains.com/plugin/1065-checkstyle-idea).
-    * Don't forget to enable [Google's Checkstyle Configuration](https://raw.githubusercontent.com/checkstyle/checkstyle/master/src/main/resources/google_checks.xml).
- * [Git CheatSheet](git-cheatsheet.md).
- * [Advanced Rest Client (Rest Call Code Generator)](https://docs.advancedrestclient.com/installation).
+More information can be found in the [setup section](##Setup).
 
-### Requirements
+### Lobby Service
+This project is dependent on the [Lobby Service](https://github.com/m5c/BoardGamePlatform).
+The Lobby Service manages the sessions and user accounts.
 
- * [Lobby Service](https://github.com/kartoffelquadrat/LobbyService)
-    * [Install Guide](https://github.com/kartoffelquadrat/LobbyService/blob/master/markdown/build-deploy.md)  
-Recommended: Startup in ```dev``` profile (default).
-    * [API Doc and ARC Configurations](https://github.com/kartoffelquadrat/LobbyService/blob/master/markdown/api.md)
-    * [Game Developer Instructions](https://github.com/kartoffelquadrat/LobbyService/blob/master/markdown/game-dev.md)
- * [BGP sample deployment configuration](https://github.com/kartoffelquadrat/BoardGamePlatform) (This one is meant for testing / understanding the interaction between LS, UI and sample game)  
-Board Game Platform (BGP) = Lobby Service + Lobby Service Web UI + Sample Game, all as docker containers.
-    * Sample [Lobby Service Web UI](https://github.com/kartoffelquadrat/LobbyServiceWebInterface)
-    * Sample Lobby Service compatible [Game (Tic Tac Toe, backend + frontend)](https://github.com/kartoffelquadrat/BgpXox)
 
- > Be careful not to confuse *Lobby Service* and *Board Game Platform*.
+## Code Style and Tools
+
+This project follows the best practices of the [Google's Checkstyle Configuration](https://raw.githubusercontent.com/checkstyle/checkstyle/master/src/main/resources/google_checks.xml).
+
+## Setup
+
+1. Clone the repository
+2. Install [Docker](https://docs.docker.com/install/)
+3. Run the following command in the root directory of the project:
+    ```bash
+    docker-compose up
+    ```
+4. TODO.
+
 
 ## Authors
 
