@@ -44,6 +44,7 @@ public class Registrator {
   @PostConstruct
   public void register() {
     // Register on a separate thread to avoid blocking the main thread.
+    logger.info("Registering at lobby service.");
     new Thread(() -> {
       try {
         registerAtLobbyService(tokenHelper.get(gameServiceParameters.getOauth2Name(),
