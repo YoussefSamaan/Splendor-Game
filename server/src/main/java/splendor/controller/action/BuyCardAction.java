@@ -3,7 +3,6 @@ package splendor.controller.action;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import javax.naming.InsufficientResourcesException;
 import splendor.model.game.Board;
 import splendor.model.game.Color;
 import splendor.model.game.SplendorGame;
@@ -34,42 +33,27 @@ public class BuyCardAction extends CardAction {
     this.cardPayment = cardPayment;
   }
 
-  private static List<HashMap<Color, Integer>> getDifferentWaysToPayForCard(HashMap<Color, Integer> cost, int numberOfGoldTokens){
-    List<HashMap<Color, Integer>> differentWaysToPay = new ArrayList<>();
-    differentWaysToPay.add(cost);
-    Color[] colors = Color.tokenColors();
+  private static HashMap<Color, Integer> PayForCardWithCoatOfArms(HashMap<Color, Integer> cost, SplendorPlayer player){
+    HashMap<Color, Integer> payment = new HashMap<>();
+    HashMap<Color, Integer> playerTokens = player.getTokens();
+    double numOfGoldTokensPlayerHas = playerTokens.getOrDefault(Color.GOLD, 0);
+    payment.put(Color.GOLD, 0);
 
-    // remove 1 from each
-    if (numberOfGoldTokens >= 1) {
-      for (Color c : cost.keySet()) {
-        HashMap<Color,Integer> temp = new HashMap<>();
-        for (int i = 0; i < colors.length - 1; i++) {
-          Color color1 = colors[i];
-          int count = cost.getOrDefault(color1, 0);
-          if (count > 0 && c == color1) {
-            temp.put(c, count-1);
-          }else if (c != color1){
-            temp.put(color1, count);
-          }
+    for (Color c : cost.keySet()) {
+      double tokensLeft = playerTokens.getOrDefault(c,0) - cost.get(c);
+      if (tokensLeft < 0) {
+        numOfGoldTokensPlayerHas -= Math.ceil(tokensLeft/2);
+        payment.put(c, (int) (cost.get(c) - Math.ceil(tokensLeft/2)));
+        payment.replace(Color.GOLD, (int) (payment.get(Color.GOLD) + Math.ceil(tokensLeft/2)));
+        if (numOfGoldTokensPlayerHas < 0) {
+          return null;
         }
-        if (temp.containsKey(c)) {
-          differentWaysToPay.add(temp);
-        }
+      } else {
+        payment.put(c, cost.get(c));
       }
     }
-    // remove 2 from each
-    // remove 1 from 2 colors
-    if (numberOfGoldTokens >= 2) {
-      // TODO
-    }
-    // remove 3 from each
-    // remove 1 from 3 colors
-    // remove 2 from one color and 1 from another
-    if (numberOfGoldTokens >= 3) {
-      // TODO
-    }
 
-    return differentWaysToPay;
+    return payment;
   }
 
   private static HashMap<Color, Integer> newCardCost(HashMap<Color, Integer> playerBonuses, HashMap<Color, Integer> cardCost){
@@ -134,11 +118,17 @@ public class BuyCardAction extends CardAction {
               actions.add(new BuyCardAction(card, null, cards));
             }
 
-          } else if (player.canAfford(card)) {
+          } else {
             HashMap<Color,Integer> newCost = newCardCost(player.getBonuses(), card.getCost().getCost());
-            for (HashMap<Color, Integer> h : getDifferentWaysToPayForCard(newCost, newCost.getOrDefault(Color.GOLD,0) - player.getTokens().getOrDefault(Color.GOLD, 0))) {
-              actions.add(new BuyCardAction(card, h, null));
+            if (player.getCoatOfArms().contains(CoatOfArms.get(3))) {
+              HashMap<Color, Integer> payment = PayForCardWithCoatOfArms(newCost, player);
+              if (payment != null) {
+                actions.add(new BuyCardAction(card, payment, null));
+              }
+            } else if (player.canAfford(card)) {
+              actions.add(new BuyCardAction(card, newCost, null));
             }
+
           }
         }
       }
@@ -154,19 +144,16 @@ public class BuyCardAction extends CardAction {
    */
   @Override
   public void performAction(Player player, Board board) {
-    // need to remove the tokens depending on the hashmap
-    // TODO
-    DevelopmentCardI card;
-    try {
-      card = (DevelopmentCardI) this.getCard();
-      HashMap<Color, Integer> tokensToGiveBack = player.buyCard(card); // should always work
-      board.giveBackTokens(tokensToGiveBack);
-    } catch (InsufficientResourcesException e) {
-      throw new RuntimeException(e);
-    }
+    player.addCard((DevelopmentCardI) this.getCard());
     board.removeCard(this.getCard());
-    card.getSpecialActions().forEach(player::addNextAction); // add special actions to player
-
+    if (this.tokenPayment != null) {
+      player.removeTokens(this.tokenPayment);
+      board.addTokens(this.tokenPayment);
+    } else {
+      for (DevelopmentCardI c : cardPayment) {
+        player.removeCardBought(c);
+      }
+    }
     // coat of arms special power
     if (player.getCoatOfArms().contains(CoatOfArms.get(1))) {
       player.addNextAction(ActionType.TAKE_ONE_TOKEN);

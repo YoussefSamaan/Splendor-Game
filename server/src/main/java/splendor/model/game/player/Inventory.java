@@ -226,4 +226,8 @@ public class Inventory {
   public void removeReservedCard(DevelopmentCardI card){
     this.reservedCards.remove(card);
   }
+
+  public void removeCardBought(DevelopmentCardI card) {
+    this.boughtCards.remove(card);
+  }
 }

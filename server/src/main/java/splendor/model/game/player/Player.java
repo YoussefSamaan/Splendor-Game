@@ -313,4 +313,8 @@ public class Player implements PlayerReadOnly, SplendorPlayer {
   public void removeReservedCard(DevelopmentCardI card) {
     this.inventory.removeReservedCard(card);
   }
+
+  public void removeCardBought(DevelopmentCardI card) {
+    this.inventory.removeCardBought(card);
+  }
 }
