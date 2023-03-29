@@ -41,20 +41,48 @@ The Lobby Service manages the sessions and user accounts.
 
 This project follows the best practices of the [Google's Checkstyle Configuration](https://raw.githubusercontent.com/checkstyle/checkstyle/master/src/main/resources/google_checks.xml).
 
+
+## Requirements
+
+* [Docker](https://docs.docker.com/install/)
+* [Python 3.7](https://www.python.org/downloads/release/python-370/)
+
+
 ## Setup
 
 1. Clone the repository
-2. Install [Docker](https://docs.docker.com/install/)
-3. Run the following command in the root directory of the project:
+2. In the client directory, run the following command:
+    ```bash
+    pip install -r requirements.txt
+    ```
+3. In the server directory, run the following command:
+    ```bash
+    mvn clean install
+    ```
+   _Is there a way not to do this?_
+4. Run the following command in the root directory of the project:
     ```bash
     docker-compose up
     ```
-4. TODO.
+5. Edit client/config.py to set the IP address of the server to the IP address of the machine
+   running the docker container.
+6. Run the client by running the main.py file in the client directory.
+7. Play the game and have fun!
+8. To stop the server, run the following command in the root directory of the project:
+    ```bash
+    docker-compose down
+    ```
+   
+**Note:**
+The first time you run the docker container, you will not be able to run the splendor server 
+container before adding the splendor admin user to the LS. This is required for the server to 
+register a new game service with LS. To do this, start all the other containers, go to 
+localhost:4242, and login using maex as the username, and abc123_ABC123 as the password. Then,
+go to the admin page, and add a new user with the username and password matching what is in the 
+server/application.properties file. Then, start the splendor server container.
 
 
 ## Authors
-
-Fill e.g. names + link to github profiles in list below.
 
  * [Youssef Samaan](https://github.com/YoussefSamaan2)
  * [Kevin Yu](https://github.com/iveykun)
