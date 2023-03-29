@@ -91,6 +91,11 @@
             <version>2.19.0</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+            <optional>true</optional>
+        </dependency>
     </dependencies>
 
     <build>
@@ -250,4 +255,26 @@
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <!--dev profile is intended for native deployment of Xox.-->
+        <profile>
+            <id>dev</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <activatedProperties>dev</activatedProperties>
+                <packaging.type>jar</packaging.type>
+            </properties>
+        </profile>
+        <!--prod profile is intended for dockerized deployment of Xox.-->
+        <profile>
+            <id>prod</id>
+            <properties>
+                <activatedProperties>prod</activatedProperties>
+                <packaging.type>jar</packaging.type>
+            </properties>
+        </profile>
+    </profiles>
 </project>
