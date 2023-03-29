@@ -72,15 +72,6 @@ This project follows the best practices of the [Google's Checkstyle Configuratio
     ```bash
     docker-compose down
     ```
-   
-**Note:**
-The first time you run the docker container, you will not be able to run the splendor server 
-container before adding the splendor admin user to the LS. This is required for the server to 
-register a new game service with LS. To do this, start all the other containers, go to 
-localhost:4242, and login using maex as the username, and abc123_ABC123 as the password. Then,
-go to the admin page, and add a new user with the username and password matching what is in the 
-server/application.properties file. Then, start the splendor server container.
-
 
 ## Authors
 
