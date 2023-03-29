@@ -8,7 +8,10 @@ import splendor.model.game.Color;
 import splendor.model.game.SplendorGame;
 import splendor.model.game.player.Player;
 
-public class TakeOneTokenAction implements Action{
+/**
+ * Taking one token action if a player has an unlocked coat of arms.
+ */
+public class TakeOneTokenAction implements Action {
   private HashMap<Color, Integer> token;
   private final ActionType actionType;
   private final long actionId;

@@ -9,7 +9,10 @@ import splendor.model.game.card.SplendorCard;
 import splendor.model.game.player.Player;
 import splendor.model.game.player.SplendorPlayer;
 
-public class BuyReservedCardAction extends CardAction{
+/**
+ * Buying a reserved card action.
+ */
+public class BuyReservedCardAction extends CardAction {
   private static CardType cardType = CardType.DevelopmentCard;
 
   /**
@@ -38,11 +41,11 @@ public class BuyReservedCardAction extends CardAction{
   }
 
   @Override
-  public void performAction(Player player, Board board){
+  public void performAction(Player player, Board board) {
     player.removeReservedCard((DevelopmentCardI) this.getCard());
     try {
       player.buyCard((DevelopmentCardI) this.getCard());
-    } catch (InsufficientResourcesException e){
+    } catch (InsufficientResourcesException e) {
       System.out.println(e);
     }
   }

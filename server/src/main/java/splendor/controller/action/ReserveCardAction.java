@@ -39,7 +39,7 @@ public class ReserveCardAction extends CardAction {
    */
   public static List<Action> getLegalActions(SplendorGame game, SplendorPlayer player) {
     List<Action> actions = new ArrayList<>();
-    if (player.getReservedCards().size() == 3){
+    if (player.getReservedCards().size() == 3) {
       return actions;
     }
     for (SplendorDeck deck : game.getBoard().getDecks()) {
@@ -50,7 +50,7 @@ public class ReserveCardAction extends CardAction {
       }
     }
 
-    for (FacedDownCardTypes t : FacedDownCardTypes.values()){
+    for (FacedDownCardTypes t : FacedDownCardTypes.values()) {
       actions.add(new ReserveCardAction(new FacedDownCard(t)));
     }
     return actions;
@@ -66,7 +66,7 @@ public class ReserveCardAction extends CardAction {
   public void performAction(Player player, Board board) {
     SplendorCard card = this.getCard();
     if (card instanceof FacedDownCard) {
-       card = board.removeFacedDownCard(((FacedDownCard) this.getCard()).getType());
+      card = board.removeFacedDownCard(((FacedDownCard) this.getCard()).getType());
     } else {
       board.removeCard(this.getCard());
     }

@@ -201,6 +201,12 @@ public class Deck implements SplendorDeck {
     return color.toString().toLowerCase();
   }
 
+  /**
+   * Gets the next faced down card.
+   * the card is removed from the deck.
+   *
+   * @return  the faced down card that is in queue.
+   */
   public SplendorCard getNextFacedDownCard() {
     SplendorCard card = this.faceDown.get(0);
     this.faceDown.remove(0);

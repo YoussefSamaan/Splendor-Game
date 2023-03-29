@@ -3,7 +3,10 @@ package splendor.model.game.card;
 import splendor.model.game.payment.Bonus;
 import splendor.model.game.payment.Cost;
 
-public class FacedDownCard implements SplendorCard{
+/**
+ * Class the acts as a faced down card used for reserving a card.
+ */
+public class FacedDownCard implements SplendorCard {
 
   private FacedDownCardTypes type;
 

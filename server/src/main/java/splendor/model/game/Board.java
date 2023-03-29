@@ -238,6 +238,12 @@ public class Board {
     }
   }
 
+  /**
+   * removes a faced down card. used for when the player is trying to reserve it.
+   *
+   * @param type  the type of card that is being reserved.
+   * @return  a splendor card that is being reserved.
+   */
   public SplendorCard removeFacedDownCard(FacedDownCardTypes type) {
     if (FacedDownCardTypes.BLUE == type) {
       return this.decks[2].getNextFacedDownCard();

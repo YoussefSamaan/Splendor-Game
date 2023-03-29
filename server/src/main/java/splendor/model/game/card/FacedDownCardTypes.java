@@ -1,5 +1,8 @@
 package splendor.model.game.card;
 
+/**
+ * types of faced down cards.
+ */
 public enum FacedDownCardTypes {
   BLUE,
   GREEN,

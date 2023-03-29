@@ -219,11 +219,11 @@ public class Inventory {
     return discounts;
   }
 
-  public List<DevelopmentCardI> getReservedCards(){
+  public List<DevelopmentCardI> getReservedCards() {
     return this.reservedCards;
   }
 
-  public void removeReservedCard(DevelopmentCardI card){
+  public void removeReservedCard(DevelopmentCardI card) {
     this.reservedCards.remove(card);
   }
 

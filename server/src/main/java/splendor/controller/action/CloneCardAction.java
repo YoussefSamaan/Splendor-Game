@@ -8,7 +8,10 @@ import splendor.model.game.card.SplendorCard;
 import splendor.model.game.player.Player;
 import splendor.model.game.player.SplendorPlayer;
 
-public class CloneCardAction extends CardAction{
+/**
+ * cloning a card action.
+ */
+public class CloneCardAction extends CardAction {
   /**
    * Creates a new card action.
    *
@@ -18,6 +21,12 @@ public class CloneCardAction extends CardAction{
     super(ActionType.CLONE_CARD, card);
   }
 
+  /**
+   * get all the type of cards that you can clone.
+   *
+   * @param player  the player we are generating the cloning card actions for
+   * @return  a list of cloning actions the player can take.
+   */
   public static List<Action> getLegalActions(SplendorPlayer player) {
     List<Action> actions = new ArrayList<>();
     for (DevelopmentCardI c : player.getCardsBought()) {
