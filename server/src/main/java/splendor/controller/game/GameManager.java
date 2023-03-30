@@ -78,6 +78,7 @@ public class GameManager {
       throw new IllegalArgumentException(String.format("Game with id %d does not exist", gameId));
     }
     games.remove(gameId);
+    boardManagers.remove(gameId);
   }
 
   /**
@@ -117,6 +118,9 @@ public class GameManager {
     Action action = actionGenerator.getGeneratedAction(gameId, Long.parseLong(actionId));
     games.get(gameId).performAction(action, username, actionData);
     actionGenerator.removeActions(gameId);
+    boardManagers.get(gameId).updateBroadcastContent(getBoard(gameId));
+    // must use touch because the hash of the board is not updating.
+    boardManagers.get(gameId).touch();
   }
 
   /**
