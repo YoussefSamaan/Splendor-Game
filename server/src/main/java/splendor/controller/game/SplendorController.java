@@ -6,7 +6,9 @@ import eu.kartoffelquadrat.asyncrestlib.ResponseGenerator;
 import java.util.logging.Logger;
 import javax.naming.AuthenticationException;
 import javax.naming.InsufficientResourcesException;
+import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,7 +26,7 @@ import splendor.model.game.Board;
  * Controller responsible for all HTTP requests specific to a game.
  */
 @RestController
-public class SplendorController extends HandlerInterceptorAdapter {
+public class SplendorController {
   private static final Logger LOGGER = Logger.getLogger(SplendorController.class.getName());
   private final GameManager gameManager;
   private final Authenticator authenticator;
@@ -41,21 +43,19 @@ public class SplendorController extends HandlerInterceptorAdapter {
    * Validate all requests have correct access token.
    * Validate all requests have correct game id, if applicable.
    * This method is called before any request is processed.
+   *
+   * @param username the username.
+   * @param accessToken the accessToken for the user.
+   * @param url of the request. Used for logging only.
    */
-  @Override
-  public boolean preHandle(javax.servlet.http.HttpServletRequest request,
-                           javax.servlet.http.HttpServletResponse response,
-                           Object handler) throws Exception {
-    String accessToken = request.getParameter("access_token");
-    String username = request.getParameter("username");
+  public boolean authenticate(String username, String accessToken, String url) {
     LOGGER.info(String.format("Received request to %s with access token %s and username %s",
-        request.getRequestURI(), accessToken, username));
+        url, accessToken, username));
     // Check if access token is valid
     try {
       authenticator.authenticate(accessToken, username);
     } catch (AuthenticationException e) {
       LOGGER.warning(e.getMessage());
-      response.sendError(401, e.getMessage());
       return false;
     }
     return true;
@@ -68,8 +68,14 @@ public class SplendorController extends HandlerInterceptorAdapter {
    * @param gameId the id of the game.
    */
   @GetMapping(value = "/api/games/{gameId}/board")
-  public ResponseEntity getBoard(@PathVariable long gameId) {
+  public ResponseEntity getBoard(@PathVariable long gameId, HttpServletRequest request,
+                                 @RequestParam("access_token") String accessToken,
+                                 @RequestParam("username") String username) {
     LOGGER.info(String.format("Received request to get board of game with id %d", gameId));
+    if (!authenticate(username, accessToken, request.getRequestURI())) {
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
+          "Invalid access token for user " + username);
+    }
     if (!gameManager.exists(gameId)) {
       LOGGER.warning(String.format("Game with id %d does not exist", gameId));
       return ResponseEntity.badRequest().body(String.format("Game with id %d does not exist",
@@ -90,12 +96,19 @@ public class SplendorController extends HandlerInterceptorAdapter {
   @GetMapping(value = "/api/games/{gameId}/board/longpoll")
   public DeferredResult<ResponseEntity<String>>
       getBoardLongPoll(@PathVariable long gameId,
-                     @RequestParam(required = false) String hash) {
+                      @RequestParam(required = false) String hash,
+                      @RequestParam("username") String username,
+                      @RequestParam("access_token") String accessToken,
+                      HttpServletRequest request) {
     LOGGER.info(String.format("Received long poll request for board of game with id %d", gameId));
-    DeferredResult<ResponseEntity<String>> result;
+    DeferredResult<ResponseEntity<String>> result = new DeferredResult<>();
+    if (!authenticate(username, accessToken, request.getRequestURI())) {
+      result.setResult(ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
+          "Invalid access token for user " + username));
+      return  result;
+    }
     if (!gameManager.exists(gameId)) {
       LOGGER.warning(String.format("Game with id %d does not exist", gameId));
-      result = new DeferredResult<>();
       result.setResult(ResponseEntity.badRequest().body(String.format(
           "Game with id %d does not exist", gameId)));
       return result;
@@ -106,6 +119,7 @@ public class SplendorController extends HandlerInterceptorAdapter {
     } else {
       result = ResponseGenerator.getHashBasedUpdate(longPollTimeout, broadcastContentManager, hash);
     }
+    LOGGER.info(String.format("Returning board of game with id %d", gameId));
     return result;
   }
 
@@ -118,9 +132,21 @@ public class SplendorController extends HandlerInterceptorAdapter {
    * @return a list of actions that the player can perform.
    */
   @GetMapping("/api/games/{gameId}/players/{username}/actions")
-  public ResponseEntity getActions(@PathVariable long gameId, @PathVariable String username) {
+  public ResponseEntity getActions(@PathVariable long gameId, @PathVariable String username,
+                                   @RequestParam("username") String usernameParam,
+                                   @RequestParam("access_token") String accessToken,
+                                   HttpServletRequest request) {
     LOGGER.info(String.format("Received request to get actions of player %s in game with id %d",
         username, gameId));
+    if (!usernameParam.equals(username)) {
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
+          "Cannot get actions of a different user"
+      );
+    }
+    if (!authenticate(username, accessToken, request.getRequestURI())) {
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
+          "Invalid access token for user " + username);
+    }
     if (!gameManager.exists(gameId)) {
       return ResponseEntity.badRequest().body(String.format("Game with id %d does not exist",
           gameId));
@@ -130,6 +156,8 @@ public class SplendorController extends HandlerInterceptorAdapter {
           username, gameId));
     }
     String body = new Gson().toJson(gameManager.generateActions(gameId, username));
+    LOGGER.info(String.format("Returning actions of player %s in game with id %d",
+        username, gameId));
     return ResponseEntity.ok().body(body);
   }
 
@@ -142,10 +170,22 @@ public class SplendorController extends HandlerInterceptorAdapter {
    */
   @PostMapping("/api/games/{gameId}/players/{username}/actions/{actionId}")
   public ResponseEntity performAction(@PathVariable long gameId,
+                                      @PathVariable String actionId,
                                       @PathVariable String username,
-                                      @PathVariable String actionId) {
+                                      @RequestParam("username") String usernameParam,
+                                      @RequestParam("access_token") String accessToken,
+                                      HttpServletRequest request) {
     LOGGER.info(String.format("Received request to perform action %s of player %s in game %d",
         actionId, username, gameId));
+    if (!usernameParam.equals(username)) {
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
+          "Cannot perform actions of a different user"
+      );
+    }
+    if (!authenticate(username, accessToken, request.getRequestURI())) {
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
+          "Invalid access token for user " + username);
+    }
     if (!gameManager.exists(gameId)) {
       return ResponseEntity.badRequest().body(String.format("Game with id %d does not exist",
           gameId));

@@ -96,10 +96,9 @@
         <dependency>
             <groupId>eu.kartoffelquadrat</groupId>
             <artifactId>asyncrestlib</artifactId>
-            <version>1.6.2</version>
+            <version>1.5.1</version>
         </dependency>
     </dependencies>
-
     <build>
         <!-- Override default name of generated jars -->
         <finalName>SplendorServer</finalName>
