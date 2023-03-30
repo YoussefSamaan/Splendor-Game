@@ -1,12 +1,10 @@
 package splendor.model.game.card;
 
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.util.HashMap;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.json.JSONTokener;
 import splendor.model.game.Color;
+import splendor.model.game.JsonParameters;
 import splendor.model.game.payment.Bonus;
 import splendor.model.game.payment.Cost;
 
@@ -16,10 +14,8 @@ import splendor.model.game.payment.Cost;
  */
 public abstract class AbstractCard implements SplendorCard {
 
-  private static final String CARDS_JSON = "src/main/resources/cards.json";
-  private static final String NOBLES_JSON = "src/main/resources/nobles.json";
-  private static JSONObject cards_json;
-  private static JSONObject nobles_json;
+  private static JSONObject cardsJson;
+  private static JSONObject noblesJson;
   private final int cardId; // 1 indexed
   private final transient Cost cost;
   private final transient int prestigePoints;
@@ -162,15 +158,10 @@ public abstract class AbstractCard implements SplendorCard {
    * @return the json object.
    */
   protected static JSONObject getCardsJson() {
-    if (cards_json == null) {
-      try {
-        cards_json = new JSONObject(new JSONTokener(new FileReader(CARDS_JSON)));
-      } catch (FileNotFoundException e) {
-        String currentDirectory = System.getProperty("user.dir");
-        throw new RuntimeException("Could not find " + CARDS_JSON + " in " + currentDirectory);
-      }
+    if (cardsJson == null) {
+      cardsJson = JsonParameters.getCardsJson();
     }
-    return cards_json;
+    return cardsJson;
   }
 
   /**
@@ -179,14 +170,9 @@ public abstract class AbstractCard implements SplendorCard {
    * @return the json object.
    */
   protected static JSONObject getNoblesJson() {
-    if (nobles_json == null) {
-      try {
-        nobles_json = new JSONObject(new JSONTokener(new FileReader(NOBLES_JSON)));
-      } catch (FileNotFoundException e) {
-        String currentDirectory = System.getProperty("user.dir");
-        throw new RuntimeException("Could not find " + NOBLES_JSON + " in " + currentDirectory);
-      }
+    if (noblesJson == null) {
+      noblesJson = JsonParameters.getNoblesJson();
     }
-    return nobles_json;
+    return noblesJson;
   }
 }

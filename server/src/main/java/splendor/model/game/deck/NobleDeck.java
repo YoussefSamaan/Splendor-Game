@@ -1,19 +1,16 @@
 package splendor.model.game.deck;
 
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 import org.json.JSONObject;
-import org.json.JSONTokener;
+import splendor.model.game.JsonParameters;
 import splendor.model.game.card.Noble;
 
 /**
  * Implementation of a Noble Deck.
  */
 public class NobleDeck implements NobleDeckI {
-  private static final String NOBLES_JSON = "src/main/resources/nobles.json";
   private static JSONObject noblesJson;
 
   private final int deckSize = getNobleJson().getInt("deckSize");
@@ -89,13 +86,8 @@ public class NobleDeck implements NobleDeckI {
    * Get Json of nobles.
    */
   private JSONObject getNobleJson() {
-    try {
-      if (noblesJson == null) {
-        noblesJson = new JSONObject(new JSONTokener(new FileReader(NOBLES_JSON)));
-      }
-    } catch (FileNotFoundException e) {
-      String currentDirectory = System.getProperty("user.dir");
-      throw new RuntimeException("Could not find " + NOBLES_JSON + " in " + currentDirectory);
+    if (noblesJson == null) {
+      noblesJson = JsonParameters.getNoblesJson();
     }
     return noblesJson;
   }
