@@ -2,16 +2,14 @@ package splendor.model.game.deck;
 
 import static java.util.Collections.shuffle;
 
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.json.JSONTokener;
 import splendor.model.game.Color;
+import splendor.model.game.JsonParameters;
 import splendor.model.game.card.DevelopmentCard;
 import splendor.model.game.card.DevelopmentCardI;
 import splendor.model.game.card.SplendorCard;
@@ -21,7 +19,6 @@ import splendor.model.game.card.SplendorCard;
  */
 
 public class Deck implements SplendorDeck {
-  private static final String CARDS_JSON = "src/main/resources/cards.json";
   private static final Map<Color, Integer> DECK_LEVELS = new HashMap<>();
   private static JSONObject cardsJson;
   private final transient List<DevelopmentCardI> faceDown = new ArrayList<>();
@@ -53,12 +50,8 @@ public class Deck implements SplendorDeck {
    * creates the deck.
    */
   private void initDeck() {
-    try {
-      if (cardsJson == null) {
-        cardsJson = new JSONObject(new JSONTokener(new FileReader(CARDS_JSON)));
-      }
-    } catch (FileNotFoundException e) {
-      throw new RuntimeException("Could not find cards.json");
+    if (cardsJson == null) {
+      cardsJson = JsonParameters.getCardsJson();
     }
     addAllCards();
     shuffle(faceDown);
