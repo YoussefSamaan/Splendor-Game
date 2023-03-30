@@ -39,6 +39,8 @@ class Authenticator:
             return True
         return False
 
-    def get_token(self):
-        # escape + with %2B
-        return self.token.replace('+', "%2B")
+    def get_token(self, escape=False):
+        if escape:
+            return self.token.replace('+', "%2B")
+
+        return self.token
