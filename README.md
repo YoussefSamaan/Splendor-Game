@@ -46,6 +46,7 @@ This project follows the best practices of the [Google's Checkstyle Configuratio
 
 * [Docker](https://docs.docker.com/install/)
 * [Python 3.7](https://www.python.org/downloads/release/python-370/)
+* Install maven
 
 
 ## Setup
