@@ -7,6 +7,8 @@ import splendor.model.game.Board;
 import splendor.model.game.Color;
 import splendor.model.game.SplendorGame;
 import splendor.model.game.card.DevelopmentCardI;
+import splendor.model.game.card.FacedDownCard;
+import splendor.model.game.card.FacedDownCardTypes;
 import splendor.model.game.card.SplendorCard;
 import splendor.model.game.deck.SplendorDeck;
 import splendor.model.game.player.Player;
@@ -37,12 +39,19 @@ public class ReserveCardAction extends CardAction {
    */
   public static List<Action> getLegalActions(SplendorGame game, SplendorPlayer player) {
     List<Action> actions = new ArrayList<>();
+    if (player.getReservedCards().size() == 3) {
+      return actions;
+    }
     for (SplendorDeck deck : game.getBoard().getDecks()) {
       for (DevelopmentCardI card : deck.getFaceUpCards()) {
         if (card != null) {
           actions.add(new ReserveCardAction(card));
         }
       }
+    }
+
+    for (FacedDownCardTypes t : FacedDownCardTypes.values()) {
+      actions.add(new ReserveCardAction(new FacedDownCard(t)));
     }
     return actions;
   }
@@ -55,9 +64,14 @@ public class ReserveCardAction extends CardAction {
    */
   @Override
   public void performAction(Player player, Board board) {
-    board.removeCard(this.getCard());
+    SplendorCard card = this.getCard();
+    if (card instanceof FacedDownCard) {
+      card = board.removeFacedDownCard(((FacedDownCard) this.getCard()).getType());
+    } else {
+      board.removeCard(this.getCard());
+    }
     boolean hasGoldToken = board.hasGoldToken();
-    player.reserveCard((DevelopmentCardI) this.getCard(), hasGoldToken);
+    player.reserveCard((DevelopmentCardI) card, hasGoldToken);
     if (hasGoldToken) {
       HashMap<Color, Integer> tokens = new HashMap<>();
       tokens.put(Color.GOLD, 1);

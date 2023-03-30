@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import org.springframework.stereotype.Component;
 import splendor.model.game.SplendorGame;
-import splendor.model.game.player.Player;
 import splendor.model.game.player.SplendorPlayer;
 
 /**
@@ -33,9 +32,10 @@ public class ActionGenerator {
     }
     // TODO: ADD more actions
     if (player.nextAction() == null) {
-      actions.addAll(TakeTokensAction.getLegalActions(game));
+      actions.addAll(TakeTokensAction.getLegalActions(game, player));
       actions.addAll(ReserveCardAction.getLegalActions(game, player));
       actions.addAll(BuyCardAction.getLegalActions(game, player));
+      actions.addAll(BuyReservedCardAction.getLegalActions(player));
     } else if (player.nextAction() == ActionType.TAKE_CARD_2) {
       actions.addAll(TakeCardAction.getLegalActions(game, 2));
     } else if (player.nextAction() == ActionType.TAKE_CARD_1) {
@@ -46,6 +46,10 @@ public class ActionGenerator {
       actions.addAll(ReturnTokensAction.getLegalActions(player));
     } else if (player.nextAction() == ActionType.RESERVE_NOBLE) {
       actions.addAll(TakeNobleAction.getLegalActions(game, player, true));
+    } else if (player.nextAction() == ActionType.CLONE_CARD) {
+      actions.addAll(CloneCardAction.getLegalActions(player));
+    } else if (player.nextAction() == ActionType.TAKE_ONE_TOKEN) {
+      actions.addAll(TakeOneTokenAction.getLegalActions(game));
     }
     player.resetNextActions();
     gameActions.put(gameId, actions); // save the actions for later validation

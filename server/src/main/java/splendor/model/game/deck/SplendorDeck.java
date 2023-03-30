@@ -2,6 +2,7 @@ package splendor.model.game.deck;
 
 import splendor.model.game.Color;
 import splendor.model.game.card.DevelopmentCardI;
+import splendor.model.game.card.SplendorCard;
 
 /**
  * This interface separates the deck from a card source. It is used to
@@ -46,4 +47,6 @@ public interface SplendorDeck {
    * The level of the deck.
    */
   int getLevel();
+
+  SplendorCard getNextFacedDownCard();
 }

@@ -14,6 +14,7 @@ import org.json.JSONTokener;
 import splendor.model.game.Color;
 import splendor.model.game.card.DevelopmentCard;
 import splendor.model.game.card.DevelopmentCardI;
+import splendor.model.game.card.SplendorCard;
 
 /**
  * A deck of splendor cards. The deck is shuffled when it is created.
@@ -201,5 +202,17 @@ public class Deck implements SplendorDeck {
       return color.toString().toLowerCase() + level;
     }
     return color.toString().toLowerCase();
+  }
+
+  /**
+   * Gets the next faced down card.
+   * the card is removed from the deck.
+   *
+   * @return  the faced down card that is in queue.
+   */
+  public SplendorCard getNextFacedDownCard() {
+    SplendorCard card = this.faceDown.get(0);
+    this.faceDown.remove(0);
+    return card;
   }
 }

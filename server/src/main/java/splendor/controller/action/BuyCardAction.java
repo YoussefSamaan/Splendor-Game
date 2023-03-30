@@ -3,13 +3,14 @@ package splendor.controller.action;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import javax.naming.InsufficientResourcesException;
 import splendor.model.game.Board;
 import splendor.model.game.Color;
 import splendor.model.game.SplendorGame;
 import splendor.model.game.card.DevelopmentCardI;
 import splendor.model.game.card.SplendorCard;
 import splendor.model.game.deck.SplendorDeck;
+import splendor.model.game.payment.Bonus;
+import splendor.model.game.payment.CoatOfArms;
 import splendor.model.game.player.Player;
 import splendor.model.game.player.SplendorPlayer;
 
@@ -18,16 +19,88 @@ import splendor.model.game.player.SplendorPlayer;
  */
 public class BuyCardAction extends CardAction {
   private static CardType cardType = CardType.DevelopmentCard;
+  private HashMap<Color, Integer> tokenPayment;
+  private List<DevelopmentCardI> cardPayment;
 
   /**
    * Creates a new card action.
    *
    * @param card the card.
    */
-  protected BuyCardAction(SplendorCard card) {
+  protected BuyCardAction(SplendorCard card, HashMap<Color, Integer> tokenPayment,
+                          List<DevelopmentCardI> cardPayment) {
     super(ActionType.BUY, card);
+    this.tokenPayment = tokenPayment;
+    this.cardPayment = cardPayment;
   }
 
+  private static HashMap<Color, Integer> payForCardWithCoatOfArms(HashMap<Color, Integer> cost,
+                                                                  SplendorPlayer player) {
+    HashMap<Color, Integer> payment = new HashMap<>();
+    HashMap<Color, Integer> playerTokens = player.getTokens();
+    double numOfGoldTokensPlayerHas = playerTokens.getOrDefault(Color.GOLD, 0);
+    payment.put(Color.GOLD, 0);
+
+    for (Color c : cost.keySet()) {
+      double tokensLeft = playerTokens.getOrDefault(c, 0) - cost.get(c);
+      if (tokensLeft < 0) {
+        numOfGoldTokensPlayerHas -= Math.ceil(tokensLeft / 2);
+        payment.put(c, (int) (cost.get(c) - Math.ceil(tokensLeft / 2)));
+        payment.replace(Color.GOLD, (int) (payment.get(Color.GOLD) + Math.ceil(tokensLeft / 2)));
+        if (numOfGoldTokensPlayerHas < 0) {
+          return null;
+        }
+      } else {
+        payment.put(c, cost.get(c));
+      }
+    }
+
+    return payment;
+  }
+
+  private static HashMap<Color, Integer> newCardCost(HashMap<Color, Integer> playerBonuses,
+                                                     HashMap<Color, Integer> cardCost) {
+    HashMap<Color, Integer> newCost = new HashMap<>();
+    for (Color c : cardCost.keySet()) {
+      int value = cardCost.get(c) - playerBonuses.getOrDefault(c, 0);
+      if (value >= 0) {
+        newCost.put(c, value);
+      }
+    }
+    return newCost;
+  }
+
+  // assumes the payment with cards is only with 2 cards
+  private static List<List<DevelopmentCardI>> differentWaysToPayWithCards(
+                                              List<DevelopmentCardI> playerCards,
+                                              HashMap<Color, Integer> cardCost) {
+    List<List<DevelopmentCardI>> differentWaysToPay = new ArrayList<>();
+    Color color = null;
+    for (Color c : cardCost.keySet()) {
+      if (cardCost.getOrDefault(c, 0) != 0) {
+        color = c;
+        break;
+      }
+    }
+    List<DevelopmentCardI> cardsOfSameColor = new ArrayList<>();
+    for (DevelopmentCardI c : playerCards) {
+      Bonus bonus = c.getBonus();
+      if (c.getBonus().getBonus(color) != 0) {
+        cardsOfSameColor.add(c);
+      }
+    }
+    // create different ways to pay for the card and send them back.
+    for (int i = 0; i < cardsOfSameColor.size(); i++) {
+      for (int j = i; j < cardsOfSameColor.size(); j++) {
+        List<DevelopmentCardI> cards = new ArrayList<>();
+        cards.add(cardsOfSameColor.get(i));
+        cards.add(cardsOfSameColor.get(j));
+        differentWaysToPay.add(cards);
+      }
+    }
+
+    return differentWaysToPay;
+  }
 
   /**
    * Generates the list of buy actions for the player.
@@ -40,8 +113,30 @@ public class BuyCardAction extends CardAction {
     List<Action> actions = new ArrayList<>();
     for (SplendorDeck deck : game.getBoard().getDecks()) {
       for (DevelopmentCardI card : deck.getFaceUpCards()) {
-        if (card != null && player.canAfford(card)) {
-          actions.add(new BuyCardAction(card));
+        if (card != null) {
+          int cid = card.getCardId();
+          // placeholder for now
+          if (cid == 115 || cid == 116 || cid == 117 || cid == 119 || cid == 120) {
+            List<List<DevelopmentCardI>> waysToPayWithCards = differentWaysToPayWithCards(
+                                                        player.getCardsBought(), card.getCost()
+                .getCost());
+            for (List<DevelopmentCardI> cards : waysToPayWithCards) {
+              actions.add(new BuyCardAction(card, null, cards));
+            }
+
+          } else {
+            HashMap<Color, Integer> newCost = newCardCost(player.getBonuses(),
+                                                        card.getCost().getCost());
+            if (player.getCoatOfArms().contains(CoatOfArms.get(3))) {
+              HashMap<Color, Integer> payment = payForCardWithCoatOfArms(newCost, player);
+              if (payment != null) {
+                actions.add(new BuyCardAction(card, payment, null));
+              }
+            } else if (player.canAfford(card)) {
+              actions.add(new BuyCardAction(card, newCost, null));
+            }
+
+          }
         }
       }
     }
@@ -56,15 +151,19 @@ public class BuyCardAction extends CardAction {
    */
   @Override
   public void performAction(Player player, Board board) {
-    DevelopmentCardI card;
-    try {
-      card = (DevelopmentCardI) this.getCard();
-      HashMap<Color, Integer> tokensToGiveBack = player.buyCard(card); // should always work
-      board.giveBackTokens(tokensToGiveBack);
-    } catch (InsufficientResourcesException e) {
-      throw new RuntimeException(e);
-    }
+    player.addCard((DevelopmentCardI) this.getCard());
     board.removeCard(this.getCard());
-    card.getSpecialActions().forEach(player::addNextAction); // add special actions to player
+    if (this.tokenPayment != null) {
+      player.removeTokens(this.tokenPayment);
+      board.addTokens(this.tokenPayment);
+    } else {
+      for (DevelopmentCardI c : cardPayment) {
+        player.removeCardBought(c);
+      }
+    }
+    // coat of arms special power
+    if (player.getCoatOfArms().contains(CoatOfArms.get(1))) {
+      player.addNextAction(ActionType.TAKE_ONE_TOKEN);
+    }
   }
 }

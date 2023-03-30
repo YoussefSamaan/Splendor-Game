@@ -70,4 +70,8 @@ public class Cost implements Iterable<Color> {
   public Iterator<Color> iterator() {
     return costMap.keySet().iterator();
   }
+
+  public HashMap<Color, Integer> getCost() {
+    return this.costMap;
+  }
 }

@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import javax.naming.InsufficientResourcesException;
 import splendor.model.game.card.DevelopmentCardI;
+import splendor.model.game.card.FacedDownCardTypes;
 import splendor.model.game.card.Noble;
 import splendor.model.game.card.SplendorCard;
 import splendor.model.game.deck.Deck;
@@ -236,6 +237,30 @@ public class Board {
         removeNoble(noble);
         return; // only unlock one noble per turn?
       }
+    }
+  }
+
+  /**
+   * removes a faced down card. used for when the player is trying to reserve it.
+   *
+   * @param type  the type of card that is being reserved.
+   * @return  a splendor card that is being reserved.
+   */
+  public SplendorCard removeFacedDownCard(FacedDownCardTypes type) {
+    if (FacedDownCardTypes.BLUE == type) {
+      return this.decks[2].getNextFacedDownCard();
+    } else if (FacedDownCardTypes.GREEN == type) {
+      return this.decks[0].getNextFacedDownCard();
+    } else if (FacedDownCardTypes.YELLOW == type) {
+      return this.decks[1].getNextFacedDownCard();
+    } else if (FacedDownCardTypes.RED_1 == type) {
+      return this.decks[3].getNextFacedDownCard();
+    } else if (FacedDownCardTypes.RED_2 == type) {
+      return this.decks[4].getNextFacedDownCard();
+    } else if (FacedDownCardTypes.RED_3 == type) {
+      return this.decks[5].getNextFacedDownCard();
+    } else {
+      return null;
     }
   }
 }
