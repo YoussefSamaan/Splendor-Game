@@ -139,6 +139,7 @@ public class TokenHelper {
    */
   public String get(String username, String password) throws UnirestException,
           AuthenticationException {
+    logger.info("Fetching token for {} at {}", username, lobbyServiceLocation + "/oauth/token");
     HttpResponse<String> response = Unirest
             .post(lobbyServiceLocation + "/oauth/token")
             .header("Authorization", "Basic YmdwLWNsaWVudC1uYW1lOmJncC1jbGllbnQtcHc=")

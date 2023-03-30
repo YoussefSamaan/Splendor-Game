@@ -21,11 +21,7 @@ import splendor.model.game.card.SplendorCard;
 
 public class Deck implements SplendorDeck {
   private static final String CARDS_JSON = "src/main/resources/cards.json";
-  private static final Map<Color, Integer> DECK_LEVELS = Map.ofEntries(
-          Map.entry(Color.GREEN, 1),
-          Map.entry(Color.BLUE, 3),
-          Map.entry(Color.YELLOW, 2)
-  );
+  private static final Map<Color, Integer> DECK_LEVELS = new HashMap<>();
   private static JSONObject cardsJson;
   private final transient List<DevelopmentCardI> faceDown = new ArrayList<>();
   private final DevelopmentCardI[] faceUpCards = new DevelopmentCardI[3];
@@ -33,6 +29,12 @@ public class Deck implements SplendorDeck {
   private int numRemainingCards; // This field is only used for serialization
   private final Color color;
   private final int level;
+
+  static {
+    DECK_LEVELS.put(Color.GREEN, 1);
+    DECK_LEVELS.put(Color.BLUE, 3);
+    DECK_LEVELS.put(Color.YELLOW, 2);
+  }
 
   /**
    * Creates a new deck. The deck is filled with cards and shuffled.

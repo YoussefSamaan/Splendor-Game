@@ -2,6 +2,7 @@ package splendor.model.game;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -41,7 +42,8 @@ public class Board {
     }
     this.players = players;
     // make sure there are no duplicate players
-    if (Set.of(players).size() != players.length) {
+    Set<Player> playerSet = new HashSet<>(Arrays.asList(players));
+    if (playerSet.size() != players.length) {
       throw new IllegalArgumentException("Duplicate players are not allowed");
     }
     currentTurn = 0;
