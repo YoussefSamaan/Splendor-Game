@@ -10,9 +10,7 @@ ADD https://github.com/ufoscout/docker-compose-wait/releases/download/$WAIT_VERS
 RUN chmod +x /wait
 
 FROM openjdk:8-jdk-alpine
-COPY --from=splendor-server-build /usr/src/app/target/SplendorServer.jar /usr/src/app/SplendorServer.jar
-
-WORKDIR /usr/src/app
+COPY --from=splendor-server-build /usr/src/app/target/SplendorServer.jar SplendorServer.jar
+COPY --from=splendor-server-build /wait /wait
 
 EXPOSE 8080
-ENTRYPOINT ["java","-jar","SplendorServer.jar"]
