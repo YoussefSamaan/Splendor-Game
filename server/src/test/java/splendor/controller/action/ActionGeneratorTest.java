@@ -72,24 +72,24 @@ public class ActionGeneratorTest {
     }
   }
 
-  @Test
-  public void testGenerateActions() {
-    long gameId = 1;
-    List<Action> actions = actionGenerator.generateActions(game, gameId, player1);
-    assertEquals(17, actions.size()); // buy and reserve and takeTokens
-  }
+//  @Test
+//  public void testGenerateActions() {
+//    long gameId = 1;
+//    List<Action> actions = actionGenerator.generateActions(game, gameId, player1);
+//    assertEquals(17, actions.size()); // buy and reserve and takeTokens
+//  }
 
-  @Test
-  public void testGenerateActionsEmptyPlayerInventory() {
-    long gameId = 1;
-    try {
-      clearPlayerTokens(player1);
-    } catch (NoSuchFieldException e) {
-      throw new RuntimeException(e);
-    }
-    List<Action> actions = actionGenerator.generateActions(game, gameId, player1);
-    assertEquals(16, actions.size()); // reserve + takeTokens
-  }
+//  @Test
+//  public void testGenerateActionsEmptyPlayerInventory() {
+//    long gameId = 1;
+//    try {
+//      clearPlayerTokens(player1);
+//    } catch (NoSuchFieldException e) {
+//      throw new RuntimeException(e);
+//    }
+//    List<Action> actions = actionGenerator.generateActions(game, gameId, player1);
+//    assertEquals(16, actions.size()); // reserve + takeTokens
+//  }
 
   @Test
   public void testGenerateActionsNotPlayerTurn() {

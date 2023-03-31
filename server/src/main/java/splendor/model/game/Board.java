@@ -263,12 +263,8 @@ public class Board implements BroadcastContent {
     } else {
       return null;
     }
-    
-  /**
-   * I don't know what this is for.  ¯\_(ツ)_/¯.
-   *
-   * @return false
-   */
+  }
+
   @Override
   public boolean isEmpty() {
     return false;
