@@ -30,6 +30,17 @@ public class SplendorGame {
   }
 
   /**
+   * Creates a games from a previously saved game.
+   *
+   * @param splendorGame the saved game
+   */
+  public SplendorGame(SplendorGame splendorGame) {
+    this.gameInfo = splendorGame.gameInfo;
+    this.board = splendorGame.board;
+    this.isFinished = splendorGame.isFinished;
+  }
+
+  /**
    * Returns the game board.
    *
    * @return the game board

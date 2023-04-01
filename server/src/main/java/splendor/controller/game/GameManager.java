@@ -12,6 +12,7 @@ import splendor.controller.action.ActionGenerator;
 import splendor.controller.action.InvalidAction;
 import splendor.controller.lobbyservice.GameInfo;
 import splendor.model.game.Board;
+import splendor.model.game.SaveGameManager;
 import splendor.model.game.SplendorGame;
 import splendor.model.game.player.SplendorPlayer;
 
@@ -66,6 +67,33 @@ public class GameManager {
     }
     games.put(gameId, new SplendorGame(gameInfo));
     boardManagers.put(gameId, new BroadcastContentManager<>(getBoard(gameId)));
+  }
+
+  /**
+   * Save the current state of a game.
+   *
+   * @param gameId the id of the game to save
+   */
+  public void saveGame(long gameId) {
+    if (!exists(gameId)) {
+      throw new IllegalArgumentException(String.format("Game with id %d does not exist", gameId));
+    }
+    SaveGameManager.saveGame(gameId, games.get(gameId));
+  }
+
+  /**
+   * Load a game from a json file.
+   *
+   * @param gameId the id of the game to load
+   */
+  public SplendorGame loadGame(long gameId) {
+    if (exists(gameId)) {
+      return games.get(gameId);
+    }
+    SplendorGame game = SaveGameManager.loadGame(gameId);
+    games.put(gameId, game);
+    boardManagers.put(gameId, new BroadcastContentManager<>(getBoard(gameId)));
+    return game;
   }
 
   /**

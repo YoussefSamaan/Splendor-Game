@@ -205,4 +205,61 @@ public class SplendorController {
       return ResponseEntity.badRequest().body(e.getMessage());
     }
   }
+
+  /**
+   * Saves the game.
+   *
+   * @param gameId the id of the game.
+   */
+  @PostMapping("/api/games/{gameId}/save")
+  public ResponseEntity saveGame(@PathVariable long gameId,
+                                 @RequestParam("username") String username,
+                                 @RequestParam("access_token") String accessToken,
+                                 HttpServletRequest request) {
+    LOGGER.info(String.format("Received request to save game with id %d", gameId));
+    if (!authenticate(username, accessToken, request.getRequestURI())) {
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
+          "Invalid access token for user " + username);
+    }
+    if (!gameManager.exists(gameId)) {
+      return ResponseEntity.badRequest().body(String.format("Game with id %d does not exist",
+          gameId));
+    }
+    if (!gameManager.playerInGame(gameId, username)) {
+      return ResponseEntity.badRequest().body(String.format("Player %s is not in game with id %d",
+          username, gameId));
+    }
+    gameManager.saveGame(gameId);
+    LOGGER.info(String.format("Saved game with id %d", gameId));
+    return ResponseEntity.ok().build();
+  }
+
+  /**
+   * Loads the game and returns the board.
+   *
+   * @param gameId the id of the game.
+   */
+  @GetMapping("/api/games/{gameId}/save")
+  public ResponseEntity loadGame(@PathVariable long gameId,
+                                 @RequestParam("username") String username,
+                                 @RequestParam("access_token") String accessToken,
+                                 HttpServletRequest request) {
+    LOGGER.info(String.format("Received request to load game with id %d", gameId));
+    if (!authenticate(username, accessToken, request.getRequestURI())) {
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
+          "Invalid access token for user " + username);
+    }
+    if (!gameManager.exists(gameId)) {
+      return ResponseEntity.badRequest().body(String.format("Game with id %d does not exist",
+          gameId));
+    }
+    if (!gameManager.playerInGame(gameId, username)) {
+      return ResponseEntity.badRequest().body(String.format("Player %s is not in game with id %d",
+          username, gameId));
+    }
+    gameManager.loadGame(gameId);
+    LOGGER.info(String.format("Loaded game with id %d", gameId));
+    String body = new Gson().toJson(gameManager.getBoard(gameId));
+    return ResponseEntity.ok().body(body);
+  }
 }
