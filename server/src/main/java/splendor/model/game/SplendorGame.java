@@ -107,4 +107,13 @@ public class SplendorGame {
       board.nextTurn();
     }
   }
+
+  /**
+   * Returns the game info.
+   *
+   * @return the game info
+   */
+  public GameInfo getGameInfo() {
+    return gameInfo;
+  }
 }

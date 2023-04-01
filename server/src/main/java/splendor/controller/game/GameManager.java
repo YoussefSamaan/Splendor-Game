@@ -76,8 +76,9 @@ public class GameManager {
    * Save the current state of a game.
    *
    * @param gameId the id of the game to save
+   * @throws IllegalArgumentException if the game does not exist
    */
-  public void saveGame(long gameId) {
+  public void saveGame(long gameId) throws IllegalArgumentException {
     if (!exists(gameId)) {
       throw new IllegalArgumentException(String.format("Game with id %d does not exist", gameId));
     }

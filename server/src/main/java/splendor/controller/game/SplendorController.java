@@ -239,9 +239,15 @@ public class SplendorController {
       return ResponseEntity.badRequest().body(String.format("Player %s is not in game with id %d",
           username, gameId));
     }
-    gameManager.saveGame(gameId);
-    LOGGER.info(String.format("Saved game with id %d", gameId));
-    return ResponseEntity.ok().build();
+    try {
+      registrator.saveGame(gameManager.loadGame(gameId).getGameInfo(), gameId);
+      gameManager.saveGame(gameId);
+      LOGGER.info(String.format("Saved game with id %d", gameId));
+      return ResponseEntity.ok().build();
+    } catch (RuntimeException e) {
+      LOGGER.warning(e.getMessage());
+      return ResponseEntity.badRequest().body(e.getMessage());
+    }
   }
 
   /**

@@ -17,6 +17,7 @@ import splendor.controller.helper.TokenHelper;
 @Component
 public class Registrator {
   private static final String REGISTRATION_RESOURCE = "/api/gameservices";
+  private static final String SAVEGAME_RESOURCE = REGISTRATION_RESOURCE + "/savegames";
 
   private final Logger logger = org.slf4j.LoggerFactory.getLogger(Registrator.class);
 
@@ -130,6 +131,34 @@ public class Registrator {
       registered = false;
     } catch (UnirestException | AuthenticationException e) {
       logger.error("Could not deregister from lobby service.", e);
+    }
+  }
+
+  /**
+   * Saves game on LS.
+   *
+   * @param gameInfo game info
+   * @param gameId game id
+   * @throws RuntimeException in case the request fails
+   */
+  public void saveGame(GameInfo gameInfo, long gameId) throws RuntimeException {
+    String url =
+        gameServiceParameters.getLobbyServiceLocation() + SAVEGAME_RESOURCE + "/" + gameId;
+    try {
+      String token = tokenHelper.get(gameServiceParameters.getOauth2Name(),
+          gameServiceParameters.getOauth2Password());
+      HttpResponse<String> response = Unirest
+          .put(url)
+          .header("Content-Type", "application/json")
+          .header("Authorization", "Bearer " + token)
+          .body(gameInfo)
+          .asString();
+      if (response.getStatus() != 200) {
+        throw new UnirestException("Could not save game with LS." + response.getBody());
+      }
+      logger.info("Successfully saved game.");
+    } catch (UnirestException | AuthenticationException e) {
+      throw new RuntimeException("Could not save game with LS." + e);
     }
   }
 }

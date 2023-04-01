@@ -60,8 +60,9 @@ public class SaveGameManager {
    *
    * @param json the json string to write
    * @param gameId the id of the game
+   * @throws RuntimeException if the file could not be written
    */
-  private void writeToFile(String json, long gameId) {
+  private void writeToFile(String json, long gameId) throws RuntimeException {
     String fileName = saveGamePath + "/" + gameId + ".json";
     File directory = new File(saveGamePath);
     if (!directory.exists()) {
