@@ -263,7 +263,8 @@ public class Board implements BroadcastContent {
     } else {
       return null;
     }
-    
+  }
+
   /**
    * I don't know what this is for.  ¯\_(ツ)_/¯.
    *
