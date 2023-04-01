@@ -1,5 +1,6 @@
 package splendor.controller.lobbyservice;
 
+import com.google.gson.Gson;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
@@ -17,7 +18,7 @@ import splendor.controller.helper.TokenHelper;
 @Component
 public class Registrator {
   private static final String REGISTRATION_RESOURCE = "/api/gameservices";
-  private static final String SAVEGAME_RESOURCE = REGISTRATION_RESOURCE + "/savegames";
+  private static final String SAVEGAME_RESOURCE = "/savegames";
 
   private final Logger logger = org.slf4j.LoggerFactory.getLogger(Registrator.class);
 
@@ -143,15 +144,18 @@ public class Registrator {
    */
   public void saveGame(GameInfo gameInfo, long gameId) throws RuntimeException {
     String url =
-        gameServiceParameters.getLobbyServiceLocation() + SAVEGAME_RESOURCE + "/" + gameId;
+        gameServiceParameters.getLobbyServiceLocation() + REGISTRATION_RESOURCE
+            + "/" + gameServiceParameters.getName() + "/" + SAVEGAME_RESOURCE + "/" + gameId;
     try {
       String token = tokenHelper.get(gameServiceParameters.getOauth2Name(),
           gameServiceParameters.getOauth2Password());
+      String gameInfoJson = gameInfo.toJson(Long.toString(gameId));
+      logger.info("Saving game with LS. Game info: " + gameInfoJson);
       HttpResponse<String> response = Unirest
           .put(url)
           .header("Content-Type", "application/json")
           .header("Authorization", "Bearer " + token)
-          .body(gameInfo)
+          .body(gameInfoJson)
           .asString();
       if (response.getStatus() != 200) {
         throw new UnirestException("Could not save game with LS." + response.getBody());

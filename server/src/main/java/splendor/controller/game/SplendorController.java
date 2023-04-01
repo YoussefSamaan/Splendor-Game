@@ -245,6 +245,7 @@ public class SplendorController {
       LOGGER.info(String.format("Saved game with id %d", gameId));
       return ResponseEntity.ok().build();
     } catch (RuntimeException e) {
+      e.printStackTrace();
       LOGGER.warning(e.getMessage());
       return ResponseEntity.badRequest().body(e.getMessage());
     }

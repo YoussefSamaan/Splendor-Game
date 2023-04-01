@@ -28,6 +28,12 @@ public class GameManager {
   private final ActionGenerator actionGenerator;
   private final SaveGameManager saveGameManager;
 
+  /**
+   * Instantiates a new Game manager.
+   *
+   * @param actionGenerator the action generator
+   * @param saveGameManager the save game manager
+   */
   public GameManager(@Autowired ActionGenerator actionGenerator,
                      @Autowired SaveGameManager saveGameManager) {
     this.actionGenerator = actionGenerator;

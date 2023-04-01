@@ -25,8 +25,6 @@ public class SplendorDeckDeserializer implements JsonDeserializer<SplendorDeck> 
   @Override
   public SplendorDeck deserialize(JsonElement json, Type typeOfT,
                                   JsonDeserializationContext context) throws JsonParseException {
-    System.out.println(
-        "Deserializing deck of type:  " + typeOfT.getTypeName() + " from json: " + json);
     JsonObject jsonObject = json.getAsJsonObject();
     JsonElement colorElement = jsonObject.get("color");
     JsonElement levelElement = jsonObject.get("level");

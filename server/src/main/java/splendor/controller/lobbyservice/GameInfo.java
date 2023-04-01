@@ -1,6 +1,8 @@
 package splendor.controller.lobbyservice;
 
 import java.util.Arrays;
+import java.util.stream.Collectors;
+import splendor.model.game.Color;
 import splendor.model.game.player.Player;
 
 /**
@@ -45,5 +47,21 @@ public class GameInfo {
             + ", players=" + Arrays.toString(players)
             + ", savegame='" + savegame + '\''
             + '}';
+  }
+
+  /**
+   * Returns a JSON representation of the game info. Used for saving games with LS.
+   *
+   * @return JSON representation of the game info
+   */
+  public String toJson(String savegameid) {
+    String playerList = Arrays.stream(players)
+        .map(name -> "\"" + name + "\"")
+        .collect(Collectors.joining(", "));
+    return "{"
+        + "\"gamename\":\"" + gameServer + "\""
+        + ", \"players\":[" + playerList + "]"
+        + ", \"savegameid\":\"" + savegameid + "\""
+        + '}';
   }
 }
