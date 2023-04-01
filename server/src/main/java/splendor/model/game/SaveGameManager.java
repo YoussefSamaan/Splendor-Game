@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.logging.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -17,7 +18,7 @@ import splendor.model.game.deck.SplendorDeckDeserializer;
  */
 @Component
 public class SaveGameManager {
-  private static String saveGamePath;
+  private final String saveGamePath;
   private final Logger logger = Logger.getLogger(SaveGameManager.class.getName());
   private final Gson gson;
 
@@ -29,6 +30,11 @@ public class SaveGameManager {
         .registerTypeAdapter(SplendorDeck.class, new SplendorDeckDeserializer())
         .create();
     this.saveGamePath = saveGamePath;
+    // Create the savegame directory if it does not exist
+    File directory = new File(saveGamePath);
+    if (!directory.exists()) {
+      directory.mkdirs();
+    }
   }
 
   /**
@@ -56,6 +62,29 @@ public class SaveGameManager {
   }
 
   /**
+   * Loads all games from the savegame directory.
+   *
+   * @return a HashMap of all loaded games, keyed by their game IDs
+   */
+  public HashMap<Long, SplendorGame> loadAllGames() {
+    logger.info("Loading all games from " + saveGamePath);
+    File directory = new File(saveGamePath);
+    File[] files = directory.listFiles((dir, name) -> name.endsWith(".json"));
+    if (files == null) {
+      logger.info("No saved games found in " + saveGamePath);
+      return new HashMap<>();
+    }
+    HashMap<Long, SplendorGame> games = new HashMap<>();
+    for (File file : files) {
+      String fileName = file.getName();
+      long gameId = Long.parseLong(fileName.substring(0, fileName.lastIndexOf(".")));
+      SplendorGame game = readFromFile(file.getAbsolutePath());
+      games.put(gameId, game);
+    }
+    return games;
+  }
+
+  /**
    * Write a json string to a file.
    *
    * @param json the json string to write
@@ -64,10 +93,6 @@ public class SaveGameManager {
    */
   private void writeToFile(String json, long gameId) throws RuntimeException {
     String fileName = saveGamePath + "/" + gameId + ".json";
-    File directory = new File(saveGamePath);
-    if (!directory.exists()) {
-      directory.mkdirs();
-    }
     try (FileWriter file = new FileWriter(fileName)) {
       file.write(json);
       file.flush();

@@ -251,6 +251,7 @@ public class SplendorController {
   }
 
   /**
+   * Not needed. All games are loaded on startup.
    * Loads the game and returns the board.
    *
    * @param gameId the id of the game.

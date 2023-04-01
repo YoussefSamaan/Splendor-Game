@@ -32,6 +32,18 @@ public class GameManager {
                      @Autowired SaveGameManager saveGameManager) {
     this.actionGenerator = actionGenerator;
     this.saveGameManager = saveGameManager;
+    loadSavedGames();
+  }
+
+  /**
+   * This function loads all saved games from the savegame directory.
+   */
+  private void loadSavedGames() {
+    HashMap<Long, SplendorGame> savedGames = saveGameManager.loadAllGames();
+    savedGames.forEach((gameId, game) -> {
+      games.put(gameId, game);
+      boardManagers.put(gameId, new BroadcastContentManager<>(getBoard(gameId)));
+    });
   }
 
   /**
@@ -86,6 +98,7 @@ public class GameManager {
   }
 
   /**
+   * No longer needed. All games are loaded on startup.
    * Load a game from a json file.
    *
    * @param gameId the id of the game to load
