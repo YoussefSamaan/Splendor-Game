@@ -1,5 +1,6 @@
 package splendor.controller.helper;
 
+import com.mashape.unirest.http.exceptions.UnirestException;
 import javax.naming.AuthenticationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -34,6 +35,26 @@ public class Authenticator {
     }
     if (!tokenHelper.isPlayer(token)) {
       throw new AuthenticationException("Token does not belong to a player.");
+    }
+  }
+
+  /**
+   * This method is used to authenticate a request from an admin.
+   *
+   * @param token    the authentication token
+   * @param username the username of the user making the request
+   * @throws AuthenticationException if the authentication fails
+   */
+  public void authenticateAdmin(String token, String username) throws AuthenticationException {
+    try {
+      if (!tokenHelper.validate(token, username)) {
+        throw new AuthenticationException("Authentication token is invalid for user " + username);
+      }
+      if (!tokenHelper.role(token).equals(Role.ADMIN.toString())) {
+        throw new AuthenticationException("Token does not belong to an admin.");
+      }
+    } catch (UnirestException | AuthenticationException e) {
+      throw new AuthenticationException("Authentication failed." + e.getMessage());
     }
   }
 }

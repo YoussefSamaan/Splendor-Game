@@ -24,6 +24,8 @@ public class Registrator {
 
   private TokenHelper tokenHelper;
 
+  private boolean registered = false;
+
   /**
    * Constructor.
    *
@@ -49,6 +51,7 @@ public class Registrator {
       try {
         registerAtLobbyService(tokenHelper.get(gameServiceParameters.getOauth2Name(),
                 gameServiceParameters.getOauth2Password()), 3);
+        registered = true;
       } catch (UnirestException | AuthenticationException e) {
         logger.error("Failed to register with LS", e);
         System.exit(1);
@@ -102,6 +105,10 @@ public class Registrator {
    */
   @PreDestroy
   public void deregisterFromLobbyService() {
+    if (!registered) {
+      logger.info("Not registered with LS. Skipping deregistration.");
+      return;
+    }
     logger.info("Deregistering from lobby service.");
     String url =
             gameServiceParameters.getLobbyServiceLocation() + REGISTRATION_RESOURCE
@@ -120,6 +127,7 @@ public class Registrator {
         return;
       }
       logger.info("Successfully deregistered from lobby service.");
+      registered = false;
     } catch (UnirestException | AuthenticationException e) {
       logger.error("Could not deregister from lobby service.", e);
     }
