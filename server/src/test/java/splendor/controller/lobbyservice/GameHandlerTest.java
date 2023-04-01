@@ -7,11 +7,13 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.ResponseEntity;
 import splendor.controller.game.GameManager;
 import splendor.controller.action.ActionGenerator;
+import splendor.model.game.SaveGameManager;
 import splendor.model.game.player.Player;
 
 public class GameHandlerTest {
   private final ActionGenerator actionGenerator = new ActionGenerator();
-  private final GameManager gameManager = new GameManager(actionGenerator);
+  private final SaveGameManager saveGameManager = new SaveGameManager("savegame");
+  private final GameManager gameManager = new GameManager(actionGenerator, saveGameManager);
   private final GameHandler gameHandler = new GameHandler(gameManager);
   private final long gameId = 1;
   private final GameInfo gameInfo;

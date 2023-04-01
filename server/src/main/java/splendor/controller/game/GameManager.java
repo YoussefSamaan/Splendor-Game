@@ -26,9 +26,12 @@ public class GameManager {
 
   private final HashMap<Long, BroadcastContentManager<Board>> boardManagers = new HashMap<>();
   private final ActionGenerator actionGenerator;
+  private final SaveGameManager saveGameManager;
 
-  public GameManager(@Autowired ActionGenerator actionGenerator) {
+  public GameManager(@Autowired ActionGenerator actionGenerator,
+                     @Autowired SaveGameManager saveGameManager) {
     this.actionGenerator = actionGenerator;
+    this.saveGameManager = saveGameManager;
   }
 
   /**
@@ -78,7 +81,7 @@ public class GameManager {
     if (!exists(gameId)) {
       throw new IllegalArgumentException(String.format("Game with id %d does not exist", gameId));
     }
-    SaveGameManager.saveGame(gameId, games.get(gameId));
+    saveGameManager.saveGame(gameId, games.get(gameId));
   }
 
   /**
@@ -90,7 +93,7 @@ public class GameManager {
     if (exists(gameId)) {
       return games.get(gameId);
     }
-    SplendorGame game = SaveGameManager.loadGame(gameId);
+    SplendorGame game = saveGameManager.loadGame(gameId);
     games.put(gameId, game);
     boardManagers.put(gameId, new BroadcastContentManager<>(getBoard(gameId)));
     return game;
