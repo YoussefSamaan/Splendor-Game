@@ -14,6 +14,7 @@ from sidebar import *
 from trade_route import * 
 from splendorToken import Token
 from color import Color
+from enum import Enum
 
 os.chdir(os.path.dirname(
     os.path.abspath(__file__)))  # to make image imports start from current directory
@@ -376,9 +377,13 @@ def perform_action(obj, user):
     elif isinstance(obj, Player):
         Sidebar.instance().switch_player(obj)
 
+class CardMenuAction(Enum):
+    STRIP = 1
+    RESERVED = 2
+    DISCARD = 3
 class CardMenu:
     """generic menu that displays all the cards that a player owns or reserved, for cloning, discarding and buying"""
-    def __init__(self, cards : List[Card], action):
+    def __init__(self, cards : List[Card], action : CardMenuAction):
         # action could be buy a reserved, clone, discard functions
         selection_box, selection_box_rect = get_selection_box(DISPLAYSURF)
         self.selection_box = selection_box
@@ -396,6 +401,7 @@ class CardMenu:
         self.action = action # the action that the menu will perform when confirm is clicked
         self.current_page = 0 # the page that the menu is currently displaying
         self.current_card_mapping = {} # maps the card to the coords that is clicked on it
+        self.card_selected = None # the card that the user has selected
 
     def display(self):
         self.selection_box.blit(self.menu, self.menu_rect)
@@ -408,7 +414,45 @@ class CardMenu:
         for i in range(self.current_page * 5, min(len(self.cards), (self.current_page + 1) * 5)):
             # draw_for_sidebar(self, screen, x, y):
             self.cards[i].draw_for_sidebar(self.selection_box,WIDTH/6 + i*(card_width+10),HEIGHT*3/10 )
-            self.current_card_mapping[self.cards[i]] = (WIDTH/6 + i*(card_width+10), HEIGHT*3/10)
+            self.current_card_mapping[self.cards[i]] = (WIDTH/6 + i*(card_width+10), HEIGHT*3/10, i)
+        # wait for user to click on something or leave
+        while True:
+            for event in pygame.event.get():
+                if event.type == QUIT:
+                    pygame.quit()
+                    sys.exit()
+                elif event.type == MOUSEBUTTONUP:
+                    card = self.check_if_clicked_card(pygame.mouse.get_pos())
+                    if card:
+                        self.add_border_to_card(card) # visually indicate this card is chosen
+                        self.card_selected = card
+                        
+                    elif self.confirm.check_if_clicked(pygame.mouse.get_pos()):
+                        if self.card_selected is None:
+                            return # if the user clicks confirm without selecting a card, just close the menu
+                        return self.action(self.card_selected)
+                    elif self.next_page.check_if_clicked(pygame.mouse.get_pos()):
+                        # increments current page up to the max page
+                        self.current_page = min(self.current_page + 1, len(self.cards) // 5)
+                    elif self.prev_page.check_if_clicked(pygame.mouse.get_pos()):
+                        # decrements current page down to 0
+                        self.current_page = max(self.current_page - 1, 0)
+                    else:
+                        if self.action != CardMenuAction.RESERVED:
+                            self.card_selected = None # deselect the card but doesn't close since cloning and stripping is forced
+                        else: # reserve cards can be closed
+                            self.card_selected = None 
+                            return # if the user clicks outside the menu, just close it
+            pygame.display.update()
+            FPSCLOCK.tick(FPS)
+    
+    def add_border_to_card(self, card):
+        card_width, card_height = self.cards[0].get_card_size(Board.instance())
+        x_start = self.current_card_mapping[card][0]
+        y_start = self.current_card_mapping[card][1]
+        pygame.draw.rect(self.selection_box, RED, (x_start, y_start, card_width, card_height), 5)
+        card_index = self.current_card_mapping[card][2]
+        card.draw_for_sidebar(self.selection_box,WIDTH/6 + card_index*(card_width+10),HEIGHT*3/10 ) # card is on top of the border
 
     def check_if_clicked_card(self, mouse_pos):
         for card in self.current_card_mapping:
@@ -634,6 +678,10 @@ def play(authenticator, game_id):
                     # check if it's the sidebar toggle
                     position = pygame.mouse.get_pos()
                     check_toggle(position)
+                    if Sidebar.instance().is_clicked_reserve(position):
+                     # check if clicked on a reserved card to buy it 
+                        CardMenu.display()
+
                     if TRADING_POST_ENABLED:
                         TradeRoute.instance().check_click(position,DISPLAYSURF)
                     obj = get_clicked_object(position)
