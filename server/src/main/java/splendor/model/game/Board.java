@@ -10,10 +10,12 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import javax.naming.InsufficientResourcesException;
+import splendor.model.game.card.City;
 import splendor.model.game.card.DevelopmentCardI;
 import splendor.model.game.card.FacedDownCardTypes;
 import splendor.model.game.card.Noble;
 import splendor.model.game.card.SplendorCard;
+import splendor.model.game.deck.CityDeck;
 import splendor.model.game.deck.Deck;
 import splendor.model.game.deck.NobleDeck;
 import splendor.model.game.deck.SplendorDeck;
@@ -29,6 +31,7 @@ public class Board implements BroadcastContent {
   private int currentTurn;
   private final SplendorDeck[] decks = new SplendorDeck[6];
   private final NobleDeck nobleDeck = new NobleDeck();
+  private final CityDeck cityDeck = new CityDeck();
   private final TokenBank bank = new TokenBank(true);
 
   /**
