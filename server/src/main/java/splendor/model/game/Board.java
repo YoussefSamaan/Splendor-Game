@@ -79,6 +79,9 @@ public class Board implements BroadcastContent {
     if (card instanceof Noble) {
       throw new IllegalArgumentException("Cannot buy a noble yet");
     }
+    if (card instanceof City) {
+      throw new IllegalArgumentException("Cannot buy a city yet");
+    }
     buyDevelopmentCard(player, (DevelopmentCardI) card);
   }
 
@@ -171,6 +174,27 @@ public class Board implements BroadcastContent {
   }
 
   /**
+   * Returns a list of the cities. Removes nulls.
+   *
+   * @return a list of the cities.
+   */
+  public List<City> getCities() {
+    City[] cities = cityDeck.getCities();
+    return Arrays.stream(cities)
+            .filter(Objects::nonNull)
+            .collect(Collectors.toList());
+  }
+
+  /**
+   * Removes city from the cityDeck on the board.
+   *
+   * @param city being removed
+   */
+  public void removeCity(City city) {
+    cityDeck.removeCity(city);
+  }
+
+  /**
    * removes the card from the deck.
    *
    * @param card the card that need to be removed.
@@ -240,6 +264,21 @@ public class Board implements BroadcastContent {
         player.addNoble(noble);
         removeNoble(noble);
         return; // only unlock one noble per turn?
+      }
+    }
+  }
+
+  /**
+   * Checks if the player can unlock a city, and if so, unlocks it.
+   *
+   * @param player the player
+   */
+  public void updateCities(Player player) {
+    for (City city : getCities()) {
+      if (city.getCost().isAffordable(player.getBonuses())) {
+        player.addCity(city);
+        removeCity(city);
+        return; // only unlock one city per turn?
       }
     }
   }
