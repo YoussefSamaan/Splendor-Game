@@ -372,7 +372,6 @@ def perform_action(obj, user):
         elif isinstance(obj, Player):
             Sidebar.instance().switch_player(obj)
 
-
     # When it's not the user's turn, still allow switching between sidebars
     elif isinstance(obj, Player):
         Sidebar.instance().switch_player(obj)
