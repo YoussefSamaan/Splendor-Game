@@ -372,11 +372,55 @@ def perform_action(obj, user):
         elif isinstance(obj, Player):
             Sidebar.instance().switch_player(obj)
 
+
     # When it's not the user's turn, still allow switching between sidebars
     elif isinstance(obj, Player):
         Sidebar.instance().switch_player(obj)
 
+class CardMenu:
+    """generic menu that displays all the cards that a player owns or reserved, for cloning, discarding and buying"""
+    def __init__(self, cards : List[Card], action):
+        # action could be buy a reserved, clone, discard functions
+        selection_box, selection_box_rect = get_selection_box(DISPLAYSURF)
+        self.selection_box = selection_box
+        self.selection_box_rect = selection_box_rect
 
+        self.menu = pygame.Surface((WIDTH, HEIGHT))
+        self.menu.fill((0, 0, 0))
+        self.menu.set_alpha(200)
+        self.menu_rect = self.menu.get_rect()
+        self.menu_rect.center = (WIDTH / 2, HEIGHT / 2)
+        self.confirm = Button(pygame.Rect(WIDTH/2,HEIGHT*7/10,90,55), self.confirm, text="Confirm")
+        self.next_page = Button(pygame.Rect(WIDTH*3/4,HEIGHT*7/10,90,55), self.next_page, text="Next")
+        self.prev_page = Button(pygame.Rect(WIDTH/4,HEIGHT*7/10,90,55), self.prev_page, text="Prev")
+        self.cards = cards # the cards that the menu will display, either owned or reserved depending on context
+        self.action = action # the action that the menu will perform when confirm is clicked
+        self.current_page = 0 # the page that the menu is currently displaying
+        self.current_card_mapping = {} # maps the card to the coords that is clicked on it
+
+    def display(self):
+        self.selection_box.blit(self.menu, self.menu_rect)
+        # draw the buttons
+        self.confirm.display(self.selection_box)
+        self.next_page.display(self.selection_box)
+        self.prev_page.display(self.selection_box)
+        # draw the cards, we will draw them the same size as on the board
+        card_width, card_height = self.cards[0].get_card_size(Board.instance())
+        for i in range(self.current_page * 5, min(len(self.cards), (self.current_page + 1) * 5)):
+            # draw_for_sidebar(self, screen, x, y):
+            self.cards[i].draw_for_sidebar(self.selection_box,WIDTH/6 + i*(card_width+10),HEIGHT*3/10 )
+            self.current_card_mapping[self.cards[i]] = (WIDTH/6 + i*(card_width+10), HEIGHT*3/10)
+
+    def check_if_clicked_card(self, mouse_pos):
+        for card in self.current_card_mapping:
+            x_start = self.current_card_mapping[card][0]
+            y_start = self.current_card_mapping[card][1]
+            x_end = x_start + Card.get_card_size(Board.instance())[0]
+            y_end = y_start + Card.get_card_size(Board.instance())[1]
+            if x_start <= mouse_pos[0] <= x_end and y_start <= mouse_pos[1] <= y_end:
+                return card
+        return False
+    
 class TokenMenu:
     """generates all the buttons, remembers which tokens user picked, checks if legal"""
     def __init__(self):
