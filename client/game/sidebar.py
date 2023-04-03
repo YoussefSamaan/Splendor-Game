@@ -216,13 +216,13 @@ class Sidebar:
         self.sidebar_rect.move_ip(0, direction)
 
     def get_rect(self):
-        return self.sidebarRect
+        return self.sidebar_rect
 
     def get_x(self):
-        return self.sidebarRect.x
+        return self.sidebar_rect.x
 
     def get_y(self):
-        return self.sidebarRect.y
+        return self.sidebar_rect.y
 
     def get_width(self):
         return self.width
@@ -232,7 +232,7 @@ class Sidebar:
 
     def is_clicked_reserve(self, mouse_pos):
         # checks if user clicked on reserve button or card
-        if self.sidebarRect.collidepoint(mouse_pos) and self.current_display == 2:
+        if self.sidebar_rect.collidepoint(mouse_pos) and self.current_display == 2:
             return True
         return False
     
