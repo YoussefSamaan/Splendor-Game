@@ -265,14 +265,16 @@
                 <activeByDefault>true</activeByDefault>
             </activation>
             <properties>
+                <spring.profiles.active>dev</spring.profiles.active>
                 <activatedProperties>dev</activatedProperties>
                 <packaging.type>jar</packaging.type>
             </properties>
         </profile>
-        <!--prod profile is intended for dockerized deployment of Xox.-->
+        <!--prod profile is intended for dockerized deployment of Splendor .-->
         <profile>
             <id>prod</id>
             <properties>
+                <spring.profiles.active>prod</spring.profiles.active>
                 <activatedProperties>prod</activatedProperties>
                 <packaging.type>jar</packaging.type>
             </properties>

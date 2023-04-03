@@ -1,5 +1,6 @@
 package splendor.controller.lobbyservice;
 
+import com.google.gson.Gson;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
@@ -17,12 +18,15 @@ import splendor.controller.helper.TokenHelper;
 @Component
 public class Registrator {
   private static final String REGISTRATION_RESOURCE = "/api/gameservices";
+  private static final String SAVEGAME_RESOURCE = "/savegames";
 
   private final Logger logger = org.slf4j.LoggerFactory.getLogger(Registrator.class);
 
   private GameServiceParameters gameServiceParameters;
 
   private TokenHelper tokenHelper;
+
+  private boolean registered = false;
 
   /**
    * Constructor.
@@ -49,6 +53,7 @@ public class Registrator {
       try {
         registerAtLobbyService(tokenHelper.get(gameServiceParameters.getOauth2Name(),
                 gameServiceParameters.getOauth2Password()), 3);
+        registered = true;
       } catch (UnirestException | AuthenticationException e) {
         logger.error("Failed to register with LS", e);
         System.exit(1);
@@ -102,6 +107,10 @@ public class Registrator {
    */
   @PreDestroy
   public void deregisterFromLobbyService() {
+    if (!registered) {
+      logger.info("Not registered with LS. Skipping deregistration.");
+      return;
+    }
     logger.info("Deregistering from lobby service.");
     String url =
             gameServiceParameters.getLobbyServiceLocation() + REGISTRATION_RESOURCE
@@ -120,8 +129,40 @@ public class Registrator {
         return;
       }
       logger.info("Successfully deregistered from lobby service.");
+      registered = false;
     } catch (UnirestException | AuthenticationException e) {
       logger.error("Could not deregister from lobby service.", e);
+    }
+  }
+
+  /**
+   * Saves game on LS.
+   *
+   * @param gameInfo game info
+   * @param gameId game id
+   * @throws RuntimeException in case the request fails
+   */
+  public void saveGame(GameInfo gameInfo, long gameId) throws RuntimeException {
+    String url =
+        gameServiceParameters.getLobbyServiceLocation() + REGISTRATION_RESOURCE
+            + "/" + gameServiceParameters.getName() + "/" + SAVEGAME_RESOURCE + "/" + gameId;
+    try {
+      String token = tokenHelper.get(gameServiceParameters.getOauth2Name(),
+          gameServiceParameters.getOauth2Password());
+      String gameInfoJson = gameInfo.toJson(Long.toString(gameId));
+      logger.info("Saving game with LS. Game info: " + gameInfoJson);
+      HttpResponse<String> response = Unirest
+          .put(url)
+          .header("Content-Type", "application/json")
+          .header("Authorization", "Bearer " + token)
+          .body(gameInfoJson)
+          .asString();
+      if (response.getStatus() != 200) {
+        throw new UnirestException("Could not save game with LS." + response.getBody());
+      }
+      logger.info("Successfully saved game.");
+    } catch (UnirestException | AuthenticationException e) {
+      throw new RuntimeException("Could not save game with LS." + e);
     }
   }
 }

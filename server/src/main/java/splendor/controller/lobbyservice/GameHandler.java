@@ -64,5 +64,4 @@ public class GameHandler {
     LOGGER.info(String.format("Game with id %d deleted", gameId));
     return ResponseEntity.ok().build();
   }
-
 }

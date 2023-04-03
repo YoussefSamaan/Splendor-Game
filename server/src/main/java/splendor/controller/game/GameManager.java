@@ -12,6 +12,7 @@ import splendor.controller.action.ActionGenerator;
 import splendor.controller.action.InvalidAction;
 import splendor.controller.lobbyservice.GameInfo;
 import splendor.model.game.Board;
+import splendor.model.game.SaveGameManager;
 import splendor.model.game.SplendorGame;
 import splendor.model.game.player.SplendorPlayer;
 
@@ -25,9 +26,30 @@ public class GameManager {
 
   private final HashMap<Long, BroadcastContentManager<Board>> boardManagers = new HashMap<>();
   private final ActionGenerator actionGenerator;
+  private final SaveGameManager saveGameManager;
 
-  public GameManager(@Autowired ActionGenerator actionGenerator) {
+  /**
+   * Instantiates a new Game manager.
+   *
+   * @param actionGenerator the action generator
+   * @param saveGameManager the save game manager
+   */
+  public GameManager(@Autowired ActionGenerator actionGenerator,
+                     @Autowired SaveGameManager saveGameManager) {
     this.actionGenerator = actionGenerator;
+    this.saveGameManager = saveGameManager;
+    loadSavedGames();
+  }
+
+  /**
+   * This function loads all saved games from the savegame directory.
+   */
+  private void loadSavedGames() {
+    HashMap<Long, SplendorGame> savedGames = saveGameManager.loadAllGames();
+    savedGames.forEach((gameId, game) -> {
+      games.put(gameId, game);
+      boardManagers.put(gameId, new BroadcastContentManager<>(getBoard(gameId)));
+    });
   }
 
   /**
@@ -66,6 +88,35 @@ public class GameManager {
     }
     games.put(gameId, new SplendorGame(gameInfo));
     boardManagers.put(gameId, new BroadcastContentManager<>(getBoard(gameId)));
+  }
+
+  /**
+   * Save the current state of a game.
+   *
+   * @param gameId the id of the game to save
+   * @throws IllegalArgumentException if the game does not exist
+   */
+  public void saveGame(long gameId) throws IllegalArgumentException {
+    if (!exists(gameId)) {
+      throw new IllegalArgumentException(String.format("Game with id %d does not exist", gameId));
+    }
+    saveGameManager.saveGame(gameId, games.get(gameId));
+  }
+
+  /**
+   * No longer needed. All games are loaded on startup.
+   * Load a game from a json file.
+   *
+   * @param gameId the id of the game to load
+   */
+  public SplendorGame loadGame(long gameId) {
+    if (exists(gameId)) {
+      return games.get(gameId);
+    }
+    SplendorGame game = saveGameManager.loadGame(gameId);
+    games.put(gameId, game);
+    boardManagers.put(gameId, new BroadcastContentManager<>(getBoard(gameId)));
+    return game;
   }
 
   /**

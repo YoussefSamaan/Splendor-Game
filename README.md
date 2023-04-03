@@ -56,17 +56,12 @@ This project follows the best practices of the [Google's Checkstyle Configuratio
     ```bash
     pip install -r requirements.txt
     ```
-3. In the server directory, run the following command:
-    ```bash
-    mvn clean install
-    ```
-   _Is there a way not to do this?_
-4. In the root directory of the project, run the following command based on your operating system:
+3. In the root directory of the project, run the following command based on your operating system:
     ```bash
     ./updatesubmodules.ps1 # Windows
     ./updatesubmodules.sh # Linux
     ```
-5. Run the following command in the root directory of the project.
+4. Run the following command in the root directory of the project.
    It will take a while for the images to download the first time.
     ```bash
     docker-compose up
@@ -76,19 +71,21 @@ This project follows the best practices of the [Google's Checkstyle Configuratio
    up. This is because the game service needs to be registered with the lobby service. To fix 
    this, go to localhost:4242. login with username "maex" and password "abc123_ABC123". Then, 
    add the game service by clicking on the "Admin Zone", and name the service splendor, and 
-   password also "abc123_ABC123". Then, restart the docker container by running the following
+   password also "abc123_ABC123". Then, restart the server container by running the following
     command:
      ```bash
-     docker-compose down
      docker-compose up
      ```
-6. Edit client/config.py to set the IP address of the server to the IP address of the machine
+   **Note 2:**
+   LS database container does not have a volume mounted to it, so running docker-compose down 
+   will remove all data in the database (including the registered game service).
+5. Edit client/config.py to set the IP address of the server to the IP address of the machine
    running the docker container.
-7. Run the client by running the main.py file in the client directory.
-8. Play the game and have fun!
-9. To stop the server, run the following command in the root directory of the project:
+6. Run the client by running the main.py file in the client directory.
+7. Play the game and have fun!
+8. To stop the server, run the following command in the root directory of the project:
     ```bash
-    docker-compose down
+    docker-compose stop
     ```
 
 ## Authors

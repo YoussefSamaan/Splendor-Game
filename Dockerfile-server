@@ -1,8 +1,11 @@
 FROM maven:3.6-jdk-13 AS splendor-server-build
-ADD server/target/SplendorServer.jar SplendorServer.jar
+# Mount the volume containing the saved games
+ENV SAVED_GAMES_PATH /usr/src/app/saved_games
+VOLUME $SAVED_GAMES_PATH
 COPY server/src /usr/src/app/src
 COPY server/pom.xml /usr/src/app
-RUN mvn -f /usr/src/app/pom.xml clean package -P prod
+RUN mvn -f /usr/src/app/pom.xml clean package -Pprod
+
 
 ## Wait for LS to be ready
 ENV WAIT_VERSION 2.7.2

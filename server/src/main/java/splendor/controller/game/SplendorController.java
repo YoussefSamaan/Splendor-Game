@@ -20,6 +20,7 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import splendor.controller.action.ActionData;
 import splendor.controller.action.InvalidAction;
 import splendor.controller.helper.Authenticator;
+import splendor.controller.lobbyservice.Registrator;
 import splendor.model.game.Board;
 
 /**
@@ -30,13 +31,22 @@ public class SplendorController {
   private static final Logger LOGGER = Logger.getLogger(SplendorController.class.getName());
   private final GameManager gameManager;
   private final Authenticator authenticator;
-
+  private final Registrator registrator;
   private final int longPollTimeout = 60000;
 
+  /**
+   * Constructor.
+   *
+   * @param gameManager the game manager.
+   * @param authenticator the authenticator.
+   * @param registrator the registrator.
+   */
   public SplendorController(@Autowired GameManager gameManager,
-                            @Autowired Authenticator authenticator) {
+                            @Autowired Authenticator authenticator,
+                            @Autowired Registrator registrator) {
     this.gameManager = gameManager;
     this.authenticator = authenticator;
+    this.registrator = registrator;
   }
 
   /**
@@ -203,6 +213,87 @@ public class SplendorController {
     } catch (InvalidAction | InsufficientResourcesException e) {
       LOGGER.warning(e.getMessage());
       return ResponseEntity.badRequest().body(e.getMessage());
+    }
+  }
+
+  /**
+   * Saves the game.
+   *
+   * @param gameId the id of the game.
+   */
+  @PostMapping("/api/games/{gameId}/save")
+  public ResponseEntity saveGame(@PathVariable long gameId,
+                                 @RequestParam("username") String username,
+                                 @RequestParam("access_token") String accessToken,
+                                 HttpServletRequest request) {
+    LOGGER.info(String.format("Received request to save game with id %d", gameId));
+    if (!authenticate(username, accessToken, request.getRequestURI())) {
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
+          "Invalid access token for user " + username);
+    }
+    if (!gameManager.exists(gameId)) {
+      return ResponseEntity.badRequest().body(String.format("Game with id %d does not exist",
+          gameId));
+    }
+    if (!gameManager.playerInGame(gameId, username)) {
+      return ResponseEntity.badRequest().body(String.format("Player %s is not in game with id %d",
+          username, gameId));
+    }
+    try {
+      registrator.saveGame(gameManager.loadGame(gameId).getGameInfo(), gameId);
+      gameManager.saveGame(gameId);
+      LOGGER.info(String.format("Saved game with id %d", gameId));
+      return ResponseEntity.ok().build();
+    } catch (RuntimeException e) {
+      e.printStackTrace();
+      LOGGER.warning(e.getMessage());
+      return ResponseEntity.badRequest().body(e.getMessage());
+    }
+  }
+
+  /**
+   * Not needed. All games are loaded on startup.
+   * Loads the game and returns the board.
+   *
+   * @param gameId the id of the game.
+   */
+  @GetMapping("/api/games/{gameId}/save")
+  public ResponseEntity loadGame(@PathVariable long gameId,
+                                 @RequestParam("username") String username,
+                                 @RequestParam("access_token") String accessToken,
+                                 HttpServletRequest request) {
+    LOGGER.info(String.format("Received request to load game with id %d", gameId));
+    if (!authenticate(username, accessToken, request.getRequestURI())) {
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
+          "Invalid access token for user " + username);
+    }
+    gameManager.loadGame(gameId);
+    // do this after loading the game
+    if (!gameManager.playerInGame(gameId, username)) {
+      return ResponseEntity.badRequest().body(String.format("Player %s is not in game with id %d",
+              username, gameId));
+    }
+    LOGGER.info(String.format("Loaded game with id %d", gameId));
+    String body = new Gson().toJson(gameManager.getBoard(gameId));
+    return ResponseEntity.ok().body(body);
+  }
+
+  /**
+   * Deregister from LS.
+   */
+  @PostMapping("/api/deregister")
+  public ResponseEntity deregister(@RequestParam("username") String username,
+                                   @RequestParam("access_token") String accessToken,
+                                   HttpServletRequest request) {
+    LOGGER.info(String.format("Received request to deregister by user %s", username));
+    try {
+      authenticator.authenticateAdmin(accessToken, username);
+      registrator.deregisterFromLobbyService();
+      LOGGER.info("Deregistered from LS");
+      return ResponseEntity.ok().build();
+    } catch (AuthenticationException e) {
+      LOGGER.warning(e.getMessage());
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
     }
   }
 }
