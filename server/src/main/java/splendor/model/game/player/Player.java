@@ -151,6 +151,14 @@ public class Player implements PlayerReadOnly, SplendorPlayer {
     nextActions.add(action);
   }
 
+  /**
+   * Removes the oldest added action in the list. This action is at the beginning of the list.
+   */
+  public void removeOldestNextAction() {
+    if (nextActions != null && nextActions.size() > 0) {
+      nextActions.remove(0);
+    }
+  }
 
   /**
    * resets the next actions so game is not stuck in a loop.

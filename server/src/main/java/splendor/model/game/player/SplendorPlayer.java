@@ -44,6 +44,11 @@ public interface SplendorPlayer {
   ActionType nextAction();
 
   /**
+   * removes the action at the beginning of the list.
+   */
+  void removeOldestNextAction();
+
+  /**
    * resets the next action.
    */
   void resetNextActions();
