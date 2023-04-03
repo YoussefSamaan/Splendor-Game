@@ -240,7 +240,7 @@ public class SplendorController {
           username, gameId));
     }
     try {
-      registrator.saveGame(gameManager.loadGame(gameId).getGameInfo(), gameId);
+      registrator.saveGame(gameManager.getGame(gameId).getGameInfo(), gameId);
       gameManager.saveGame(gameId);
       LOGGER.info(String.format("Saved game with id %d", gameId));
       return ResponseEntity.ok().build();
@@ -249,33 +249,6 @@ public class SplendorController {
       LOGGER.warning(e.getMessage());
       return ResponseEntity.badRequest().body(e.getMessage());
     }
-  }
-
-  /**
-   * Not needed. All games are loaded on startup.
-   * Loads the game and returns the board.
-   *
-   * @param gameId the id of the game.
-   */
-  @GetMapping("/api/games/{gameId}/save")
-  public ResponseEntity loadGame(@PathVariable long gameId,
-                                 @RequestParam("username") String username,
-                                 @RequestParam("access_token") String accessToken,
-                                 HttpServletRequest request) {
-    LOGGER.info(String.format("Received request to load game with id %d", gameId));
-    if (!authenticate(username, accessToken, request.getRequestURI())) {
-      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
-          "Invalid access token for user " + username);
-    }
-    gameManager.loadGame(gameId);
-    // do this after loading the game
-    if (!gameManager.playerInGame(gameId, username)) {
-      return ResponseEntity.badRequest().body(String.format("Player %s is not in game with id %d",
-              username, gameId));
-    }
-    LOGGER.info(String.format("Loaded game with id %d", gameId));
-    String body = new Gson().toJson(gameManager.getBoard(gameId));
-    return ResponseEntity.ok().body(body);
   }
 
   /**

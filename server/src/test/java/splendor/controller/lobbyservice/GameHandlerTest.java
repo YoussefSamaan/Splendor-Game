@@ -25,7 +25,7 @@ public class GameHandlerTest {
     players[2] = new Player("player3", "green");
     players[3] = new Player("player4", "yellow");
     gameInfo = new GameInfo("gameServer", players[0].getName(), players,
-        "savegame");
+        null);
   }
 
   @Test

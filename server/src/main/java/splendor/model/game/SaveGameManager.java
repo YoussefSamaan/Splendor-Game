@@ -40,25 +40,40 @@ public class SaveGameManager {
   /**
   * Save a game into a json file.
   *
-  * @param gameId id of the game to save. File name will be gameId.json.
-  * @param game the game to save.
+  * @param game the game to save
+  * @param saveGameId the id of the savegame. File name will be saveGameId.json.
   */
-  public void saveGame(long gameId, SplendorGame game) {
-    logger.info("Saving game " + gameId);
+  public void saveGame(SplendorGame game, String saveGameId) {
+    logger.info("Saving game " + saveGameId);
     String json = new Gson().toJson(game);
-    writeToFile(json, gameId);
+    writeToFile(json, saveGameId);
   }
 
   /**
   * Load a game from a json file.
   *
-  * @param gameId id of the game to load. File name will be gameId.json.
+  * @param saveGameId id of the game to load. File name will be gameId.json.
   * @return the loaded game
   */
-  public SplendorGame loadGame(long gameId) {
-    logger.info("Loading game " + gameId);
-    String fileName = saveGamePath + "/" + gameId + ".json";
+  public SplendorGame loadGame(String saveGameId) {
+    logger.info("Loading save game " + saveGameId);
+    String fileName = saveGamePath + "/" + saveGameId + ".json";
     return readFromFile(fileName);
+  }
+
+  /**
+   * Delete a game from the savegame directory.
+   * If the file does not exist, nothing happens.
+   *
+   * @param saveGameId the id of the game to delete
+   */
+  public void deleteGame(String saveGameId) {
+    logger.info("Deleting save game " + saveGameId);
+    String fileName = saveGamePath + "/" + saveGameId + ".json";
+    File file = new File(fileName);
+    if (file.exists()) {
+      file.delete();
+    }
   }
 
   /**
@@ -88,11 +103,11 @@ public class SaveGameManager {
    * Write a json string to a file.
    *
    * @param json the json string to write
-   * @param gameId the id of the game
+   * @param saveGameId the id of the game
    * @throws RuntimeException if the file could not be written
    */
-  private void writeToFile(String json, long gameId) throws RuntimeException {
-    String fileName = saveGamePath + "/" + gameId + ".json";
+  private void writeToFile(String json, String saveGameId) throws RuntimeException {
+    String fileName = saveGamePath + "/" + saveGameId + ".json";
     try (FileWriter file = new FileWriter(fileName)) {
       file.write(json);
       file.flush();

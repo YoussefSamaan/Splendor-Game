@@ -13,7 +13,7 @@ public class GameInfo {
   private final String gameServer;
   private final String creator;
   private final Player[] players;
-  private final String savegame;
+  private String savegame;
 
   /**
    * Instantiates a new Game info.
@@ -72,5 +72,14 @@ public class GameInfo {
         + ", \"players\":[" + playerList + "]"
         + ", \"savegameid\":\"" + savegameid + "\""
         + '}';
+  }
+
+  /**
+   * Getter for savegame.
+   *
+   * @return savegame
+   */
+  public String getSavegame() {
+    return savegame;
   }
 }

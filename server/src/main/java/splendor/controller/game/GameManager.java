@@ -38,7 +38,6 @@ public class GameManager {
                      @Autowired SaveGameManager saveGameManager) {
     this.actionGenerator = actionGenerator;
     this.saveGameManager = saveGameManager;
-    loadSavedGames();
   }
 
   /**
@@ -74,6 +73,19 @@ public class GameManager {
   }
 
   /**
+   * Returns existing game.
+   *
+   * @param gameId the id of the game
+   * @return the game
+   */
+  public SplendorGame getGame(long gameId) {
+    if (!exists(gameId)) {
+      throw new IllegalArgumentException(String.format("Game with id %d does not exist", gameId));
+    }
+    return games.get(gameId);
+  }
+
+  /**
    * Creates a new game, and tracks it.
    *
    * @param gameInfo the info of the game to create
@@ -86,7 +98,11 @@ public class GameManager {
     if (gameInfo == null) {
       throw new IllegalArgumentException("GameInfo cannot be null");
     }
-    games.put(gameId, new SplendorGame(gameInfo));
+    if (gameInfo.getSavegame() != null && !gameInfo.getSavegame().isEmpty()) {
+      games.put(gameId, saveGameManager.loadGame(gameInfo.getSavegame()));
+    } else {
+      games.put(gameId, new SplendorGame(gameInfo));
+    }
     boardManagers.put(gameId, new BroadcastContentManager<>(getBoard(gameId)));
   }
 
@@ -100,23 +116,7 @@ public class GameManager {
     if (!exists(gameId)) {
       throw new IllegalArgumentException(String.format("Game with id %d does not exist", gameId));
     }
-    saveGameManager.saveGame(gameId, games.get(gameId));
-  }
-
-  /**
-   * No longer needed. All games are loaded on startup.
-   * Load a game from a json file.
-   *
-   * @param gameId the id of the game to load
-   */
-  public SplendorGame loadGame(long gameId) {
-    if (exists(gameId)) {
-      return games.get(gameId);
-    }
-    SplendorGame game = saveGameManager.loadGame(gameId);
-    games.put(gameId, game);
-    boardManagers.put(gameId, new BroadcastContentManager<>(getBoard(gameId)));
-    return game;
+    saveGameManager.saveGame(games.get(gameId), Long.toString(gameId));
   }
 
   /**
