@@ -1,5 +1,6 @@
 package splendor.controller.action;
 
+import com.sun.java.swing.action.NextAction;
 import java.util.ArrayList;
 import java.util.List;
 import splendor.model.game.Board;
@@ -38,6 +39,13 @@ public class TakeCardAction extends CardAction {
     player.addCard(card);
     board.removeCard(this.getCard());
     card.getSpecialActions().forEach(player::addNextAction); // add special actions to player
+    if (board.getNobles() == null) {
+      if (player.containsNextAction(ActionType.TAKE_NOBLE)) {
+        player.removeNextAction(ActionType.TAKE_NOBLE);
+      } else if (player.containsNextAction(ActionType.RESERVE_NOBLE)) {
+        player.removeNextAction(ActionType.RESERVE_NOBLE);
+      }
+    }
   }
 
   /**
