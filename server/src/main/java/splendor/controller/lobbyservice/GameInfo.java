@@ -50,6 +50,15 @@ public class GameInfo {
   }
 
   /**
+   * Get the gameserver name.
+   *
+   * @return the gameserver name
+   */
+  public String getGameServer() {
+    return gameServer;
+  }
+
+  /**
    * Returns a JSON representation of the game info. Used for saving games with LS.
    *
    * @return JSON representation of the game info

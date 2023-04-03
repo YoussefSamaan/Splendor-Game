@@ -46,15 +46,11 @@ public class Authenticator {
    * @throws AuthenticationException if the authentication fails
    */
   public void authenticateAdmin(String token, String username) throws AuthenticationException {
-    try {
-      if (!tokenHelper.validate(token, username)) {
-        throw new AuthenticationException("Authentication token is invalid for user " + username);
-      }
-      if (!tokenHelper.role(token).equals(Role.ADMIN.toString())) {
-        throw new AuthenticationException("Token does not belong to an admin.");
-      }
-    } catch (UnirestException | AuthenticationException e) {
-      throw new AuthenticationException("Authentication failed." + e.getMessage());
+    if (!tokenHelper.validate(token, username)) {
+      throw new AuthenticationException("Authentication token is invalid for user " + username);
+    }
+    if (!tokenHelper.validate(token, username, Role.ADMIN)) {
+      throw new AuthenticationException("Token does not belong to an admin.");
     }
   }
 }
