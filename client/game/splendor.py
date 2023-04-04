@@ -38,7 +38,7 @@ CURR_PLAYER = 0
 action_manager = None
 has_initialized = False
 cascade = False
-TRADING_POST_ENABLED = True 
+TRADING_POST_ENABLED = False 
 CITIES_ENABLED = False
 
 class IndividualTokenSelection:
@@ -298,7 +298,8 @@ def display_everything(current_user):
     pygame.display.update()
 
 def display_trade_routes():
-    TradeRoute.instance().display(DISPLAYSURF)
+    if TRADING_POST_ENABLED:
+        TradeRoute.instance().display(DISPLAYSURF)
 
 def display_board():
     Board.instance().display(DISPLAYSURF)
@@ -450,12 +451,13 @@ def perform_action(obj, user, position):
         Sidebar.instance().switch_player(obj)
 
 class CardMenuAction(Enum):
-    STRIP = 1
+    CLONE = 1
     RESERVED = 2
     DISCARD = 3
 class CardMenu:
     """generic menu that displays all the cards that a player owns or reserved, for cloning, discarding and buying"""
     def __init__(self, cards : List[Card], action : CardMenuAction):
+        global action_manager
         # action could be buy a reserved, clone, discard functions
         selection_box, selection_box_rect = get_selection_box(DISPLAYSURF, 1, 0.6)
         self.selection_box = selection_box
@@ -471,17 +473,30 @@ class CardMenu:
         self.prev_page = Button(pygame.Rect(WIDTH/4,HEIGHT*7/10,90,55), None, text="Prev")
         self.cards = cards # the cards that the menu will display, either owned or reserved depending on context
         self.action = action
-        if action == CardMenuAction.RESERVED:
-             # the action that the menu will perform when confirm is clicked
-            print("bought a reserved card")
-            pass
-        elif action == CardMenuAction.STRIP:
-            pass
-        elif action == CardMenuAction.DISCARD:
-            pass
+        self.send_action = None
+        
         self.current_page = 0 # the page that the menu is currently displaying
         self.current_card_mapping = {} # maps the card to the coords that is clicked on it
         self.card_selected = None # the card that the user has selected
+        self.card_selected2 = None # the second card that the user has selected
+
+    def create_send_action(self, card):
+        def reserved_action(card):
+            self.send_action = action_manager.get_buy_reserved_card_action_id(card)
+        def discard_action(card):
+            self.send_action = action_manager.get_discard_action_id(card)
+        def clone_action(card):
+            self.send_action = action_manager.get_clone_action_id(card)
+
+        if self.action == CardMenuAction.CLONE:
+            return clone_action(card)
+        elif self.action == CardMenuAction.RESERVED:
+            return reserved_action(card)
+        elif self.action == CardMenuAction.DISCARD:
+            return discard_action(card)
+
+            
+
 
     def display(self):
         self.selection_box.blit(self.menu, self.menu_rect)
@@ -497,7 +512,7 @@ class CardMenu:
         #write_on(DISPLAYSURF, "Page " + str(self.current_page + 1) + "/" + str(math.ceil(len(self.cards) / 5)), WIDTH/2, HEIGHT*3/10 - 20, size=30)
         # draw the cards, we will draw them the same size as on the board
         card_width, card_height = self.cards[0].get_card_size(Board.instance())
-        for i in range(self.current_page * 5, min(len(self.cards), (self.current_page + 1) * 5)):
+        for i in range(self.current_page * 6, min(len(self.cards), (self.current_page + 1) * 6)):
             # draw_for_sidebar(self, screen, x, y):
             self.cards[i].draw_for_sidebar(DISPLAYSURF,WIDTH/6 + i*(card_width+50),HEIGHT*3/10 )
             self.current_card_mapping[self.cards[i]] = (WIDTH/6 + i*(card_width+50), HEIGHT*3/10, i)
@@ -517,10 +532,10 @@ class CardMenu:
                     elif self.confirm.rectangle.collidepoint(pygame.mouse.get_pos()):
                         if self.card_selected is None:
                             return # if the user clicks confirm without selecting a card, just close the menu
-                        return self.action(self.card_selected)
+                        return self.create_send_action(self.card_selected)
                     elif self.next_page.rectangle.collidepoint(pygame.mouse.get_pos()):
                         # increments current page up to the max page
-                        self.current_page = min(self.current_page + 1, len(self.cards) // 5)
+                        self.current_page = min(self.current_page + 1, len(self.cards) // 6)
                     elif self.prev_page.rectangle.collidepoint(pygame.mouse.get_pos()):
                         # decrements current page down to 0
                         self.current_page = max(self.current_page - 1, 0)
@@ -537,7 +552,7 @@ class CardMenu:
         card_width, card_height = self.cards[0].get_card_size(Board.instance())
         x_start = self.current_card_mapping[card][0]
         y_start = self.current_card_mapping[card][1]
-        pygame.draw.rect(self.selection_box, RED, (x_start, y_start, card_width, card_height), 5)
+        pygame.draw.rect(self.selection_box, RED, (x_start, y_start, card_width+10, card_height+10), 5)
         card_index = self.current_card_mapping[card][2]
         card.draw_for_sidebar(self.selection_box,WIDTH/6 + card_index*(card_width+10),HEIGHT*3/10 ) # card is on top of the border
 
