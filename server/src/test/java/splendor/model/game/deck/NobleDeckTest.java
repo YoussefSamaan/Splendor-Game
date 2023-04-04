@@ -10,7 +10,7 @@ public class NobleDeckTest {
 
   @BeforeEach
   public void setUp() throws Exception {
-    deck = new NobleDeck();
+    deck = new NobleDeck(2);
   }
 
   @Test
@@ -49,7 +49,7 @@ public class NobleDeckTest {
     int sampleSize = 10;
     NobleDeck[] decks = new NobleDeck[sampleSize];
     for (int i = 0; i < sampleSize; i++) {
-      decks[i] = new NobleDeck();
+      decks[i] = new NobleDeck(2);
     }
     boolean same = true;
     for (int i = 0; i < sampleSize; i++) {

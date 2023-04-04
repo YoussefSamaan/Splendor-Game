@@ -13,11 +13,18 @@ import splendor.model.game.card.Noble;
 public class NobleDeck implements NobleDeckI {
   private static JSONObject noblesJson;
 
-  private final int deckSize = getNobleJson().getInt("deckSize");
+  private final int deckSize; // = getNobleJson().getInt("deckSize"); // TODO: remove
 
-  private final Noble[] nobles = new Noble[deckSize];
+  private final Noble[] nobles;
 
-  public NobleDeck() {
+  /**
+   * Constructor for the noble deck. The deckSize is based on the number of players + 1.
+   *
+   * @param numPlayers number of players in the game.
+   */
+  public NobleDeck(int numPlayers) {
+    deckSize = numPlayers + 1;
+    nobles = new Noble[deckSize];
     addNoblesToDeck();
   }
 

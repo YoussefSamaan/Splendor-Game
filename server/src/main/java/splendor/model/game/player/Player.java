@@ -152,7 +152,14 @@ public class Player implements PlayerReadOnly, SplendorPlayer {
     nextActions.add(action);
   }
 
-  //TODO: Add removeOneNextActions()
+  /**
+   * Removes the oldest added action in the list. This action is at the beginning of the list.
+   */
+  public void removeOldestNextAction() {
+    if (nextActions != null && nextActions.size() > 0) {
+      nextActions.remove(0);
+    }
+  }
 
   /**
    * resets the next actions so game is not stuck in a loop.
@@ -250,6 +257,10 @@ public class Player implements PlayerReadOnly, SplendorPlayer {
     return inventory.getNoblesCount();
   }
 
+  public int getNumGoldCards() {
+    return inventory.getNumGoldCards();
+  }
+
   /**
    * get the number of cities the player has.
    *
@@ -269,7 +280,9 @@ public class Player implements PlayerReadOnly, SplendorPlayer {
   }
 
   /**
-   * gives tokens to the player.
+   * Gives tokens to the player. Must not exceed 10 in a player's inventory.
+   * Note that the calculation 10 + 2 * numGoldCards is to compensate for the fact that
+   * we count gold cards as 2 tokens when adding these cards to the inventory.
    *
    * @param tokens  a hashmap of the color and the tokens to give to the player.
    */
@@ -281,7 +294,7 @@ public class Player implements PlayerReadOnly, SplendorPlayer {
     for (Color c : inventory.getTokens().keySet()) {
       i += inventory.getTokens().get(c);
     }
-    if (i > 10) {
+    if (i > (10 + 2 * inventory.getNumGoldCards())) {
       this.nextActions.add(ActionType.RETURN_TOKENS);
     }
   }
