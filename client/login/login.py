@@ -93,11 +93,34 @@ def login(authenticator: Authenticator):
                 if username_active:
                     if event.key == pygame.K_BACKSPACE:
                         username_text = username_text[:-1]
+                    elif event.key == pygame.K_TAB:
+                        # switch to password input
+                        password_active = True
+                        password_color = color_active
+                        username_active = False
+                        username_color = color_passive
+                        break
                     else:
                         username_text += event.unicode
                 if password_active:
                     if event.key == pygame.K_BACKSPACE:
                         password_text = password_text[:-1]
+                    elif event.key == pygame.K_TAB:
+                        # switch to username input
+                        username_active = True
+                        username_color = color_active
+                        password_active = False
+                        password_color = color_passive
+                        break
+                    elif event.key == pygame.K_RETURN:
+                        # tries to login
+                        if authenticator.authenticate(username_text, password_text):
+                            return
+                        else:
+                            wrong_credentials = True
+                            username_color = color_error
+                            password_color = color_error
+                        break
                     else:
                         password_text += event.unicode
 

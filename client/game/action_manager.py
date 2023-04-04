@@ -49,7 +49,7 @@ class ActionManager:
             return self.get_clone_action_id(card)
 
         for action in self.actions:
-            if "card" in action and action["card"]["cardId"] == card.get_id()\
+            if "card" in action and "cardId" in action["card"] and action["card"]["cardId"] == card.get_id()\
                 and action["actionType"] == action_type.value:
                 return action["actionId"]
         return -1
