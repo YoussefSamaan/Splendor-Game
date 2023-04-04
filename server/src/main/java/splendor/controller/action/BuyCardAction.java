@@ -135,6 +135,7 @@ public class BuyCardAction extends CardAction {
                 actions.add(new BuyCardAction(card, payment, null));
               }
             } else if (player.canAfford(card)) {
+              HashMap<Color, Integer> newPayment = getCardCostWithGold(newCost, player);
               actions.add(new BuyCardAction(card, newCost, null));
             }
 
@@ -143,6 +144,22 @@ public class BuyCardAction extends CardAction {
       }
     }
     return actions;
+  }
+
+  private static HashMap<Color, Integer> getCardCostWithGold(HashMap<Color, Integer> newCost, SplendorPlayer player) {
+    HashMap<Color, Integer> playerTokens = player.getTokens();
+    HashMap<Color, Integer> newPayment = new HashMap<>();
+
+    for (Color c : newCost.keySet()) {
+      if (playerTokens.getOrDefault(c, 0) >= newCost.get(c)) {
+        newPayment.put(c, newCost.get(c));
+      } else {
+        newPayment.put(c, playerTokens.getOrDefault(c,0));
+        newPayment.put(Color.GOLD, newCost.get(c) - playerTokens.getOrDefault(c,0));
+      }
+    }
+
+    return newPayment;
   }
 
   /**
