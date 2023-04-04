@@ -323,6 +323,13 @@ class Player:
         if 'WHITE' in newtokens:
             self.tokens[Color.WHITE] = newtokens['WHITE']
 
+        self.nobles = {}
+        self.cards_bought = {}
+        self.reserved_cards = {}
+        self.last_position_card = (0, Card.get_card_size()[1] / 4 + 10)
+        self.last_position_noble = (0, Card.get_card_size()[1] / 4 + 10)
+        self.last_position_reserved = (0, Card.get_card_size()[1] / 4 + 10)
+
         for nobleJson in inventory['nobles']:
             noble = Noble.instance(id=nobleJson['cardId'])
             if noble not in self.nobles.keys():
@@ -337,9 +344,6 @@ class Player:
             card = Card.instance(id=card_json['cardId'], color=color)
             if card not in self.cards_bought.keys():
                 self.add_card_to_sidebar(card)
-        # for owned_card in self.cards_bought.keys():
-        #     if owned_card not in inventory['boughtCards']:
-        #         del self.cards_bought[owned_card]
 
         for card_json in inventory['reservedCards']:
             for color in Color:
@@ -349,9 +353,6 @@ class Player:
             card = Card.instance(id=card_json['cardId'], color=color)
             if card not in self.reserved_cards.keys():
                 self.reserve_card_to_sidebar(card)
-        # for owned_card in self.reserved_cards.keys():
-        #     if owned_card not in inventory['reservedCards']:
-        #         del self.reserved_cards[owned_card]
             
 
         discounts = inventory['discounts']
