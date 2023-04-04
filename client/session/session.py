@@ -269,7 +269,7 @@ def session(authenticator :Authenticator) -> int:
         clickable_buttons :List[Button] = []
 
         def parse_type() -> str:
-            game_type = "splendor"
+            game_type = "Splendor"
             if trade_toggle.active:
                 game_type += "Traderoutes"
             if cities_toggle.active:
