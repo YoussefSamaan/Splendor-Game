@@ -17,6 +17,7 @@ from city import *
 from splendorToken import Token
 from color import Color
 from enum import Enum
+from menu import Menu
 
 os.chdir(os.path.dirname(
     os.path.abspath(__file__)))  # to make image imports start from current directory
@@ -40,6 +41,7 @@ has_initialized = False
 cascade = False
 TRADING_POST_ENABLED = False 
 CITIES_ENABLED = False
+EXIT = False
 
 class IndividualTokenSelection:
     def __init__(self, token: Token, x_pos: int, y_pos: int) -> None:
@@ -79,6 +81,7 @@ def initialize_game(board_json):
     initialize_board()
     initialize_cards()
     initialize_tokens()
+    initialize_menu()
     
     initialize_players(board_json)
     if TRADING_POST_ENABLED:
@@ -118,6 +121,8 @@ def initialize_board():
 def initialize_sidebar():
     Sidebar.instance(WIDTH, HEIGHT)
 
+def initialize_menu():
+    Menu.instance(WIDTH, HEIGHT)
 
 def initialize_cards():
     BlueDeck.instance()
@@ -285,6 +290,7 @@ def display_everything(current_user):
     display_board()
     display_decks()
     display_tokens()
+    display_menu()
     if CITIES_ENABLED:
         pass
         #display_cities()
@@ -296,6 +302,9 @@ def display_everything(current_user):
     show_flash_message()  # last so it's on top
     show_persistent_message()
     pygame.display.update()
+
+def display_menu():
+  Menu.instance().display(DISPLAYSURF)
 
 def display_trade_routes():
     if TRADING_POST_ENABLED:
@@ -336,6 +345,8 @@ def display_players(logged_in_player_username):
 def get_clicked_object(pos):
     board = Board.instance()
     sidebar = Sidebar.instance()
+    if Menu.instance().is_clicked(pos):
+        return Menu.instance()
     for i in range(NUM_PLAYERS):
         temp_player = Player.instance(id=i)
         if temp_player.is_clicked(pos, WIDTH, HEIGHT, NUM_PLAYERS):
@@ -449,6 +460,13 @@ def perform_action(obj, user, position):
     # When it's not the user's turn, still allow switching between sidebars
     elif isinstance(obj, Player):
         Sidebar.instance().switch_player(obj)
+    elif isinstance(obj, Menu):
+        selection = Menu.instance().get_menu_selection(DISPLAYSURF)
+        if selection == "save":
+          pass
+        elif selection == "lobby":
+          global EXIT
+          EXIT = True
 
 class CardMenuAction(Enum):
     CLONE = 1
@@ -813,6 +831,9 @@ def play(authenticator, game_id):
                     check_sidebar_reserve(logged_in_user, position)
                     obj = get_clicked_object(position)
                     perform_action(obj, logged_in_user, position)
+                    global EXIT
+                    if EXIT:
+                        return
                     with threading.Lock():
                         threading.Thread(target=update, args=(authenticator, game_id)).start()
 

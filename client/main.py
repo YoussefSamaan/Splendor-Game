@@ -6,5 +6,6 @@ from session import session
 if __name__ == '__main__':
     authenticator = Authenticator()
     login.login(authenticator)
-    game_id = session.session(authenticator)
-    splendor.play(authenticator=authenticator, game_id=game_id)
+    while True:
+      game_id = session.session(authenticator)
+      splendor.play(authenticator=authenticator, game_id=game_id)
