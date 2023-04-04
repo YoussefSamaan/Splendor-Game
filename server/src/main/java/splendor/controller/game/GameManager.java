@@ -37,6 +37,7 @@ public class GameManager {
    *
    * @param actionGenerator the action generator
    * @param saveGameManager the save game manager
+   * @param registrator the registrator
    */
   public GameManager(@Autowired ActionGenerator actionGenerator,
                      @Autowired SaveGameManager saveGameManager,
@@ -91,6 +92,7 @@ public class GameManager {
    * Creates a new game, and tracks it.
    *
    * @param gameInfo the info of the game to create
+   * @param gameId the game id
    * @throws IllegalArgumentException if the game already exists
    */
   public void createGame(GameInfo gameInfo, long gameId) throws IllegalArgumentException {
@@ -156,6 +158,7 @@ public class GameManager {
    *
    * @param gameId     the id of the game
    * @param playerName the name of the player
+   * @return boolean if the player is in the game or not
    */
   public boolean playerInGame(long gameId, String playerName) {
     return exists(gameId) && games.get(gameId).getPlayer(playerName) != null;
@@ -169,6 +172,7 @@ public class GameManager {
    * @param actionId   the id of the action
    * @param actionData the data of the action
    * @throws InvalidAction if the action is invalid
+   * @throws InsufficientResourcesException if there are not enough resources
    */
   public void performAction(long gameId, String username, String actionId, ActionData actionData)
       throws InvalidAction, InsufficientResourcesException {

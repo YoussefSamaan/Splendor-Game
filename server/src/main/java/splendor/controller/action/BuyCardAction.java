@@ -26,6 +26,8 @@ public class BuyCardAction extends CardAction {
    * Creates a new card action.
    *
    * @param card the card.
+   * @param tokenPayment tokens you use to pay.
+   * @param cardPayment cards you use to pay.
    */
   protected BuyCardAction(SplendorCard card, HashMap<Color, Integer> tokenPayment,
                           List<DevelopmentCardI> cardPayment) {

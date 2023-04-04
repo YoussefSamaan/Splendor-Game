@@ -52,6 +52,7 @@ public class TakeCardAction extends CardAction {
    * Generates the list of taking card actions for the player.
    *
    * @param game   the current game that is being played.
+   * @param level  the level for cascade.
    * @return all legal taking card actions for the given player in the given game state.
    */
   public static List<Action> getLegalActions(SplendorGame game, int level) {
