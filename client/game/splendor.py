@@ -402,12 +402,9 @@ def get_user_cascade_selection(card :Card):
     PERMANENT_MESSAGE = None
     action_manager.force_update(Player.instance(id=CURR_PLAYER).name)
 
-def perform_action(obj, user, position):
-    if obj is None:
-        return
+def check_sidebar_reserve(user, position):
     global CURR_PLAYER
     global action_manager
-    # make sure it's the current user's turn, otherwise cannot take cards
     if user == Player.instance(id=CURR_PLAYER).name:
         action_manager.update(Player.instance(id=CURR_PLAYER).name)
         if Sidebar.instance().is_clicked_reserve(position):
@@ -416,8 +413,16 @@ def perform_action(obj, user, position):
             print("checking if clicked reserved")
             card_menu = CardMenu(Player.instance(id=CURR_PLAYER).reserved_cards.keys(), CardMenuAction.RESERVED)
             card_menu.display(DISPLAYSURF)
+def perform_action(obj, user, position):
+    if obj is None:
+        return
+    global CURR_PLAYER
+    global action_manager
+    # make sure it's the current user's turn, otherwise cannot take cards
+    if user == Player.instance(id=CURR_PLAYER).name:
+        action_manager.update(Player.instance(id=CURR_PLAYER).name)
         
-        elif isinstance(obj, Card):
+        if isinstance(obj, Card):
             global cascade
             if cascade:
                 get_user_cascade_selection(obj)
@@ -756,6 +761,7 @@ def play(authenticator, game_id):
                     check_toggle(position)
                     if TRADING_POST_ENABLED:
                         TradeRoute.instance().check_click(position,DISPLAYSURF)
+                    check_sidebar_reserve(logged_in_user, position)
                     obj = get_clicked_object(position)
                     perform_action(obj, logged_in_user, position)
                     with threading.Lock():
