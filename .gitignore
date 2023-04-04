@@ -149,3 +149,5 @@ server/src/main/resources/application-dev.properties
 # IDE
 server/.*
 server/bin
+client/config/config.py
+server/src/main/resources/application-dev.properties
