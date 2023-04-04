@@ -583,8 +583,8 @@ class CardMenu:
         for card in self.current_card_mapping:
             x_start = self.current_card_mapping[card][0]
             y_start = self.current_card_mapping[card][1]
-            x_end = x_start + Card.get_card_size(Board.instance())[0]
-            y_end = y_start + Card.get_card_size(Board.instance())[1]
+            x_end = x_start + Card.get_card_size(Board.instance())[0] * 1.5
+            y_end = y_start + Card.get_card_size(Board.instance())[1] * 1.5
             if x_start <= mouse_pos[0] <= x_end and y_start <= mouse_pos[1] <= y_end:
                 return card
         return False
