@@ -462,7 +462,7 @@ class CardMenu:
         selection_box, selection_box_rect = get_selection_box(DISPLAYSURF, 1, 0.6)
         self.selection_box = selection_box
         self.selection_box_rect = selection_box_rect
-        self.highlighted_box = (None, None, None)
+        self.highlighted_box = (None, None, None) #(x, y, Card)
         self.highlighted_box2 = (None, None, None)
         self.menu = pygame.Surface((WIDTH, HEIGHT))
         self.menu.fill((0, 0, 0))
@@ -511,7 +511,9 @@ class CardMenu:
         #write_on(DISPLAYSURF, "Page " + str(self.current_page + 1) + "/" + str(math.ceil(len(self.cards) / 5)), WIDTH/2, HEIGHT*3/10 - 20, size=30)
         # draw the cards, we will draw them the same size as on the board
         card_width, card_height = self.cards[0].get_card_size(Board.instance())
-        self.draw_border_to_card()
+        self.draw_border_to_card(self.highlighted_box[2])
+        if self.card_selected2 is not None:
+            self.draw_border_to_card2(self.highlighted_box2[2])
         for i in range(self.current_page * 6, min(len(self.cards), (self.current_page + 1) * 6)):
             # draw_for_sidebar(self, screen, x, y):
             self.cards[i].draw_for_sidebar(DISPLAYSURF,WIDTH/7 + i*(card_width+55),HEIGHT*3/10 )
@@ -528,6 +530,10 @@ class CardMenu:
                     if card:
                         self.add_border_to_card(card) # visually indicate this card is chosen
                         self.card_selected = card
+                        if self.action == CardMenuAction.DISCARD and self.card_selected is not None:
+                            # if the first card is selected, then the second card is selected
+                            self.card_selected2 = card
+                            self.add_border_to_card2(card)
                         
                     elif self.confirm.rectangle.collidepoint(pygame.mouse.get_pos()):
                         if self.card_selected is None:
@@ -543,23 +549,25 @@ class CardMenu:
                         if self.action != CardMenuAction.RESERVED:
                             self.card_selected = None # deselect the card but doesn't close since cloning and stripping is forced
                         else: # reserve cards can be closed
-                            self.card_selected = None 
+                            self.card_selected = None
                             return # if the user clicks outside the menu, just close it
             pygame.display.update()
             FPSCLOCK.tick(FPS)
-    
-    def add_border_to_card(self, card):
+    def add_border_to_card2(self, card):
 
+        self.highlighted_box2 = (self.current_card_mapping[card][0], self.current_card_mapping[card][1], self.current_card_mapping[card][2], card)
+
+    def add_border_to_card(self, card):
+        # width height index, card
         self.highlighted_box = (self.current_card_mapping[card][0], self.current_card_mapping[card][1], self.current_card_mapping[card][2], card)
 
-
-    def draw_border_to_card(self):
+    def draw_border_to_card(self, card):
         if not self.highlighted_box[0] or not self.highlighted_box[1]:
             return
         card_width, card_height = self.cards[0].get_card_size(Board.instance())
         x_start = self.highlighted_box[0]
         y_start = self.highlighted_box[1]
-        card = self.highlighted_box[2]
+        #card = 
         pygame.draw.rect(DISPLAYSURF, RED, (x_start, y_start, card_width+20, card_height+20), 10)
         card_index = self.current_card_mapping[card][2]
         #card.draw_for_sidebar(DISPLAYSURF,WIDTH/7 + card_index*(card_width),HEIGHT*3/10 ) # card is on top of the border
