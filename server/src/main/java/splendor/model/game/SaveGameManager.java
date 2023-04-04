@@ -128,6 +128,7 @@ public class SaveGameManager {
     try (FileReader reader = new FileReader(fileName)) {
       SplendorGame game = gson.fromJson(reader, SplendorGame.class);
       logger.info("Game loaded from file " + fileName);
+      logger.info("Game Info: " + game.getGameInfo());
       return game;
     } catch (IOException e) {
       e.printStackTrace();
