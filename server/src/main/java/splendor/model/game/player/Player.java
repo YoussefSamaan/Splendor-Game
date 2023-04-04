@@ -247,6 +247,10 @@ public class Player implements PlayerReadOnly, SplendorPlayer {
     return inventory.getNoblesCount();
   }
 
+  public int getNumGoldCards() {
+    return inventory.getNumGoldCards();
+  }
+
   /**
    * Removes tokens from player inventory.
    *
@@ -257,7 +261,9 @@ public class Player implements PlayerReadOnly, SplendorPlayer {
   }
 
   /**
-   * gives tokens to the player.
+   * Gives tokens to the player. Must not exceed 10 in a player's inventory.
+   * Note that the calculation 10 + 2 * numGoldCards is to compensate for the fact that
+   * we count gold cards as 2 tokens when adding these cards to the inventory.
    *
    * @param tokens  a hashmap of the color and the tokens to give to the player.
    */
@@ -269,7 +275,7 @@ public class Player implements PlayerReadOnly, SplendorPlayer {
     for (Color c : inventory.getTokens().keySet()) {
       i += inventory.getTokens().get(c);
     }
-    if (i > 10) {
+    if (i > (10 + 2 * inventory.getNumGoldCards())) {
       this.nextActions.add(ActionType.RETURN_TOKENS);
     }
   }

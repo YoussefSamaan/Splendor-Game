@@ -51,7 +51,7 @@ public class ActionGenerator {
     } else if (player.nextAction() == ActionType.TAKE_ONE_TOKEN) {
       actions.addAll(TakeOneTokenAction.getLegalActions(game));
     }
-    player.resetNextActions();
+    player.removeOldestNextAction();
     gameActions.put(gameId, actions); // save the actions for later validation
     return actions;
   }

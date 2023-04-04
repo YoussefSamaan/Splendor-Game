@@ -25,6 +25,8 @@ public class Inventory {
   private final HashMap<Color, Integer> discounts = new HashMap<>();
   private List<Noble> nobles = new ArrayList<>();
 
+  private int numGoldCards = 0;
+
   /**
    * Creates a new inventory.
    */
@@ -39,6 +41,10 @@ public class Inventory {
    */
   public void addBoughtCard(DevelopmentCardI card) {
     this.boughtCards.add(card);
+    int cardId = card.getCardId();
+    if ((cardId == 92) || (cardId == 94) || (cardId == 95) || (cardId == 96) || (cardId == 100)) {
+      addTokens(Token.of(Color.GOLD), 2); // those IDs are gold cards (they count as 2 gold tokens)
+    }
     addBonus(Collections.singletonList(card), this.discounts);
   }
 
@@ -221,6 +227,16 @@ public class Inventory {
 
   public List<DevelopmentCardI> getReservedCards() {
     return this.reservedCards;
+  }
+
+  /**
+   * Get the number of gold cards in the player's inventory.
+   * "Gold card" refers to the card worth 2 gold tokens when paying.
+   *
+   * @return the number of gold cards.
+   */
+  public int getNumGoldCards() {
+    return numGoldCards;
   }
 
   public void removeReservedCard(DevelopmentCardI card) {

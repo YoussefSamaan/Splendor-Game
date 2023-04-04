@@ -140,7 +140,7 @@ public class ReturnTokensAction implements Action {
     List<Action> actions = new ArrayList<>();
     int numOfTokensToReturn = getNumOfTokens(player.getTokens());
     List<HashMap<Color, Integer>> possibleActions = getTokensToRemove(player.getTokens(),
-                                                            numOfTokensToReturn - 10);
+                                                            numOfTokensToReturn - (10 + 2 * player.getNumGoldCards()));
     for (HashMap<Color, Integer> pa : possibleActions) {
       actions.add(new ReturnTokensAction(ActionType.RETURN_TOKENS, pa));
     }

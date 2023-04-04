@@ -67,6 +67,8 @@ public interface SplendorPlayer {
    */
   HashMap<Color, Integer> getTokens();
 
+  int getNumGoldCards();
+
   List<DevelopmentCardI> getReservedCards();
 
   void removeReservedCard(DevelopmentCardI card);
