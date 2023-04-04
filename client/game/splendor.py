@@ -12,6 +12,7 @@ from game.action_manager import ActionManager
 from deck import *
 from sidebar import *
 from trade_route import * 
+from city import * 
 from splendorToken import Token
 from color import Color
 from enum import Enum
@@ -81,10 +82,11 @@ def initialize_game(board_json):
     initialize_players(board_json)
     if TRADING_POST_ENABLED:
         initialize_trade_routes(board_json)
-    if CITIES_ENABLED:
-        pass
-        #initialize_cities(board_json)
-    else:
+        initialize_nobles(board_json)
+    elif CITIES_ENABLED:
+        # no nobles
+        initialize_cities(board_json)
+    else: # normal game
         initialize_nobles(board_json)
     initialize_sidebar()
     print(board_json)
@@ -94,6 +96,10 @@ def initialize_game(board_json):
 def initialize_trade_routes(board_json):
     #trade_routes = board_json['tradeRoutes']
     TradeRoute.instance()
+
+def initialize_cities(board_json):
+    ids = [city['cardId'] for city in board_json['cities']['city']  if city is not None]
+    City.initialize(ids)
 
 
 def initialize_players(board_json):
@@ -181,17 +187,17 @@ def update(authenticator, game_id):
     # if we need to cascade, we don't chance players
     check_cascade()
     check_clone()
-    check_reserve_noble()
+    if not CITIES_ENABLED:
+        check_reserve_noble()
     check_discard()
     update_turn_player(board_json)
     update_players(board_json)
     update_decks(board_json)
     update_tokens(board_json)
-    update_nobles(board_json)
-    TradeRoute.instance().update(board_json)
-    
+
     if TRADING_POST_ENABLED:
         TradeRoute.instance().update(board_json)
+        update_nobles(board_json)
     if CITIES_ENABLED:
         pass
         #update_cities(board_json)
@@ -285,8 +291,6 @@ def display_everything(current_user):
         display_nobles()
     if TRADING_POST_ENABLED:
         display_trade_routes()
-    display_nobles()
-    display_trade_routes()
 
     show_flash_message()  # last so it's on top
     show_persistent_message()
@@ -343,9 +347,10 @@ def get_clicked_object(pos):
     token = Token.get_clicked_token(pos)
     if token is not None:
         return token
-    noble = Noble.get_clicked_noble(pos)
-    if noble is not None:
-        return noble
+    if not CITIES_ENABLED:
+        noble = Noble.get_clicked_noble(pos)
+        if noble is not None:
+            return noble
     return None
 
 
