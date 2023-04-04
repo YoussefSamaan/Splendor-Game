@@ -32,7 +32,7 @@ public class Board implements BroadcastContent {
   private final SplendorDeck[] decks = new SplendorDeck[6];
 
   private final NobleDeck nobleDeck;
-  private final CityDeck cityDeck = new CityDeck();
+  private final CityDeck cityDeck;
 
   private final TokenBank bank = new TokenBank(true);
 
@@ -43,7 +43,7 @@ public class Board implements BroadcastContent {
    *
    * @param players the players. Only 2-4 players are allowed.
    */
-  public Board(Player... players) {
+  public Board(String gameType, Player... players) {
     if (players.length < 2 || players.length > 4) {
       throw new IllegalArgumentException(
               String.format("Only 2-4 players are allowed, not %d", players.length));
@@ -54,7 +54,11 @@ public class Board implements BroadcastContent {
     if (playerSet.size() != players.length) {
       throw new IllegalArgumentException("Duplicate players are not allowed");
     }
-    nobleDeck = new NobleDeck(players.length); // create nobleDeck based on # players
+    if (gameType.equals("Splendor") || gameType.equals("SplendorTraderoutes")) {
+      this.nobleDeck = new NobleDeck(players.length); // create nobleDeck based on # players
+    } else {
+      this.cityDeck = new CityDeck();
+    }
     currentTurn = 0;
     decks[0] = new Deck(Color.GREEN);
     decks[1] = new Deck(Color.YELLOW);

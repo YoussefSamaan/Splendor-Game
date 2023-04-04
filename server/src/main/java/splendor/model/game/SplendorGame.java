@@ -24,7 +24,7 @@ public class SplendorGame {
    */
   public SplendorGame(GameInfo gameInfo) {
     this.gameInfo = gameInfo;
-    this.board = new Board(gameInfo.getPlayers());
+    this.board = new Board(gameInfo.getGameServer(), gameInfo.getPlayers());
   }
 
   /**
