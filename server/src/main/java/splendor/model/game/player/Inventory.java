@@ -275,8 +275,8 @@ public class Inventory {
   }
 
   /**
-   * Based on the number of gold tokens used in the payment,
-   * we decide the number of gold cards to remove.
+   * We decide the number of gold cards to remove.
+   * We calculate using the number of gold tokens used in the payment.
    * By default, a gold card will be used instead of 2 gold tokens.
    *
    * @param numGoldTokensRemoved number of gold tokens used in the payment.
