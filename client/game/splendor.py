@@ -554,7 +554,7 @@ class CardMenu:
 
 
     def draw_border_to_card(self):
-        if not self.highlighted_box:
+        if not self.highlighted_box[0] or not self.highlighted_box[1]:
             return
         card_width, card_height = self.cards[0].get_card_size(Board.instance())
         x_start = self.highlighted_box[0]
