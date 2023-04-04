@@ -146,8 +146,11 @@ public class SplendorController {
    * Generates all the actions that can be performed by the player.
    * This is used by the client to generate the buttons that the player can click.
    *
-   * @param gameId   the id of the game.
-   * @param username the username of the player.
+   * @param gameId the id of the game.
+   * @param username username of player
+   * @param accessToken access token of player
+   * @param request HttpServletRequest of game
+   * @param usernameParam username
    * @return a list of actions that the player can perform.
    */
   @GetMapping("/api/games/{gameId}/players/{username}/actions")
@@ -189,6 +192,7 @@ public class SplendorController {
    * @param request    the HttpServletRequest
    * @param accessToken the access token of player
    * @param usernameParam the username as a parameter
+   * @return response entity
    */
   @PostMapping("/api/games/{gameId}/players/{username}/actions/{actionId}")
   public ResponseEntity performAction(@PathVariable long gameId,
@@ -232,6 +236,10 @@ public class SplendorController {
    * Saves the game.
    *
    * @param gameId the id of the game.
+   * @param username username
+   * @param accessToken access token
+   * @param request request
+   * @return response entity
    */
   @PostMapping("/api/games/{gameId}/save")
   public ResponseEntity saveGame(@PathVariable long gameId,
