@@ -371,7 +371,7 @@ def perform_action(obj, user, position):
         elif Sidebar.instance().is_clicked_reserve(position):
         # check if clicked on a reserved card to buy it 
             # opens the cardmeny
-            card_menu = CardMenu(Player.instance(id=CURR_PLAYER).reserved_cards, CardMenuAction.RESERVED)
+            card_menu = CardMenu(Player.instance(id=CURR_PLAYER).reserved_cards.keys(), CardMenuAction.RESERVED)
             card_menu.display(DISPLAYSURF)
         
         elif isinstance(obj, Player):
