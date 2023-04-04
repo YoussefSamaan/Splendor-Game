@@ -455,7 +455,7 @@ class CardMenu:
     """generic menu that displays all the cards that a player owns or reserved, for cloning, discarding and buying"""
     def __init__(self, cards : List[Card], action : CardMenuAction):
         # action could be buy a reserved, clone, discard functions
-        selection_box, selection_box_rect = get_selection_box(DISPLAYSURF)
+        selection_box, selection_box_rect = get_selection_box(DISPLAYSURF, 1, 0.6)
         self.selection_box = selection_box
         self.selection_box_rect = selection_box_rect
 
