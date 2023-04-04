@@ -275,14 +275,23 @@ public class Inventory {
   }
 
   /**
-   * Remove 1 from the number of gold cards.
+   * Based on the number of gold tokens used in the payment, we decide the number of gold cards to remove.
+   * By default, a gold card will be used instead of 2 gold tokens.
+   *
+   * @param numGoldTokensRemoved number of gold tokens used in the payment.
    */
-  public void decrementGoldCard() {
-    if (numGoldCards == 0) {
+  public void removeGoldCards(Integer numGoldTokensRemoved) {
+    if ((numGoldCards <= 0) || (numGoldTokensRemoved < 2)) { // no gold cards will be used
+      // if there are none or if the number of gold tokens to spend is less than 2.
+      return;
+    }
+    while (numGoldCards >= 1 && numGoldTokensRemoved >= 2) {
+      // while we have at least 1 gold card, and the number of gold tokens to remove is 2 or more
+      numGoldTokensRemoved -= 2;
       numGoldCards -= 1;
     }
-  }
 
+  }
 
 
   public void removeReservedCard(DevelopmentCardI card) {
