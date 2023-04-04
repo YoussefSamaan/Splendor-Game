@@ -81,11 +81,11 @@ public class TakeTokensActionTest {
     assertEquals(true, player1.getTokens().get(Color.BLUE) == 1);
   }
 
-  /***
-   * Sould be added 10 blue. then remove 2 blue, and added two blue
-   * buggy
+
+
   @Test
-  public void performTakeTwoTokenAction(){
+  public void performTakeTwoTokenActionWithReturn(){
+    long gameId = 1;
     Player[] testPlayers = {player1,player2};
     GameInfo testGameInfo = new GameInfo("testServer","SplendorGameTest",testPlayers,"testSave");
     game = new SplendorGame(testGameInfo);
@@ -99,21 +99,28 @@ public class TakeTokensActionTest {
     tenBlueToken.put(Color.BLUE, 10);
     player1.addTokens(tenBlueToken);
 
-    HashMap<Color, Integer> token = new HashMap<Color, Integer>();
-    token.put(Color.BLUE, 2);
+    HashMap<Color, Integer> twoBluetoken = new HashMap<Color, Integer>();
+    twoBluetoken.put(Color.BLUE, 2);
 
-    ReturnTokensAction return2Blue = new return
-    long gameId = 1;
-    TakeTokensAction tester = new TakeTokensAction(ActionType.TAKE_TOKENS,token);
+    ReturnTokensAction return2Blue = new ReturnTokensAction(ActionType.RETURN_TOKENS, twoBluetoken);
+    return2Blue.performAction(player1, game.getBoard());
+
+    TakeTokensAction tester = new TakeTokensAction(ActionType.TAKE_TOKENS,twoBluetoken);
     tester.performAction(player1, game.getBoard());
     assertEquals(true, player1.getTokens().get(Color.BLUE) == 10);
   }
-***/
+
   @Test
   public void performTakeThreeTokenAction(){
     Player[] testPlayers = {player1,player2};
     GameInfo testGameInfo = new GameInfo("testServer","SplendorGameTest",testPlayers,"testSave");
     game = new SplendorGame(testGameInfo);
+
+    try {
+      clearPlayerTokens(player1);
+    } catch (NoSuchFieldException e) {
+      throw new RuntimeException(e);
+    }
 
     HashMap<Color, Integer> token = new HashMap<Color, Integer>();
     token.put(Color.BLUE, 3);
