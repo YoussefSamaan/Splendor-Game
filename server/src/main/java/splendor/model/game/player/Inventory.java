@@ -268,18 +268,19 @@ public class Inventory {
   }
 
   /**
-   * Add 1 to the number of gold cards
+   * Add 1 to the number of gold cards.
    */
   public void addOneGoldCard() {
     numGoldCards += 1;
   }
 
   /**
-   * Remove 1 from the number of gold cards
+   * Remove 1 from the number of gold cards.
    */
   public void decrementGoldCard() {
-    if (numGoldCards == 0)
-    numGoldCards -= 1;
+    if (numGoldCards == 0) {
+      numGoldCards -= 1;
+    }
   }
 
 
