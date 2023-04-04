@@ -69,13 +69,11 @@ public class Registrator {
    * @param token the token to use for authentication
    */
   private void registerGameServices(String token) {
-    logger.info("Registering at lobby service.");
     try {
       for (String gameService : GAME_MODES) {
         gameServiceParameters.setName(gameService);
         logger.info("Registering game service: " + gameServiceParameters.getName());
         registerGameService(token);
-        registered = true;
       }
     } catch (UnirestException e) {
       logger.error("Could not register at lobby service. Shutting down.", e);
@@ -90,6 +88,10 @@ public class Registrator {
    * @throws UnirestException in case the request fails
    */
   private void registerGameService(String token) throws UnirestException {
+    if (registered(token, gameServiceParameters.getName())) {
+      logger.info("Already registered with LS. Skipping registration.");
+      return;
+    }
     String url =
             gameServiceParameters.getLobbyServiceLocation() + REGISTRATION_RESOURCE
             + "/" + gameServiceParameters.getName();
@@ -107,6 +109,25 @@ public class Registrator {
     logger.info(
         "Successfully registered at lobby service game service: " + gameServiceParameters.getName()
     );
+  }
+
+  private boolean registered(String token, String name) {
+    String url = gameServiceParameters.getLobbyServiceLocation() + REGISTRATION_RESOURCE
+        + "/" + name;
+    try {
+      HttpResponse<String> response = Unirest
+          .get(url)
+          .header("Authorization", "Bearer " + token)
+          .asString();
+      if (response.getStatus() == 200) {
+        logger.info("{} is already registered with LS.", name);
+        return true;
+      }
+      return false;
+    } catch (UnirestException e) {
+      logger.error("Could not check registration status for {}.", name, e);
+      throw new RuntimeException(e);
+    }
   }
 
   /**
