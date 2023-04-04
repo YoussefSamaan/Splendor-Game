@@ -1,6 +1,5 @@
 package splendor.controller.action;
 
-import com.sun.java.swing.action.NextAction;
 import java.util.ArrayList;
 import java.util.List;
 import splendor.model.game.Board;

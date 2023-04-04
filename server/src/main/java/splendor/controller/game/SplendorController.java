@@ -149,19 +149,24 @@ public class SplendorController {
     LOGGER.info(String.format("Received request to get actions of player %s in game with id %d",
         username, gameId));
     if (!usernameParam.equals(username)) {
+      LOGGER.warning(String.format("Cannot get actions of a different user. Requested %s, got %s",
+          username, usernameParam));
       return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
           "Cannot get actions of a different user"
       );
     }
     if (!authenticate(username, accessToken, request.getRequestURI())) {
+      LOGGER.warning(String.format("Invalid access token for user %s", username));
       return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
           "Invalid access token for user " + username);
     }
     if (!gameManager.exists(gameId)) {
+      LOGGER.warning(String.format("Game with id %d does not exist", gameId));
       return ResponseEntity.badRequest().body(String.format("Game with id %d does not exist",
           gameId));
     }
     if (!gameManager.playerInGame(gameId, username)) {
+      LOGGER.warning(String.format("Player %s is not in game with id %d", username, gameId));
       return ResponseEntity.badRequest().body(String.format("Player %s is not in game with id %d",
           username, gameId));
     }
