@@ -57,6 +57,7 @@ public class SplendorController {
    * @param username the username.
    * @param accessToken the accessToken for the user.
    * @param url of the request. Used for logging only.
+   * @return boolean if succeeded or not
    */
   public boolean authenticate(String username, String accessToken, String url) {
     LOGGER.info(String.format("Received request to %s with access token %s and username %s",
@@ -76,6 +77,10 @@ public class SplendorController {
    * players get the same view of the board.
    *
    * @param gameId the id of the game.
+   * @param request the HttpServletRequest
+   * @param accessToken the access token of the player
+   * @param username the username of the player
+   * @return response entity
    */
   @GetMapping(value = "/api/games/{gameId}/board")
   public ResponseEntity getBoard(@PathVariable long gameId, HttpServletRequest request,
@@ -101,6 +106,10 @@ public class SplendorController {
    * Get the board of a specific game. Use long polling to wait for the board to change.
    *
    * @param gameId the id of the game.
+   * @param hash hash
+   * @param username username of player
+   * @param accessToken access token of player
+   * @param request HttpServletRequest of game
    * @return the board of the game.
    */
   @GetMapping(value = "/api/games/{gameId}/board/longpoll")
@@ -137,8 +146,11 @@ public class SplendorController {
    * Generates all the actions that can be performed by the player.
    * This is used by the client to generate the buttons that the player can click.
    *
-   * @param gameId   the id of the game.
-   * @param username the username of the player.
+   * @param gameId the id of the game.
+   * @param username username of player
+   * @param accessToken access token of player
+   * @param request HttpServletRequest of game
+   * @param usernameParam username
    * @return a list of actions that the player can perform.
    */
   @GetMapping("/api/games/{gameId}/players/{username}/actions")
@@ -182,6 +194,10 @@ public class SplendorController {
    * @param gameId     the id of the game.
    * @param username   the username of the player.
    * @param actionId   the id of the action.
+   * @param request    the HttpServletRequest
+   * @param accessToken the access token of player
+   * @param usernameParam the username as a parameter
+   * @return response entity
    */
   @PostMapping("/api/games/{gameId}/players/{username}/actions/{actionId}")
   public ResponseEntity performAction(@PathVariable long gameId,
@@ -225,6 +241,10 @@ public class SplendorController {
    * Saves the game.
    *
    * @param gameId the id of the game.
+   * @param username username
+   * @param accessToken access token
+   * @param request request
+   * @return response entity
    */
   @PostMapping("/api/games/{gameId}/save")
   public ResponseEntity saveGame(@PathVariable long gameId,

@@ -241,6 +241,11 @@ public class Inventory {
     return discounts;
   }
 
+  /**
+   * Get the reserved cards.
+   *
+   * @return list of reserved development cards
+   */
   public List<DevelopmentCardI> getReservedCards() {
     return this.reservedCards;
   }
