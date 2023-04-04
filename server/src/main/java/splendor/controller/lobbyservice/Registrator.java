@@ -171,17 +171,17 @@ public class Registrator {
    * Saves game on LS.
    *
    * @param gameInfo game info
-   * @param gameId game id
    * @throws RuntimeException in case the request fails
    */
-  public void saveGame(GameInfo gameInfo, long gameId) throws RuntimeException {
+  public void saveGame(GameInfo gameInfo) throws RuntimeException {
     String url =
         gameServiceParameters.getLobbyServiceLocation() + REGISTRATION_RESOURCE
-            + "/" + gameInfo.getGameServer() + "/" + SAVEGAME_RESOURCE + "/" + gameId;
+            + "/" + gameInfo.getGameServer() + "/" + SAVEGAME_RESOURCE + "/"
+            + gameInfo.getSavegame();
     try {
       String token = tokenHelper.get(gameServiceParameters.getOauth2Name(),
           gameServiceParameters.getOauth2Password());
-      String gameInfoJson = gameInfo.toJson(Long.toString(gameId));
+      String gameInfoJson = gameInfo.toJson();
       logger.info("Saving game with LS. Game info: " + gameInfoJson);
       HttpResponse<String> response = Unirest
           .put(url)

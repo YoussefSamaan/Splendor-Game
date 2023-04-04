@@ -41,9 +41,9 @@ public class SaveGameManager {
   * Save a game into a json file.
   *
   * @param game the game to save
-  * @param saveGameId the id of the savegame. File name will be saveGameId.json.
   */
-  public void saveGame(SplendorGame game, String saveGameId) {
+  public void saveGame(SplendorGame game) {
+    String saveGameId = game.getGameInfo().getSavegame();
     logger.info("Saving game " + saveGameId);
     String json = new Gson().toJson(game);
     writeToFile(json, saveGameId);
@@ -81,7 +81,7 @@ public class SaveGameManager {
    *
    * @return a HashMap of all loaded games, keyed by their game IDs
    */
-  public HashMap<Long, SplendorGame> loadAllGames() {
+  public HashMap<String, SplendorGame> loadAllGames() {
     logger.info("Loading all games from " + saveGamePath);
     File directory = new File(saveGamePath);
     File[] files = directory.listFiles((dir, name) -> name.endsWith(".json"));
@@ -89,12 +89,12 @@ public class SaveGameManager {
       logger.info("No saved games found in " + saveGamePath);
       return new HashMap<>();
     }
-    HashMap<Long, SplendorGame> games = new HashMap<>();
+    HashMap<String, SplendorGame> games = new HashMap<>();
     for (File file : files) {
       String fileName = file.getName();
-      long gameId = Long.parseLong(fileName.substring(0, fileName.lastIndexOf(".")));
+      String saveGameId = fileName.substring(0, fileName.lastIndexOf("."));
       SplendorGame game = readFromFile(file.getAbsolutePath());
-      games.put(gameId, game);
+      games.put(saveGameId, game);
     }
     return games;
   }

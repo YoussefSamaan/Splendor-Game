@@ -240,7 +240,6 @@ public class SplendorController {
           username, gameId));
     }
     try {
-      registrator.saveGame(gameManager.getGame(gameId).getGameInfo(), gameId);
       gameManager.saveGame(gameId);
       LOGGER.info(String.format("Saved game with id %d", gameId));
       return ResponseEntity.ok().build();

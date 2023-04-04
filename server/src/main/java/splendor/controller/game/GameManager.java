@@ -3,6 +3,7 @@ package splendor.controller.game;
 import eu.kartoffelquadrat.asyncrestlib.BroadcastContentManager;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.naming.InsufficientResourcesException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -11,6 +12,7 @@ import splendor.controller.action.ActionData;
 import splendor.controller.action.ActionGenerator;
 import splendor.controller.action.InvalidAction;
 import splendor.controller.lobbyservice.GameInfo;
+import splendor.controller.lobbyservice.Registrator;
 import splendor.model.game.Board;
 import splendor.model.game.SaveGameManager;
 import splendor.model.game.SplendorGame;
@@ -25,8 +27,10 @@ public class GameManager {
   private final HashMap<Long, SplendorGame> games = new HashMap<>();
 
   private final HashMap<Long, BroadcastContentManager<Board>> boardManagers = new HashMap<>();
+  private final HashMap<String, SplendorGame> savedGames = new HashMap<>();
   private final ActionGenerator actionGenerator;
   private final SaveGameManager saveGameManager;
+  private final Registrator registrator;
 
   /**
    * Instantiates a new Game manager.
@@ -35,20 +39,31 @@ public class GameManager {
    * @param saveGameManager the save game manager
    */
   public GameManager(@Autowired ActionGenerator actionGenerator,
-                     @Autowired SaveGameManager saveGameManager) {
+                     @Autowired SaveGameManager saveGameManager,
+                     @Autowired Registrator registrator) {
     this.actionGenerator = actionGenerator;
     this.saveGameManager = saveGameManager;
+    this.registrator = registrator;
+    loadSavedGames();
+    registerSavedGamesOnLobbyService();
+  }
+
+  /**
+   * Registers all saved games on the lobby service.
+   */
+  private void registerSavedGamesOnLobbyService() {
+    savedGames.values().stream()
+        .map(SplendorGame::getGameInfo)
+        .collect(Collectors.toList())
+        .forEach(registrator::saveGame);
   }
 
   /**
    * This function loads all saved games from the savegame directory.
    */
   private void loadSavedGames() {
-    HashMap<Long, SplendorGame> savedGames = saveGameManager.loadAllGames();
-    savedGames.forEach((gameId, game) -> {
-      games.put(gameId, game);
-      boardManagers.put(gameId, new BroadcastContentManager<>(getBoard(gameId)));
-    });
+    HashMap<String, SplendorGame> savedGames = saveGameManager.loadAllGames();
+    this.savedGames.putAll(savedGames);
   }
 
   /**
@@ -116,7 +131,9 @@ public class GameManager {
     if (!exists(gameId)) {
       throw new IllegalArgumentException(String.format("Game with id %d does not exist", gameId));
     }
-    saveGameManager.saveGame(games.get(gameId), Long.toString(gameId));
+    SplendorGame game = games.get(gameId);
+    game.getGameInfo().setSavegame(Long.toString(gameId));
+    saveGameManager.saveGame(game);
   }
 
   /**

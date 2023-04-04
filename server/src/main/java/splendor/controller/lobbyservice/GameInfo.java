@@ -59,18 +59,27 @@ public class GameInfo {
   }
 
   /**
+   * Sets the savegame.
+   *
+   * @param savegame the savegame
+   */
+  public void setSavegame(String savegame) {
+    this.savegame = savegame;
+  }
+
+  /**
    * Returns a JSON representation of the game info. Used for saving games with LS.
    *
    * @return JSON representation of the game info
    */
-  public String toJson(String savegameid) {
+  public String toJson() {
     String playerList = Arrays.stream(players)
         .map(name -> "\"" + name + "\"")
         .collect(Collectors.joining(", "));
     return "{"
         + "\"gamename\":\"" + gameServer + "\""
         + ", \"players\":[" + playerList + "]"
-        + ", \"savegameid\":\"" + savegameid + "\""
+        + ", \"savegameid\":\"" + savegame + "\""
         + '}';
   }
 
