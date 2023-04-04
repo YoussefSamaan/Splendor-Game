@@ -206,8 +206,6 @@ class Sidebar:
         # checks if user clicked on reserve button or card
         if self.sidebar_rect.collidepoint(mouse_pos) and self.current_display == 2:
             # doesn't happen if we click on the sidebar button instead of the card
-            if self.reserve_button.collidepoint(mouse_pos):
-                return False
             return True
         return False
     
