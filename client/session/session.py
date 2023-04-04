@@ -74,6 +74,9 @@ LAUNCH_RECT_SIZE = (90,55)
 # max sessions before putting more on the next page
 MAX_SESSIONS_PER_PAGE = 4
 current_page = 0
+#current_type = "splendor"
+
+
 
 class Button:
     def __init__(self,rectangle : pygame.Rect, on_click_event : Callable[[None], None], color: Tuple[int,int,int] = LIGHT_GREY, text: str = "") -> None:
@@ -85,24 +88,26 @@ class Button:
     def set_text(self, text):
         self.text = text
 
-class Checkbox(Button): # a button that stays pressed until pressed again
-    def __init__(self,rectangle : pygame.Rect, on_click_event : Callable[[None], None], color: Tuple[int,int,int] = LIGHT_GREY, text: str = "") -> None:
+class ToggleButton (Button):
+    def __init__(self, rectangle : pygame.Rect, on_click_event : Callable[[None], None], color: Tuple[int,int,int] = RED, text: str = "") -> None:
         super().__init__(rectangle, on_click_event, color, text)
-        self.pressed = False
-    
-    def is_pressed(self):
-        return self.pressed
-def press_checkbox(checkbox : Checkbox) -> None:
-    checkbox.pressed = not checkbox.pressed
-    checkbox.color = color_active if checkbox.pressed else color_passive
-
-trade_rect = Checkbox(pygame.Rect((200, 100, 150, 70)), press_checkbox)
-cities_rect = Checkbox(pygame.Rect((400, 100, 150, 70)), press_checkbox)
+        self.active = False
+        # on click event should always be the toggle func
+        # for use with the togglebuttons
+    def toggle(self):
+        self.active = not self.active
+        if self.active:
+            self.color = GREEN
+        else:
+            self.color = RED
+        
 
 # action when the back button is pressed
 def back_button_event() -> None:
     screen.fill(GREY)
     exit()
+
+
 
 # Class for a session listing. A session listing is the game info and interaction buttons
 # associated with an existing session in the session list
@@ -227,8 +232,35 @@ def generate_session_list_buttons(authenticator,sessions_json) -> List[SessionLi
     return session_list
 
 def session(authenticator :Authenticator) -> int:
- 
+
+    # current_page: 0-indexed
+    # functions for the pagination buttons
+    def previous_button_event() -> None:
+        global current_page
+        current_page = max(0, current_page-1)
+
+    def next_button_event() -> None:
+        global current_page
+        current_page = min(current_page+1, max(0,(len(session_list)-1) // MAX_SESSIONS_PER_PAGE))
+
+    def create_button_event() -> None:
+        post_session.create_session(authenticator.username, authenticator.get_token(escape=True), parse_type())
+
+
+    # These buttons are always visible regardless of page
+    back_rect = Button(pygame.Rect((50, 100, 150, 70)), back_button_event, RED)
+    previous_rect = Button(pygame.Rect((150, 660, 150, 70)), previous_button_event, LIGHT_BLUE)
+    next_rect = Button(pygame.Rect((600, 660, 150, 70)), next_button_event, LIGHT_BLUE)
+    # Back is the logout button, not to be confused with previous
+    create_rect = Button(pygame.Rect((600, 100, 150, 70)), create_button_event, LIGHT_BLUE)
+    trade_toggle = ToggleButton(pygame.Rect((440, 100, 150, 70)), None, RED, "Trade Route")
+    cities_toggle = ToggleButton(pygame.Rect((280, 100, 150, 70)), None, RED, "Cities")
+    trade_toggle.activation = trade_toggle.toggle
+    cities_toggle.activation = cities_toggle.toggle
+
+
     while True:
+        authenticator.refresh()
         screen.fill(GREY)
 
         sessions_json = get_session.get_all_sessions().json()["sessions"]
@@ -236,38 +268,23 @@ def session(authenticator :Authenticator) -> int:
         # This is the list of buttons that should be visible. We need to draw them.
         clickable_buttons :List[Button] = []
 
-        def create_button_event() -> None:
-            trade_enabled = trade_rect.is_pressed()
-            cities_enabled = cities_rect.is_pressed()
-            # TODO: implement switching trade/cities on off
-            post_session.create_session(authenticator.username, authenticator.get_token(escape=True))
-
-        # current_page: 0-indexed
-        # functions for the pagination buttons
-        def previous_button_event() -> None:
-            global current_page
-            current_page = max(0, current_page-1)
-
-        def next_button_event() -> None:
-            global current_page
-            current_page = min(current_page+1, max(0,(len(session_list)-1) // MAX_SESSIONS_PER_PAGE))
-
-        # These buttons are always visible regardless of page
-        back_rect = Button(pygame.Rect((50, 100, 100, 70)), back_button_event, RED)
-        previous_rect = Button(pygame.Rect((150, 660, 150, 70)), previous_button_event, LIGHT_BLUE)
-        next_rect = Button(pygame.Rect((600, 660, 150, 70)), next_button_event, LIGHT_BLUE)
-        # Back is the logout button, not to be confused with previous
-        create_rect = Button(pygame.Rect((600, 100, 150, 70)), create_button_event, LIGHT_BLUE)
+        def parse_type() -> str:
+            game_type = "Splendor"
+            if trade_toggle.active:
+                game_type += "Traderoutes"
+            if cities_toggle.active:
+                game_type += "Cities"
+            return game_type
 
         clickable_buttons.append(back_rect)
         clickable_buttons.append(next_rect)
         clickable_buttons.append(previous_rect)
         clickable_buttons.append(create_rect)
-        clickable_buttons.append(trade_rect)
-        clickable_buttons.append(cities_rect)
+        clickable_buttons.append(trade_toggle)
+        clickable_buttons.append(cities_toggle)
 
         # display page number: 1-indexed
-        new_text(f"{current_page+1} / {max(1,((len(session_list)-1) // MAX_SESSIONS_PER_PAGE)+1)}", WHITE, 385, 125)
+        new_text(f"{current_page+1} / {max(1,((len(session_list)-1) // MAX_SESSIONS_PER_PAGE)+1)}", WHITE, 385, 665)
 
         for session_listing in session_list:
             # Display all the listings in our current page
@@ -285,12 +302,10 @@ def session(authenticator :Authenticator) -> int:
             new_text(button.text, WHITE, button.rectangle.x + 10, button.rectangle.y + 10)
 
         # writing text on buttons
-        new_text("Back", WHITE, 80, 125)
+        new_text("Back", WHITE, 85, 125)
         new_text("Next", WHITE, 625, 665)
         new_text("Previous", WHITE, 150, 665)
         new_text("Create", WHITE, 625, 125)
-        new_text("T.R.", WHITE, 225, 125)
-        new_text("Cities", WHITE, 425, 125)
 
         for event in pygame.event.get():
             # when the user clicks or types anything
