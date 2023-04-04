@@ -483,11 +483,11 @@ class CardMenu:
 
     def create_send_action(self, card):
         def reserved_action(card):
-            self.send_action = action_manager.get_buy_reserved_card_action_id(card)
+            self.send_action = action_manager.perform_action(action_manager.get_buy_reserved_card_action_id(card))
         def discard_action(card):
-            self.send_action = action_manager.get_discard_action_id(card)
+            self.send_action = action_manager.perform_action(action_manager.get_discard_action_id(card))
         def clone_action(card):
-            self.send_action = action_manager.get_clone_action_id(card)
+            self.send_action = action_manager.perform_action(action_manager.get_clone_action_id(card))
 
         if self.action == CardMenuAction.CLONE:
             return clone_action(card)
@@ -562,7 +562,7 @@ class CardMenu:
         card = self.highlighted_box[2]
         pygame.draw.rect(DISPLAYSURF, RED, (x_start, y_start, card_width+20, card_height+20), 10)
         card_index = self.current_card_mapping[card][2]
-        card.draw_for_sidebar(DISPLAYSURF,WIDTH/7 + card_index*(card_width),HEIGHT*3/10 ) # card is on top of the border
+        #card.draw_for_sidebar(DISPLAYSURF,WIDTH/7 + card_index*(card_width),HEIGHT*3/10 ) # card is on top of the border
         pygame.display.update()
 
     def check_if_clicked_card(self, mouse_pos):
