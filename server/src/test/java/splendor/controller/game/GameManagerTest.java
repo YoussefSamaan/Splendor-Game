@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import org.mockito.Mock;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
@@ -88,6 +89,7 @@ public class GameManagerTest {
         .thenReturn(Collections.singletonList(action));
     when(actionGenerator.getGeneratedAction(Mockito.anyLong(), Mockito.anyLong()))
         .thenReturn(action);
+    doNothing().when(saveGameManager).saveGame(any());
   }
 
   @Test
@@ -220,5 +222,36 @@ public class GameManagerTest {
     ((HashMap<Long, BroadcastContentManager<Board>>) boardManagers.get(gameManager))
         .put(gameId, boardManager);
     ((HashMap<Long, SplendorGame>) games.get(gameManager)).put(gameId, game);
+  }
+
+  @Test
+  public void testSaveGameSuccess() throws NoSuchFieldException, IllegalAccessException {
+    SplendorGame game = mock(SplendorGame.class);
+    gameInfo.setSavegame("savegameId");
+    setGameInfo(game);
+    addGameToGameManager(game, gameManager);
+    gameManager.saveGame(gameId);
+  }
+
+  @Test
+  public void testSaveGameDoesNotExists() {
+    SplendorGame game = mock(SplendorGame.class);
+    gameInfo.setSavegame("savegameId");
+    setGameInfo(game);
+    assertThrows(IllegalArgumentException.class, () -> {
+      gameManager.saveGame(gameId);
+    });
+  }
+
+  private void setGameInfo(SplendorGame game) {
+    when(game.getGameInfo()).thenReturn(gameInfo);
+  }
+
+  private void addSavedGameToGameManager(SplendorGame game, GameManager gameManager)
+      throws IllegalAccessException, NoSuchFieldException {
+    String saveGameId = game.getGameInfo().getSavegame();
+    Field savedGames = gameManager.getClass().getDeclaredField("savedGames");
+    savedGames.setAccessible(true);
+    ((HashMap<String, SplendorGame>) savedGames.get(gameManager)).put(saveGameId, game);
   }
 }
