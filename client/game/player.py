@@ -306,15 +306,18 @@ class Player:
             if noble not in self.nobles.keys():
                 self.add_noble_to_sidebar(noble)
                 noble.isOnDisplay = False
+
         for card_json in inventory['boughtCards']:
             for color in Color:
                 if str(color).split('.')[1] == card_json['color']:
                     color = color
                     break
-
             card = Card.instance(id=card_json['cardId'], color=color)
             if card not in self.cards_bought.keys():
                 self.add_card_to_sidebar(card)
+        # for owned_card in self.cards_bought.keys():
+        #     if owned_card not in inventory['boughtCards']:
+        #         del self.cards_bought[owned_card]
 
         for card_json in inventory['reservedCards']:
             for color in Color:
@@ -324,6 +327,10 @@ class Player:
             card = Card.instance(id=card_json['cardId'], color=color)
             if card not in self.reserved_cards.keys():
                 self.reserve_card_to_sidebar(card)
+        # for owned_card in self.reserved_cards.keys():
+        #     if owned_card not in inventory['reservedCards']:
+        #         del self.reserved_cards[owned_card]
+            
 
         discounts = inventory['discounts']
         brown = discounts.get('BROWN', 0)
