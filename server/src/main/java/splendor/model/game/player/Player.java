@@ -277,6 +277,7 @@ public class Player implements PlayerReadOnly, SplendorPlayer {
    */
   public void removeTokens(HashMap<Color, Integer> tokens) {
     inventory.removeTokens(tokens);
+    inventory.removeGoldCards(tokens.get(Color.GOLD)); // removes any gold cards if needed
   }
 
   /**
