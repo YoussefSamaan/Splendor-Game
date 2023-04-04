@@ -43,10 +43,37 @@ public class Board implements BroadcastContent {
    *
    * @param players the players. Only 2-4 players are allowed.
    */
-  public Board(String gameType, Player... players) {
+  public Board(Player... players) {
     if (players.length < 2 || players.length > 4) {
       throw new IllegalArgumentException(
               String.format("Only 2-4 players are allowed, not %d", players.length));
+    }
+    this.players = players;
+    // make sure there are no duplicate players
+    Set<Player> playerSet = new HashSet<>(Arrays.asList(players));
+    if (playerSet.size() != players.length) {
+      throw new IllegalArgumentException("Duplicate players are not allowed");
+    }
+    this.nobleDeck = new NobleDeck(players.length); // create nobleDeck based on # players
+    this.cityDeck = new CityDeck();
+    currentTurn = 0;
+    decks[0] = new Deck(Color.GREEN);
+    decks[1] = new Deck(Color.YELLOW);
+    decks[2] = new Deck(Color.BLUE);
+    decks[3] = new Deck(Color.RED, 1);
+    decks[4] = new Deck(Color.RED, 2);
+    decks[5] = new Deck(Color.RED, 3);
+  }
+
+  /**
+   * Creates a new board.
+   *
+   * @param players the players. Only 2-4 players are allowed.
+   */
+  public Board(String gameType, Player... players) {
+    if (players.length < 2 || players.length > 4) {
+      throw new IllegalArgumentException(
+          String.format("Only 2-4 players are allowed, not %d", players.length));
     }
     this.players = players;
     // make sure there are no duplicate players
