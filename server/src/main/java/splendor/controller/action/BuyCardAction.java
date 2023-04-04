@@ -146,7 +146,15 @@ public class BuyCardAction extends CardAction {
     return actions;
   }
 
-  private static HashMap<Color, Integer> getCardCostWithGold(HashMap<Color, Integer> newCost, SplendorPlayer player) {
+  /**
+   * Returns the cost of the card with gold tokens.
+   *
+   * @param newCost the cost of the card
+   * @param player the player we are performing an action for.
+   * @return the cost of the card with gold tokens.
+   */
+  private static HashMap<Color, Integer> getCardCostWithGold(HashMap<Color, Integer> newCost,
+                                                             SplendorPlayer player) {
     HashMap<Color, Integer> playerTokens = player.getTokens();
     HashMap<Color, Integer> newPayment = new HashMap<>();
 
@@ -154,8 +162,8 @@ public class BuyCardAction extends CardAction {
       if (playerTokens.getOrDefault(c, 0) >= newCost.get(c)) {
         newPayment.put(c, newCost.get(c));
       } else {
-        newPayment.put(c, playerTokens.getOrDefault(c,0));
-        newPayment.put(Color.GOLD, newCost.get(c) - playerTokens.getOrDefault(c,0));
+        newPayment.put(c, playerTokens.getOrDefault(c, 0));
+        newPayment.put(Color.GOLD, newCost.get(c) - playerTokens.getOrDefault(c, 0));
       }
     }
 
@@ -170,8 +178,17 @@ public class BuyCardAction extends CardAction {
    */
   @Override
   public void performAction(Player player, Board board) {
-    player.addCard((DevelopmentCardI) this.getCard());
-    board.removeCard(this.getCard());
+    DevelopmentCardI card = (DevelopmentCardI) this.getCard();
+    player.addCard(card);
+    board.removeCard(card);
+    card.getSpecialActions().forEach(player::addNextAction); // add special actions to player
+    if (board.getNobles() == null) {
+      if (player.containsNextAction(ActionType.TAKE_NOBLE)) {
+        player.removeNextAction(ActionType.TAKE_NOBLE);
+      } else if (player.containsNextAction(ActionType.RESERVE_NOBLE)) {
+        player.removeNextAction(ActionType.RESERVE_NOBLE);
+      }
+    }
     if (this.tokenPayment != null) {
       player.removeTokens(this.tokenPayment);
       board.addTokens(this.tokenPayment);

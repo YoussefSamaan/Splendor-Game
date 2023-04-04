@@ -27,6 +27,9 @@ public class ActionGenerator {
     if (!game.isTurnPlayer(player)) {
       return actions;
     }
+    if (game.getBoard().isFinished()) {
+      return actions;
+    }
     if (gameActions.containsKey(gameId)) {
       // To check if the action was already generated for the player
       return gameActions.get(gameId);

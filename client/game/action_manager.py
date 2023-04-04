@@ -47,6 +47,9 @@ class ActionManager:
         elif action_type == Action.CLONE:
             # Clone is special
             return self.get_clone_action_id(card)
+        elif action_type == Action.BUY_RESERVED_CARD:
+            # Buy reserved card is special
+            return self.get_buy_reserved_card_action_id(card)
 
         for action in self.actions:
             if "card" in action and "cardId" in action["card"] and action["card"]["cardId"] == card.get_id()\
@@ -61,6 +64,17 @@ class ActionManager:
             if "card" in action and action["card"]["cardId"] == card.get_id()\
                 and action["actionType"] == Action.RESERVE_NOBLE.value:
                 print("Found reserve noble action id: " + str(action["actionId"]))
+                return action["actionId"]
+        print("Action not found")
+        return -1
+    
+    def get_buy_reserved_card_action_id(self, card: Card) -> int:
+        """ find which action id is for buying a reserved card"""
+        print("Getting buy reserved card action id for card: " + str(card.get_id()))
+        for action in self.actions:
+            if "card" in action and action["card"]["cardId"] == card.get_id()\
+                and action["actionType"] == Action.BUY_RESERVED_CARD.value:
+                print("Found buy reserved card action id: " + str(action["actionId"]))
                 return action["actionId"]
         print("Action not found")
         return -1

@@ -268,7 +268,7 @@ public class Inventory {
   }
 
   /**
-   * Add 1 to the number of gold cards
+   * Add 1 to the number of gold cards.
    */
   public void addOneGoldCard() {
     numGoldCards += 1;
@@ -292,7 +292,6 @@ public class Inventory {
     }
 
   }
-
 
 
   public void removeReservedCard(DevelopmentCardI card) {

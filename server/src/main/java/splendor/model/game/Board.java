@@ -331,4 +331,11 @@ public class Board implements BroadcastContent {
   public boolean isEmpty() {
     return false;
   }
+
+  /**
+   * Check if game is finished.
+   */
+  public boolean isFinished() {
+    return winner != null;
+  }
 }

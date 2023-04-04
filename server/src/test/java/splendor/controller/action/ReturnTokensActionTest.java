@@ -1,6 +1,8 @@
 package splendor.controller.action;
 
 import java.lang.reflect.Field;
+import java.util.List;
+
 import org.junit.Before;
 import org.junit.Test;
 import splendor.controller.lobbyservice.GameInfo;
@@ -41,20 +43,20 @@ public class ReturnTokensActionTest {
 //      throw new RuntimeException(e);
 //    }
 //    actions.get(0).performAction(player1, game.getBoard());
-////    game.getBoard().nextTurn();
-////    game.getBoard().nextTurn();
-////    actions = actionGenerator.generateActions(game, gameId, player1);
-////    actions.get(0).preformAction(player1, game.getBoard());
-////    game.getBoard().nextTurn();
-////    game.getBoard().nextTurn();
-////    actions = actionGenerator.generateActions(game, gameId, player1);
-////    actions.get(0).preformAction(player1, game.getBoard());
-////    game.getBoard().nextTurn();
-////    game.getBoard().nextTurn();
-////    actions = actionGenerator.generateActions(game, gameId, player1);
-////    actions.get(0).preformAction(player1, game.getBoard());
-////    game.getBoard().nextTurn();
-////    game.getBoard().nextTurn();
+//    game.getBoard().nextTurn();
+//    game.getBoard().nextTurn();
+//    actions = actionGenerator.generateActions(game, gameId, player1);
+//    actions.get(0).preformAction(player1, game.getBoard());
+//    game.getBoard().nextTurn();
+//    game.getBoard().nextTurn();
+//    actions = actionGenerator.generateActions(game, gameId, player1);
+//    actions.get(0).preformAction(player1, game.getBoard());
+//    game.getBoard().nextTurn();
+//    game.getBoard().nextTurn();
+//    actions = actionGenerator.generateActions(game, gameId, player1);
+//    actions.get(0).preformAction(player1, game.getBoard());
+//    game.getBoard().nextTurn();
+//    game.getBoard().nextTurn();
 //    player1.addNextAction(ActionType.RETURN_TOKENS);
 //    game.getBoard().nextTurn();
 //    actions = actionGenerator.generateActions(game, gameId, player2);
