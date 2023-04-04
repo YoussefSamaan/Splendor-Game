@@ -9,6 +9,7 @@ import javax.naming.InsufficientResourcesException;
 import splendor.controller.action.ActionType;
 import splendor.model.game.Color;
 import splendor.model.game.SplendorGame;
+import splendor.model.game.card.City;
 import splendor.model.game.card.DevelopmentCardI;
 import splendor.model.game.card.Noble;
 import splendor.model.game.card.SplendorCard;
@@ -99,7 +100,7 @@ public class Player implements PlayerReadOnly, SplendorPlayer {
    */
   @Override
   public HashMap<Color, Integer> buyCard(DevelopmentCardI card)
-      throws InsufficientResourcesException {
+          throws InsufficientResourcesException {
     HashMap<Color, Integer> tokens = inventory.payFor(card.getCost());
     inventory.addBoughtCard(card);
     prestigePoints += card.getPrestigePoints();
@@ -151,6 +152,7 @@ public class Player implements PlayerReadOnly, SplendorPlayer {
     nextActions.add(action);
   }
 
+  //TODO: Add removeOneNextActions()
 
   /**
    * resets the next actions so game is not stuck in a loop.
@@ -191,6 +193,15 @@ public class Player implements PlayerReadOnly, SplendorPlayer {
   public void addNoble(Noble noble) {
     this.inventory.addNoble(noble);
     this.prestigePoints += noble.getPrestigePoints();
+  }
+
+  /**
+   * Adds city to player inventory.
+   *
+   * @param city that gets added.
+   */
+  public void addCity(City city) {
+    this.inventory.addCity(city);
   }
 
   /**
@@ -237,6 +248,15 @@ public class Player implements PlayerReadOnly, SplendorPlayer {
    */
   public int getNoblesCount() {
     return inventory.getNoblesCount();
+  }
+
+  /**
+   * get the number of cities the player has.
+   *
+   * @return the number of cities
+   */
+  public int getCitiesCount() {
+    return inventory.getCitiesCount();
   }
 
   /**
