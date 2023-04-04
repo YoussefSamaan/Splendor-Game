@@ -410,7 +410,14 @@ def perform_action(obj, user, position):
     # make sure it's the current user's turn, otherwise cannot take cards
     if user == Player.instance(id=CURR_PLAYER).name:
         action_manager.update(Player.instance(id=CURR_PLAYER).name)
-        if isinstance(obj, Card):
+        if Sidebar.instance().is_clicked_reserve(position):
+        # check if clicked on a reserved card to buy it 
+            # opens the cardmeny
+            print("checking if clicked reserved")
+            card_menu = CardMenu(Player.instance(id=CURR_PLAYER).reserved_cards.keys(), CardMenuAction.RESERVED)
+            card_menu.display(DISPLAYSURF)
+        
+        elif isinstance(obj, Card):
             global cascade
             if cascade:
                 get_user_cascade_selection(obj)
@@ -427,12 +434,7 @@ def perform_action(obj, user, position):
         # players shouldn't click on nobles
             # obj.take_noble(Sidebar.instance(), Player.instance(id=CURR_PLAYER))
             # set_flash_message('Took a noble')
-        elif Sidebar.instance().is_clicked_reserve(position):
-        # check if clicked on a reserved card to buy it 
-            # opens the cardmeny
-            card_menu = CardMenu(Player.instance(id=CURR_PLAYER).reserved_cards.keys(), CardMenuAction.RESERVED)
-            card_menu.display(DISPLAYSURF)
-        
+       
         elif isinstance(obj, Player):
             Sidebar.instance().switch_player(obj)
 

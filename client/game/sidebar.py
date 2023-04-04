@@ -71,11 +71,6 @@ class Sidebar:
             self.draw_reserved_button(screen, self.display_color_active)
             self.draw_bought_button(screen)
             # self.draw_trade_route_button(screen)
-        # elif self.current_display == 3:
-        #     self.draw_nobles_button(screen)
-        #     self.draw_reserved_button(screen)
-        #     self.draw_bought_button(screen)
-        #     self.draw_trade_route_button(screen, self.display_color_active)
         else: # must be bought
             self.draw_nobles_button(screen)
             self.draw_reserved_button(screen)
@@ -91,21 +86,6 @@ class Sidebar:
         buy_button = button('Nobles', width=self.width / 3, height=self.card_size[1] / 4, color=color)
         x = self.width / 3
         y = 0
-        surface.blit(buy_button, (x, y))
-        button_rect = buy_button.get_rect()
-        button_rect.x = x
-        button_rect.y = y
-        return button_rect
-    
-    def draw_trade_route_button(self, surface: pygame.Surface, color=LIGHT_GREY):
-        """
-        The x and y coordinates returned are relative to the surface.
-        :param surface:
-        :return:
-        """
-        buy_button = button('Trade Route', width=self.width / 4, height=self.card_size[1] / 4, color=color)
-        x = self.width * 3 / 4
-        y = self.card_size[1] / 4
         surface.blit(buy_button, (x, y))
         button_rect = buy_button.get_rect()
         button_rect.x = x
@@ -190,14 +170,6 @@ class Sidebar:
             # else:
             #     self.update_positions(direction)
             #     self.sidebar_rect.move_ip(0, direction)
-        # elif (self.current_display == 3):
-        #     """this is for trade route which is displayed for all players """
-        #     # TODO: idk if this works 
-        #     if (direction < 0 and self.trade_route_last_position[1] < 1 * self.card_size[1]):
-        #         return
-        #     elif (direction > 0 and self.trade_route_amount > (
-        #             Board.instance().height - 3 * self.card_size[1])):
-        #         return
 
         elif (self.current_display == 2):
             # ==2  must be reserved card -
