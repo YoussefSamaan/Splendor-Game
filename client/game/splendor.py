@@ -537,7 +537,7 @@ class CardMenu:
                             # if the first card is selected, then the second card is selected
                             self.card_selected2 = card
                             self.add_border_to_card2(card)
-                        
+                    
                     elif self.confirm.rectangle.collidepoint(pygame.mouse.get_pos()):
                         if self.card_selected is None:
                             return # if the user clicks confirm without selecting a card, just close the menu
@@ -552,6 +552,8 @@ class CardMenu:
                     else:
                         if self.action != CardMenuAction.RESERVED:
                             self.card_selected = None # deselect the card but doesn't close since cloning and stripping is forced
+                        elif self.selection_box_rect.collidepoint(pygame.mouse.get_pos()):
+                            continue # do nothing if the user clicks inside the menu
                         else: # reserve cards can be closed
                             self.card_selected = None
                             return # if the user clicks outside the menu, just close it
