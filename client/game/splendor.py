@@ -491,9 +491,9 @@ class CardMenu:
         self.confirm.display(DISPLAYSURF)
         self.next_page.display(DISPLAYSURF)
         self.prev_page.display(DISPLAYSURF)
-        write_on(DISPLAYSURF, self.confirm.text, center=self.confirm.rect.center,color=WHITE)
-        write_on(DISPLAYSURF, self.next_page.text, center=self.next_page.rect.center,color=WHITE)
-        write_on(DISPLAYSURF, self.prev_page.text, center=self.prev_page.rect.center,color=WHITE)
+        write_on(DISPLAYSURF, self.confirm.text, center=self.confirm.rectangle.center,color=WHITE)
+        write_on(DISPLAYSURF, self.next_page.text, center=self.next_page.rectangle.center,color=WHITE)
+        write_on(DISPLAYSURF, self.prev_page.text, center=self.prev_page.rectangle.center,color=WHITE)
         #write_on(DISPLAYSURF, "Page " + str(self.current_page + 1) + "/" + str(math.ceil(len(self.cards) / 5)), WIDTH/2, HEIGHT*3/10 - 20, size=30)
         # draw the cards, we will draw them the same size as on the board
         card_width, card_height = self.cards[0].get_card_size(Board.instance())
