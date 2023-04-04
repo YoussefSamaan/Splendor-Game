@@ -81,6 +81,28 @@ class Player:
         self.last_position_reserved = (
             self.last_position_reserved[0], self.last_position_reserved[1] + Card.get_card_size()[1]* SIDEBAR_IMAGE_SCALE)
 
+    def remove_card_from_sidebar(self, card):
+        if card in self.cards_bought:
+            removed_card_position = self.cards_bought[card]
+            del self.cards_bought[card]
+            for remaining_card in self.cards_bought:
+                # check if this card is positioned below the removed card
+                if self.cards_bought[remaining_card][1] > removed_card_position[1]:
+                    self.cards_bought[remaining_card] = (0, self.cards_bought[remaining_card][1] - Card.get_card_size()[1]* SIDEBAR_IMAGE_SCALE)
+        else:
+            print("Card cannot be removed because it does not exist.")
+    
+    def remove_reserved_card_from_sidebar(self, card):
+        if card in self.reserved_cards:
+            removed_r_card_position = self.reserved_cards[card]
+            del self.reserved_cards[card]
+            for remaining_r_card in self.reserved_cards:
+                # check if this card is positioned below the removed card
+                if self.cards_bought[remaining_r_card][1] > removed_r_card_position[1]:
+                    self.cards_bought[remaining_r_card] = (0, self.cards_bought[remaining_r_card][1] - Card.get_card_size()[1]* SIDEBAR_IMAGE_SCALE)
+        else:
+            print("Reserved card cannot be removed because it does not exist.")
+
     def add_token(self, token):
         self.tokens[token.get_color()] += 1
 
