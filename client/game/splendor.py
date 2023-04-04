@@ -343,8 +343,7 @@ def get_user_cascade_selection(card :Card):
     PERMANENT_MESSAGE = None
     action_manager.force_update(Player.instance(id=CURR_PLAYER).name)
 
-
-def perform_action(obj, user):
+def perform_action(obj, user, position):
     if obj is None:
         return
     global CURR_PLAYER
@@ -369,6 +368,11 @@ def perform_action(obj, user):
         # players shouldn't click on nobles
             # obj.take_noble(Sidebar.instance(), Player.instance(id=CURR_PLAYER))
             # set_flash_message('Took a noble')
+        elif Sidebar.instance().is_clicked_reserve(position):
+        # check if clicked on a reserved card to buy it 
+            # opens the cardmeny
+            card_menu = CardMenu(Player.instance(id=CURR_PLAYER).reserved_cards, CardMenuAction.RESERVED)
+            card_menu.display(DISPLAYSURF)
         
         elif isinstance(obj, Player):
             Sidebar.instance().switch_player(obj)
@@ -678,14 +682,10 @@ def play(authenticator, game_id):
                     # check if it's the sidebar toggle
                     position = pygame.mouse.get_pos()
                     check_toggle(position)
-                    if Sidebar.instance().is_clicked_reserve(position):
-                     # check if clicked on a reserved card to buy it 
-                        CardMenu.display()
-
                     if TRADING_POST_ENABLED:
                         TradeRoute.instance().check_click(position,DISPLAYSURF)
                     obj = get_clicked_object(position)
-                    perform_action(obj, logged_in_user)
+                    perform_action(obj, logged_in_user, position)
                     with threading.Lock():
                         threading.Thread(target=update, args=(authenticator, game_id)).start()
 
