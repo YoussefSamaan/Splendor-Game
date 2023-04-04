@@ -61,7 +61,7 @@ class ActionManager:
         """ find which action id is for reserving a noble"""
         print("Getting reserve noble action id for card: " + str(card.get_id()))
         for action in self.actions:
-            if "card" in action and action["card"]["cardId"] == card.get_id()\
+            if "card" in action and "cardId" in action["card"] and action["card"]["cardId"] == card.get_id()\
                 and action["actionType"] == Action.RESERVE_NOBLE.value:
                 print("Found reserve noble action id: " + str(action["actionId"]))
                 return action["actionId"]
@@ -72,7 +72,7 @@ class ActionManager:
         """ find which action id is for buying a reserved card"""
         print("Getting buy reserved card action id for card: " + str(card.get_id()))
         for action in self.actions:
-            if "card" in action and action["card"]["cardId"] == card.get_id()\
+            if "card" in action and "cardId" in action["card"] and action["card"]["cardId"] == card.get_id()\
                 and action["actionType"] == Action.BUY_RESERVED_CARD.value:
                 print("Found buy reserved card action id: " + str(action["actionId"]))
                 return action["actionId"]
@@ -83,7 +83,7 @@ class ActionManager:
         """ find which action id is for discarding a card"""
         print("Getting discard action id for card: " + str(card.get_id()))
         for action in self.actions:
-            if "card" in action and action["card"]["cardId"] == card.get_id()\
+            if "card" in action and "cardId" in action["card"] and action["card"]["cardId"] == card.get_id()\
                 and action["actionType"] == Action.DISCARD.value:
                 print("Found discard action id: " + str(action["actionId"]))
                 return action["actionId"]
@@ -94,7 +94,7 @@ class ActionManager:
         """ find which action id is for cloning a card"""
         print("Getting clone action id for card: " + str(card.get_id()))
         for action in self.actions:
-            if "card" in action and action["card"]["cardId"] == card.get_id()\
+            if "card" in action and "cardId" in action["card"] and action["card"]["cardId"] == card.get_id()\
                 and action["actionType"] == Action.CLONE.value:
                 print("Found clone action id: " + str(action["actionId"]))
                 return action["actionId"]
@@ -108,7 +108,7 @@ class ActionManager:
         """
         print("Getting cascade action id for card: " + str(card.get_id()))
         for action in self.actions:
-            if "card" in action and action["card"]["cardId"] == card.get_id()\
+            if "card" in action and "cardId" in action["card"] and action["card"]["cardId"] == card.get_id()\
                 and (action["actionType"] == Action.TAKE_CARD_1.value or action["actionType"] == Action.TAKE_CARD_2.value):
                 print("Found cascade action id: " + str(action["actionId"]))
                 return action["actionId"]

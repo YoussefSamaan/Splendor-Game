@@ -18,7 +18,7 @@ public class SplendorGameTest {
 	@BeforeEach
 	public void setUp() throws Exception {
 		Player[] testPlayers = {player1,player2};
-		GameInfo testGameInfo = new GameInfo("testServer","SplendorGameTest",testPlayers,"testSave");
+		GameInfo testGameInfo = new GameInfo("Splendor","SplendorGameTest",testPlayers,"testSave");
 		testSplendorGame = new SplendorGame(testGameInfo);
 	}
 	

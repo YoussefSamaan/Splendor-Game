@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.async.DeferredResult;
-import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import splendor.controller.action.ActionData;
 import splendor.controller.action.InvalidAction;
 import splendor.controller.helper.Authenticator;
