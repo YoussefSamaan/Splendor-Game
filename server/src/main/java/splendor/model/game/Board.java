@@ -34,6 +34,8 @@ public class Board implements BroadcastContent {
   private final CityDeck cityDeck = new CityDeck();
   private final TokenBank bank = new TokenBank(true);
 
+  private String winner = null;
+
   /**
    * Creates a new board.
    *
@@ -137,6 +139,21 @@ public class Board implements BroadcastContent {
    */
   public void nextTurn() {
     currentTurn = (currentTurn + 1) % players.length;
+    if (currentTurn == 0) {
+      checkGameEnd();
+    }
+  }
+
+  private void checkGameEnd() {
+    if (winner != null) {
+      return;
+    }
+    for (Player player : players) {
+      if (player.getPrestigePoints() >= 15) {
+        winner = player.getName();
+        return;
+      }
+    }
   }
 
   /**
