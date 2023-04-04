@@ -162,6 +162,9 @@ def update(authenticator, game_id):
     # TODO: add cascading buy for cards]
     # if we need to cascade, we don't chance players
     check_cascade()
+    check_clone()
+    check_reserve_noble()
+    check_discard()
     update_turn_player(board_json)
     update_players(board_json)
     update_decks(board_json)
@@ -174,6 +177,35 @@ def update(authenticator, game_id):
         #update_cities(board_json)
     else:
         update_nobles(board_json)
+def check_clone():
+    """checks if the card has a clone effect. if so, display card menu with clone action so player can choose what to clone"""
+    global action_manager, PERSISTENT_MESSAGE
+    if action_manager.has_unlocked_clone(Player.instance(id=CURR_PLAYER).name):
+        PERSISTENT_MESSAGE = "You Unlocked a Clone! Choose a card to clone!"
+        return True
+    else:
+        PERSISTENT_MESSAGE = None
+        return False
+
+def check_reserve_noble():
+    """checks if the player has unlocked the reserve noble action. if so, display the reserve noble button"""
+    global action_manager, PERSISTENT_MESSAGE
+    if action_manager.has_unlocked_reserve_noble(Player.instance(id=CURR_PLAYER).name):
+        PERSISTENT_MESSAGE = "You Unlocked a Reserve Noble! Choose a noble to reserve!"
+        return True
+    else:
+        PERSISTENT_MESSAGE = None
+        return False
+
+def check_discard():
+    """checks if the player has unlocked the discard action. if so, display the discard button"""
+    global action_manager, PERSISTENT_MESSAGE
+    if action_manager.has_unlocked_discard(Player.instance(id=CURR_PLAYER).name):
+        PERSISTENT_MESSAGE = "You Unlocked a Discard! Choose a card to discard!"
+        return True
+    else:
+        PERSISTENT_MESSAGE = None
+        return False
 
 def check_cascade():
     """Checks if we need to cascade a card purchase.
