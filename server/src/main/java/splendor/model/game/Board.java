@@ -30,8 +30,10 @@ public class Board implements BroadcastContent {
   private final Player[] players;
   private int currentTurn;
   private final SplendorDeck[] decks = new SplendorDeck[6];
-  private final NobleDeck nobleDeck = new NobleDeck();
+
+  private final NobleDeck nobleDeck;
   private final CityDeck cityDeck = new CityDeck();
+
   private final TokenBank bank = new TokenBank(true);
 
   private String winner = null;
@@ -52,6 +54,7 @@ public class Board implements BroadcastContent {
     if (playerSet.size() != players.length) {
       throw new IllegalArgumentException("Duplicate players are not allowed");
     }
+    nobleDeck = new NobleDeck(players.length); // create nobleDeck based on # players
     currentTurn = 0;
     decks[0] = new Deck(Color.GREEN);
     decks[1] = new Deck(Color.YELLOW);

@@ -53,7 +53,7 @@ public class TakeOneTokenAction implements Action {
   public void performAction(Player player, Board board) {
     player.addTokens(this.token);
     board.removeTokens(this.token);
-    player.resetNextActions(); // needs to be remove the last one.
+    player.removeOldestNextAction(); // needs to be remove the last one.
   }
 
   @Override
