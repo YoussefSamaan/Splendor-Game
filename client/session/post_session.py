@@ -8,11 +8,12 @@ sys.path.insert(1, 'client\config')
 from config.config import LOBBY_SERVICE_URL
 
 
-def create_session(username, access_token):
+def create_session(username, access_token, game_type: str):
+    print(game_type)
     url = f"{LOBBY_SERVICE_URL}/api/sessions?access_token={access_token}"
     data = {
         "creator": username,
-        "game": "splendor",
+        "game": "Splendor",
         "savegame": "",
     }
     header = {

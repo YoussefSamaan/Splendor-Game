@@ -57,6 +57,7 @@ public class SplendorController {
    * @param username the username.
    * @param accessToken the accessToken for the user.
    * @param url of the request. Used for logging only.
+   * @return boolean if succeeded or not
    */
   public boolean authenticate(String username, String accessToken, String url) {
     LOGGER.info(String.format("Received request to %s with access token %s and username %s",
@@ -76,6 +77,10 @@ public class SplendorController {
    * players get the same view of the board.
    *
    * @param gameId the id of the game.
+   * @param request the HttpServletRequest
+   * @param accessToken the access token of the player
+   * @param username the username of the player
+   * @return response entity
    */
   @GetMapping(value = "/api/games/{gameId}/board")
   public ResponseEntity getBoard(@PathVariable long gameId, HttpServletRequest request,
@@ -101,6 +106,10 @@ public class SplendorController {
    * Get the board of a specific game. Use long polling to wait for the board to change.
    *
    * @param gameId the id of the game.
+   * @param hash hash
+   * @param username username of player
+   * @param accessToken access token of player
+   * @param request HttpServletRequest of game
    * @return the board of the game.
    */
   @GetMapping(value = "/api/games/{gameId}/board/longpoll")
@@ -137,8 +146,11 @@ public class SplendorController {
    * Generates all the actions that can be performed by the player.
    * This is used by the client to generate the buttons that the player can click.
    *
-   * @param gameId   the id of the game.
-   * @param username the username of the player.
+   * @param gameId the id of the game.
+   * @param username username of player
+   * @param accessToken access token of player
+   * @param request HttpServletRequest of game
+   * @param usernameParam username
    * @return a list of actions that the player can perform.
    */
   @GetMapping("/api/games/{gameId}/players/{username}/actions")
@@ -149,19 +161,24 @@ public class SplendorController {
     LOGGER.info(String.format("Received request to get actions of player %s in game with id %d",
         username, gameId));
     if (!usernameParam.equals(username)) {
+      LOGGER.warning(String.format("Cannot get actions of a different user. Requested %s, got %s",
+          username, usernameParam));
       return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
           "Cannot get actions of a different user"
       );
     }
     if (!authenticate(username, accessToken, request.getRequestURI())) {
+      LOGGER.warning(String.format("Invalid access token for user %s", username));
       return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
           "Invalid access token for user " + username);
     }
     if (!gameManager.exists(gameId)) {
+      LOGGER.warning(String.format("Game with id %d does not exist", gameId));
       return ResponseEntity.badRequest().body(String.format("Game with id %d does not exist",
           gameId));
     }
     if (!gameManager.playerInGame(gameId, username)) {
+      LOGGER.warning(String.format("Player %s is not in game with id %d", username, gameId));
       return ResponseEntity.badRequest().body(String.format("Player %s is not in game with id %d",
           username, gameId));
     }
@@ -177,6 +194,10 @@ public class SplendorController {
    * @param gameId     the id of the game.
    * @param username   the username of the player.
    * @param actionId   the id of the action.
+   * @param request    the HttpServletRequest
+   * @param accessToken the access token of player
+   * @param usernameParam the username as a parameter
+   * @return response entity
    */
   @PostMapping("/api/games/{gameId}/players/{username}/actions/{actionId}")
   public ResponseEntity performAction(@PathVariable long gameId,
@@ -220,6 +241,10 @@ public class SplendorController {
    * Saves the game.
    *
    * @param gameId the id of the game.
+   * @param username username
+   * @param accessToken access token
+   * @param request request
+   * @return response entity
    */
   @PostMapping("/api/games/{gameId}/save")
   public ResponseEntity saveGame(@PathVariable long gameId,
@@ -240,7 +265,6 @@ public class SplendorController {
           username, gameId));
     }
     try {
-      registrator.saveGame(gameManager.loadGame(gameId).getGameInfo(), gameId);
       gameManager.saveGame(gameId);
       LOGGER.info(String.format("Saved game with id %d", gameId));
       return ResponseEntity.ok().build();
@@ -249,33 +273,6 @@ public class SplendorController {
       LOGGER.warning(e.getMessage());
       return ResponseEntity.badRequest().body(e.getMessage());
     }
-  }
-
-  /**
-   * Not needed. All games are loaded on startup.
-   * Loads the game and returns the board.
-   *
-   * @param gameId the id of the game.
-   */
-  @GetMapping("/api/games/{gameId}/save")
-  public ResponseEntity loadGame(@PathVariable long gameId,
-                                 @RequestParam("username") String username,
-                                 @RequestParam("access_token") String accessToken,
-                                 HttpServletRequest request) {
-    LOGGER.info(String.format("Received request to load game with id %d", gameId));
-    if (!authenticate(username, accessToken, request.getRequestURI())) {
-      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
-          "Invalid access token for user " + username);
-    }
-    gameManager.loadGame(gameId);
-    // do this after loading the game
-    if (!gameManager.playerInGame(gameId, username)) {
-      return ResponseEntity.badRequest().body(String.format("Player %s is not in game with id %d",
-              username, gameId));
-    }
-    LOGGER.info(String.format("Loaded game with id %d", gameId));
-    String body = new Gson().toJson(gameManager.getBoard(gameId));
-    return ResponseEntity.ok().body(body);
   }
 
   /**

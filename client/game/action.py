@@ -10,6 +10,9 @@ class Action(Enum):
     TAKE_CARD_1 = 'TAKE_CARD_1'
     TAKE_CARD_2 = 'TAKE_CARD_2'
     CASCADE = 'CASCADE'
+    CLONE = 'CLONE'
+    RESERVE_NOBLE = 'RESERVE_NOBLE'
+    DISCARD = 'DISCARD'
 
     def __eq__(self, other):
         return self.value == other.value

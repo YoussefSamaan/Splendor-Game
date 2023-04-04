@@ -163,6 +163,7 @@ public class TakeTokensAction implements Action {
    * generates a list of actions that the player can make.
    *
    * @param game The game that the player is playing in.
+   * @param player the player that we are getting legal actions for.
    * @return  a list of possible action that the player can take.
    */
   public static List<Action> getLegalActions(SplendorGame game, SplendorPlayer player) {

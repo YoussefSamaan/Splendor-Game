@@ -37,6 +37,9 @@ def get_actions(authenticator: Authenticator, game_id: str, player_name: str):
     response = requests.get(url, params=data)
     if response.status_code == 200:
         return response.json()
+    elif response.status_code == 401:
+        return []
+    print(f"{response.status_code}")
     raise Exception("Could not get actions")
 
 

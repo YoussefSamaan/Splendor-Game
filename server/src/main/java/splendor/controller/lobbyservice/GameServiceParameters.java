@@ -70,6 +70,14 @@ public class GameServiceParameters {
   }
 
   /**
+   * Change the name to handle multiple game modes.
+   */
+  public void setName(String name) {
+    this.gameServiceName = name;
+    this.gameServiceDsiplayName = name;
+  }
+
+  /**
    * Getter for the lobby service url and port.
    *
    * @return The lobby service location

@@ -46,11 +46,6 @@ class Noble:
                 return noble
         return None
 
-    def take_noble(self, sidebar, player):
-        self.isOnDisplay = False
-        #sidebar.add_noble(self)
-        player.reserve_noble(self)
-
     def draw(self, screen, x, y):
         screen.blit(pygame.transform.scale(self._image, Noble.get_card_size()), (x, y))
 

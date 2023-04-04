@@ -103,10 +103,10 @@ class Card:
         screen.blit(image, (x, y))
         self.pos = (x, y)
 
-    def draw_for_sidebar(self, screen, x, y):
+    def draw_for_sidebar(self, screen, x, y, width_mult=1.5, height_mult=1.5):
         board = Board.instance()
         width, height = Card.get_card_size(board)
-        image = pygame.transform.scale(self._image, (int(width) *1.5, int(height) *1.5))
+        image = pygame.transform.scale(self._image, (int(width) *width_mult, int(height) *height_mult))
         screen.blit(image, (x, y))
         self.pos = (x, y)
 

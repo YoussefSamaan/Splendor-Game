@@ -9,6 +9,7 @@ import javax.naming.InsufficientResourcesException;
 import splendor.controller.action.ActionType;
 import splendor.model.game.Color;
 import splendor.model.game.SplendorGame;
+import splendor.model.game.card.City;
 import splendor.model.game.card.DevelopmentCardI;
 import splendor.model.game.card.Noble;
 import splendor.model.game.card.SplendorCard;
@@ -99,7 +100,7 @@ public class Player implements PlayerReadOnly, SplendorPlayer {
    */
   @Override
   public HashMap<Color, Integer> buyCard(DevelopmentCardI card)
-      throws InsufficientResourcesException {
+          throws InsufficientResourcesException {
     HashMap<Color, Integer> tokens = inventory.payFor(card.getCost());
     inventory.addBoughtCard(card);
     prestigePoints += card.getPrestigePoints();
@@ -202,6 +203,15 @@ public class Player implements PlayerReadOnly, SplendorPlayer {
   }
 
   /**
+   * Adds city to player inventory.
+   *
+   * @param city that gets added.
+   */
+  public void addCity(City city) {
+    this.inventory.addCity(city);
+  }
+
+  /**
    * Adds card and corresponding prestige points to player inventory.
    *
    * @param card that gets added.
@@ -249,6 +259,15 @@ public class Player implements PlayerReadOnly, SplendorPlayer {
 
   public int getNumGoldCards() {
     return inventory.getNumGoldCards();
+  }
+
+  /**
+   * get the number of cities the player has.
+   *
+   * @return the number of cities
+   */
+  public int getCitiesCount() {
+    return inventory.getCitiesCount();
   }
 
   /**
@@ -330,5 +349,13 @@ public class Player implements PlayerReadOnly, SplendorPlayer {
 
   public void removeCardBought(DevelopmentCardI card) {
     this.inventory.removeCardBought(card);
+  }
+
+  public boolean containsNextAction(ActionType action) {
+    return this.nextActions.contains(action);
+  }
+
+  public void removeNextAction(ActionType action) {
+    this.nextActions.remove(action);
   }
 }

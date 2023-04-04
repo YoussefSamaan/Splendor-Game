@@ -38,16 +38,59 @@ class ActionManager:
         if action_type == Action.CASCADE:
             # Cascade is special
             return self.get_cascade_action_id(card)
+        elif action_type == Action.RESERVE_NOBLE:
+            # Reserve is special
+            return self.get_reserve_noble_action_id(card)
+        elif action_type == Action.DISCARD:
+            # Discard is special
+            return self.get_discard_action_id(card)
+        elif action_type == Action.CLONE:
+            # Clone is special
+            return self.get_clone_action_id(card)
 
         for action in self.actions:
-            if "card" in action and action["card"]["cardId"] == card.get_id()\
+            if "card" in action and "cardId" in action["card"] and action["card"]["cardId"] == card.get_id()\
                 and action["actionType"] == action_type.value:
                 return action["actionId"]
+        return -1
+
+    def get_reserve_noble_action_id(self, card: Card) -> int:
+        """ find which action id is for reserving a noble"""
+        print("Getting reserve noble action id for card: " + str(card.get_id()))
+        for action in self.actions:
+            if "card" in action and action["card"]["cardId"] == card.get_id()\
+                and action["actionType"] == Action.RESERVE_NOBLE.value:
+                print("Found reserve noble action id: " + str(action["actionId"]))
+                return action["actionId"]
+        print("Action not found")
+        return -1
+
+    def get_discard_action_id(self, card: Card) -> int:
+        """ find which action id is for discarding a card"""
+        print("Getting discard action id for card: " + str(card.get_id()))
+        for action in self.actions:
+            if "card" in action and action["card"]["cardId"] == card.get_id()\
+                and action["actionType"] == Action.DISCARD.value:
+                print("Found discard action id: " + str(action["actionId"]))
+                return action["actionId"]
+        print("Action not found")
+        return -1
+    
+    def get_clone_action_id(self, card: Card) -> int:
+        """ find which action id is for cloning a card"""
+        print("Getting clone action id for card: " + str(card.get_id()))
+        for action in self.actions:
+            if "card" in action and action["card"]["cardId"] == card.get_id()\
+                and action["actionType"] == Action.CLONE.value:
+                print("Found clone action id: " + str(action["actionId"]))
+                return action["actionId"]
+        print("Action not found")
         return -1
 
     def get_cascade_action_id(self, card: Card) -> int:
         """
          we need to find the action id with the given card, and the action type TAKE_CARD_1 or TAKE_CARD_2
+         
         """
         print("Getting cascade action id for card: " + str(card.get_id()))
         for action in self.actions:
@@ -58,6 +101,38 @@ class ActionManager:
         print("Action not found")
         return -1
 
+    def has_unlocked_reserve_noble(self, player_name: str) -> bool:
+        print("Checking reserve")
+        if player_name != self.last_updated_player:
+            # Not player's turn
+            return False
+        for action in self.actions:
+            if "actionType" in action and action["actionType"] == Action.RESERVE_NOBLE.value:
+                print("has unlocked reserve")
+                return True
+        return False
+    
+    def has_unlocked_discard(self, player_name: str) -> bool:
+        print("Checking discard")
+        if player_name != self.last_updated_player:
+            # Not player's turn
+            return False
+        for action in self.actions:
+            if "actionType" in action and action["actionType"] == Action.DISCARD.value:
+                print("has unlocked discard")
+                return True
+        return False
+    
+    def has_unlocked_clone(self, player_name: str) -> bool:
+        print("Checking clone")
+        if player_name != self.last_updated_player:
+            # Not player's turn
+            return False
+        for action in self.actions:
+            if "actionType" in action and action["actionType"] == Action.CLONE.value:
+                print("has unlocked clone")
+                return True
+        return False
 
     def has_unlocked_cascade(self, player_name: str) -> bool:
         print("Checking cascade")

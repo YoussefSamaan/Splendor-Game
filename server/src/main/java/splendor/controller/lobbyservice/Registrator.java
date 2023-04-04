@@ -19,6 +19,7 @@ import splendor.controller.helper.TokenHelper;
 public class Registrator {
   private static final String REGISTRATION_RESOURCE = "/api/gameservices";
   private static final String SAVEGAME_RESOURCE = "/savegames";
+  private static final String[] GAME_MODES = {"Splendor", "SplendorCities", "SplendorTraderoutes"};
 
   private final Logger logger = org.slf4j.LoggerFactory.getLogger(Registrator.class);
 
@@ -51,8 +52,9 @@ public class Registrator {
     logger.info("Registering at lobby service.");
     new Thread(() -> {
       try {
-        registerAtLobbyService(tokenHelper.get(gameServiceParameters.getOauth2Name(),
-                gameServiceParameters.getOauth2Password()), 3);
+        String token = tokenHelper.get(gameServiceParameters.getOauth2Name(),
+                gameServiceParameters.getOauth2Password());
+        registerGameServices(token);
         registered = true;
       } catch (UnirestException | AuthenticationException e) {
         logger.error("Failed to register with LS", e);
@@ -62,76 +64,106 @@ public class Registrator {
   }
 
   /**
-   * Registers the game service with the lobby service.
+   * Registers all game services with the LS.
    *
-   * @param token OAuth2 access token
-   * @param retries number of tries to register
-   * @throws RuntimeException in case the request fails more than the number of retries
+   * @param token the token to use for authentication
    */
-  private void registerAtLobbyService(String token, int retries) {
-    logger.info("Registering at lobby service. {} attempts remaining.", retries);
-    String url =
-            gameServiceParameters.getLobbyServiceLocation() + REGISTRATION_RESOURCE
-            + "/" + gameServiceParameters.getName();
+  private void registerGameServices(String token) {
     try {
-      HttpResponse<String> response = Unirest
-              .put(url)
-              .header("Authorization", "Bearer " + token)
-              .header("Content-Type", "application/json")
-              .body(gameServiceParameters.toJson())
-              .asString();
-      if (response.getStatus() != 200) {
-        logger.error("Could not register at lobby service.\n Status: {}\n Body: {}",
-                response.getStatus(), response.getBody());
-        throw new UnirestException("Could not register at lobby service.");
+      for (String gameService : GAME_MODES) {
+        gameServiceParameters.setName(gameService);
+        logger.info("Registering game service: " + gameServiceParameters.getName());
+        registerGameService(token);
       }
-      logger.info("Successfully registered at lobby service.");
     } catch (UnirestException e) {
-      if (retries > 0) {
-        // sleep for 1 second and try again
-        try {
-          Thread.sleep(1000);
-        } catch (InterruptedException e1) {
-          throw new RuntimeException(e1);
-        }
-        registerAtLobbyService(token, retries - 1);
-      } else {
-        logger.error("Could not register at lobby service. Giving up.");
-        System.exit(1);
-      }
+      logger.error("Could not register at lobby service. Shutting down.", e);
+      System.exit(1);
     }
   }
 
   /**
-   * Deregisters the game service from the lobby service. Called before the application exits.
+   * Registers the game service with the lobby service.
+   *
+   * @param token the token to use for authentication
+   * @throws UnirestException in case the request fails
+   */
+  private void registerGameService(String token) throws UnirestException {
+    if (registered(token, gameServiceParameters.getName())) {
+      logger.info("Already registered with LS. Skipping registration.");
+      return;
+    }
+    String url =
+            gameServiceParameters.getLobbyServiceLocation() + REGISTRATION_RESOURCE
+            + "/" + gameServiceParameters.getName();
+    HttpResponse<String> response = Unirest
+            .put(url)
+            .header("Authorization", "Bearer " + token)
+            .header("Content-Type", "application/json")
+            .body(gameServiceParameters.toJson())
+            .asString();
+    if (response.getStatus() != 200) {
+      logger.error("Could not register at lobby service.\n Status: {}\n Body: {}",
+              response.getStatus(), response.getBody());
+      throw new UnirestException("Could not register at lobby service.");
+    }
+    logger.info(
+        "Successfully registered at lobby service game service: " + gameServiceParameters.getName()
+    );
+  }
+
+  private boolean registered(String token, String name) {
+    String url = gameServiceParameters.getLobbyServiceLocation() + REGISTRATION_RESOURCE
+        + "/" + name;
+    try {
+      HttpResponse<String> response = Unirest
+          .get(url)
+          .header("Authorization", "Bearer " + token)
+          .asString();
+      if (response.getStatus() == 200) {
+        logger.info("{} is already registered with LS.", name);
+        return true;
+      }
+      return false;
+    } catch (UnirestException e) {
+      logger.error("Could not check registration status for {}.", name, e);
+      throw new RuntimeException(e);
+    }
+  }
+
+  /**
+   * De-registers the game service from the lobby service. Called before the application exits.
    */
   @PreDestroy
   public void deregisterFromLobbyService() {
     if (!registered) {
-      logger.info("Not registered with LS. Skipping deregistration.");
+      logger.info("Not registered with LS. Skipping de-registration.");
       return;
     }
-    logger.info("Deregistering from lobby service.");
-    String url =
-            gameServiceParameters.getLobbyServiceLocation() + REGISTRATION_RESOURCE
+    logger.info("De-registering from lobby service.");
+    for (String gameService : GAME_MODES) {
+      gameServiceParameters.setName(gameService);
+      String url = gameServiceParameters.getLobbyServiceLocation() + REGISTRATION_RESOURCE
             + "/" + gameServiceParameters.getName();
-    try {
-      String token = tokenHelper.get(gameServiceParameters.getOauth2Name(),
-              gameServiceParameters.getOauth2Password());
-      HttpResponse<String> response = Unirest
-              .delete(url)
-              .header("Content-Type", "application/json")
-              .header("Authorization", "Bearer " + token)
-              .asString();
-      if (response.getStatus() != 200) {
-        logger.error("Could not deregister from lobby service.\n Status: {}\n Body: {}",
-                response.getStatus(), response.getBody());
-        return;
+      try {
+        String token = tokenHelper.get(gameServiceParameters.getOauth2Name(),
+            gameServiceParameters.getOauth2Password());
+        HttpResponse<String> response = Unirest
+            .delete(url)
+            .header("Content-Type", "application/json")
+            .header("Authorization", "Bearer " + token)
+            .asString();
+        if (response.getStatus() != 200) {
+          logger.error("Could not deregister from lobby service.\n Status: {}\n Body: {}",
+              response.getStatus(), response.getBody());
+          return;
+        }
+        logger.info(
+            "Successfully deregistered {} from lobby service.", gameServiceParameters.getName());
+        registered = false;
+      } catch (UnirestException | AuthenticationException e) {
+        logger.error("Could not deregister {} from lobby service.", gameServiceParameters.getName(),
+            e);
       }
-      logger.info("Successfully deregistered from lobby service.");
-      registered = false;
-    } catch (UnirestException | AuthenticationException e) {
-      logger.error("Could not deregister from lobby service.", e);
     }
   }
 
@@ -139,17 +171,17 @@ public class Registrator {
    * Saves game on LS.
    *
    * @param gameInfo game info
-   * @param gameId game id
    * @throws RuntimeException in case the request fails
    */
-  public void saveGame(GameInfo gameInfo, long gameId) throws RuntimeException {
+  public void saveGame(GameInfo gameInfo) throws RuntimeException {
     String url =
         gameServiceParameters.getLobbyServiceLocation() + REGISTRATION_RESOURCE
-            + "/" + gameServiceParameters.getName() + "/" + SAVEGAME_RESOURCE + "/" + gameId;
+            + "/" + gameInfo.getGameServer() + "/" + SAVEGAME_RESOURCE + "/"
+            + gameInfo.getSavegame();
     try {
       String token = tokenHelper.get(gameServiceParameters.getOauth2Name(),
           gameServiceParameters.getOauth2Password());
-      String gameInfoJson = gameInfo.toJson(Long.toString(gameId));
+      String gameInfoJson = gameInfo.toJson();
       logger.info("Saving game with LS. Game info: " + gameInfoJson);
       HttpResponse<String> response = Unirest
           .put(url)

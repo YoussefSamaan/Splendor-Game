@@ -28,6 +28,7 @@
 //import splendor.controller.action.BuyCardAction;
 //import splendor.controller.action.InvalidAction;
 //import splendor.controller.helper.Authenticator;
+//import splendor.controller.lobbyservice.Registrator;
 //import splendor.model.game.Board;
 //import splendor.model.game.card.DevelopmentCard;
 //import splendor.model.game.card.SplendorCard;
@@ -36,7 +37,9 @@
 //public class SplendorControllerTest {
 //  private GameManager gameManager = mock(GameManager.class);
 //  private Authenticator authenticator = mock(Authenticator.class);
-//  private SplendorController splendorController = new SplendorController(gameManager, authenticator);
+//  private Registrator registrator = mock(Registrator.class);
+//  private SplendorController splendorController = new SplendorController(gameManager,
+//      authenticator, registrator);
 //  private long gameId = 1;
 //  Player[] players = new Player[2];
 //  private Board board;

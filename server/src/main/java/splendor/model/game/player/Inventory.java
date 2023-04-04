@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.stream.IntStream;
 import splendor.model.game.Color;
 import splendor.model.game.TokenBank;
+import splendor.model.game.card.City;
 import splendor.model.game.card.DevelopmentCardI;
 import splendor.model.game.card.Noble;
 import splendor.model.game.card.SplendorCard;
@@ -24,6 +25,8 @@ public class Inventory {
   private final List<DevelopmentCardI> reservedCards = new ArrayList<>();
   private final HashMap<Color, Integer> discounts = new HashMap<>();
   private List<Noble> nobles = new ArrayList<>();
+  private List<City> cities = new ArrayList<>();
+  // TODO: Change implementation of cities, bc there is max 1 city/player.
 
   private int numGoldCards = 0;
 
@@ -65,6 +68,15 @@ public class Inventory {
   public void addNoble(Noble noble) {
     nobles.add(noble);
     addBonus(Collections.singletonList(noble), this.discounts);
+  }
+
+  /**
+   * Adds a city to the inventory.
+   *
+   * @param city the city to add
+   */
+  public void addCity(City city) {
+    cities.add(city);
   }
 
   /**
@@ -217,6 +229,16 @@ public class Inventory {
   }
 
   /**
+   * get number of cities in the inventory.
+   * TODO: Maximum number of cities is 1. Consider different implementation.
+   *
+   * @return the number of cities
+   */
+  public int getCitiesCount() {
+    return this.cities.size();
+  }
+
+  /**
    * get bonuses of a player from cards and nobles.
    *
    * @return the bonuses
@@ -225,6 +247,11 @@ public class Inventory {
     return discounts;
   }
 
+  /**
+   * Get the reserved cards.
+   *
+   * @return list of reserved development cards
+   */
   public List<DevelopmentCardI> getReservedCards() {
     return this.reservedCards;
   }

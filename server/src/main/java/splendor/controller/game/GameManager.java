@@ -3,6 +3,7 @@ package splendor.controller.game;
 import eu.kartoffelquadrat.asyncrestlib.BroadcastContentManager;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.naming.InsufficientResourcesException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -11,6 +12,7 @@ import splendor.controller.action.ActionData;
 import splendor.controller.action.ActionGenerator;
 import splendor.controller.action.InvalidAction;
 import splendor.controller.lobbyservice.GameInfo;
+import splendor.controller.lobbyservice.Registrator;
 import splendor.model.game.Board;
 import splendor.model.game.SaveGameManager;
 import splendor.model.game.SplendorGame;
@@ -25,31 +27,44 @@ public class GameManager {
   private final HashMap<Long, SplendorGame> games = new HashMap<>();
 
   private final HashMap<Long, BroadcastContentManager<Board>> boardManagers = new HashMap<>();
+  private final HashMap<String, SplendorGame> savedGames = new HashMap<>();
   private final ActionGenerator actionGenerator;
   private final SaveGameManager saveGameManager;
+  private final Registrator registrator;
 
   /**
    * Instantiates a new Game manager.
    *
    * @param actionGenerator the action generator
    * @param saveGameManager the save game manager
+   * @param registrator the registrator
    */
   public GameManager(@Autowired ActionGenerator actionGenerator,
-                     @Autowired SaveGameManager saveGameManager) {
+                     @Autowired SaveGameManager saveGameManager,
+                     @Autowired Registrator registrator) {
     this.actionGenerator = actionGenerator;
     this.saveGameManager = saveGameManager;
+    this.registrator = registrator;
     loadSavedGames();
+    registerSavedGamesOnLobbyService();
+  }
+
+  /**
+   * Registers all saved games on the lobby service.
+   */
+  private void registerSavedGamesOnLobbyService() {
+    savedGames.values().stream()
+        .map(SplendorGame::getGameInfo)
+        .collect(Collectors.toList())
+        .forEach(registrator::saveGame);
   }
 
   /**
    * This function loads all saved games from the savegame directory.
    */
   private void loadSavedGames() {
-    HashMap<Long, SplendorGame> savedGames = saveGameManager.loadAllGames();
-    savedGames.forEach((gameId, game) -> {
-      games.put(gameId, game);
-      boardManagers.put(gameId, new BroadcastContentManager<>(getBoard(gameId)));
-    });
+    HashMap<String, SplendorGame> savedGames = saveGameManager.loadAllGames();
+    this.savedGames.putAll(savedGames);
   }
 
   /**
@@ -77,6 +92,7 @@ public class GameManager {
    * Creates a new game, and tracks it.
    *
    * @param gameInfo the info of the game to create
+   * @param gameId the game id
    * @throws IllegalArgumentException if the game already exists
    */
   public void createGame(GameInfo gameInfo, long gameId) throws IllegalArgumentException {
@@ -86,7 +102,12 @@ public class GameManager {
     if (gameInfo == null) {
       throw new IllegalArgumentException("GameInfo cannot be null");
     }
-    games.put(gameId, new SplendorGame(gameInfo));
+    if (gameInfo.getSavegame() != null && !gameInfo.getSavegame().isEmpty()) {
+      SplendorGame game = savedGames.get(gameInfo.getSavegame());
+      games.put(gameId, game);
+    } else {
+      games.put(gameId, new SplendorGame(gameInfo));
+    }
     boardManagers.put(gameId, new BroadcastContentManager<>(getBoard(gameId)));
   }
 
@@ -100,23 +121,10 @@ public class GameManager {
     if (!exists(gameId)) {
       throw new IllegalArgumentException(String.format("Game with id %d does not exist", gameId));
     }
-    saveGameManager.saveGame(gameId, games.get(gameId));
-  }
-
-  /**
-   * No longer needed. All games are loaded on startup.
-   * Load a game from a json file.
-   *
-   * @param gameId the id of the game to load
-   */
-  public SplendorGame loadGame(long gameId) {
-    if (exists(gameId)) {
-      return games.get(gameId);
-    }
-    SplendorGame game = saveGameManager.loadGame(gameId);
-    games.put(gameId, game);
-    boardManagers.put(gameId, new BroadcastContentManager<>(getBoard(gameId)));
-    return game;
+    SplendorGame game = games.get(gameId);
+    // FIXME: allow custom savegame names.
+    game.getGameInfo().setSavegame(Long.toString(gameId));
+    saveGameManager.saveGame(game);
   }
 
   /**
@@ -150,6 +158,7 @@ public class GameManager {
    *
    * @param gameId     the id of the game
    * @param playerName the name of the player
+   * @return boolean if the player is in the game or not
    */
   public boolean playerInGame(long gameId, String playerName) {
     return exists(gameId) && games.get(gameId).getPlayer(playerName) != null;
@@ -163,6 +172,7 @@ public class GameManager {
    * @param actionId   the id of the action
    * @param actionData the data of the action
    * @throws InvalidAction if the action is invalid
+   * @throws InsufficientResourcesException if there are not enough resources
    */
   public void performAction(long gameId, String username, String actionId, ActionData actionData)
       throws InvalidAction, InsufficientResourcesException {

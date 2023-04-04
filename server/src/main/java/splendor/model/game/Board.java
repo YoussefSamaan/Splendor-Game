@@ -10,10 +10,12 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import javax.naming.InsufficientResourcesException;
+import splendor.model.game.card.City;
 import splendor.model.game.card.DevelopmentCardI;
 import splendor.model.game.card.FacedDownCardTypes;
 import splendor.model.game.card.Noble;
 import splendor.model.game.card.SplendorCard;
+import splendor.model.game.deck.CityDeck;
 import splendor.model.game.deck.Deck;
 import splendor.model.game.deck.NobleDeck;
 import splendor.model.game.deck.SplendorDeck;
@@ -28,7 +30,10 @@ public class Board implements BroadcastContent {
   private final Player[] players;
   private int currentTurn;
   private final SplendorDeck[] decks = new SplendorDeck[6];
+
   private final NobleDeck nobleDeck;
+  private final CityDeck cityDeck = new CityDeck();
+
   private final TokenBank bank = new TokenBank(true);
 
   /**
@@ -76,6 +81,9 @@ public class Board implements BroadcastContent {
       throws InsufficientResourcesException {
     if (card instanceof Noble) {
       throw new IllegalArgumentException("Cannot buy a noble yet");
+    }
+    if (card instanceof City) {
+      throw new IllegalArgumentException("Cannot buy a city yet");
     }
     buyDevelopmentCard(player, (DevelopmentCardI) card);
   }
@@ -169,6 +177,27 @@ public class Board implements BroadcastContent {
   }
 
   /**
+   * Returns a list of the cities. Removes nulls.
+   *
+   * @return a list of the cities.
+   */
+  public List<City> getCities() {
+    City[] cities = cityDeck.getCities();
+    return Arrays.stream(cities)
+            .filter(Objects::nonNull)
+            .collect(Collectors.toList());
+  }
+
+  /**
+   * Removes city from the cityDeck on the board.
+   *
+   * @param city being removed
+   */
+  public void removeCity(City city) {
+    cityDeck.removeCity(city);
+  }
+
+  /**
    * removes the card from the deck.
    *
    * @param card the card that need to be removed.
@@ -243,6 +272,21 @@ public class Board implements BroadcastContent {
   }
 
   /**
+   * Checks if the player can unlock a city, and if so, unlocks it.
+   *
+   * @param player the player
+   */
+  public void updateCities(Player player) {
+    for (City city : getCities()) {
+      if (city.getCost().isAffordable(player.getBonuses())) {
+        player.addCity(city);
+        removeCity(city);
+        return; // only unlock one city per turn?
+      }
+    }
+  }
+
+  /**
    * removes a faced down card. used for when the player is trying to reserve it.
    *
    * @param type  the type of card that is being reserved.
@@ -266,11 +310,6 @@ public class Board implements BroadcastContent {
     }
   }
 
-  /**
-   * I don't know what this is for.  ¯\_(ツ)_/¯.
-   *
-   * @return false
-   */
   @Override
   public boolean isEmpty() {
     return false;

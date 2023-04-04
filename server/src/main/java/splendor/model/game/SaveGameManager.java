@@ -40,25 +40,40 @@ public class SaveGameManager {
   /**
   * Save a game into a json file.
   *
-  * @param gameId id of the game to save. File name will be gameId.json.
-  * @param game the game to save.
+  * @param game the game to save
   */
-  public void saveGame(long gameId, SplendorGame game) {
-    logger.info("Saving game " + gameId);
+  public void saveGame(SplendorGame game) {
+    String saveGameId = game.getGameInfo().getSavegame();
+    logger.info("Saving game " + saveGameId);
     String json = new Gson().toJson(game);
-    writeToFile(json, gameId);
+    writeToFile(json, saveGameId);
   }
 
   /**
   * Load a game from a json file.
   *
-  * @param gameId id of the game to load. File name will be gameId.json.
+  * @param saveGameId id of the game to load. File name will be gameId.json.
   * @return the loaded game
   */
-  public SplendorGame loadGame(long gameId) {
-    logger.info("Loading game " + gameId);
-    String fileName = saveGamePath + "/" + gameId + ".json";
+  public SplendorGame loadGame(String saveGameId) {
+    logger.info("Loading save game " + saveGameId);
+    String fileName = saveGamePath + "/" + saveGameId + ".json";
     return readFromFile(fileName);
+  }
+
+  /**
+   * Delete a game from the savegame directory.
+   * If the file does not exist, nothing happens.
+   *
+   * @param saveGameId the id of the game to delete
+   */
+  public void deleteGame(String saveGameId) {
+    logger.info("Deleting save game " + saveGameId);
+    String fileName = saveGamePath + "/" + saveGameId + ".json";
+    File file = new File(fileName);
+    if (file.exists()) {
+      file.delete();
+    }
   }
 
   /**
@@ -66,7 +81,7 @@ public class SaveGameManager {
    *
    * @return a HashMap of all loaded games, keyed by their game IDs
    */
-  public HashMap<Long, SplendorGame> loadAllGames() {
+  public HashMap<String, SplendorGame> loadAllGames() {
     logger.info("Loading all games from " + saveGamePath);
     File directory = new File(saveGamePath);
     File[] files = directory.listFiles((dir, name) -> name.endsWith(".json"));
@@ -74,12 +89,12 @@ public class SaveGameManager {
       logger.info("No saved games found in " + saveGamePath);
       return new HashMap<>();
     }
-    HashMap<Long, SplendorGame> games = new HashMap<>();
+    HashMap<String, SplendorGame> games = new HashMap<>();
     for (File file : files) {
       String fileName = file.getName();
-      long gameId = Long.parseLong(fileName.substring(0, fileName.lastIndexOf(".")));
+      String saveGameId = fileName.substring(0, fileName.lastIndexOf("."));
       SplendorGame game = readFromFile(file.getAbsolutePath());
-      games.put(gameId, game);
+      games.put(saveGameId, game);
     }
     return games;
   }
@@ -88,11 +103,11 @@ public class SaveGameManager {
    * Write a json string to a file.
    *
    * @param json the json string to write
-   * @param gameId the id of the game
+   * @param saveGameId the id of the game
    * @throws RuntimeException if the file could not be written
    */
-  private void writeToFile(String json, long gameId) throws RuntimeException {
-    String fileName = saveGamePath + "/" + gameId + ".json";
+  private void writeToFile(String json, String saveGameId) throws RuntimeException {
+    String fileName = saveGamePath + "/" + saveGameId + ".json";
     try (FileWriter file = new FileWriter(fileName)) {
       file.write(json);
       file.flush();
@@ -113,6 +128,7 @@ public class SaveGameManager {
     try (FileReader reader = new FileReader(fileName)) {
       SplendorGame game = gson.fromJson(reader, SplendorGame.class);
       logger.info("Game loaded from file " + fileName);
+      logger.info("Game Info: " + game.getGameInfo());
       return game;
     } catch (IOException e) {
       e.printStackTrace();
