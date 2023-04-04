@@ -8,6 +8,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.logging.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import splendor.model.game.deck.SplendorDeck;
@@ -25,6 +26,7 @@ public class SaveGameManager {
   /**
    * Constructor.
    */
+  @Autowired
   public SaveGameManager(@Value("${savegame.location}") String saveGamePath) {
     gson = new GsonBuilder()
         .registerTypeAdapter(SplendorDeck.class, new SplendorDeckDeserializer())
@@ -45,35 +47,8 @@ public class SaveGameManager {
   public void saveGame(SplendorGame game) {
     String saveGameId = game.getGameInfo().getSavegame();
     logger.info("Saving game " + saveGameId);
-    String json = new Gson().toJson(game);
+    String json = gson.toJson(game);
     writeToFile(json, saveGameId);
-  }
-
-  /**
-  * Load a game from a json file.
-  *
-  * @param saveGameId id of the game to load. File name will be gameId.json.
-  * @return the loaded game
-  */
-  public SplendorGame loadGame(String saveGameId) {
-    logger.info("Loading save game " + saveGameId);
-    String fileName = saveGamePath + "/" + saveGameId + ".json";
-    return readFromFile(fileName);
-  }
-
-  /**
-   * Delete a game from the savegame directory.
-   * If the file does not exist, nothing happens.
-   *
-   * @param saveGameId the id of the game to delete
-   */
-  public void deleteGame(String saveGameId) {
-    logger.info("Deleting save game " + saveGameId);
-    String fileName = saveGamePath + "/" + saveGameId + ".json";
-    File file = new File(fileName);
-    if (file.exists()) {
-      file.delete();
-    }
   }
 
   /**
