@@ -88,19 +88,6 @@ public class GameManager {
   }
 
   /**
-   * Returns existing game.
-   *
-   * @param gameId the id of the game
-   * @return the game
-   */
-  public SplendorGame getGame(long gameId) {
-    if (!exists(gameId)) {
-      throw new IllegalArgumentException(String.format("Game with id %d does not exist", gameId));
-    }
-    return games.get(gameId);
-  }
-
-  /**
    * Creates a new game, and tracks it.
    *
    * @param gameInfo the info of the game to create
@@ -114,7 +101,8 @@ public class GameManager {
       throw new IllegalArgumentException("GameInfo cannot be null");
     }
     if (gameInfo.getSavegame() != null && !gameInfo.getSavegame().isEmpty()) {
-      games.put(gameId, saveGameManager.loadGame(gameInfo.getSavegame()));
+      SplendorGame game = savedGames.get(gameInfo.getSavegame());
+      games.put(gameId, game);
     } else {
       games.put(gameId, new SplendorGame(gameInfo));
     }
@@ -132,6 +120,7 @@ public class GameManager {
       throw new IllegalArgumentException(String.format("Game with id %d does not exist", gameId));
     }
     SplendorGame game = games.get(gameId);
+    // FIXME: allow custom savegame names.
     game.getGameInfo().setSavegame(Long.toString(gameId));
     saveGameManager.saveGame(game);
   }
