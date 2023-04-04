@@ -406,7 +406,7 @@ def get_user_cascade_selection(card :Card):
 def check_sidebar_reserve(user, position):
     global CURR_PLAYER
     global action_manager
-    if user == Player.instance(id=CURR_PLAYER).name and Sidebar.instance().current_player == user:
+    if user == Player.instance(id=CURR_PLAYER).name and Sidebar.instance().current_player.name == user:
         action_manager.update(Player.instance(id=CURR_PLAYER).name)
         if Sidebar.instance().is_clicked_reserve(position):
         # check if clicked on a reserved card to buy it 
