@@ -464,11 +464,18 @@ class CardMenu:
         self.menu.set_alpha(200)
         self.menu_rect = self.menu.get_rect()
         self.menu_rect.center = (WIDTH / 2, HEIGHT / 2)
-        self.confirm = Button(pygame.Rect(WIDTH/2,HEIGHT*7/10,90,55), self.confirm, text="Confirm")
-        self.next_page = Button(pygame.Rect(WIDTH*3/4,HEIGHT*7/10,90,55), self.next_page, text="Next")
-        self.prev_page = Button(pygame.Rect(WIDTH/4,HEIGHT*7/10,90,55), self.prev_page, text="Prev")
+        self.confirm = Button(pygame.Rect(WIDTH/2,HEIGHT*7/10,90,55), None, text="Confirm")
+        self.next_page = Button(pygame.Rect(WIDTH*3/4,HEIGHT*7/10,90,55), None, text="Next")
+        self.prev_page = Button(pygame.Rect(WIDTH/4,HEIGHT*7/10,90,55), None, text="Prev")
         self.cards = cards # the cards that the menu will display, either owned or reserved depending on context
-        self.action = action # the action that the menu will perform when confirm is clicked
+        if action == CardMenuAction.RESERVED:
+             # the action that the menu will perform when confirm is clicked
+            print("bought a reserved card")
+            pass
+        elif action == CardMenuAction.STRIP:
+            pass
+        elif action == CardMenuAction.DISCARD:
+            pass
         self.current_page = 0 # the page that the menu is currently displaying
         self.current_card_mapping = {} # maps the card to the coords that is clicked on it
         self.card_selected = None # the card that the user has selected
@@ -497,14 +504,14 @@ class CardMenu:
                         self.add_border_to_card(card) # visually indicate this card is chosen
                         self.card_selected = card
                         
-                    elif self.confirm.check_if_clicked(pygame.mouse.get_pos()):
+                    elif self.confirm.rectangle.collidepoint(pygame.mouse.get_pos()):
                         if self.card_selected is None:
                             return # if the user clicks confirm without selecting a card, just close the menu
                         return self.action(self.card_selected)
-                    elif self.next_page.check_if_clicked(pygame.mouse.get_pos()):
+                    elif self.next_page.rectangle.collidepoint(pygame.mouse.get_pos()):
                         # increments current page up to the max page
                         self.current_page = min(self.current_page + 1, len(self.cards) // 5)
-                    elif self.prev_page.check_if_clicked(pygame.mouse.get_pos()):
+                    elif self.prev_page.rectangle.collidepoint(pygame.mouse.get_pos()):
                         # decrements current page down to 0
                         self.current_page = max(self.current_page - 1, 0)
                     else:
