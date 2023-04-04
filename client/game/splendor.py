@@ -1,3 +1,4 @@
+import math
 import os
 import sys
 import threading
@@ -410,7 +411,7 @@ def check_sidebar_reserve(user, position):
         if Sidebar.instance().is_clicked_reserve(position):
         # check if clicked on a reserved card to buy it 
             # opens the cardmeny
-            print("checking if clicked reserved")
+            #print("checking if clicked reserved")
             print(list(Player.instance(id=CURR_PLAYER).reserved_cards.keys()))
             card_menu = CardMenu(list(Player.instance(id=CURR_PLAYER).reserved_cards.keys()), CardMenuAction.RESERVED)
             card_menu.display()
@@ -484,16 +485,23 @@ class CardMenu:
 
     def display(self):
         self.selection_box.blit(self.menu, self.menu_rect)
+        dim_screen(DISPLAYSURF)
+        DISPLAYSURF.blit(self.selection_box, self.selection_box_rect)
         # draw the buttons
-        self.confirm.display(self.selection_box)
-        self.next_page.display(self.selection_box)
-        self.prev_page.display(self.selection_box)
+        self.confirm.display(DISPLAYSURF)
+        self.next_page.display(DISPLAYSURF)
+        self.prev_page.display(DISPLAYSURF)
+        write_on(DISPLAYSURF, self.confirm.text, center=self.confirm.rect.center,color=WHITE)
+        write_on(DISPLAYSURF, self.next_page.text, center=self.next_page.rect.center,color=WHITE)
+        write_on(DISPLAYSURF, self.prev_page.text, center=self.prev_page.rect.center,color=WHITE)
+        #write_on(DISPLAYSURF, "Page " + str(self.current_page + 1) + "/" + str(math.ceil(len(self.cards) / 5)), WIDTH/2, HEIGHT*3/10 - 20, size=30)
         # draw the cards, we will draw them the same size as on the board
         card_width, card_height = self.cards[0].get_card_size(Board.instance())
         for i in range(self.current_page * 5, min(len(self.cards), (self.current_page + 1) * 5)):
             # draw_for_sidebar(self, screen, x, y):
             self.cards[i].draw_for_sidebar(self.selection_box,WIDTH/6 + i*(card_width+10),HEIGHT*3/10 )
             self.current_card_mapping[self.cards[i]] = (WIDTH/6 + i*(card_width+10), HEIGHT*3/10, i)
+        pygame.display.update()
         # wait for user to click on something or leave
         while True:
             for event in pygame.event.get():
