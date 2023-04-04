@@ -499,8 +499,8 @@ class CardMenu:
         card_width, card_height = self.cards[0].get_card_size(Board.instance())
         for i in range(self.current_page * 5, min(len(self.cards), (self.current_page + 1) * 5)):
             # draw_for_sidebar(self, screen, x, y):
-            self.cards[i].draw_for_sidebar(DISPLAYSURF,WIDTH/6 + i*(card_width+10),HEIGHT*3/10 )
-            self.current_card_mapping[self.cards[i]] = (WIDTH/6 + i*(card_width+10), HEIGHT*3/10, i)
+            self.cards[i].draw_for_sidebar(DISPLAYSURF,WIDTH/6 + i*(card_width+50),HEIGHT*3/10 )
+            self.current_card_mapping[self.cards[i]] = (WIDTH/6 + i*(card_width+50), HEIGHT*3/10, i)
         pygame.display.update()
         # wait for user to click on something or leave
         while True:
