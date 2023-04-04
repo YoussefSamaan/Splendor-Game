@@ -411,8 +411,9 @@ def check_sidebar_reserve(user, position):
         # check if clicked on a reserved card to buy it 
             # opens the cardmeny
             print("checking if clicked reserved")
-            card_menu = CardMenu(Player.instance(id=CURR_PLAYER).reserved_cards.keys(), CardMenuAction.RESERVED)
-            card_menu.display(DISPLAYSURF)
+            print(list(Player.instance(id=CURR_PLAYER).reserved_cards.keys()))
+            card_menu = CardMenu(list(Player.instance(id=CURR_PLAYER).reserved_cards.keys()), CardMenuAction.RESERVED)
+            card_menu.display()
 def perform_action(obj, user, position):
     if obj is None:
         return
@@ -468,6 +469,7 @@ class CardMenu:
         self.next_page = Button(pygame.Rect(WIDTH*3/4,HEIGHT*7/10,90,55), None, text="Next")
         self.prev_page = Button(pygame.Rect(WIDTH/4,HEIGHT*7/10,90,55), None, text="Prev")
         self.cards = cards # the cards that the menu will display, either owned or reserved depending on context
+        self.action = action
         if action == CardMenuAction.RESERVED:
              # the action that the menu will perform when confirm is clicked
             print("bought a reserved card")
