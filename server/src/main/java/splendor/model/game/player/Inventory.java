@@ -28,6 +28,8 @@ public class Inventory {
   private List<City> cities = new ArrayList<>();
   // TODO: Change implementation of cities, bc there is max 1 city/player.
 
+  private int numGoldCards = 0;
+
   /**
    * Creates a new inventory.
    */
@@ -42,6 +44,11 @@ public class Inventory {
    */
   public void addBoughtCard(DevelopmentCardI card) {
     this.boughtCards.add(card);
+    int cardId = card.getCardId();
+    if ((cardId == 92) || (cardId == 94) || (cardId == 95) || (cardId == 96) || (cardId == 100)) {
+      addTokens(Token.of(Color.GOLD), 2); // those IDs are gold cards (they count as 2 gold tokens)
+      addOneGoldCard();
+    }
     addBonus(Collections.singletonList(card), this.discounts);
   }
 
@@ -249,6 +256,33 @@ public class Inventory {
   public List<DevelopmentCardI> getReservedCards() {
     return this.reservedCards;
   }
+
+  /**
+   * Get the number of gold cards in the player's inventory.
+   * "Gold card" refers to the card worth 2 gold tokens when paying.
+   *
+   * @return the number of gold cards.
+   */
+  public int getNumGoldCards() {
+    return numGoldCards;
+  }
+
+  /**
+   * Add 1 to the number of gold cards
+   */
+  public void addOneGoldCard() {
+    numGoldCards += 1;
+  }
+
+  /**
+   * Remove 1 from the number of gold cards
+   */
+  public void decrementGoldCard() {
+    if (numGoldCards == 0)
+    numGoldCards -= 1;
+  }
+
+
 
   public void removeReservedCard(DevelopmentCardI card) {
     this.reservedCards.remove(card);

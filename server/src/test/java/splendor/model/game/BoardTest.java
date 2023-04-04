@@ -244,7 +244,7 @@ public class BoardTest {
 
 	@Test
 	void updateNoblesNoUpdate() {
-		testBoard = new Board(player1,player2,player3,player4);
+		testBoard = new Board(player1,player2,player3,player4); // 4+1 = 5 nobles
 		HashMap<Color, Integer> bonus = new HashMap<>();
 		bonus.put(Color.RED, 0);
 		bonus.put(Color.WHITE, 0);
@@ -256,13 +256,13 @@ public class BoardTest {
 		} catch (NoSuchFieldException e) {
 			throw new RuntimeException(e);
 		}
-		testBoard.updateNobles(player1);
-		Assertions.assertEquals(3, nonNullCount(testBoard.getNobles().toArray()));
+		testBoard.updateNobles(player1); // player 1 is broke and cannot afford a noble.
+		Assertions.assertEquals(5, nonNullCount(testBoard.getNobles().toArray()));
 	}
 
 	@Test
 	void updateNoblesUpdate() {
-		testBoard = new Board(player1,player2,player3,player4);
+		testBoard = new Board(player1,player2,player3,player4); // 4+1 = 5 nobles
 
 		HashMap<Color, Integer> bonus = new HashMap<>();
 		bonus.put(Color.RED, 10);
@@ -275,8 +275,8 @@ public class BoardTest {
 		} catch (NoSuchFieldException e) {
 			throw new RuntimeException(e);
 		}
-		testBoard.updateNobles(player1);
-		Assertions.assertEquals(2, nonNullCount(testBoard.getNobles().toArray()));
+		testBoard.updateNobles(player1); // player 1 can afford a noble
+		Assertions.assertEquals(4, nonNullCount(testBoard.getNobles().toArray()));
 	}
 
 	@Test

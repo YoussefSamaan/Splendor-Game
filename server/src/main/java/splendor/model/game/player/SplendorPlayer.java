@@ -44,6 +44,11 @@ public interface SplendorPlayer {
   ActionType nextAction();
 
   /**
+   * removes the action at the beginning of the list.
+   */
+  void removeOldestNextAction();
+
+  /**
    * resets the next action.
    */
   void resetNextActions();
@@ -61,6 +66,8 @@ public interface SplendorPlayer {
    * @return  a hashmap of tokens.
    */
   HashMap<Color, Integer> getTokens();
+
+  int getNumGoldCards();
 
   List<DevelopmentCardI> getReservedCards();
 

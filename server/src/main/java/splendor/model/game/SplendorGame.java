@@ -16,7 +16,6 @@ import splendor.model.game.player.SplendorPlayer;
 public class SplendorGame {
   private final GameInfo gameInfo;
   private final Board board;
-  private final boolean isFinished;
 
   /**
    * Creates a new game, with a fresh board.
@@ -26,7 +25,6 @@ public class SplendorGame {
   public SplendorGame(GameInfo gameInfo) {
     this.gameInfo = gameInfo;
     this.board = new Board(gameInfo.getPlayers());
-    isFinished = false;
   }
 
   /**
@@ -37,7 +35,6 @@ public class SplendorGame {
   public SplendorGame(SplendorGame splendorGame) {
     this.gameInfo = splendorGame.gameInfo;
     this.board = splendorGame.board;
-    this.isFinished = splendorGame.isFinished;
   }
 
   /**
