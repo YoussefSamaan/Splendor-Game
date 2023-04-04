@@ -31,8 +31,8 @@ public class Board implements BroadcastContent {
   private int currentTurn;
   private final SplendorDeck[] decks = new SplendorDeck[6];
 
-  private final NobleDeck nobleDeck;
-  private final CityDeck cityDeck;
+  private NobleDeck nobleDeck;
+  private CityDeck cityDeck;
 
   private final TokenBank bank = new TokenBank(true);
 
