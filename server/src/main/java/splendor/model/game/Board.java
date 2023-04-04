@@ -1,12 +1,8 @@
 package splendor.model.game;
 
 import eu.kartoffelquadrat.asyncrestlib.BroadcastContent;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import javax.naming.InsufficientResourcesException;
@@ -36,7 +32,7 @@ public class Board implements BroadcastContent {
 
   private final TokenBank bank = new TokenBank(true);
 
-  private String winner = null;
+  private List<String> winners = null; // can have multiple winners in case of a tie
 
   /**
    * Creates a new board.
@@ -147,15 +143,50 @@ public class Board implements BroadcastContent {
     }
   }
 
+  /**
+   * Used to compare Players by the number of prestige points. Used for Collections.sort in checkGameEnd.
+   */
+  class SortByDescendingPrestigePoints implements Comparator<Player>
+  {
+    @Override
+    public int compare(Player o1, Player o2) {
+      return o2.getPrestigePoints() - o1.getPrestigePoints();
+    }
+  }
+
   private void checkGameEnd() {
-    if (winner != null) {
+    if (winners == null) {
       return;
     }
-    for (Player player : players) {
-      if (player.getPrestigePoints() >= 15) {
-        winner = player.getName();
-        return;
+    if (nobleDeck == null) { // in cities extension, the nobleDeck will be null
+      List<Player> playersWithCities = new ArrayList<>();
+      boolean gameEnd = false;
+      for (Player player : players) { // go through players and add any player that has a city
+        if (player.getCitiesCount() > 0) {
+          playersWithCities.add(player);
+          gameEnd = true;
+        }
       }
+      if (gameEnd) { // if at least one player had a city
+        // then we sort them by prestige points (high to low) and declare the highest one the winner.
+        Collections.sort(playersWithCities, new SortByDescendingPrestigePoints());
+        for (int i = 0; i < playersWithCities.size(); i++) {
+          winners.add(playersWithCities.get(i).getName()); // add name of player with most prestige points
+          // check if the next player on the list has the same number of prestige points as the winner.
+          // if they do, then we continue the for loop to add them as a tied winner; otherwise we break the loop.
+          if (playersWithCities.get(i).getPrestigePoints() > playersWithCities.get(i+1).getPrestigePoints()) {
+            return;
+          }
+        }
+      }
+
+    } else { // not cities extension
+      for (Player player : players) {
+        if (player.getPrestigePoints() >= 15) {
+          winners.add(player.getName());
+        }
+      }
+      return;
     }
   }
 
@@ -336,6 +367,6 @@ public class Board implements BroadcastContent {
    * Check if game is finished.
    */
   public boolean isFinished() {
-    return winner != null;
+    return winners != null;
   }
 }
