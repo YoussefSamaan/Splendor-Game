@@ -25,7 +25,7 @@ public class ActionGeneratorTest {
   @Before
   public void setUp() {
     Player[] testPlayers = {player1,player2};
-    GameInfo testGameInfo = new GameInfo("testServer","SplendorGameTest",testPlayers,"testSave");
+    GameInfo testGameInfo = new GameInfo("Splendor","SplendorGameTest",testPlayers,"testSave");
     game = new SplendorGame(testGameInfo);
     try {
       setSingleCardOnly(game);
