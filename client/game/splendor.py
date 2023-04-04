@@ -416,6 +416,7 @@ def check_sidebar_reserve(user, position):
             print(list(Player.instance(id=CURR_PLAYER).reserved_cards.keys()))
             card_menu = CardMenu(list(Player.instance(id=CURR_PLAYER).reserved_cards.keys()), CardMenuAction.RESERVED)
             card_menu.display()
+            
 def perform_action(obj, user, position):
     if obj is None:
         return
@@ -436,6 +437,8 @@ def perform_action(obj, user, position):
             get_token_selection()
             
         elif isinstance(obj, Noble):
+            # check if the player is currently in the reserve noble phase
+    
             pass
         #elif isinstance(obj, City):
             #pass
@@ -538,7 +541,8 @@ class CardMenu:
                     elif self.confirm.rectangle.collidepoint(pygame.mouse.get_pos()):
                         if self.card_selected is None:
                             return # if the user clicks confirm without selecting a card, just close the menu
-                        return self.create_send_action(self.card_selected)
+                        self.create_send_action(self.card_selected)
+                        return 
                     elif self.next_page.rectangle.collidepoint(pygame.mouse.get_pos()):
                         # increments current page up to the max page
                         self.current_page = min(self.current_page + 1, len(self.cards) // 6)
