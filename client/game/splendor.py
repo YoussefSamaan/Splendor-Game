@@ -406,7 +406,7 @@ def get_user_cascade_selection(card :Card):
 def check_sidebar_reserve(user, position):
     global CURR_PLAYER
     global action_manager
-    if user == Player.instance(id=CURR_PLAYER).name:
+    if user == Player.instance(id=CURR_PLAYER).name and Sidebar.instance().current_player == user:
         action_manager.update(Player.instance(id=CURR_PLAYER).name)
         if Sidebar.instance().is_clicked_reserve(position):
         # check if clicked on a reserved card to buy it 
@@ -499,7 +499,7 @@ class CardMenu:
         card_width, card_height = self.cards[0].get_card_size(Board.instance())
         for i in range(self.current_page * 5, min(len(self.cards), (self.current_page + 1) * 5)):
             # draw_for_sidebar(self, screen, x, y):
-            self.cards[i].draw_for_sidebar(self.selection_box,WIDTH/6 + i*(card_width+10),HEIGHT*3/10 )
+            self.cards[i].draw_for_sidebar(DISPLAYSURF,WIDTH/6 + i*(card_width+10),HEIGHT*3/10 )
             self.current_card_mapping[self.cards[i]] = (WIDTH/6 + i*(card_width+10), HEIGHT*3/10, i)
         pygame.display.update()
         # wait for user to click on something or leave
