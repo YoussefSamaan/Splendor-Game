@@ -750,7 +750,7 @@ def play(authenticator, game_id):
                     if TRADING_POST_ENABLED:
                         TradeRoute.instance().check_click(position,DISPLAYSURF)
                     obj = get_clicked_object(position)
-                    perform_action(obj, logged_in_user)
+                    perform_action(obj, logged_in_user, position)
                     with threading.Lock():
                         threading.Thread(target=update, args=(authenticator, game_id)).start()
 
