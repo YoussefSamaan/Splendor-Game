@@ -267,7 +267,8 @@ public class Board implements BroadcastContent {
    */
   public void removeTokens(HashMap<Color, Integer> tokens) {
     for (Color c : tokens.keySet()) {
-      for (int i = 0; i < tokens.get(c); i++) {
+      int numOfTokens = tokens.get(c);
+      for (int i = 0; i < numOfTokens; i++) {
         this.bank.remove(Token.of(c));
       }
     }
