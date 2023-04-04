@@ -57,7 +57,7 @@ class IndividualTokenSelection:
             if self.amount > 0:
                 self.amount -= 1
                 self.display()
-        X_SHIFT = 40
+        X_SHIFT = 46
         Y_SHIFT = 60
         BUTTON_WIDTH = 90
         BUTTON_HEIGHT = 55
@@ -150,9 +150,27 @@ def set_flash_message(text, color=GREEN, timer=5):
     FLASH_MESSAGE, FLASH_TIMER, FLASH_START = text, timer, pygame.time.get_ticks()
     FLASH_COLOR = color
 
+async def async_update(authenticator, game_id):
+    global has_initialized
+    global action_manager
+    board_json = await server_manager.get_board_async(authenticator=authenticator, game_id=game_id)
+
+    if not has_initialized:
+        has_initialized = True
+        initialize_game(board_json)
+    action_manager.update(Player.instance(id=CURR_PLAYER).name)
+    check_cascade()
+    update_turn_player(board_json)
+    update_players(board_json)
+    update_decks(board_json)
+    update_tokens(board_json)
+    update_nobles(board_json)
+    TradeRoute.instance().update(board_json)
+
 
 def update(authenticator, game_id):
     global has_initialized
+    global action_manager
     board_json = server_manager.get_board(authenticator=authenticator, game_id=game_id)
     if not has_initialized:
         has_initialized = True
@@ -166,6 +184,8 @@ def update(authenticator, game_id):
     update_players(board_json)
     update_decks(board_json)
     update_tokens(board_json)
+    update_nobles(board_json)
+    TradeRoute.instance().update(board_json)
     
     if TRADING_POST_ENABLED:
         TradeRoute.instance().update(board_json)
@@ -233,6 +253,8 @@ def display_everything(current_user):
         display_nobles()
     if TRADING_POST_ENABLED:
         display_trade_routes()
+    display_nobles()
+    display_trade_routes()
 
     show_flash_message()  # last so it's on top
     show_persistent_message()
@@ -471,20 +493,21 @@ class CardMenu:
 class TokenMenu:
     """generates all the buttons, remembers which tokens user picked, checks if legal"""
     def __init__(self):
-        selection_box, selection_box_rect = get_selection_box(DISPLAYSURF)
+        selection_box, selection_box_rect = get_selection_box(DISPLAYSURF, 1, 0.6)
         self.selection_box = selection_box
         self.selection_box_rect = selection_box_rect
+        self.selection_box_rect.center = (WIDTH / 2, HEIGHT / 4)
 
-        self.menu = pygame.Surface((WIDTH, HEIGHT))
+        self.menu = pygame.Surface((WIDTH, HEIGHT/ 4))
         self.menu.fill((0, 0, 0))
         self.menu.set_alpha(200)
         self.menu_rect = self.menu.get_rect()
-        self.menu_rect.center = (WIDTH / 2, HEIGHT / 2)
+        self.menu_rect.center = (WIDTH / 2, HEIGHT / 4)
 
         self.token_selection_list :List[IndividualTokenSelection] = [] 
         # button for confirming token selection
-        self.confirm_take_button = Button(pygame.Rect(WIDTH/2-100,HEIGHT*7/10,90,55), self.confirm_take_token, text="Take Token")
-        self.confirm_return_button = Button(pygame.Rect(WIDTH/2+100,HEIGHT*7/10,90,55), self.confirm_return_token, text="Return Token")
+        self.confirm_take_button = Button(pygame.Rect(WIDTH/2-110,HEIGHT*4/10,100,55), self.confirm_take_token, text="Take Token")
+        self.confirm_return_button = Button(pygame.Rect(WIDTH/2 + 30,HEIGHT*4/10,100,55), self.confirm_return_token, text="Return Token")
 
         
     def generate_selection_and_buttons(self) -> Tuple[List[IndividualTokenSelection],List[Button]]:
@@ -492,7 +515,7 @@ class TokenMenu:
         self.token_selection_list = []     
         button_list = []
         for index,token in enumerate(Token.get_all_token_colors()):
-            tokenSelection = IndividualTokenSelection(token,WIDTH/10+index*200,HEIGHT/2)
+            tokenSelection = IndividualTokenSelection(token,WIDTH/10.5+index*200,HEIGHT/6)
             tokenSelection.display()
             self.token_selection_list.append(tokenSelection)
             button_list.append(tokenSelection.incrementButton)
@@ -552,7 +575,7 @@ class TokenMenu:
             return
         
         action_manager.perform_action(take_token_action_id)
-        action_manager.force_update(Player.instance(id=CURR_PLAYER).name)
+
         return
     
     def confirm_return_token(self) -> None:
@@ -582,6 +605,7 @@ class TokenMenu:
         return
 
     def get_user_token_selection(self) -> Action:
+            dim_screen(DISPLAYSURF)
             DISPLAYSURF.blit(self.selection_box, self.selection_box_rect)
             components_generated: Tuple[List[IndividualTokenSelection],List[Button]] = self.generate_selection_and_buttons()
             individual_token_list: List[IndividualTokenSelection] = components_generated[0]
@@ -591,8 +615,11 @@ class TokenMenu:
             self.confirm_take_button.display(DISPLAYSURF)
             self.confirm_return_button.display(DISPLAYSURF)
 
-            write_on(DISPLAYSURF,self.confirm_take_button.text,center=self.confirm_take_button.rectangle.center)
-            write_on(DISPLAYSURF,self.confirm_return_button.text,center=self.confirm_return_button.rectangle.center)
+            write_on(DISPLAYSURF,self.confirm_take_button.text,center=self.confirm_take_button.rectangle.center, color=WHITE)
+            write_on(DISPLAYSURF,self.confirm_return_button.text,center=self.confirm_return_button.rectangle.center, color=WHITE)
+            write_on(DISPLAYSURF,"Take 2 identical tokens or 3 different colored tokens",center=(WIDTH/2,HEIGHT/20))
+            write_on(DISPLAYSURF,"You must return tokens over 10",center=(WIDTH/2,HEIGHT/12))
+
             pygame.display.update()
             for token_selection in button_list:
                 pygame.draw.rect(self.selection_box,token_selection.color,token_selection.rectangle)
@@ -627,6 +654,10 @@ class TokenMenu:
                             elif token_selection.decrementButton.rectangle.collidepoint(clicked_position):
                                 print("decrement")
                                 token_selection.decrementButton.activation()
+                        if not TokenMenu().selection_box_rect.collidepoint(clicked_position):
+                            print("clicked out")
+                            return Action.CANCEL
+                        
                         pygame.display.update()
 
 def get_token_selection():
@@ -650,8 +681,10 @@ def play(authenticator, game_id):
     logged_in_user = authenticator.username
     while True:
         # update every 5 seconds on a separate thread
+        authenticator.refresh()
         if pygame.time.get_ticks() - last_update > 2000:
             last_update = pygame.time.get_ticks()
+            # await async_update(authenticator, game_id)
             # start a new thread
             with threading.Lock():
                 threading.Thread(target=update, args=(authenticator, game_id)).start()
@@ -685,7 +718,7 @@ def play(authenticator, game_id):
                     if TRADING_POST_ENABLED:
                         TradeRoute.instance().check_click(position,DISPLAYSURF)
                     obj = get_clicked_object(position)
-                    perform_action(obj, logged_in_user, position)
+                    perform_action(obj, logged_in_user)
                     with threading.Lock():
                         threading.Thread(target=update, args=(authenticator, game_id)).start()
 
