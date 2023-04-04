@@ -267,7 +267,8 @@ public class Board implements BroadcastContent {
    */
   public void removeTokens(HashMap<Color, Integer> tokens) {
     for (Color c : tokens.keySet()) {
-      for (int i = 0; i < tokens.get(c); i++) {
+      int numOfTokens = tokens.get(c);
+      for (int i = 0; i < numOfTokens; i++) {
         this.bank.remove(Token.of(c));
       }
     }
@@ -330,5 +331,12 @@ public class Board implements BroadcastContent {
   @Override
   public boolean isEmpty() {
     return false;
+  }
+
+  /**
+   * Check if game is finished.
+   */
+  public boolean isFinished() {
+    return winner != null;
   }
 }
