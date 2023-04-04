@@ -255,9 +255,19 @@ def session(authenticator :Authenticator) -> int:
     create_rect = Button(pygame.Rect((600, 100, 150, 70)), create_button_event, LIGHT_BLUE)
     trade_toggle = ToggleButton(pygame.Rect((440, 100, 150, 70)), None, RED, "Trade Route")
     cities_toggle = ToggleButton(pygame.Rect((280, 100, 150, 70)), None, RED, "Cities")
+
     trade_toggle.activation = trade_toggle.toggle
     cities_toggle.activation = cities_toggle.toggle
-
+    
+    def trade_toggle_event() -> None:
+        trade_toggle.activation = trade_toggle.toggle
+        if trade_toggle.active:
+            cities_toggle.active = False
+    
+    def cities_toggle_event() -> None:
+        cities_toggle.activation = cities_toggle.toggle
+        if cities_toggle.active:
+            trade_toggle.active = False
 
     while True:
         authenticator.refresh()
