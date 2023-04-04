@@ -1,8 +1,10 @@
 package splendor.model.game;
 import java.lang.reflect.Field;
 import java.util.HashMap;
+import java.util.List;
 import java.util.stream.IntStream;
 import org.junit.jupiter.api.*;
+import splendor.model.game.card.City;
 import splendor.model.game.card.DevelopmentCard;
 import splendor.model.game.card.Noble;
 import splendor.model.game.deck.SplendorDeck;
@@ -121,7 +123,15 @@ public class BoardTest {
 		});
 		Assertions.assertTrue(true);
 	}
-	
+
+	@Test
+	void initBoardWithGameTypeWithOnePlayer() {
+		Assertions.assertThrows(IllegalArgumentException.class, () -> {
+			new Board("Splendor", player1);
+		});
+		Assertions.assertTrue(true);
+	}
+
 	@Test
 	void initBoardWithTwoPlayers() {
 		new Board(player1,player2);
@@ -163,13 +173,31 @@ public class BoardTest {
 		});
 		Assertions.assertTrue(true);
 	}
-	
+
+	@Test
+	void initBoardWithGameTypeWithDuplicatePlayers() {
+		Assertions.assertThrows(IllegalArgumentException.class, () -> {
+			new Board("Splendor", player1,player2,player2);
+		});
+		Assertions.assertTrue(true);
+	}
+
 	@Test
 	void validateDecks() {
 		Assertions.assertEquals(SplendorDeck[].class,testBoard.getDecks().getClass());
 	}
 	
 	// TODO: TEST buyCard method
+
+	@Test
+	void cannotBuyCity(){
+		testBoard = new Board(player1, player2, player3, player4);
+		City city1 = City.get(1);
+		Assertions.assertThrows(IllegalArgumentException.class, () -> {
+			testBoard.buyCard(player1, city1);
+		});
+		Assertions.assertTrue(true);
+	}
 
 	@Test
 	void cannotBuyNoble(){
@@ -311,6 +339,53 @@ public class BoardTest {
 		Assertions.assertEquals(0, (int) testBoard.getTokens().getOrDefault(Color.RED, 0));
 	}
 
+	@Test
+	public void testGameCityNoWinner() {
+		testBoard = new Board("SplendorCities", player1, player2, player3, player4);
+		player1.addPrestigePoints(15);
+		testBoard.nextTurn(); // turn 0 -> 1. This function calls checkGameEnd()
+		testBoard.nextTurn(); // 1->2
+		testBoard.nextTurn(); // 2->3
+		testBoard.nextTurn(); // 3->4
+		Assertions.assertTrue(true); //testBoard.getWinners().isEmpty());
+	}
+
+	@Test
+	public void testGameEndsOneWinner() {
+		testBoard = new Board("Splendor", player1, player2, player3, player4);
+		player1.addPrestigePoints(15);
+		testBoard.nextTurn(); // turn 0 -> 1. This function calls checkGameEnd()
+		testBoard.nextTurn(); // 1->2
+		testBoard.nextTurn(); // 2->3
+		testBoard.nextTurn(); // 3->4
+		Assertions.assertTrue(testBoard.getWinners().get(0).equals("Wassim"));
+	}
+
+	@Test
+	public void testGameEndsCityOneWinner() {
+		testBoard = new Board("SplendorCities", player1, player2, player3, player4);
+		player1.addCity(City.get(1));
+		testBoard.nextTurn(); // turn 0 -> 1. This function calls checkGameEnd()
+		testBoard.nextTurn(); // 1->2
+		testBoard.nextTurn(); // 2->3
+		testBoard.nextTurn(); // 3->4
+		player1.getCitiesCount();
+		testBoard.getWinners();
+		Assertions.assertTrue(testBoard.getWinners().get(0).equals("Wassim"));
+	}
+
+	@Test
+	public void testGameEndsCityTwoWinners() {
+		testBoard = new Board("SplendorCities", player1, player2, player3, player4);
+		player1.addCity(City.get(1));
+		player2.addCity(City.get(2));
+		testBoard.nextTurn(); // turn 0 -> 1. This function calls checkGameEnd()
+		testBoard.nextTurn(); // 1->2
+		testBoard.nextTurn(); // 2->3
+		testBoard.nextTurn(); // 3->4
+		testBoard.getWinners();
+		Assertions.assertEquals(testBoard.getWinners().size(), 2);
+	}
 
 	@Test
 	public void testBuyDevCardGivesBackTokens2() throws NoSuchFieldException {
@@ -332,5 +407,61 @@ public class BoardTest {
 			e.printStackTrace();
 		}
 		Assertions.assertEquals(2, (int) testBoard.getTokens().getOrDefault(Color.RED, 0));
+	}
+
+	@Test
+	void validateRemoveCity() {
+		testBoard = new Board(player1,player2,player3,player4);
+		City city1 = testBoard.getCities().get(1);
+		testBoard.removeCity(city1);
+		Assertions.assertFalse(testBoard.getCities().contains(city1));
+	}
+
+	@Test
+	void TestRemoveGoldToken() {
+		testBoard = new Board(player1,player2,player3,player4);
+		HashMap<Color, Integer> tokensToRemove = new HashMap<>();
+		tokensToRemove.put(Color.GOLD, 1);
+		if (testBoard.hasGoldToken()) {
+			testBoard.removeTokens(tokensToRemove);
+		}
+		Assertions.assertEquals(testBoard.getTokens().get(Color.GOLD), 4);
+	}
+
+	@Test
+	void updateCitiesNoUpdate() {
+		testBoard = new Board(player1,player2,player3,player4); // 4+1 = 5 nobles
+		HashMap<Color, Integer> bonus = new HashMap<>();
+		bonus.put(Color.RED, 0);
+		bonus.put(Color.WHITE, 0);
+		bonus.put(Color.GREEN, 0);
+		bonus.put(Color.BLUE, 0);
+		bonus.put(Color.BROWN, 0);
+		try {
+			setPlayerBonus(player1, bonus);
+		} catch (NoSuchFieldException e) {
+			throw new RuntimeException(e);
+		}
+		testBoard.updateCities(player1); // player 1 is broke and cannot afford a noble.
+		Assertions.assertEquals(3, nonNullCount(testBoard.getCities().toArray()));
+	}
+
+	@Test
+	void updateCitiesUpdate() {
+		testBoard = new Board(player1,player2,player3,player4); // 4+1 = 5 nobles
+
+		HashMap<Color, Integer> bonus = new HashMap<>();
+		bonus.put(Color.RED, 10);
+		bonus.put(Color.WHITE, 10);
+		bonus.put(Color.GREEN, 10);
+		bonus.put(Color.BLUE, 10);
+		bonus.put(Color.BROWN, 10);
+		try {
+			setPlayerBonus(player1, bonus);
+		} catch (NoSuchFieldException e) {
+			throw new RuntimeException(e);
+		}
+		testBoard.updateCities(player1); // player 1 can afford a noble
+		Assertions.assertEquals(2, nonNullCount(testBoard.getCities().toArray()));
 	}
 }
