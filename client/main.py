@@ -7,7 +7,7 @@ from pygame.locals import *
 
 if __name__ == '__main__':
     pygame.init()
-    screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
+    screen = pygame.display.set_mode((0, 0), pygame.RESIZABLE)
     # fill screen with grey
     screen.fill((57, 57, 57))
     authenticator = Authenticator()

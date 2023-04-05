@@ -202,7 +202,7 @@ class SessionListing:
 
     # logged-in user is the creator and launches the session if there are enough players
     def launch_sess(self) -> None:
-        post_session.launch_session(self.authenticator.get_token(escape=True), self.session_id)
+        post_session.launch_session(self.authenticator.get_token(escape=True), self.session_id, self.savegame)
 
     # logged-in user is not the creator and joins the session
     def join_sess(self) -> None:
@@ -285,7 +285,7 @@ def session(authenticator :Authenticator, full_screen: pygame.Surface) -> int:
     while True:
         screen.fill(GREY)
 
-        sessions_json = get_session.get_all_sessions().json()["sessions"]
+        sessions_json = get_session.get_all_sessions(authenticator)
         session_list = generate_session_list_buttons(authenticator,sessions_json, full_screen)
         # This is the list of buttons that should be visible. We need to draw them.
         clickable_buttons :List[Button] = []

@@ -41,6 +41,7 @@ TRADING_POST_ENABLED = False
 CITIES_ENABLED = False
 EXIT = False
 DISPLAYSURF = pygame.display.set_mode((WIDTH, HEIGHT), pygame.FULLSCREEN)
+MINIMIZED = False
 
 class IndividualTokenSelection:
     def __init__(self, token: Token, x_pos: int, y_pos: int) -> None:
@@ -284,6 +285,9 @@ def update_players(board_json):
 
 
 def display_everything(current_user):
+    global MINIMIZED
+    if MINIMIZED:
+        return
     # reset the display and re-display everything
     DISPLAYSURF.fill((0, 0, 0))
     display_sidebar()
@@ -877,7 +881,7 @@ def play(authenticator, game_id, screen):
     """Main game loop"""
     DISPLAYSURF = screen
     last_update = pygame.time.get_ticks() # force update on first loop
-    global action_manager
+    global action_manager, MINIMIZED
     action_manager = ActionManager(authenticator=authenticator, game_id=game_id)
     update(authenticator, game_id)
     logged_in_user = authenticator.username
@@ -893,16 +897,19 @@ def play(authenticator, game_id, screen):
             if event.type == QUIT:
                 pygame.quit()
                 sys.exit()
+            
+            elif event.type == pygame.VIDEORESIZE:   
+                print("MAXIMIZED")          
+                MINIMIZED = False
             elif event.type == KEYDOWN:
                 if event.key == K_ESCAPE:
                     pygame.quit()
                     sys.exit()
-                if event.key == K_m:
-                    # minimize the window
-                    # FIXME: Is there a better way to do this?
-                    pygame.display.set_mode((1, 1))
-                if event.key == K_f:
-                    pygame.display.set_mode((WIDTH, HEIGHT), pygame.FULLSCREEN)
+                # if event.key == K_m:
+                #     # minimize the window
+                #     # FIXME: Is there a better way to do this?
+                #     MINIMIZED = True
+                #     pygame.display.iconify()
                 if event.key == K_UP:
                     Sidebar.instance().scroll_sidebar(50)
                 if event.key == K_DOWN:

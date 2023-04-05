@@ -18,6 +18,7 @@ import splendor.controller.helper.TokenHelper;
 @Component
 public class Registrator {
   private static final String REGISTRATION_RESOURCE = "/api/gameservices";
+  private static final String SESSION_RESOURCE = "/api/sessions";
   private static final String SAVEGAME_RESOURCE = "/savegames";
   private static final String[] GAME_MODES = {"Splendor", "SplendorCities", "SplendorTraderoutes"};
 
@@ -195,6 +196,36 @@ public class Registrator {
       logger.info("Successfully saved game.");
     } catch (UnirestException | AuthenticationException e) {
       throw new RuntimeException("Could not save game with LS." + e);
+    }
+    launchSavedGame(gameInfo);
+  }
+
+  /**
+   * Launch a saved game on LS.
+   *
+   * @param gameInfo game info
+   */
+  private void launchSavedGame(GameInfo gameInfo) {
+    String url = gameServiceParameters.getLobbyServiceLocation() + SESSION_RESOURCE;
+    try {
+      String token = tokenHelper.get(gameServiceParameters.getOauth2Name(),
+          gameServiceParameters.getOauth2Password());
+      String gameInfoJson = gameInfo.toJsonForSaveGameResource();
+      logger.info("Creating saved game session with LS. Game info: " + gameInfoJson);
+      HttpResponse<String> response = Unirest
+          .post(url)
+          .header("Content-Type", "application/json")
+          .header("Authorization", "Bearer " + token)
+          .body(gameInfoJson)
+          .asString();
+      if (response.getStatus() != 200) {
+        throw new UnirestException(
+            "Could not create saved game session with LS." + response.getBody()
+        );
+      }
+      logger.info("Successfully created saved game session.");
+    } catch (UnirestException | AuthenticationException e) {
+      throw new RuntimeException("Could not launch saved game with LS." + e);
     }
   }
 }

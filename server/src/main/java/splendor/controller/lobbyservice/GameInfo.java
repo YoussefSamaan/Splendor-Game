@@ -84,6 +84,24 @@ public class GameInfo {
   }
 
   /**
+   * Get Json for save game resource.
+   * Example: {
+   *     "creator": "maex",
+   *     "game": "DummyGame1",
+   *     "savegame": "funnysavegameid42"
+   * }
+   *
+   * @return Json for save game resource
+   */
+  public String toJsonForSaveGameResource() {
+    return "{"
+        + "\"creator\":\"" + creator + "\""
+        + ", \"game\":\"" + gameServer + "\""
+        + ", \"savegame\":\"" + savegame + "\""
+        + '}';
+  }
+
+  /**
    * Getter for savegame.
    *
    * @return savegame
