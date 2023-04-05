@@ -425,8 +425,9 @@ def check_sidebar_clone(user, position):
     if user == Player.instance(id=CURR_PLAYER).name and Sidebar.instance().current_player.name == user:
         action_manager.update(Player.instance(id=CURR_PLAYER).name)
         if Sidebar.instance().is_clicked_owned_cards(position):
-            
+            print("=== clicked bought cards")
             if check_clone:
+                print("=== preparing to clone")
                 print(list(Player.instance(id=CURR_PLAYER).cards_bought.keys()))
                 card_menu = CardMenu(list(Player.instance(id=CURR_PLAYER).cards_bought.keys()), CardMenuAction.RESERVED)
                 card_menu.display()
@@ -849,6 +850,7 @@ def play(authenticator, game_id):
                     if TRADING_POST_ENABLED:
                         TradeRoute.instance().check_click(position,DISPLAYSURF)
                     check_sidebar_reserve(logged_in_user, position)
+                    check_sidebar_clone(logged_in_user, position)
                     obj = get_clicked_object(position)
                     perform_action(obj, logged_in_user, position)
                     with threading.Lock():
