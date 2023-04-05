@@ -605,9 +605,24 @@ class CardMenu:
             pygame.display.update()
             FPSCLOCK.tick(FPS)
     def remove_border_to_card(self):
+        if not self.highlighted_box[0] and not self.highlighted_box[1]:
+            return
+        card_width, card_height = self.cards[0].get_card_size(Board.instance())
+        x_start = self.highlighted_box[0]
+        y_start = self.highlighted_box[1]
         self.highlighted_box = (None, None, None, None)
+        
+        pygame.draw.rect(DISPLAYSURF, BLACK, (x_start-10, y_start-10, card_width+55+20, card_height+55+20))
     def remove_border_to_card2(self):
+        
+        if not self.highlighted_box[0] and not self.highlighted_box[1]:
+            return
+        card_width, card_height = self.cards[0].get_card_size(Board.instance())
+        x_start = self.highlighted_box[0]
+        y_start = self.highlighted_box[1]
         self.highlighted_box2 = (None, None, None, None)
+        
+        pygame.draw.rect(DISPLAYSURF, BLACK, (x_start-10, y_start-10, card_width+55+20, card_height+55+20))
     def add_border_to_card2(self, card):
 
         self.highlighted_box2 = (self.current_card_mapping[card][0], self.current_card_mapping[card][1], self.current_card_mapping[card][2], card)
