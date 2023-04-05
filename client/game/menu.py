@@ -28,7 +28,6 @@ class Menu:
     Pop up the menu, and get the user selection.
     User can select to save the game, or go back to the lobby.
     """
-    print("Getting menu selection")
     # display grey box
     dim_screen(screen)
     menu_surface, menu_rect = get_selection_box(screen)
@@ -43,14 +42,10 @@ class Menu:
     menu_surface.blit(lobby_button, (20, menu_surface.get_height() - button_height - 20))
     save_button = save_button.get_rect()
     lobby_button = lobby_button.get_rect()
-    print("BEFOREEE")
-    print(save_button.x, save_button.y)
     save_button.x += menu_rect.x + menu_surface.get_width() - button_width - 20
     save_button.y += menu_rect.y + menu_surface.get_height() - button_height - 20
     lobby_button.x += menu_rect.x + 20
     lobby_button.y += menu_rect.y + menu_surface.get_height() - button_height - 20
-    print("AFTER")
-    print(save_button.x, save_button.y)
     
     screen.blit(menu_surface, menu_rect)
     pygame.display.update()
