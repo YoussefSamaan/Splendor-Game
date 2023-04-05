@@ -567,16 +567,16 @@ class CardMenu:
         # width height index, card
         self.highlighted_box = (self.current_card_mapping[card][0], self.current_card_mapping[card][1], self.current_card_mapping[card][2], card)
 
-    def draw_border_to_card(self, card):
+    def draw_border_to_card(self, card : Card):
         if not self.highlighted_box[0] or not self.highlighted_box[1]:
             return
         card_width, card_height = self.cards[0].get_card_size(Board.instance())
         x_start = self.highlighted_box[0]
         y_start = self.highlighted_box[1]
         #card = 
-        pygame.draw.rect(DISPLAYSURF, RED, (x_start, y_start, card_width+20, card_height+20), 10)
+        pygame.draw.rect(DISPLAYSURF, RED, (x_start-10, y_start-10, card_width+20, card_height+20))
         card_index = self.current_card_mapping[card][2]
-        #card.draw_for_sidebar(DISPLAYSURF,WIDTH/7 + card_index*(card_width),HEIGHT*3/10 ) # card is on top of the border
+        card.draw_for_sidebar(DISPLAYSURF,WIDTH/7 + card_index*(card_width+55),HEIGHT*3/10 ) # card is on top of the border
         pygame.display.update()
 
     def check_if_clicked_card(self, mouse_pos):
