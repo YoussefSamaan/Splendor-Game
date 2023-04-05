@@ -418,6 +418,18 @@ def check_sidebar_reserve(user, position):
             print(list(Player.instance(id=CURR_PLAYER).reserved_cards.keys()))
             card_menu = CardMenu(list(Player.instance(id=CURR_PLAYER).reserved_cards.keys()), CardMenuAction.RESERVED)
             card_menu.display()
+
+def check_sidebar_clone(user, position):
+    global CURR_PLAYER
+    global action_manager
+    if user == Player.instance(id=CURR_PLAYER).name and Sidebar.instance().current_player.name == user:
+        action_manager.update(Player.instance(id=CURR_PLAYER).name)
+        if Sidebar.instance().is_clicked_owned_cards(position):
+            
+            if check_clone:
+                print(list(Player.instance(id=CURR_PLAYER).cards_bought.keys()))
+                card_menu = CardMenu(list(Player.instance(id=CURR_PLAYER).cards_bought.keys()), CardMenuAction.RESERVED)
+                card_menu.display()
             
 def perform_action(obj, user, position):
     if obj is None:

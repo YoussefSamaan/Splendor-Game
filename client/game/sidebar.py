@@ -202,6 +202,15 @@ class Sidebar:
     def get_height(self):
         return self.height
 
+    def is_clicked_owned_cards(self, mouse_pos):
+        # checks if user clicked on reserve button or card
+        if self.sidebar_rect.collidepoint(mouse_pos) and self.current_display == 0:
+            # doesn't happen if we click on the sidebar button instead of the card
+            if self.reserve_button.collidepoint(mouse_pos):
+                return False
+            return True
+        return False
+
     def is_clicked_reserve(self, mouse_pos):
         # checks if user clicked on reserve button or card
         if self.sidebar_rect.collidepoint(mouse_pos) and self.current_display == 2:
