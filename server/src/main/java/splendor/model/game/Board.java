@@ -416,7 +416,7 @@ public class Board implements BroadcastContent {
    * Check if game is finished.
    */
   public boolean isFinished() {
-    return winners.size() != 0;
+    return winners != null;
   }
 
   public List<String> getWinners() {
