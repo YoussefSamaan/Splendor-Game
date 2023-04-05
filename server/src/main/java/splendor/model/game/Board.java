@@ -39,7 +39,7 @@ public class Board implements BroadcastContent {
 
   private final TokenBank bank = new TokenBank(true);
 
-  private List<String> winners = new ArrayList<>(); // can have multiple winners in case of a tie
+  private List<String> winners = null; // can have multiple winners in case of a tie
 
   /**
    * Creates a new board.
@@ -193,6 +193,9 @@ public class Board implements BroadcastContent {
   }
 
   private void checkGameEnd() {
+    if (winners != null) {
+      return;
+    }
     if (nobleDeck == null) { // in cities extension, the nobleDeck will be null
       List<Player> playersWithCities = new ArrayList<>();
       boolean gameEnd = false;
@@ -209,6 +212,7 @@ public class Board implements BroadcastContent {
       // Otherwise, if they have the same amount of points, then we add them as a tied winner.
       if (gameEnd) {
         Collections.sort(playersWithCities, new SortByDescendingPrestigePoints());
+        winners = new ArrayList<>(); // previously null
         for (int i = 0; i < playersWithCities.size(); i++) {
           winners.add(playersWithCities.get(i).getName()); // player with most prestige points
           if (i >= playersWithCities.size() - 1) {
@@ -221,8 +225,12 @@ public class Board implements BroadcastContent {
         }
       }
     } else { // not cities extension
+      boolean gameEnd = false;
       for (Player player : players) {
         if (player.getPrestigePoints() >= 15) {
+          if (winners == null) {
+            winners = new ArrayList<>(); // initialize
+          }
           winners.add(player.getName());
         }
       }
