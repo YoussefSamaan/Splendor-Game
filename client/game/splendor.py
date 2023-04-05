@@ -554,17 +554,34 @@ class CardMenu:
                         if card == self.card_selected:
                             self.card_selected = None
                             self.remove_border_to_card()
+                            continue
+                        elif self.card_selected is not None:
+                            self.remove_border_to_card()
+                            self.card_selected = card
+                            pygame.display.update()
+                            self.add_border_to_card(card)
+                            continue
                         else:
                             self.add_border_to_card(card) # visually indicate this card is chosen
                             self.card_selected = card
                         if self.action == CardMenuAction.DISCARD and self.card_selected is not None:
                             # if the first card is selected, then the second card is selected
                             if card == self.card_selected2:
+                                # deselect the second card 
                                 self.card_selected2 = None
                                 self.remove_border_to_card2()
+                                continue
+                            elif self.card_selected2 is not None:
+                                # there's already such a card selected but it's different
+                                self.remove_border_to_card2() # remove prev card
+                                self.card_selected2 = card
+                                pygame.display.update()
+                                self.add_border_to_card2(card) # add new card 
+                                continue
                             else: 
                                 self.card_selected2 = card
                                 self.add_border_to_card2(card)
+                                continue
                     
                     elif self.confirm.rectangle.collidepoint(pygame.mouse.get_pos()):
                         if self.card_selected is None:
@@ -862,7 +879,6 @@ def play(authenticator, game_id):
                     if TRADING_POST_ENABLED:
                         TradeRoute.instance().check_click(position,DISPLAYSURF)
                     check_sidebar_reserve(logged_in_user, position)
-                    check_sidebar_clone(logged_in_user, position)
                     obj = get_clicked_object(position)
                     perform_action(obj, logged_in_user, position)
                     with threading.Lock():
