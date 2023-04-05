@@ -483,7 +483,7 @@ def perform_action(obj, user, position, game_id, authenticator):
             #  find noble in the json
             for action in action_manager.actions:
                 if "card" in action and "cardId" in action["card"] and action["card"]["cardId"] == obj.get_id()\
-                    and action["actionType"] == Action.TAKE_NOBLE.value:
+                    and action["actionType"] == Action.RESERVE_NOBLE.value:
                   
                     action_manager.perform_action(obj.get_id())
         
