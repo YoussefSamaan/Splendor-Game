@@ -2,10 +2,17 @@ from authenticator import Authenticator
 from game import splendor
 from login import login
 from session import session
+import pygame
+from pygame.locals import *
 
 if __name__ == '__main__':
+    pygame.init()
+    screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
+    # fill screen with grey
+    screen.fill((57, 57, 57))
     authenticator = Authenticator()
-    login.login(authenticator)
+    login.login(authenticator, screen)
     while True:
-      game_id = session.session(authenticator)
-      splendor.play(authenticator=authenticator, game_id=game_id)
+      game_id = session.session(authenticator, screen)
+      print(game_id)
+      splendor.play(authenticator=authenticator, game_id=game_id, screen=screen)

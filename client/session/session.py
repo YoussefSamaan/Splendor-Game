@@ -25,7 +25,7 @@ pygame.init()
 pygame.display.set_caption('Splendor')
 base_font = pygame.font.Font(None, 28)  # font, size
 clock = pygame.time.Clock()
-screen = pygame.display.set_mode((WIDTH, HEIGHT))  # , pygame.FULLSCREEN
+screen = pygame.Surface((WIDTH, HEIGHT))
 
 splendor_text = pygame.image.load('../sprites/splendor-title.png')
 splendor_text = pygame.transform.scale(splendor_text, (500, 200))
@@ -231,7 +231,14 @@ def generate_session_list_buttons(authenticator,sessions_json) -> List[SessionLi
     
     return session_list
 
-def session(authenticator :Authenticator) -> int:
+def session(authenticator :Authenticator, full_screen: pygame.Surface) -> int:
+    # set up the screen  
+    full_screen.fill(GREY)
+    # center the screen on the full screen
+    screen_rect = screen.get_rect()
+    full_screen_rect = full_screen.get_rect()
+    screen_rect.center = full_screen_rect.center
+    full_screen.blit(screen, screen_rect)
 
     # current_page: 0-indexed
     # functions for the pagination buttons
@@ -330,5 +337,6 @@ def session(authenticator :Authenticator) -> int:
                         if not (button_return is None):
                             return button_return
 
+        full_screen.blit(screen, screen_rect)
         pygame.display.flip()
         clock.tick(FPS)

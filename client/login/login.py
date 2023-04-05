@@ -15,13 +15,12 @@ RED = (255, 0, 0)
 FPS = 60
 
 
-def login(authenticator: Authenticator):
+def login(authenticator: Authenticator, full_screen: pygame.Surface):
     os.chdir(os.path.dirname(os.path.abspath(__file__)))
     pygame.init()
     pygame.display.set_caption('Splendor')
 
     clock = pygame.time.Clock()
-    full_screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.FULLSCREEN)  # , pygame.FULLSCREEN
     screen = pygame.Surface((WIDTH, HEIGHT))
     full_screen.fill(GREY)
     # center the screen on the full screen
