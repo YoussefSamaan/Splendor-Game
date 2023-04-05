@@ -791,8 +791,6 @@ def play(authenticator, game_id):
     update(authenticator, game_id)
     logged_in_user = authenticator.username
     while True:
-        # update every 5 seconds on a separate thread
-        authenticator.refresh()
         if pygame.time.get_ticks() - last_update > 2000:
             last_update = pygame.time.get_ticks()
             # await async_update(authenticator, game_id)

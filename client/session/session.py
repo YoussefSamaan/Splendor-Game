@@ -270,7 +270,6 @@ def session(authenticator :Authenticator) -> int:
             trade_toggle.active = False
 
     while True:
-        authenticator.refresh()
         screen.fill(GREY)
 
         sessions_json = get_session.get_all_sessions().json()["sessions"]
