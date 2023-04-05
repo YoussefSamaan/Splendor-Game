@@ -483,8 +483,8 @@ class CardMenu:
         self.highlighted_box = (None, None, None, None) #(x, y, Card), for drawing a highlight around the card selected
         self.highlighted_box2 = (None, None, None, None) # this is the second highlighted box, for cloning
         self.menu = pygame.Surface((WIDTH, HEIGHT))
-        self.menu.fill((0, 0, 0))
-        self.menu.set_alpha(200)
+        self.menu.fill((50, 50, 50))
+        #self.menu.set_alpha(200)
         self.menu_rect = self.menu.get_rect()
         self.menu_rect.center = (WIDTH / 2, HEIGHT / 2)
         self.confirm = Button(pygame.Rect(WIDTH/2,HEIGHT*7/10,90,55), None, text="Confirm")
@@ -612,7 +612,7 @@ class CardMenu:
         y_start = self.highlighted_box[1]
         self.highlighted_box = (None, None, None, None)
         
-        pygame.draw.rect(DISPLAYSURF, BLACK, (x_start-10, y_start-10, card_width+55+20, card_height+55+20))
+        pygame.draw.rect(DISPLAYSURF, (50, 50, 50), (x_start-10, y_start-10, card_width+55+20, card_height+55+20))
     def remove_border_to_card2(self):
         
         if not self.highlighted_box[0] and not self.highlighted_box[1]:
@@ -622,7 +622,7 @@ class CardMenu:
         y_start = self.highlighted_box[1]
         self.highlighted_box2 = (None, None, None, None)
         
-        pygame.draw.rect(DISPLAYSURF, BLACK, (x_start-10, y_start-10, card_width+55+20, card_height+55+20))
+        pygame.draw.rect(DISPLAYSURF, (50, 50, 50), (x_start-10, y_start-10, card_width+55+20, card_height+55+20))
     def add_border_to_card2(self, card):
 
         self.highlighted_box2 = (self.current_card_mapping[card][0], self.current_card_mapping[card][1], self.current_card_mapping[card][2], card)
