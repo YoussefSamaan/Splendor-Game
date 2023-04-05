@@ -137,6 +137,8 @@ def login(authenticator: Authenticator, full_screen: pygame.Surface):
         pygame.draw.rect(screen, username_color, username_input_rect, 3)
         pygame.draw.rect(screen, password_color, password_input_rect, 3)
         pygame.draw.rect(screen, GREEN, login_rect)
+        # login_rect.x = login_rect.x + full_screen.get_width() / 2
+        # login_rect.y = login_rect.y + full_screen.get_height() / 2
 
         username_text_surface = base_font.render(username_text, True, WHITE)
         screen.blit(username_text_surface, (username_input_rect.x + 5, username_input_rect.y + 5))

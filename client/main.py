@@ -14,5 +14,4 @@ if __name__ == '__main__':
     login.login(authenticator, screen)
     while True:
       game_id = session.session(authenticator, screen)
-      print(game_id)
       splendor.play(authenticator=authenticator, game_id=game_id, screen=screen)
