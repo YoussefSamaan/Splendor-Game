@@ -209,6 +209,10 @@ def check_clone():
     global action_manager, PERSISTENT_MESSAGE
     if action_manager.has_unlocked_clone(Player.instance(id=CURR_PLAYER).name):
         PERSISTENT_MESSAGE = "You Unlocked a Clone! Choose a card to clone!"
+        
+        card_menu = CardMenu(list(Player.instance(id=CURR_PLAYER).cards_bought.keys()), CardMenuAction.CLONE)
+        card_menu.display()
+
         return True
     else:
         PERSISTENT_MESSAGE = None
