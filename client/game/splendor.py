@@ -467,8 +467,8 @@ class CardMenu:
         selection_box, selection_box_rect = get_selection_box(DISPLAYSURF, 1, 0.6)
         self.selection_box = selection_box
         self.selection_box_rect = selection_box_rect
-        self.highlighted_box = (None, None, None) #(x, y, Card), for drawing a highlight around the card selected
-        self.highlighted_box2 = (None, None, None) # this is the second highlighted box, for cloning
+        self.highlighted_box = (None, None, None, None) #(x, y, Card), for drawing a highlight around the card selected
+        self.highlighted_box2 = (None, None, None, None) # this is the second highlighted box, for cloning
         self.menu = pygame.Surface((WIDTH, HEIGHT))
         self.menu.fill((0, 0, 0))
         self.menu.set_alpha(200)
@@ -522,7 +522,8 @@ class CardMenu:
 
         # wait for user to click on something or leave
         while True:
-            self.draw_border_to_card(self.highlighted_box[3])
+            if self.card_selected is not None:
+                self.draw_border_to_card(self.highlighted_box[3])
             if self.card_selected2 is not None:
                 self.draw_border_to_card2(self.highlighted_box2[3])
             for i in range(self.current_page * 6, min(len(self.cards), (self.current_page + 1) * 6)):
