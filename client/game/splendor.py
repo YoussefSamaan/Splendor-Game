@@ -418,18 +418,6 @@ def check_sidebar_reserve(user, position):
             print(list(Player.instance(id=CURR_PLAYER).reserved_cards.keys()))
             card_menu = CardMenu(list(Player.instance(id=CURR_PLAYER).reserved_cards.keys()), CardMenuAction.RESERVED)
             card_menu.display()
-
-def check_sidebar_clone(user, position):
-    global CURR_PLAYER
-    global action_manager
-    if user == Player.instance(id=CURR_PLAYER).name and Sidebar.instance().current_player.name == user:
-        action_manager.update(Player.instance(id=CURR_PLAYER).name)
-        if Sidebar.instance().is_clicked_owned_cards(position):
-            
-            if check_clone:
-                print(list(Player.instance(id=CURR_PLAYER).cards_bought.keys()))
-                card_menu = CardMenu(list(Player.instance(id=CURR_PLAYER).cards_bought.keys()), CardMenuAction.RESERVED)
-                card_menu.display()
             
 def perform_action(obj, user, position):
     if obj is None:
@@ -550,12 +538,20 @@ class CardMenu:
                 elif event.type == MOUSEBUTTONUP:
                     card = self.check_if_clicked_card(pygame.mouse.get_pos())
                     if card:
-                        self.add_border_to_card(card) # visually indicate this card is chosen
-                        self.card_selected = card
+                        if card == self.card_selected:
+                            self.card_selected = None
+                            self.remove_border_to_card()
+                        else:
+                            self.add_border_to_card(card) # visually indicate this card is chosen
+                            self.card_selected = card
                         if self.action == CardMenuAction.DISCARD and self.card_selected is not None:
                             # if the first card is selected, then the second card is selected
-                            self.card_selected2 = card
-                            self.add_border_to_card2(card)
+                            if card == self.card_selected2:
+                                self.card_selected2 = None
+                                self.remove_border_to_card2()
+                            else: 
+                                self.card_selected2 = card
+                                self.add_border_to_card2(card)
                     
                     elif self.confirm.rectangle.collidepoint(pygame.mouse.get_pos()):
                         if self.card_selected is None:
@@ -578,6 +574,10 @@ class CardMenu:
                             return # if the user clicks outside the menu, just close it
             pygame.display.update()
             FPSCLOCK.tick(FPS)
+    def remove_border_to_card(self):
+        self.highlighted_box = (None, None, None, None)
+    def remove_border_to_card2(self):
+        self.highlighted_box2 = (None, None, None, None)
     def add_border_to_card2(self, card):
 
         self.highlighted_box2 = (self.current_card_mapping[card][0], self.current_card_mapping[card][1], self.current_card_mapping[card][2], card)
@@ -594,7 +594,7 @@ class CardMenu:
         x_start = self.highlighted_box[0]
         y_start = self.highlighted_box[1]
         #card = 
-        pygame.draw.rect(DISPLAYSURF, RED, (x_start-10, y_start-10, card_width+55+20, card_height+20))
+        pygame.draw.rect(DISPLAYSURF, RED, (x_start-10, y_start-10, card_width+55+20, card_height+55+20))
         #card_index = self.current_card_mapping[card][2]
         #card.draw_for_sidebar(DISPLAYSURF,WIDTH/7 + card_index*(card_width+55),HEIGHT*3/10 ) # card is on top of the border
         #pygame.display.update()
@@ -606,7 +606,7 @@ class CardMenu:
         x_start = self.highlighted_box2[0]
         y_start = self.highlighted_box2[1]
         #card = 
-        pygame.draw.rect(DISPLAYSURF, RED, (x_start-10, y_start-10, card_width+55+20, card_height+20))
+        pygame.draw.rect(DISPLAYSURF, RED, (x_start-10, y_start-10, card_width+55+20, card_height+55+20))
         #card_index = self.current_card_mapping[card][2]
         #card.draw_for_sidebar(DISPLAYSURF,WIDTH/7 + card_index*(card_width+55),HEIGHT*3/10 ) # card is on top of the border
         #pygame.display.update()
