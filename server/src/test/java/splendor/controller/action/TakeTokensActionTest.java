@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import splendor.controller.lobbyservice.GameInfo;
 import splendor.model.game.Color;
 import splendor.model.game.SplendorGame;
+import splendor.model.game.payment.CoatOfArms;
 import splendor.model.game.player.Inventory;
 import splendor.model.game.player.Player;
  import splendor.model.game.Color;
@@ -27,14 +28,11 @@ public class TakeTokensActionTest {
 //  }
 
   private void clearPlayerTokens(Player player) throws NoSuchFieldException {
-    Field inventory = player.getClass().getDeclaredField("inventory");
-    inventory.setAccessible(true);
-    try {
-      inventory.set(player, new Inventory());
-    } catch (IllegalAccessException e) {
-      e.printStackTrace();
+    for (Color key : player.getTokens().keySet()) {
+      player.getTokens().put(key, 0);
     }
-  }
+    }
+
 
   @Test
   public void preformAction(){
@@ -62,6 +60,7 @@ public class TakeTokensActionTest {
 
   @Test
   public void performTakeOneTokenAction(){
+    long gameId = 1;
     Player[] testPlayers = {player1,player2};
     GameInfo testGameInfo = new GameInfo("testServer","SplendorGameTest",testPlayers,"testSave");
     game = new SplendorGame(testGameInfo);
@@ -72,19 +71,27 @@ public class TakeTokensActionTest {
       throw new RuntimeException(e);
     }
 
-    HashMap<Color, Integer> token = new HashMap<Color, Integer>();
-    token.put(Color.BLUE, 1);
+    HashMap<Color, Integer> sixBlueToken = new HashMap<Color, Integer>();
+    sixBlueToken.put(Color.BLUE, 6);
 
-    long gameId = 1;
-    TakeOneTokenAction tester = new TakeOneTokenAction(ActionType.TAKE_ONE_TOKEN,token);
-    tester.performAction(player1, game.getBoard());
+    HashMap<Color, Integer>  allTokensFromBoard = game.getBoard().getTokens();
+    game.getBoard().removeTokens(allTokensFromBoard);
+    game.getBoard().addTokens(sixBlueToken);
+
+    List<Action> actions = actionGenerator.generateActions(game, gameId, player1);
+
+    Action action = actions.get(0);
+    action.performAction(player1, game.getBoard());
     assertEquals(true, player1.getTokens().get(Color.BLUE) == 1);
   }
 
-
-
+  /***
+   * There is six blue tokens in the board
+   * The player have no tokens
+   * The player should take two blue tokens
+   ***/
   @Test
-  public void performTakeTwoTokenActionWithReturn(){
+  public void performTakeTwoTokenAction(){
     long gameId = 1;
     Player[] testPlayers = {player1,player2};
     GameInfo testGameInfo = new GameInfo("testServer","SplendorGameTest",testPlayers,"testSave");
@@ -95,23 +102,32 @@ public class TakeTokensActionTest {
     } catch (NoSuchFieldException e) {
       throw new RuntimeException(e);
     }
-    HashMap<Color, Integer> tenBlueToken = new HashMap<Color, Integer>();
-    tenBlueToken.put(Color.BLUE, 10);
-    player1.addTokens(tenBlueToken);
 
-    HashMap<Color, Integer> twoBluetoken = new HashMap<Color, Integer>();
-    twoBluetoken.put(Color.BLUE, 2);
+    HashMap<Color, Integer> sixBlueToken = new HashMap<Color, Integer>();
+    sixBlueToken.put(Color.BLUE, 6);
 
-    ReturnTokensAction return2Blue = new ReturnTokensAction(ActionType.RETURN_TOKENS, twoBluetoken);
-    return2Blue.performAction(player1, game.getBoard());
+    HashMap<Color, Integer>  allTokensFromBoard = game.getBoard().getTokens();
+    game.getBoard().removeTokens(allTokensFromBoard);
+    game.getBoard().addTokens(sixBlueToken);
 
-    TakeTokensAction tester = new TakeTokensAction(ActionType.TAKE_TOKENS,twoBluetoken);
-    tester.performAction(player1, game.getBoard());
-    assertEquals(true, player1.getTokens().get(Color.BLUE) == 10);
+    List<Action> actions = actionGenerator.generateActions(game, gameId, player1);
+//    for (Action a : actions) {
+//      System.out.println(a.getActionType());
+//    }
+
+    Action action = actions.get(1);
+    action.performAction(player1, game.getBoard());
+    assertEquals(true, player1.getTokens().get(Color.BLUE) == 2);
   }
 
+  /***
+   * There is one blue token, one red token, and one green token
+   * The player have no tokens
+   * The player should take one blue token, one red token, and one green token
+   ***/
   @Test
   public void performTakeThreeTokenAction(){
+    long gameId = 1;
     Player[] testPlayers = {player1,player2};
     GameInfo testGameInfo = new GameInfo("testServer","SplendorGameTest",testPlayers,"testSave");
     game = new SplendorGame(testGameInfo);
@@ -122,17 +138,24 @@ public class TakeTokensActionTest {
       throw new RuntimeException(e);
     }
 
-    HashMap<Color, Integer> token = new HashMap<Color, Integer>();
-    token.put(Color.BLUE, 3);
+    HashMap<Color, Integer> tokensWithDiffColor = new HashMap<Color, Integer>();
+    tokensWithDiffColor.put(Color.BLUE, 1);
+    tokensWithDiffColor.put(Color.RED, 1);
+    tokensWithDiffColor.put(Color.GREEN, 1);
 
-    long gameId = 1;
-    TakeTokensAction tester = new TakeTokensAction(ActionType.TAKE_TOKENS,token);
-    tester.performAction(player1, game.getBoard());
-    assertEquals(true, player1.getTokens().get(Color.BLUE) == 3);
+    HashMap<Color, Integer>  allTokensFromBoard = game.getBoard().getTokens();
+    game.getBoard().removeTokens(allTokensFromBoard);
+    game.getBoard().addTokens(tokensWithDiffColor);
+
+    List<Action> actions = actionGenerator.generateActions(game, gameId, player1);
+    Action action = actions.get(0);
+    action.performAction(player1, game.getBoard());
+    assertEquals(true, (player1.getTokens().get(Color.BLUE) == 1) && (player1.getTokens().get(Color.RED) == 1) && (player1.getTokens().get(Color.GREEN) == 1));
   }
 
   @Test
-  public void getLegalActions(){
+  public void performTakeTwoTokenActionWithSpecialPower(){
+    long gameId = 1;
     Player[] testPlayers = {player1,player2};
     GameInfo testGameInfo = new GameInfo("testServer","SplendorGameTest",testPlayers,"testSave");
     game = new SplendorGame(testGameInfo);
@@ -143,12 +166,26 @@ public class TakeTokensActionTest {
       throw new RuntimeException(e);
     }
 
-    HashMap<Color, Integer> token = new HashMap<Color, Integer>();
-    token.put(Color.BLUE, 1);
+    HashMap<Color, Integer> sixBlueToken = new HashMap<Color, Integer>();
+    sixBlueToken.put(Color.BLUE, 6);
+    sixBlueToken.put(Color.GREEN, 1);
+    HashMap<Color, Integer>  allTokensFromBoard = game.getBoard().getTokens();
+    game.getBoard().removeTokens(allTokensFromBoard);
+    game.getBoard().addTokens(sixBlueToken);
 
-    long gameId = 1;
-    TakeOneTokenAction tester = new TakeOneTokenAction(ActionType.TAKE_ONE_TOKEN,token);
-    assertEquals(true, tester.getLegalActions(game).size() > 0);
+    HashMap<Color, Integer> twoWhiteToken = new HashMap<Color, Integer>();
+    twoWhiteToken.put(Color.WHITE, 2);
+    player1.addTokens(twoWhiteToken);
+    player1.addUnlockedCoatOfArms(CoatOfArms.get(2));
+
+    List<Action> actions = actionGenerator.generateActions(game, gameId, player1);
+//    for (Action a : actions) {
+//      System.out.println(a.getActionType());
+//    }
+
+    Action action = actions.get(1);
+    action.performAction(player1, game.getBoard());
+    assertEquals(true, (player1.getTokens().get(Color.BLUE) == 2) && (player1.getTokens().get(Color.GREEN) == 1));
   }
 
   @Test

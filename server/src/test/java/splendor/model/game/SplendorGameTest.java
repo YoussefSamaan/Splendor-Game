@@ -70,6 +70,7 @@ public class SplendorGameTest {
 			testSplendorGame.performAction(action, player1.getName(), actionData);
 		}
 		catch (Exception e) {
+			System.out.println(e);
 			Assertions.fail();
 		}
 		Assertions.assertTrue(true);

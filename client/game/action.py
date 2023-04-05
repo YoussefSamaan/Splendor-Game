@@ -10,8 +10,8 @@ class Action(Enum):
     TAKE_CARD_1 = 'TAKE_CARD_1'
     TAKE_CARD_2 = 'TAKE_CARD_2'
     CASCADE = 'CASCADE'
-    CLONE = 'CLONE'
-    RESERVE_NOBLE = 'RESERVE_NOBLE'
+    CLONE_CARD = 'CLONE_CARD'
+    TAKE_NOBLE = 'TAKE_NOBLE' # for reserving a noble
     DISCARD = 'DISCARD'
     BUY_RESERVED_CARD = 'BUY_RESERVED_CARD'
 

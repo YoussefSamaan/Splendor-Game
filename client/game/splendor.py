@@ -189,6 +189,7 @@ def update(authenticator, game_id):
         initialize_game(board_json)
     global action_manager
     action_manager.update(Player.instance(id=CURR_PLAYER).name)
+    print(action_manager.actions)
     # TODO: add cascading buy for cards]
     # if we need to cascade, we don't chance players
     check_cascade()
@@ -209,6 +210,7 @@ def update(authenticator, game_id):
         #update_cities(board_json)
     else:
         update_nobles(board_json)
+
 def check_clone():
     """checks if the card has a clone effect. if so, display card menu with clone action so player can choose what to clone"""
     global action_manager, PERSISTENT_MESSAGE
@@ -427,13 +429,27 @@ def check_sidebar_reserve(user, position):
             print(list(Player.instance(id=CURR_PLAYER).reserved_cards.keys()))
             card_menu = CardMenu(list(Player.instance(id=CURR_PLAYER).reserved_cards.keys()), CardMenuAction.RESERVED)
             card_menu.display()
+
+def check_sidebar_clone(user, position):
+    global CURR_PLAYER
+    global action_manager
+    if user == Player.instance(id=CURR_PLAYER).name and Sidebar.instance().current_player.name == user:
+        action_manager.update(Player.instance(id=CURR_PLAYER).name)
+        if Sidebar.instance().is_clicked_owned_cards(position):
+            print("=== clicked bought cards")
+            if check_clone:
+                print("=== preparing to clone")
+                print(list(Player.instance(id=CURR_PLAYER).cards_bought.keys()))
+                card_menu = CardMenu(list(Player.instance(id=CURR_PLAYER).cards_bought.keys()), CardMenuAction.CLONE)
+                card_menu.display()
+
 def perform_action(obj, user, position, game_id, authenticator):
   if obj is None:
       return
   global CURR_PLAYER
   global action_manager
 
-  # Check menu not matter the turn
+  # Check menuand sidebar  not matter the turn
   if isinstance(obj, Menu):
     selection = Menu.instance().get_menu_selection(DISPLAYSURF)
     if selection == "save":
@@ -442,35 +458,40 @@ def perform_action(obj, user, position, game_id, authenticator):
     elif selection == "lobby":
       global EXIT
       EXIT = True
-      
-    return
+  if isinstance(obj, Player):
+      Sidebar.instance().switch_player(obj)
+      return
   # make sure it's the current user's turn, otherwise cannot take cards
   if user == Player.instance(id=CURR_PLAYER).name:
     action_manager.update(Player.instance(id=CURR_PLAYER).name)
     
     if isinstance(obj, Card):
-      global cascade
-      if cascade:
-        get_user_cascade_selection(obj)
-      else:
-        get_user_card_selection(obj)
+        global cascade
+        if cascade:
+            get_user_cascade_selection(obj)
+        else:
+            get_user_card_selection(obj)
     elif isinstance(obj, Token):
-      # opens token selection menu
-      get_token_selection()
+        # opens token selection menu
+        get_token_selection()
+        
     elif isinstance(obj, Noble):
-      pass
+        # check if the player is currently in the reserve noble phase
+        
+        if action_manager.has_unlocked_reserve_noble(Player.instance(id=CURR_PLAYER).name):
+            print("=-=-=-=preparing to reserve a noble")
+            #  find noble in the json
+            for action in action_manager.actions:
+                if "card" in action and "cardId" in action["card"] and action["card"]["cardId"] == obj.get_id()\
+                    and action["actionType"] == Action.TAKE_NOBLE.value:
+                  
+                    action_manager.perform_action(obj.get_id())
+        
     #elif isinstance(obj, City):
         #pass
     # players shouldn't click on nobles
         # obj.take_noble(Sidebar.instance(), Player.instance(id=CURR_PLAYER))
         # set_flash_message('Took a noble')
-    
-    elif isinstance(obj, Player):
-      Sidebar.instance().switch_player(obj)
-
-  # When it's not the user's turn, still allow switching between sidebars
-  elif isinstance(obj, Player):
-    Sidebar.instance().switch_player(obj)
 
 class CardMenuAction(Enum):
     CLONE = 1
@@ -484,11 +505,11 @@ class CardMenu:
         selection_box, selection_box_rect = get_selection_box(DISPLAYSURF, 1, 0.6)
         self.selection_box = selection_box
         self.selection_box_rect = selection_box_rect
-        self.highlighted_box = (None, None, None) #(x, y, Card)
-        self.highlighted_box2 = (None, None, None)
+        self.highlighted_box = (None, None, None, None) #(x, y, Card), for drawing a highlight around the card selected
+        self.highlighted_box2 = (None, None, None, None) # this is the second highlighted box, for cloning
         self.menu = pygame.Surface((WIDTH, HEIGHT))
-        self.menu.fill((0, 0, 0))
-        self.menu.set_alpha(200)
+        self.menu.fill((50, 50, 50))
+        #self.menu.set_alpha(200)
         self.menu_rect = self.menu.get_rect()
         self.menu_rect.center = (WIDTH / 2, HEIGHT / 2)
         self.confirm = Button(pygame.Rect(WIDTH/2,HEIGHT*7/10,90,55), None, text="Confirm")
@@ -532,17 +553,22 @@ class CardMenu:
         write_on(DISPLAYSURF, self.prev_page.text, center=self.prev_page.rectangle.center,color=WHITE)
         #write_on(DISPLAYSURF, "Page " + str(self.current_page + 1) + "/" + str(math.ceil(len(self.cards) / 5)), WIDTH/2, HEIGHT*3/10 - 20, size=30)
         # draw the cards, we will draw them the same size as on the board
+        if len(self.cards) == 0:
+            # if there are no cards, abort
+            return 
         card_width, card_height = self.cards[0].get_card_size(Board.instance())
-        self.draw_border_to_card(self.highlighted_box[2])
-        if self.card_selected2 is not None:
-            self.draw_border_to_card2(self.highlighted_box2[2])
-        for i in range(self.current_page * 6, min(len(self.cards), (self.current_page + 1) * 6)):
-            # draw_for_sidebar(self, screen, x, y):
-            self.cards[i].draw_for_sidebar(DISPLAYSURF,WIDTH/7 + i*(card_width+55),HEIGHT*3/10 )
-            self.current_card_mapping[self.cards[i]] = (WIDTH/7 + i*(card_width+55), HEIGHT*3/10, i)
-        pygame.display.update()
+
         # wait for user to click on something or leave
         while True:
+            if self.card_selected is not None:
+                self.draw_border_to_card(self.highlighted_box[3])
+            if self.card_selected2 is not None:
+                self.draw_border_to_card2(self.highlighted_box2[3])
+            for i in range(self.current_page * 6, min(len(self.cards), (self.current_page + 1) * 6)):
+                # draw_for_sidebar(self, screen, x, y):
+                self.cards[i].draw_for_sidebar(DISPLAYSURF,WIDTH/7 + i*(card_width+55),HEIGHT*3/10 )
+                self.current_card_mapping[self.cards[i]] = (WIDTH/7 + i*(card_width+55), HEIGHT*3/10, i)
+            pygame.display.update()
             for event in pygame.event.get():
                 if event.type == QUIT:
                     pygame.quit()
@@ -550,17 +576,43 @@ class CardMenu:
                 elif event.type == MOUSEBUTTONUP:
                     card = self.check_if_clicked_card(pygame.mouse.get_pos())
                     if card:
-                        self.add_border_to_card(card) # visually indicate this card is chosen
-                        self.card_selected = card
+                        if card == self.card_selected:
+                            self.card_selected = None
+                            self.remove_border_to_card()
+                            continue
+                        elif self.card_selected is not None:
+                            self.remove_border_to_card()
+                            self.card_selected = card
+                            pygame.display.update()
+                            self.add_border_to_card(card)
+                            continue
+                        else:
+                            self.add_border_to_card(card) # visually indicate this card is chosen
+                            self.card_selected = card
                         if self.action == CardMenuAction.DISCARD and self.card_selected is not None:
                             # if the first card is selected, then the second card is selected
-                            self.card_selected2 = card
-                            self.add_border_to_card2(card)
-                        
+                            if card == self.card_selected2:
+                                # deselect the second card 
+                                self.card_selected2 = None
+                                self.remove_border_to_card2()
+                                continue
+                            elif self.card_selected2 is not None:
+                                # there's already such a card selected but it's different
+                                self.remove_border_to_card2() # remove prev card
+                                self.card_selected2 = card
+                                pygame.display.update()
+                                self.add_border_to_card2(card) # add new card 
+                                continue
+                            else: 
+                                self.card_selected2 = card
+                                self.add_border_to_card2(card)
+                                continue
+                    
                     elif self.confirm.rectangle.collidepoint(pygame.mouse.get_pos()):
                         if self.card_selected is None:
                             return # if the user clicks confirm without selecting a card, just close the menu
-                        return self.create_send_action(self.card_selected)
+                        self.create_send_action(self.card_selected)
+                        return 
                     elif self.next_page.rectangle.collidepoint(pygame.mouse.get_pos()):
                         # increments current page up to the max page
                         self.current_page = min(self.current_page + 1, len(self.cards) // 6)
@@ -570,37 +622,71 @@ class CardMenu:
                     else:
                         if self.action != CardMenuAction.RESERVED:
                             self.card_selected = None # deselect the card but doesn't close since cloning and stripping is forced
+                        elif self.selection_box_rect.collidepoint(pygame.mouse.get_pos()):
+                            continue # do nothing if the user clicks inside the menu
                         else: # reserve cards can be closed
                             self.card_selected = None
                             return # if the user clicks outside the menu, just close it
             pygame.display.update()
             FPSCLOCK.tick(FPS)
+    def remove_border_to_card(self):
+        if not self.highlighted_box[0] and not self.highlighted_box[1]:
+            return
+        card_width, card_height = self.cards[0].get_card_size(Board.instance())
+        x_start = self.highlighted_box[0]
+        y_start = self.highlighted_box[1]
+        self.highlighted_box = (None, None, None, None)
+        
+        pygame.draw.rect(DISPLAYSURF, (50, 50, 50), (x_start-10, y_start-10, card_width+55+20, card_height+55+20))
+    def remove_border_to_card2(self):
+        
+        if not self.highlighted_box[0] and not self.highlighted_box[1]:
+            return
+        card_width, card_height = self.cards[0].get_card_size(Board.instance())
+        x_start = self.highlighted_box[0]
+        y_start = self.highlighted_box[1]
+        self.highlighted_box2 = (None, None, None, None)
+        
+        pygame.draw.rect(DISPLAYSURF, (50, 50, 50), (x_start-10, y_start-10, card_width+55+20, card_height+55+20))
     def add_border_to_card2(self, card):
 
         self.highlighted_box2 = (self.current_card_mapping[card][0], self.current_card_mapping[card][1], self.current_card_mapping[card][2], card)
 
     def add_border_to_card(self, card):
-        # width height index, card
+        """visually highlights this card"""
+        
         self.highlighted_box = (self.current_card_mapping[card][0], self.current_card_mapping[card][1], self.current_card_mapping[card][2], card)
 
-    def draw_border_to_card(self, card):
-        if not self.highlighted_box[0] or not self.highlighted_box[1]:
+    def draw_border_to_card(self, card : Card):
+        if not self.highlighted_box[0] and not self.highlighted_box[1]:
             return
         card_width, card_height = self.cards[0].get_card_size(Board.instance())
         x_start = self.highlighted_box[0]
         y_start = self.highlighted_box[1]
         #card = 
-        pygame.draw.rect(DISPLAYSURF, RED, (x_start, y_start, card_width+20, card_height+20), 10)
-        card_index = self.current_card_mapping[card][2]
-        #card.draw_for_sidebar(DISPLAYSURF,WIDTH/7 + card_index*(card_width),HEIGHT*3/10 ) # card is on top of the border
-        pygame.display.update()
+        pygame.draw.rect(DISPLAYSURF, RED, (x_start-10, y_start-10, card_width+55+20, card_height+55+20))
+        #card_index = self.current_card_mapping[card][2]
+        #card.draw_for_sidebar(DISPLAYSURF,WIDTH/7 + card_index*(card_width+55),HEIGHT*3/10 ) # card is on top of the border
+        #pygame.display.update()
+
+    def draw_border_to_card2(self, card : Card):
+        if not self.highlighted_box2[0] or not self.highlighted_box2[1]:
+            return
+        card_width, card_height = self.cards[0].get_card_size(Board.instance())
+        x_start = self.highlighted_box2[0]
+        y_start = self.highlighted_box2[1]
+        #card = 
+        pygame.draw.rect(DISPLAYSURF, RED, (x_start-10, y_start-10, card_width+55+20, card_height+55+20))
+        #card_index = self.current_card_mapping[card][2]
+        #card.draw_for_sidebar(DISPLAYSURF,WIDTH/7 + card_index*(card_width+55),HEIGHT*3/10 ) # card is on top of the border
+        #pygame.display.update()
 
     def check_if_clicked_card(self, mouse_pos):
         for card in self.current_card_mapping:
             x_start = self.current_card_mapping[card][0]
             y_start = self.current_card_mapping[card][1]
-            x_end = x_start + Card.get_card_size(Board.instance())[0]
-            y_end = y_start + Card.get_card_size(Board.instance())[1]
+            x_end = x_start + Card.get_card_size(Board.instance())[0] * 1.5
+            y_end = y_start + Card.get_card_size(Board.instance())[1] * 1.5
             if x_start <= mouse_pos[0] <= x_end and y_start <= mouse_pos[1] <= y_end:
                 return card
         return False
