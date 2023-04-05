@@ -440,7 +440,7 @@ def check_sidebar_clone(user, position):
         action_manager.update(Player.instance(id=CURR_PLAYER).name)
         if Sidebar.instance().is_clicked_owned_cards(position):
             print("=== clicked bought cards")
-            if check_clone:
+            if check_clone():
                 print("=== preparing to clone")
                 print(list(Player.instance(id=CURR_PLAYER).cards_bought.keys()))
                 card_menu = CardMenu(list(Player.instance(id=CURR_PLAYER).cards_bought.keys()), CardMenuAction.CLONE)
@@ -486,7 +486,7 @@ def perform_action(obj, user, position, game_id, authenticator):
             #  find noble in the json
             for action in action_manager.actions:
                 if "card" in action and "cardId" in action["card"] and action["card"]["cardId"] == obj.get_id()\
-                    and action["actionType"] == Action.TAKE_NOBLE.value:
+                    and action["actionType"] == Action.RESERVE_NOBLE.value:
                   
                     action_manager.perform_action(obj.get_id())
         
@@ -926,6 +926,7 @@ def play(authenticator, game_id, screen):
                     if TRADING_POST_ENABLED:
                         TradeRoute.instance().check_click(position,DISPLAYSURF)
                     check_sidebar_reserve(logged_in_user, position)
+                    check_sidebar_clone(logged_in_user, position)
                     obj = get_clicked_object(position)
                     perform_action(obj, logged_in_user, position, game_id, authenticator)
                     global EXIT
