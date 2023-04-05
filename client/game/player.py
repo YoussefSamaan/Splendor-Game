@@ -45,6 +45,10 @@ class Player:
         self.trade_routes = {} # to store unlocked trade routes
         self.pos = id # 0-indexed, from 0 to MAX_PLAYERS last excluded
 
+        self.cards_bought_json = None
+        self.nobles_json = None
+        self.reserved_cards_json = None
+
         # for sidebar
         self.last_position_card = (0, Card.get_card_size()[1] / 4 + 10)
         self.last_position_noble = (0, Card.get_card_size()[1] / 4 + 10)
@@ -323,36 +327,41 @@ class Player:
         if 'WHITE' in newtokens:
             self.tokens[Color.WHITE] = newtokens['WHITE']
 
-        self.nobles = {}
-        self.cards_bought = {}
-        self.reserved_cards = {}
-        self.last_position_card = (0, Card.get_card_size()[1] / 4 + 10)
-        self.last_position_noble = (0, Card.get_card_size()[1] / 4 + 10)
-        self.last_position_reserved = (0, Card.get_card_size()[1] / 4 + 10)
+        if inventory['nobles'] != self.nobles_json:
+            self.nobles_json = inventory['nobles']
+            self.nobles = {}
+            self.last_position_noble = (0, Card.get_card_size()[1] / 4 + 10)
+            for nobleJson in inventory['nobles']:
+                noble = Noble.instance(id=nobleJson['cardId'])
+                if noble not in self.nobles.keys():
+                    self.add_noble_to_sidebar(noble)
+                    noble.isOnDisplay = False
 
-        for nobleJson in inventory['nobles']:
-            noble = Noble.instance(id=nobleJson['cardId'])
-            if noble not in self.nobles.keys():
-                self.add_noble_to_sidebar(noble)
-                noble.isOnDisplay = False
+        if inventory['boughtCards'] != self.cards_bought_json:
+            self.cards_bought_json = inventory['boughtCards']
+            self.cards_bought = {}
+            self.last_position_card = (0, Card.get_card_size()[1] / 4 + 10)
+            for card_json in inventory['boughtCards']:
+                for color in Color:
+                    if str(color).split('.')[1] == card_json['color']:
+                        color = color
+                        break
+                card = Card.instance(id=card_json['cardId'], color=color)
+                if card not in self.cards_bought.keys():
+                    self.add_card_to_sidebar(card)
 
-        for card_json in inventory['boughtCards']:
-            for color in Color:
-                if str(color).split('.')[1] == card_json['color']:
-                    color = color
-                    break
-            card = Card.instance(id=card_json['cardId'], color=color)
-            if card not in self.cards_bought.keys():
-                self.add_card_to_sidebar(card)
-
-        for card_json in inventory['reservedCards']:
-            for color in Color:
-                if str(color).split('.')[1] == card_json['color']:
-                    color = color
-                    break
-            card = Card.instance(id=card_json['cardId'], color=color)
-            if card not in self.reserved_cards.keys():
-                self.reserve_card_to_sidebar(card)
+        if inventory['reservedCards'] != self.reserved_cards_json:
+            self.reserved_cards_json = inventory['reservedCards']
+            self.reserved_cards = {}
+            self.last_position_reserved = (0, Card.get_card_size()[1] / 4 + 10)
+            for card_json in inventory['reservedCards']:
+                for color in Color:
+                    if str(color).split('.')[1] == card_json['color']:
+                        color = color
+                        break
+                card = Card.instance(id=card_json['cardId'], color=color)
+                if card not in self.reserved_cards.keys():
+                    self.reserve_card_to_sidebar(card)
             
 
         discounts = inventory['discounts']
