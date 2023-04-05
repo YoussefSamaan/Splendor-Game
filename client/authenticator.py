@@ -10,7 +10,7 @@ class Authenticator:
         self.token = None
         self.refresh_token = None
         # Time since last refresh
-        self.last_refresh = time.time()
+        self.last_refresh = time()
 
     def authenticate(self, username, password):
         url = config.LOBBY_SERVICE_URL + '/oauth/token'
@@ -43,9 +43,9 @@ class Authenticator:
 
     def get_token(self, escape=False):
         # Refresh the token if it is older than 5 minutes
-        if time.time() - self.last_refresh > 300:
+        if time() - self.last_refresh > 300:
             self.refresh()
-            self.last_refresh = time.time()
+            self.last_refresh = time()
         if escape:
             return self.token.replace('+', "%2B")
 

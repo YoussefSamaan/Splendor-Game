@@ -427,46 +427,50 @@ def check_sidebar_reserve(user, position):
             print(list(Player.instance(id=CURR_PLAYER).reserved_cards.keys()))
             card_menu = CardMenu(list(Player.instance(id=CURR_PLAYER).reserved_cards.keys()), CardMenuAction.RESERVED)
             card_menu.display()
-def perform_action(obj, user, position):
-    if obj is None:
-        return
-    global CURR_PLAYER
-    global action_manager
-    # make sure it's the current user's turn, otherwise cannot take cards
-    if user == Player.instance(id=CURR_PLAYER).name:
-        action_manager.update(Player.instance(id=CURR_PLAYER).name)
-        
-        if isinstance(obj, Card):
-            global cascade
-            if cascade:
-                get_user_cascade_selection(obj)
-            else:
-                get_user_card_selection(obj)
-        elif isinstance(obj, Token):
-            # opens token selection menu
-            get_token_selection()
-            
-        elif isinstance(obj, Noble):
-            pass
-        #elif isinstance(obj, City):
-            #pass
-        # players shouldn't click on nobles
-            # obj.take_noble(Sidebar.instance(), Player.instance(id=CURR_PLAYER))
-            # set_flash_message('Took a noble')
-       
-        elif isinstance(obj, Player):
-            Sidebar.instance().switch_player(obj)
+def perform_action(obj, user, position, game_id, authenticator):
+  if obj is None:
+      return
+  global CURR_PLAYER
+  global action_manager
 
-    # When it's not the user's turn, still allow switching between sidebars
+  # Check menu not matter the turn
+  if isinstance(obj, Menu):
+    selection = Menu.instance().get_menu_selection(DISPLAYSURF)
+    if selection == "save":
+      server_manager.save_game(authenticator, game_id)
+      set_flash_message('Game saved')
+    elif selection == "lobby":
+      global EXIT
+      EXIT = True
+      
+    return
+  # make sure it's the current user's turn, otherwise cannot take cards
+  if user == Player.instance(id=CURR_PLAYER).name:
+    action_manager.update(Player.instance(id=CURR_PLAYER).name)
+    
+    if isinstance(obj, Card):
+      global cascade
+      if cascade:
+        get_user_cascade_selection(obj)
+      else:
+        get_user_card_selection(obj)
+    elif isinstance(obj, Token):
+      # opens token selection menu
+      get_token_selection()
+    elif isinstance(obj, Noble):
+      pass
+    #elif isinstance(obj, City):
+        #pass
+    # players shouldn't click on nobles
+        # obj.take_noble(Sidebar.instance(), Player.instance(id=CURR_PLAYER))
+        # set_flash_message('Took a noble')
+    
     elif isinstance(obj, Player):
-        Sidebar.instance().switch_player(obj)
-    elif isinstance(obj, Menu):
-        selection = Menu.instance().get_menu_selection(DISPLAYSURF)
-        if selection == "save":
-          pass
-        elif selection == "lobby":
-          global EXIT
-          EXIT = True
+      Sidebar.instance().switch_player(obj)
+
+  # When it's not the user's turn, still allow switching between sidebars
+  elif isinstance(obj, Player):
+    Sidebar.instance().switch_player(obj)
 
 class CardMenuAction(Enum):
     CLONE = 1
@@ -828,7 +832,7 @@ def play(authenticator, game_id):
                         TradeRoute.instance().check_click(position,DISPLAYSURF)
                     check_sidebar_reserve(logged_in_user, position)
                     obj = get_clicked_object(position)
-                    perform_action(obj, logged_in_user, position)
+                    perform_action(obj, logged_in_user, position, game_id, authenticator)
                     global EXIT
                     if EXIT:
                         return

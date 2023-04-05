@@ -3,7 +3,6 @@ from singleton import Singleton
 from color import Color
 from utils import write_on, dim_screen, get_selection_box, button
 
-
 @Singleton
 class Menu:
   """
@@ -28,6 +27,7 @@ class Menu:
     Pop up the menu, and get the user selection.
     User can select to save the game, or go back to the lobby.
     """
+    print("get_menu_selection")
     # display grey box
     dim_screen(screen)
     menu_surface, menu_rect = get_selection_box(screen)
@@ -63,7 +63,6 @@ class Menu:
             return "lobby"
           if not menu_rect.collidepoint(event.pos):
             return None
-
 
   def get_rect(self):
     return self.menuRect
