@@ -184,6 +184,7 @@ def update(authenticator, game_id):
         initialize_game(board_json)
     global action_manager
     action_manager.update(Player.instance(id=CURR_PLAYER).name)
+    print(action_manager.actions)
     # TODO: add cascading buy for cards]
     # if we need to cascade, we don't chance players
     check_cascade()
@@ -204,15 +205,12 @@ def update(authenticator, game_id):
         #update_cities(board_json)
     else:
         update_nobles(board_json)
+
 def check_clone():
     """checks if the card has a clone effect. if so, display card menu with clone action so player can choose what to clone"""
     global action_manager, PERSISTENT_MESSAGE
     if action_manager.has_unlocked_clone(Player.instance(id=CURR_PLAYER).name):
         PERSISTENT_MESSAGE = "You Unlocked a Clone! Choose a card to clone!"
-        
-        card_menu = CardMenu(list(Player.instance(id=CURR_PLAYER).cards_bought.keys()), CardMenuAction.CLONE)
-        card_menu.display()
-
         return True
     else:
         PERSISTENT_MESSAGE = None
@@ -517,6 +515,9 @@ class CardMenu:
         write_on(DISPLAYSURF, self.prev_page.text, center=self.prev_page.rectangle.center,color=WHITE)
         #write_on(DISPLAYSURF, "Page " + str(self.current_page + 1) + "/" + str(math.ceil(len(self.cards) / 5)), WIDTH/2, HEIGHT*3/10 - 20, size=30)
         # draw the cards, we will draw them the same size as on the board
+        if len(self.cards) == 0:
+            # if there are no cards, abort
+            return 
         card_width, card_height = self.cards[0].get_card_size(Board.instance())
         self.draw_border_to_card(self.highlighted_box[2])
         if self.card_selected2 is not None:

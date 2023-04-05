@@ -45,7 +45,7 @@ class ActionManager:
         elif action_type == Action.DISCARD:
             # Discard is special
             return self.get_discard_action_id(card)
-        elif action_type == Action.CLONE:
+        elif action_type == Action.CLONE_CARD:
             # Clone is special
             return self.get_clone_action_id(card)
         elif action_type == Action.BUY_RESERVED_CARD:
@@ -96,7 +96,7 @@ class ActionManager:
         print("Getting clone action id for card: " + str(card.get_id()))
         for action in self.actions:
             if "card" in action and "cardId" in action["card"] and action["card"]["cardId"] == card.get_id()\
-                and action["actionType"] == Action.CLONE.value:
+                and action["actionType"] == Action.CLONE_CARD.value:
                 print("Found clone action id: " + str(action["actionId"]))
                 return action["actionId"]
         print("Action not found")
@@ -144,7 +144,7 @@ class ActionManager:
             # Not player's turn
             return False
         for action in self.actions:
-            if "actionType" in action and action["actionType"] == Action.CLONE.value:
+            if "actionType" in action and action["actionType"] == Action.CLONE_CARD.value:
                 print("has unlocked clone")
                 return True
         return False
