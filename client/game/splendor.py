@@ -429,7 +429,7 @@ def check_sidebar_clone(user, position):
             if check_clone:
                 print("=== preparing to clone")
                 print(list(Player.instance(id=CURR_PLAYER).cards_bought.keys()))
-                card_menu = CardMenu(list(Player.instance(id=CURR_PLAYER).cards_bought.keys()), CardMenuAction.RESERVED)
+                card_menu = CardMenu(list(Player.instance(id=CURR_PLAYER).cards_bought.keys()), CardMenuAction.CLONE)
                 card_menu.display()
             
 def perform_action(obj, user, position):
