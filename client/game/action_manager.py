@@ -122,7 +122,7 @@ class ActionManager:
             # Not player's turn
             return False
         for action in self.actions:
-            if "actionType" in action and action["actionType"] == Action.RESERVE_NOBLE.value:
+            if "actionType" in action and action["actionType"] == Action.TAKE_NOBLE.value:
                 print("has unlocked reserve")
                 return True
         return False

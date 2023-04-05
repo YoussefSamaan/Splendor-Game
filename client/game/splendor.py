@@ -431,7 +431,7 @@ def check_sidebar_clone(user, position):
                 print(list(Player.instance(id=CURR_PLAYER).cards_bought.keys()))
                 card_menu = CardMenu(list(Player.instance(id=CURR_PLAYER).cards_bought.keys()), CardMenuAction.CLONE)
                 card_menu.display()
-            
+
 def perform_action(obj, user, position):
     if obj is None:
         return
@@ -453,8 +453,16 @@ def perform_action(obj, user, position):
             
         elif isinstance(obj, Noble):
             # check if the player is currently in the reserve noble phase
-    
-            pass
+            
+            if action_manager.has_unlocked_reserve_noble(Player.instance(id=CURR_PLAYER).name):
+                print("=-=-=-=preparing to reserve a noble")
+                #  find noble in the json
+                for action in action_manager.actions:
+                    if "card" in action and "cardId" in action["card"] and action["card"]["cardId"] == obj.get_id()\
+                        and action["actionType"] == Action.TAKE_NOBLE.value:
+                      
+                        action_manager.perform_action(obj.get_id())
+            
         #elif isinstance(obj, City):
             #pass
         # players shouldn't click on nobles
