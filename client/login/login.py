@@ -44,6 +44,13 @@ def login(authenticator: Authenticator, full_screen: pygame.Surface):
     login_rect = pygame.Rect((350, 600, 200, 70))
     login_text = base_font.render('Login', True, WHITE)
 
+    difference_width = (full_screen.get_width() - screen.get_width()) / 2
+    difference_height = (full_screen.get_height() - screen.get_height()) / 2
+    # copy the login rect to a new rect for click detection
+    login_click_rect = pygame.Rect(login_rect.x + difference_width, login_rect.y + difference_height, login_rect.width, login_rect.height)
+    username_click_rect = pygame.Rect(username_input_rect.x + difference_width, username_input_rect.y + difference_height, username_input_rect.width, username_input_rect.height)
+    password_click_rect = pygame.Rect(password_input_rect.x + difference_width, password_input_rect.y + difference_height, password_input_rect.width, password_input_rect.height)
+
     username_text_display = base_font.render('Username', True, WHITE)
     password_text_display = base_font.render('Password', True, WHITE)
 
@@ -67,18 +74,18 @@ def login(authenticator: Authenticator, full_screen: pygame.Surface):
 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 wrong_credentials = False
-                if login_rect.collidepoint(event.pos):
+                if login_click_rect.collidepoint(event.pos):
                     if authenticator.authenticate(username_text, password_text):
                         return
                     else:
                         wrong_credentials = True
 
-                if username_input_rect.collidepoint(event.pos):
+                if username_click_rect.collidepoint(event.pos):
                     username_active = True
                     username_color = color_active
                     password_active = False
                     password_color = color_passive
-                elif password_input_rect.collidepoint(event.pos):
+                elif password_click_rect.collidepoint(event.pos):
                     password_active = True
                     password_color = color_active
                     username_active = False
@@ -137,9 +144,6 @@ def login(authenticator: Authenticator, full_screen: pygame.Surface):
         pygame.draw.rect(screen, username_color, username_input_rect, 3)
         pygame.draw.rect(screen, password_color, password_input_rect, 3)
         pygame.draw.rect(screen, GREEN, login_rect)
-        # login_rect.x = login_rect.x + full_screen.get_width() / 2
-        # login_rect.y = login_rect.y + full_screen.get_height() / 2
-
         username_text_surface = base_font.render(username_text, True, WHITE)
         screen.blit(username_text_surface, (username_input_rect.x + 5, username_input_rect.y + 5))
 
@@ -151,7 +155,9 @@ def login(authenticator: Authenticator, full_screen: pygame.Surface):
         screen.blit(password_text_display, (150, 425))
 
         username_input_rect.w = max(600, username_text_surface.get_width() + 10)
+        username_click_rect.w = max(600, username_text_surface.get_width() + 10)
         password_input_rect.w = max(600, password_text_surface.get_width() + 10)
+        password_click_rect.w = max(600, password_text_surface.get_width() + 10)
 
         full_screen.blit(screen, screen_rect)
         pygame.display.flip()
