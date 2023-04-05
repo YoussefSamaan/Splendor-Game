@@ -21,7 +21,14 @@ def login(authenticator: Authenticator):
     pygame.display.set_caption('Splendor')
 
     clock = pygame.time.Clock()
-    screen = pygame.display.set_mode((WIDTH, HEIGHT))  # , pygame.FULLSCREEN
+    full_screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.FULLSCREEN)  # , pygame.FULLSCREEN
+    screen = pygame.Surface((WIDTH, HEIGHT))
+    full_screen.fill(GREY)
+    # center the screen on the full screen
+    screen_rect = screen.get_rect()
+    full_screen_rect = full_screen.get_rect()
+    screen_rect.center = full_screen_rect.center
+    full_screen.blit(screen, screen_rect)
 
     splendor_text = pygame.image.load('../sprites/splendor-title.png')
     splendor_text = pygame.transform.scale(splendor_text, (500, 200))
@@ -145,5 +152,6 @@ def login(authenticator: Authenticator):
         username_input_rect.w = max(600, username_text_surface.get_width() + 10)
         password_input_rect.w = max(600, password_text_surface.get_width() + 10)
 
+        full_screen.blit(screen, screen_rect)
         pygame.display.flip()
         clock.tick(FPS)
