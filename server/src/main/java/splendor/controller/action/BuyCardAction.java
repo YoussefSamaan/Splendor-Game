@@ -182,6 +182,9 @@ public class BuyCardAction extends CardAction {
     player.addCard(card);
     board.removeCard(card);
     card.getSpecialActions().forEach(player::addNextAction); // add special actions to player
+    if (player.getCardsBought().size() == 0 && player.containsNextAction(ActionType.CLONE_CARD)) {
+      player.removeNextAction(ActionType.CLONE_CARD);
+    }
     if (board.getNobles() == null) {
       if (player.containsNextAction(ActionType.TAKE_NOBLE)) {
         player.removeNextAction(ActionType.TAKE_NOBLE);
