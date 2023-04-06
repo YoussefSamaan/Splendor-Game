@@ -19,6 +19,7 @@ class City:
         self._id = id  # 1 -> 3
         self._image = pygame.image.load('../sprites/cities/{}.png'.format(id))
         self.slot = len(City.flyweights)  # The slot position of the city
+        print("city slot: ", self.slot)
         self.pos = self._default_position()
         self.isOnDisplay = True
 
