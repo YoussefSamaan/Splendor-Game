@@ -112,6 +112,16 @@
         "white": 2
       },
       "prestige_points": 13
+    },
+    {
+      "id": 15,
+      "cards": {
+        "green": 1,
+        "red": 1,
+        "blue": 1,
+        "white": 1
+      },
+      "prestige_points": 15
     }
   ],
   "deckSize": 3
