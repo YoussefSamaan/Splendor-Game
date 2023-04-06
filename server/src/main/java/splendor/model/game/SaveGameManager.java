@@ -27,6 +27,8 @@ public class SaveGameManager {
 
   /**
    * Constructor.
+   *
+   * @param saveGamePath the save game path.
    */
   @Autowired
   public SaveGameManager(@Value("${savegame.location}") String saveGamePath) {
