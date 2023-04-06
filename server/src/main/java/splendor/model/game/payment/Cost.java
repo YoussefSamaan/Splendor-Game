@@ -9,12 +9,29 @@ import splendor.model.game.Color;
  */
 public class Cost implements Iterable<Color> {
   private final HashMap<Color, Integer> costMap;
+  private int prestigePoints;
 
   /**
    * Creates a new cost.
    */
   public Cost(HashMap<Color, Integer> costMap) {
     this.costMap = new HashMap<>(costMap);
+    this.prestigePoints = 0;
+  }
+
+  /**
+   * Creates a new cost.
+   */
+  public Cost(HashMap<Color, Integer> costMap, int prestigePoints) {
+    this.costMap = new HashMap<>(costMap);
+    this.prestigePoints = prestigePoints;
+  }
+
+  /**
+   * Update prestige points.
+   */
+  public void updatePrestigePoints(int prestigePoints) {
+    this.prestigePoints = prestigePoints;
   }
 
   /**
@@ -59,6 +76,15 @@ public class Cost implements Iterable<Color> {
     }
 
     return true;
+  }
+
+  /**
+   * Checks isAffordable with prestige points.
+   *
+   * @param resources a Cost to add
+   */
+  public boolean isAffordable(HashMap<Color, Integer> resources, int prestigePoints) {
+    return prestigePoints >= this.prestigePoints && isAffordable(resources);
   }
 
   /**

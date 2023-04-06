@@ -20,7 +20,7 @@ import splendor.model.game.player.Player;
 
 
 public class BoardTest {
-	
+
 	static Player player1 = new Player("Wassim", "Blue");
 	static Player player2 = new Player("Youssef", "Red");
 	static Player player3 = new Player("Felicia", "Green");
@@ -28,8 +28,8 @@ public class BoardTest {
 	static Player player5 = new Player("Kevin", "White");
 	static Player player6 = new Player("Rui", "Yellow");
 	static Board testBoard;
-	
-	
+
+
 	@BeforeAll
 	static void setUp() throws Exception {
 	}
@@ -139,19 +139,19 @@ public class BoardTest {
 		new Board(player1,player2);
 		Assertions.assertTrue(true);
 	}
-	
+
 	@Test
 	void initBoardWithThreePlayers() {
 		new Board(player1,player2,player3);
 		Assertions.assertTrue(true);
 	}
-	
+
 	@Test
 	void initBoardWithFourPlayers() {
 		new Board(player1,player2,player3,player4);
 		Assertions.assertTrue(true);
 	}
-	
+
 	@Test
 	void initBoardWithFivePlayers() {
 		Assertions.assertThrows(IllegalArgumentException.class, () -> {
@@ -159,7 +159,7 @@ public class BoardTest {
 		});
 		Assertions.assertTrue(true);
 	}
-	
+
 	@Test
 	void initBoardWithSixPlayers() {
 		 Assertions.assertThrows(IllegalArgumentException.class, () -> {
@@ -167,7 +167,7 @@ public class BoardTest {
 		});
 		Assertions.assertTrue(true);
 	}
-	
+
 	@Test
 	void initBoardWithDuplicatePlayers() {
 		 Assertions.assertThrows(IllegalArgumentException.class, () -> {
@@ -188,7 +188,7 @@ public class BoardTest {
 	void validateDecks() {
 		Assertions.assertEquals(SplendorDeck[].class,testBoard.getDecks().getClass());
 	}
-	
+
 	// TODO: TEST buyCard method
 
 	@Test
@@ -258,7 +258,7 @@ public class BoardTest {
 		testBoard = new Board(player1,player2,player3,player4);
 		Assertions.assertTrue(testBoard.isTurnPlayer(player1));
 	}
-	
+
 	@Test
 	void validateSecondTurn() {
 		testBoard = new Board(player1,player2,player3,player4);

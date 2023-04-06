@@ -384,7 +384,7 @@ public class Board implements BroadcastContent {
    */
   public void updateCities(Player player) {
     for (City city : getCities()) {
-      if (city.getCost().isAffordable(player.getBonuses())) {
+      if (city.getCost().isAffordable(player.getBonuses(), player.getPrestigePoints())) {
         player.addCity(city);
         removeCity(city);
         return; // only unlock one city per turn?

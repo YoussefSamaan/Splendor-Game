@@ -16,6 +16,7 @@ public abstract class AbstractCard implements SplendorCard {
 
   private static JSONObject cardsJson;
   private static JSONObject noblesJson;
+  private static JSONObject citiesJson;
   private final int cardId; // 1 indexed
   private final Cost cost;
   private final int prestigePoints;
@@ -136,20 +137,25 @@ public abstract class AbstractCard implements SplendorCard {
   protected JSONObject getCardJson() {
     JSONArray cards;
     if (this instanceof Noble) {
-      cards = getJson().getJSONArray("nobles");
+      cards = getNoblesJson().getJSONArray("nobles");
+    } else if (this instanceof City) {
+      cards = getCitiesJson().getJSONArray("cities");
     } else {
-      cards = getJson().getJSONArray("cards");
+      cards = getCardsJson().getJSONArray("cards");
     }
     return cards.getJSONObject(cardId - 1); // -1 because cardId is 1 indexed
   }
 
   /**
-   * Returns the json object of the entire file.
+   * Returns the json object of the cities file.
    *
    * @return the json object.
    */
-  protected JSONObject getJson() {
-    return this instanceof Noble ? getNoblesJson() : getCardsJson();
+  protected static JSONObject getCitiesJson() {
+    if (citiesJson == null) {
+      citiesJson = JsonParameters.getCitiesJson();
+    }
+    return citiesJson;
   }
 
   /**
