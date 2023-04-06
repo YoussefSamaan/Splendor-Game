@@ -39,7 +39,7 @@ public class TakeOneTokenAction implements Action {
     for (Color color : game.getBoard().getTokens().keySet()) {
       HashMap<Color, Integer> tk = new HashMap<>();
       tk.put(color, 1);
-      actions.add(new TakeTokensAction(ActionType.TAKE_ONE_TOKEN, tk));
+      actions.add(new TakeOneTokenAction(ActionType.TAKE_ONE_TOKEN, tk));
     }
     return actions;
   }

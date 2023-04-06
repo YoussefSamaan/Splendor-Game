@@ -69,7 +69,7 @@ def flash_message(screen, text, color=GREEN, opacity=255):
     :param: color: the color of the text
     :param opacity: the opacity of the box
     """
-    box = pygame.Surface((screen.get_width() / 4, screen.get_height() / 10))
+    box = pygame.Surface((screen.get_width() / 2, screen.get_height() / 10))
     box.set_alpha(opacity)
     box.fill(color)
     write_on(box, text)

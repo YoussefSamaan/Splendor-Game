@@ -310,4 +310,8 @@ public class Inventory {
       this.discounts.replace(c, this.discounts.getOrDefault(c, 0) - card.getBonus().getBonus(c));
     }
   }
+
+  public void addReservedNoble(Noble noble) {
+    this.nobles.add(noble);
+  }
 }

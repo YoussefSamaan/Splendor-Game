@@ -49,11 +49,6 @@ public interface SplendorPlayer {
   void removeOldestNextAction();
 
   /**
-   * resets the next action.
-   */
-  void resetNextActions();
-
-  /**
    * returns a lost of the cards bought by the player.
    *
    * @return  the cards bought by the player.
