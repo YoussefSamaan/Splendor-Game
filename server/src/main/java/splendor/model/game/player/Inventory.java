@@ -299,7 +299,15 @@ public class Inventory {
     this.reservedCards.remove(card);
   }
 
+  /**
+   * Get rid of the card bought and associated bonuses.
+   *
+   * @param card the card
+   */
   public void removeCardBought(DevelopmentCardI card) {
     this.boughtCards.remove(card);
+    for (Color c : Color.tokenColors()) {
+      this.discounts.replace(c, this.discounts.getOrDefault(c, 0) - card.getBonus().getBonus(c));
+    }
   }
 }
