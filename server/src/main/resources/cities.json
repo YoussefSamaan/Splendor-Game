@@ -92,6 +92,16 @@
         "white": 2
       },
       "prestige_points": 13
+    },
+    {
+      "id": 12,
+      "cost": {
+        "green": 1,
+        "red": 1,
+        "blue": 1,
+        "white": 1
+      },
+      "prestige_points": 14
     }
   ],
   "deckSize": 3

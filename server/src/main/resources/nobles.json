@@ -88,18 +88,12 @@
     {
       "id": 11,
       "cost": {
-        "blue": 10,
-        "green": 10
+        "blue": 4,
+        "green": 4,
+        "red": 4,
+        "white": 4
       },
-      "prestige_points": 8
-    },
-    {
-      "id": 12,
-        "cost": {
-          "blue": 5,
-          "green": 5
-        },
-      "prestige_points": 5
+      "prestige_points": 14
     }
   ],
   "deckSize": 3

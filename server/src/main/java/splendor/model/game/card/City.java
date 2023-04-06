@@ -4,7 +4,7 @@ package splendor.model.game.card;
  * Flyweight for a city card.
  */
 public class City extends AbstractCard {
-  private static final int NUMBER_OF_CITIES = 11;
+  private static final int NUMBER_OF_CITIES = 12;
   private static final City[] CITIES = new City[NUMBER_OF_CITIES];
 
   /**
