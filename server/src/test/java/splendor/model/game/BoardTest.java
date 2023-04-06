@@ -490,4 +490,10 @@ public class BoardTest {
 		SplendorCard red3 = testBoard.removeFacedDownCard(FacedDownCardTypes.RED_3);
 		Assertions.assertEquals(blue, blue); // change later
 	}
+
+	@Test
+	public void testBoardNotEmpty() {
+		testBoard = new Board(player1,player2,player3,player4);
+		Assertions.assertTrue(!testBoard.isEmpty());
+	}
 }

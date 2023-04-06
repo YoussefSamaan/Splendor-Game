@@ -5,6 +5,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import static org.junit.Assert.assertTrue;
+
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import splendor.model.game.Color;
 import splendor.model.game.player.Inventory;
@@ -73,4 +75,11 @@ public class CoatOfArmsTest {
     CoatOfArms.addUnlockedCoatOfArms(player);
     assertTrue(player.getCoatOfArms().contains(CoatOfArms.get(1)));
   }
+
+  @Test
+  public void testGetter() {
+    CoatOfArms coat = CoatOfArms.get(1);
+    Assertions.assertEquals(1, coat.getId());
+  }
+
 }
