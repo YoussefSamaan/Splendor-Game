@@ -1,9 +1,12 @@
 package splendor.model.game;
+
 import java.lang.reflect.Field;
 import java.util.HashMap;
-import java.util.List;
 import java.util.stream.IntStream;
-import org.junit.jupiter.api.*;
+import javax.naming.InsufficientResourcesException;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import splendor.model.game.card.City;
 import splendor.model.game.card.DevelopmentCard;
 import splendor.model.game.card.Noble;
@@ -11,7 +14,6 @@ import splendor.model.game.deck.SplendorDeck;
 import splendor.model.game.payment.Token;
 import splendor.model.game.player.Inventory;
 import splendor.model.game.player.Player;
-import javax.naming.InsufficientResourcesException;
 
 
 
