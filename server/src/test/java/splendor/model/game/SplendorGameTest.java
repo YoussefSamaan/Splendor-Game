@@ -89,4 +89,10 @@ public class SplendorGameTest {
 		testPerformAction();
 //		Assertions.assertTrue(testSplendorGame.isTurnPlayer(player1)); // returning
 	}
+
+	@Test
+	public void testCreateSavedGameSameNumberPlayers() {
+		SplendorGame newGame = new SplendorGame(testSplendorGame);
+		Assertions.assertEquals(newGame.getGameInfo().getPlayers().length, 2);
+	}
 }
