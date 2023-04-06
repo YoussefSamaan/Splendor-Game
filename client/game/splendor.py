@@ -90,9 +90,9 @@ class IndividualTokenSelection:
 def initialize_game_type(board_json):
     global TRADING_POST_ENABLED
     global CITIES_ENABLED
-    if board_json['gameType'] == 'SplendorTraderoute':
+    if board_json['gameType'] == 'TRADEROUTES':
         TRADING_POST_ENABLED = True
-    elif board_json['gameType'] == 'SplendorCities':
+    elif board_json['gameType'] == 'CITIES':
         CITIES_ENABLED = True
 
 def initialize_game(board_json):
@@ -122,7 +122,7 @@ def initialize_trade_routes(board_json):
     TradeRoute.instance()
 
 def initialize_cities(board_json):
-    ids = [city['cardId'] for city in board_json['cities']['city']  if city is not None]
+    ids = [city['cardId'] for city in board_json['cityDeck']['cities']  if city is not None]
     City.initialize(ids)
 
 
@@ -207,13 +207,14 @@ def update(authenticator, game_id):
     global has_initialized
     global action_manager
     board_json = server_manager.get_board(authenticator=authenticator, game_id=game_id)
+    print(board_json)
     if not has_initialized:
         has_initialized = True
         initialize_game(board_json)
     global action_manager
     check_if_won(board_json,authenticator.username)
     action_manager.update(Player.instance(id=CURR_PLAYER).name)
-    print(action_manager.actions)
+    #print(action_manager.actions)
     # TODO: add cascading buy for cards]
     # if we need to cascade, we don't chance players
 
@@ -231,8 +232,7 @@ def update(authenticator, game_id):
         TradeRoute.instance().update(board_json)
         update_nobles(board_json)
     if CITIES_ENABLED:
-        pass
-        #update_cities(board_json)
+        update_cities(board_json)
     else:
         update_nobles(board_json)
 
@@ -282,6 +282,10 @@ def update_nobles(board_json):
     ids = [noble['cardId'] for noble in board_json['nobleDeck']['nobles'] if noble is not None]
     Noble.update_all(ids)
 
+def update_cities(board_json):
+    ids = [city['cardId'] for city in board_json['cityDeck']['cities']  if city is not None]
+    City.update_all(ids)
+
 def update_tokens(board_json):
     Token.update_all(board_json['bank']['tokens'])
 
@@ -322,8 +326,7 @@ def display_everything(current_user):
     display_tokens()
     display_menu()
     if CITIES_ENABLED:
-        pass
-        #display_cities()
+        display_cities()
     else:
         display_nobles()
     if TRADING_POST_ENABLED:
@@ -364,6 +367,9 @@ def display_tokens():
 
 def display_nobles():
     Noble.display_all(DISPLAYSURF)
+
+def display_cities():
+    City.display_all(DISPLAYSURF)
 
 
 def display_players(logged_in_player_username):
@@ -920,13 +926,13 @@ def play(authenticator, game_id, screen):
     global action_manager, MINIMIZED
     global EXIT
     global PERSISTENT_MESSAGE
+    global IS_WON, TRADING_POST_ENABLED, CITIES_ENABLED, has_initialized
     EXIT = False
     action_manager = ActionManager(authenticator=authenticator, game_id=game_id)
     update(authenticator, game_id)
     logged_in_user = authenticator.username
     display_everything(logged_in_user)
     while True:
-        print(IS_WON)
         if IS_WON != WIN_TYPE.NOTHING:
             
             if IS_WON == WIN_TYPE.WIN:
@@ -938,6 +944,10 @@ def play(authenticator, game_id, screen):
                 while True:
                     for event in pygame.event.get():
                         if event.type == MOUSEBUTTONDOWN or event.type == KEYDOWN:
+                            has_initialized = False
+                            TRADING_POST_ENABLED = False 
+                            CITIES_ENABLED = False
+                            IS_WON == WIN_TYPE.NOTHING
                             return
             elif IS_WON == WIN_TYPE.TIE:
                 dim_screen(DISPLAYSURF)
@@ -947,6 +957,10 @@ def play(authenticator, game_id, screen):
                 while True:
                     for event in pygame.event.get():
                         if event.type == MOUSEBUTTONDOWN or event.type == KEYDOWN:
+                            has_initialized = False
+                            TRADING_POST_ENABLED = False 
+                            CITIES_ENABLED = False
+                            IS_WON == WIN_TYPE.NOTHING
                             return
             elif IS_WON == WIN_TYPE.LOSE:
                 dim_screen(DISPLAYSURF)
@@ -956,6 +970,10 @@ def play(authenticator, game_id, screen):
                 while True:
                     for event in pygame.event.get():
                         if event.type == MOUSEBUTTONDOWN or event.type == KEYDOWN:
+                            has_initialized = False
+                            TRADING_POST_ENABLED = False 
+                            CITIES_ENABLED = False
+                            IS_WON == WIN_TYPE.NOTHING
                             return
 
         if pygame.time.get_ticks() - last_update > 2000:
@@ -1001,6 +1019,10 @@ def play(authenticator, game_id, screen):
                     obj = get_clicked_object(position)
                     perform_action(obj, logged_in_user, position, game_id, authenticator)
                     if EXIT:
+                        has_initialized = False
+                        TRADING_POST_ENABLED = False 
+                        CITIES_ENABLED = False
+                        IS_WON == WIN_TYPE.NOTHING
                         return
                     with threading.Lock():
                         threading.Thread(target=update, args=(authenticator, game_id)).start()
