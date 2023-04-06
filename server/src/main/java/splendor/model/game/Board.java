@@ -265,6 +265,9 @@ public class Board implements BroadcastContent {
    * @return a list of the nobles.
    */
   public List<Noble> getNobles() {
+    if (nobleDeck == null) {
+      return null;
+    }
     Noble[] nobles = nobleDeck.getNobles();
     return Arrays.stream(nobles)
         .filter(Objects::nonNull)
@@ -287,6 +290,9 @@ public class Board implements BroadcastContent {
    * @return a list of the cities.
    */
   public List<City> getCities() {
+    if (cityDeck == null) {
+      return null;
+    }
     City[] cities = cityDeck.getCities();
     return Arrays.stream(cities)
             .filter(Objects::nonNull)
