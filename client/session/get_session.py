@@ -21,6 +21,7 @@ def get_all_sessions(authenticator):
     saved_session["gameParameters"] = {}
     saved_session["gameParameters"]["maxSessionPlayers"] = len(saved_session["players"])
     saved_session["gameParameters"]["minSessionPlayers"] = len(saved_session["players"])
+    saved_session["gameParameters"]["name"] = saved_session["gamename"]
     saved_session["launched"] = False
     saved_session["creator"] = authenticator.username # so it can be launched
     saved_session["created"] = False
