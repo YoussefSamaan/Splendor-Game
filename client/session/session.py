@@ -152,7 +152,7 @@ class SessionListing:
     
     # get a string of the game description, to be blitted in the box later
     def get_game_info(self) -> str:
-        return f"{self.session_id} / {self.creator} / {','.join(self.plr_list[1:])} [{len(self.plr_list)}/{self.min_plr}-{self.max_plr}]"
+        return f"{self.session_id} / {self.game_type} / {self.creator} \n {','.join(self.plr_list[1:])} [{len(self.plr_list)}/{self.min_plr}-{self.max_plr}]"
     
     def assign_buttons(self) -> None:
         red_rect_position = (DEL_RECT_INIT_X,DEL_RECT_INIT_Y+DEL_RECT_INCR_Y*self.index_order)
