@@ -44,6 +44,7 @@ EXIT = False
 DISPLAYSURF = pygame.display.set_mode((WIDTH, HEIGHT), pygame.FULLSCREEN)
 MINIMIZED = False
 
+current_action_list = []
 
 class WIN_TYPE(Enum):
     WIN = 1
@@ -212,6 +213,7 @@ def update(authenticator, game_id):
     global action_manager
     check_if_won(board_json,authenticator.username)
     action_manager.update(Player.instance(id=CURR_PLAYER).name)
+    print(action_manager.actions)
     #print(action_manager.actions)
     # TODO: add cascading buy for cards]
     # if we need to cascade, we don't chance players
@@ -234,11 +236,28 @@ def update(authenticator, game_id):
     else:
         update_nobles(board_json)
 
+    global current_action_list
+    new_unique_action_list = action_manager.get_unique_actions()
+    if current_action_list != new_unique_action_list:
+        current_action_list = new_unique_action_list
+        if current_action_list != []:
+            set_flash_message("Your unique actions: " + ", ".join(action_manager.get_unique_actions()))
+
 def check_clone():
     """checks if the card has a clone effect. if so, display card menu with clone action so player can choose what to clone"""
     global action_manager, PERSISTENT_MESSAGE
     if action_manager.has_unlocked_clone(Player.instance(id=CURR_PLAYER).name):
-        PERSISTENT_MESSAGE = "You Unlocked a Clone! Choose a card to clone!"
+        PERSISTENT_MESSAGE = "You Unlocked a Clone! Choose a card in your sidebar to clone!"
+        return True
+    else:
+        PERSISTENT_MESSAGE = None
+        return False
+
+def check_return_tokens():
+    """Check if player is forced to return tokens"""
+    global action_manager, PERSISTENT_MESSAGE
+    if action_manager.has_unlocked_return_token(Player.instance(id=CURR_PLAYER).name):
+        PERSISTENT_MESSAGE = "You have too many tokens! Return until you have 10."
         return True
     else:
         PERSISTENT_MESSAGE = None
@@ -586,6 +605,13 @@ class CardMenu:
         self.confirm.display(DISPLAYSURF)
         self.next_page.display(DISPLAYSURF)
         self.prev_page.display(DISPLAYSURF)
+
+        if self.action == CardMenuAction.RESERVED:
+            write_on(DISPLAYSURF,"Choose a Reserved Card to buy",center=(WIDTH/2,HEIGHT/20))
+        elif self.action == CardMenuAction.CLONE:
+            write_on(DISPLAYSURF,"Choose a card to clone its bonus",center=(WIDTH/2,HEIGHT/20))
+        elif self.action == CardMenuAction.DISCARD:
+            write_on(DISPLAYSURF,"Choose two cards of the correct color to strip",center=(WIDTH/2,HEIGHT/20))
         write_on(DISPLAYSURF, self.confirm.text, center=self.confirm.rectangle.center,color=WHITE)
         write_on(DISPLAYSURF, self.next_page.text, center=self.next_page.rectangle.center,color=WHITE)
         write_on(DISPLAYSURF, self.prev_page.text, center=self.prev_page.rectangle.center,color=WHITE)
@@ -662,7 +688,7 @@ class CardMenu:
                         # decrements current page down to 0
                         self.current_page = max(self.current_page - 1, 0)
                     else:
-                        if self.action != CardMenuAction.RESERVED:
+                        if self.action == CardMenuAction.CLONE:
                             self.card_selected = None # deselect the card but doesn't close since cloning and stripping is forced
                         elif self.selection_box_rect.collidepoint(pygame.mouse.get_pos()):
                             continue # do nothing if the user clicks inside the menu
@@ -820,6 +846,7 @@ class TokenMenu:
         action_manager.perform_action(take_token_action_id)
 
         action_manager.force_update(Player.instance(id=CURR_PLAYER).name)
+        check_return_tokens()
 
         return
     
