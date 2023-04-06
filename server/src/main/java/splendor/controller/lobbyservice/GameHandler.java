@@ -20,6 +20,11 @@ public class GameHandler {
   private GameManager gameManager;
   private static final Logger LOGGER = Logger.getLogger(GameHandler.class.getName());
 
+  /**
+   * constructor.
+   *
+   * @param gameManager game manager
+   */
   public GameHandler(@Autowired GameManager gameManager) {
     this.gameManager = gameManager;
   }
@@ -29,6 +34,7 @@ public class GameHandler {
    * It creates a new game
    *
    * @param gameInfo the info of the game to create
+   * @param gameId the game id
    * @return the status of the request
    */
   @PutMapping(value = "/api/games/{gameId}", consumes = "application/json; charset=utf-8")

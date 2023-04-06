@@ -7,7 +7,7 @@ public class GameServiceParametersTest {
   private final GameServiceParameters gameServiceParameters = new GameServiceParameters();
   private final String lobbyServiceLocation = "http://localhost:4242";
 
-  private final String gameServiceDsiplayName = "Splendor Display Name";
+  private final String gameServiceDisplayName = "Splendor Display Name";
 
   private final String gameServiceName = "Splendor";
 
@@ -27,7 +27,7 @@ public class GameServiceParametersTest {
   public void setUp() {
     // use reflection to set the values of the private fields
     setPrivateField("lobbyServiceLocation", lobbyServiceLocation);
-    setPrivateField("gameServiceDsiplayName", gameServiceDsiplayName);
+    setPrivateField("gameServiceDisplayName", gameServiceDisplayName);
     setPrivateField("gameServiceName", gameServiceName);
     setPrivateField("oauth2Name", oauth2Name);
     setPrivateField("oauth2Password", oauth2Password);
@@ -53,8 +53,8 @@ public class GameServiceParametersTest {
   }
 
   @Test
-  public void testGetGameServiceDsiplayName() {
-    assert gameServiceDsiplayName.equals(gameServiceParameters.getGameServiceDsiplayName());
+  public void testGetGameServiceDisplayName() {
+    assert gameServiceDisplayName.equals(gameServiceParameters.getGameServiceDisplayName());
   }
 
   @Test
@@ -84,7 +84,7 @@ public class GameServiceParametersTest {
     assert gameServiceParametersString.contains("maxSessionPlayers\":\"" + maxPlayers);
     assert gameServiceParametersString.contains("minSessionPlayers\":\"" + minPlayers);
     assert gameServiceParametersString.contains("name\":\"" + gameServiceName);
-    assert gameServiceParametersString.contains("displayName\":\"" + gameServiceDsiplayName);
+    assert gameServiceParametersString.contains("displayName\":\"" + gameServiceDisplayName);
     assert gameServiceParametersString.contains("webSupport\":\"" + webSupport);
   }
 }

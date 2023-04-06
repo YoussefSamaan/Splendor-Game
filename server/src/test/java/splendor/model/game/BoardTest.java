@@ -394,27 +394,31 @@ public class BoardTest {
 		Assertions.assertEquals(numWinners, 2);
 	}
 
-//	@Test
-//	public void testBuyDevCardGivesBackTokens2() throws NoSuchFieldException {
-//		testBoard = new Board(player1, player2, player3, player4);
-//		resetTokenBank(testBoard);
-//		assert testBoard.getTokens().getOrDefault(Color.RED, 0) == 0;
-//		DevelopmentCard card1 = DevelopmentCard.get(1); // 2 blue 2 red cost
-//		HashMap<Color, Integer> tokens = new HashMap<>();
-//		tokens.put(Color.RED, 2);
-//		tokens.put(Color.BLUE, 2);
-//		try {
-//			setPlayerTokens(player1, tokens);
-//		} catch (NoSuchFieldException e) {
-//			e.printStackTrace();
-//		}
-//		try {
-//			testBoard.buyCard(player1, card1);
-//		} catch (InsufficientResourcesException e) {
-//			e.printStackTrace();
-//		}
-//		Assertions.assertEquals(2, (int) testBoard.getTokens().getOrDefault(Color.RED, 0));
-//	}
+	@Test
+	public void testBuyDevCardGivesBackTokens2() throws NoSuchFieldException {
+		Player player12 = new Player("Wassim", "Blue");
+		Player player22 = new Player("Youssef", "Red");
+		Player player32 = new Player("Felicia", "Green");
+		Player player42 = new Player("Jessie", "Brown");
+		Board testBoard2 = new Board("SplendorCities", player12, player22, player32, player42);
+		resetTokenBank(testBoard2);
+		assert testBoard2.getTokens().getOrDefault(Color.RED, 0) == 0;
+		DevelopmentCard card1 = DevelopmentCard.get(1); // 2 blue 2 red cost
+		HashMap<Color, Integer> tokens = new HashMap<>();
+		tokens.put(Color.RED, 2);
+		tokens.put(Color.BLUE, 2);
+		try {
+			setPlayerTokens(player12, tokens);
+		} catch (NoSuchFieldException e) {
+			e.printStackTrace();
+		}
+		try {
+			testBoard2.buyCard(player12, card1);
+		} catch (InsufficientResourcesException e) {
+			e.printStackTrace();
+		}
+		Assertions.assertEquals(2, (int) testBoard2.getTokens().getOrDefault(Color.RED, 0));
+	}
 
 	@Test
 	void validateRemoveCity() {

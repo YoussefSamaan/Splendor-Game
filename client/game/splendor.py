@@ -52,6 +52,7 @@ class WIN_TYPE(Enum):
     NOTHING = 0
     def __eq__(self, other):
         return self.value == other.value
+
 IS_WON = WIN_TYPE.NOTHING
 
 class IndividualTokenSelection:
@@ -86,8 +87,16 @@ class IndividualTokenSelection:
         self.incrementButton.display(DISPLAYSURF)
         self.decrementButton.display(DISPLAYSURF)
 
+def initialize_game_type(board_json):
+    global TRADING_POST_ENABLED
+    global CITIES_ENABLED
+    if board_json['gameType'] == 'SplendorTraderoute':
+        TRADING_POST_ENABLED = True
+    elif board_json['gameType'] == 'SplendorCities':
+        CITIES_ENABLED = True
 
 def initialize_game(board_json):
+    initialize_game_type(board_json)
     pygame.display.set_mode((WIDTH, HEIGHT), pygame.FULLSCREEN)
     initialize_board()
     initialize_cards()
@@ -167,48 +176,32 @@ def show_persistent_message(color=GREEN):
 
     flash_right_side(DISPLAYSURF, PERSISTENT_MESSAGE, color=color, opacity=255)
 
-def check_if_won(board_json):
+def check_if_won(board_json,username):
     # checks checkGameEnd in Board
     global IS_WON
     if "winners" in board_json:
+        print("found winners")
         lst = board_json["winners"]
 
-        if Player.instance(id=CURR_PLAYER).name in lst and len(lst) == 1:
-
+        if username in lst and len(lst) == 1:
+            print("player won")
             IS_WON = WIN_TYPE.WIN
-        elif Player.instance(id=CURR_PLAYER).name in lst and len(lst) > 1:
 
+        elif username in lst and len(lst) > 1:
             IS_WON = WIN_TYPE.TIE
         elif len(lst) > 0:
                 
             IS_WON = WIN_TYPE.LOSE
         else:
-
+            print("win type nothing")
             IS_WON = WIN_TYPE.NOTHING
-    IS_WON = WIN_TYPE.NOTHING
+    else:
+        IS_WON = WIN_TYPE.NOTHING
 
 def set_flash_message(text, color=GREEN, timer=5):
     global FLASH_MESSAGE, FLASH_TIMER, FLASH_START, FLASH_COLOR
     FLASH_MESSAGE, FLASH_TIMER, FLASH_START = text, timer, pygame.time.get_ticks()
     FLASH_COLOR = color
-
-async def async_update(authenticator, game_id):
-    global has_initialized
-    global action_manager
-    board_json = await server_manager.get_board_async(authenticator=authenticator, game_id=game_id)
-
-    if not has_initialized:
-        has_initialized = True
-        initialize_game(board_json)
-    action_manager.update(Player.instance(id=CURR_PLAYER).name)
-    check_cascade()
-    update_turn_player(board_json)
-    update_players(board_json)
-    update_decks(board_json)
-    update_tokens(board_json)
-    update_nobles(board_json)
-    TradeRoute.instance().update(board_json)
-
 
 def update(authenticator, game_id):
     global has_initialized
@@ -218,7 +211,7 @@ def update(authenticator, game_id):
         has_initialized = True
         initialize_game(board_json)
     global action_manager
-    check_if_won(board_json)
+    check_if_won(board_json,authenticator.username)
     action_manager.update(Player.instance(id=CURR_PLAYER).name)
     print(action_manager.actions)
     # TODO: add cascading buy for cards]
@@ -932,45 +925,39 @@ def play(authenticator, game_id, screen):
     update(authenticator, game_id)
     logged_in_user = authenticator.username
     display_everything(logged_in_user)
-    if IS_WON != WIN_TYPE.NOTHING:
-        
-        
-        if IS_WON == WIN_TYPE.WIN:
-            dim_screen(DISPLAYSURF)
-
-            PERSISTENT_MESSAGE = "You won!"
-            show_persistent_message()
-            pygame.display.update()
-            while True:
-                for _ in pygame.event.get():
-                    
-                    #end game if click anything
-
-                    EXIT = True
-        elif IS_WON == WIN_TYPE.TIE:
-            dim_screen(DISPLAYSURF)
-            PERSISTENT_MESSAGE = "You tied!"
-            show_persistent_message()
-            pygame.display.update()
-            while True:
-
-                for _ in pygame.event.get():
-                    
-                    #end game if click anything
-
-                    EXIT = True
-        elif IS_WON == WIN_TYPE.LOSE:
-            dim_screen(DISPLAYSURF)
-            PERSISTENT_MESSAGE = "You lost!"
-            show_persistent_message()
-            pygame.display.update()
-            while True:
-
-                for _ in pygame.event.get():
-                    
-                    #end game if click anything
-                    EXIT = True
     while True:
+        print(IS_WON)
+        if IS_WON != WIN_TYPE.NOTHING:
+            
+            if IS_WON == WIN_TYPE.WIN:
+                dim_screen(DISPLAYSURF)
+
+                PERSISTENT_MESSAGE = "You won!"
+                show_persistent_message()
+                pygame.display.update()
+                while True:
+                    for event in pygame.event.get():
+                        if event.type == MOUSEBUTTONDOWN or event.type == KEYDOWN:
+                            return
+            elif IS_WON == WIN_TYPE.TIE:
+                dim_screen(DISPLAYSURF)
+                PERSISTENT_MESSAGE = "You tied!"
+                show_persistent_message()
+                pygame.display.update()
+                while True:
+                    for event in pygame.event.get():
+                        if event.type == MOUSEBUTTONDOWN or event.type == KEYDOWN:
+                            return
+            elif IS_WON == WIN_TYPE.LOSE:
+                dim_screen(DISPLAYSURF)
+                PERSISTENT_MESSAGE = "You lost!"
+                show_persistent_message()
+                pygame.display.update()
+                while True:
+                    for event in pygame.event.get():
+                        if event.type == MOUSEBUTTONDOWN or event.type == KEYDOWN:
+                            return
+
         if pygame.time.get_ticks() - last_update > 2000:
             last_update = pygame.time.get_ticks()
             # await async_update(authenticator, game_id)
