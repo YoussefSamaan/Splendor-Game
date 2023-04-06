@@ -13,6 +13,7 @@ public interface SplendorDeck {
    * Take a card face up card.
    * Card is replaced with a new card from the deck.
    *
+   * @param pos position.
    * @return the card.
    */
   DevelopmentCardI takeCard(int pos);
@@ -20,6 +21,7 @@ public interface SplendorDeck {
   /**
    * Check if the deck contains a card.
    *
+   * @param card the card.
    * @return if the card is face up, return the position of the card, otherwise return -1.
    */
   int isFaceUp(DevelopmentCardI card);
@@ -40,13 +42,22 @@ public interface SplendorDeck {
 
   /**
    * The color of the deck.
+   *
+   * @return color.
    */
   Color getColor();
 
   /**
    * The level of the deck.
+   *
+   * @return level.
    */
   int getLevel();
 
+  /**
+   * get the next faced down card.
+   *
+   * @return the next faced down card
+   */
   SplendorCard getNextFacedDownCard();
 }

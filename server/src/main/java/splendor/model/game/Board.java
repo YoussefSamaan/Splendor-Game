@@ -72,6 +72,7 @@ public class Board implements BroadcastContent {
    * Creates a new board.
    *
    * @param players the players. Only 2-4 players are allowed.
+   * @param gameType the type of game (extension)
    */
   public Board(String gameType, Player... players) {
     if (players.length < 2 || players.length > 4) {
@@ -119,6 +120,7 @@ public class Board implements BroadcastContent {
    *
    * @param player the player buying the card
    * @param card the card to buy
+   * @throws InsufficientResourcesException if not enough resources
    */
   public void buyCard(SplendorPlayer player, SplendorCard card)
       throws InsufficientResourcesException {
@@ -421,11 +423,18 @@ public class Board implements BroadcastContent {
 
   /**
    * Check if game is finished.
+   *
+   * @return finished if winners is not empty (if there are winners)
    */
   public boolean isFinished() {
     return winners != null;
   }
 
+  /**
+   * get the list of winners.
+   *
+   * @return list of winners.
+   */
   public List<String> getWinners() {
     return winners;
   }
