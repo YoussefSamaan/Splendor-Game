@@ -294,7 +294,11 @@ public class Inventory {
 
   }
 
-
+  /**
+   * remove the reserved card from inventory.
+   *
+   * @param card to remove.
+   */
   public void removeReservedCard(DevelopmentCardI card) {
     this.reservedCards.remove(card);
   }

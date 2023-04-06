@@ -12,6 +12,8 @@ public class Cost implements Iterable<Color> {
 
   /**
    * Creates a new cost.
+   *
+   * @param costMap the map with cost per colour.
    */
   public Cost(HashMap<Color, Integer> costMap) {
     this.costMap = new HashMap<>(costMap);
@@ -71,6 +73,11 @@ public class Cost implements Iterable<Color> {
     return costMap.keySet().iterator();
   }
 
+  /**
+   * Getter for the cost.
+   *
+   * @return the cost map
+   */
   public HashMap<Color, Integer> getCost() {
     return this.costMap;
   }
