@@ -154,10 +154,16 @@ class SessionListing:
     def get_game_info(self) -> str:
         return f"{self.creator} / {','.join(self.plr_list[1:])} [{len(self.plr_list)}/{self.min_plr}-{self.max_plr}]"
     def get_game_info_game(self) -> str:
-        if self.game_type == "SplendorTraderoutes":
-            return f"{self.session_id} / SplendorTrade"
-        else:
-            return f"{self.session_id} / {self.game_type}"
+        if self.savegame != "":
+            if self.game_type == "SplendorTraderoutes":
+                return f"S-{self.savegame} / SplendorTrade"
+            else:
+                return f"S-{self.savegame} / {self.game_type}"
+        else: #not a savedgame
+            if self.game_type == "SplendorTraderoutes":
+                return f"{self.session_id} / SplendorTrade"
+            else:
+                return f"{self.session_id} / {self.game_type}"
     def assign_buttons(self) -> None:
         red_rect_position = (DEL_RECT_INIT_X,DEL_RECT_INIT_Y+DEL_RECT_INCR_Y*self.index_order)
         red_rect = pygame.Rect(red_rect_position,DEL_RECT_SIZE)
