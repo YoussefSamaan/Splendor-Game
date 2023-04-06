@@ -822,6 +822,8 @@ class TokenMenu:
         
         action_manager.perform_action(take_token_action_id)
 
+        action_manager.force_update(Player.instance(id=CURR_PLAYER).name)
+
         return
     
     def confirm_return_token(self) -> None:
