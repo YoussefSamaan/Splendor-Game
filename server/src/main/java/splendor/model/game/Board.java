@@ -33,7 +33,7 @@ public class Board implements BroadcastContent {
   private final Player[] players;
   private int currentTurn;
   private final SplendorDeck[] decks = new SplendorDeck[6];
-
+  private GameType gameType;
   private NobleDeck nobleDeck;
   private CityDeck cityDeck;
 
@@ -72,6 +72,7 @@ public class Board implements BroadcastContent {
    * Creates a new board.
    *
    * @param players the players. Only 2-4 players are allowed.
+   * @param gameType the type of game (extension)
    */
   public Board(String gameType, Player... players) {
     if (players.length < 2 || players.length > 4) {
@@ -86,8 +87,15 @@ public class Board implements BroadcastContent {
     }
     if (gameType.equals("Splendor") || gameType.equals("SplendorTraderoutes")) {
       this.nobleDeck = new NobleDeck(players.length); // create nobleDeck based on # players
+      if (gameType.equals("Splendor")) {
+        this.gameType = GameType.ORIENT;
+      } else {
+        this.gameType = GameType.TRADEROUTES;
+      }
     } else {
       this.cityDeck = new CityDeck();
+      this.gameType = GameType.CITIES;
+
     }
     currentTurn = 0;
     decks[0] = new Deck(Color.GREEN);
@@ -112,6 +120,7 @@ public class Board implements BroadcastContent {
    *
    * @param player the player buying the card
    * @param card the card to buy
+   * @throws InsufficientResourcesException if not enough resources
    */
   public void buyCard(SplendorPlayer player, SplendorCard card)
       throws InsufficientResourcesException {
@@ -256,6 +265,9 @@ public class Board implements BroadcastContent {
    * @return a list of the nobles.
    */
   public List<Noble> getNobles() {
+    if (nobleDeck == null) {
+      return null;
+    }
     Noble[] nobles = nobleDeck.getNobles();
     return Arrays.stream(nobles)
         .filter(Objects::nonNull)
@@ -278,6 +290,9 @@ public class Board implements BroadcastContent {
    * @return a list of the cities.
    */
   public List<City> getCities() {
+    if (cityDeck == null) {
+      return null;
+    }
     City[] cities = cityDeck.getCities();
     return Arrays.stream(cities)
             .filter(Objects::nonNull)
@@ -375,7 +390,7 @@ public class Board implements BroadcastContent {
    */
   public void updateCities(Player player) {
     for (City city : getCities()) {
-      if (city.getCost().isAffordable(player.getBonuses())) {
+      if (city.getCost().isAffordable(player.getBonuses(), player.getPrestigePoints())) {
         player.addCity(city);
         removeCity(city);
         return; // only unlock one city per turn?
@@ -414,11 +429,18 @@ public class Board implements BroadcastContent {
 
   /**
    * Check if game is finished.
+   *
+   * @return finished if winners is not empty (if there are winners)
    */
   public boolean isFinished() {
     return winners != null;
   }
 
+  /**
+   * get the list of winners.
+   *
+   * @return list of winners.
+   */
   public List<String> getWinners() {
     return winners;
   }

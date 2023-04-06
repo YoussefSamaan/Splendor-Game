@@ -4,7 +4,7 @@ package splendor.model.game.card;
  * Flyweight for a noble card.
  */
 public class Noble extends AbstractCard {
-  private static final int NUMBER_OF_NOBLES = 10;
+  private static final int NUMBER_OF_NOBLES = 11;
   private static final Noble[] NOBLES = new Noble[NUMBER_OF_NOBLES];
 
   /**

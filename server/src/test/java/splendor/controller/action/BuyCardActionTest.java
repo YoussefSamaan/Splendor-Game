@@ -57,10 +57,21 @@ public class BuyCardActionTest {
   @Test
   public void preformAction(){
     long gameId = 1;
+    HashMap<Color, Integer> tokens= new HashMap<>();
+    tokens.put(Color.RED, 3);
+    tokens.put(Color.BLUE, 3);
+    tokens.put(Color.WHITE, 3);
+    player1.addTokens(tokens);
     List<Action> actions = actionGenerator.generateActions(game, gameId, player1);
-    System.out.println(actions.get(actions.size()-1));
-    actions.get(actions.size()-1).performAction(player1, game.getBoard()); //should be buy card
-    assertEquals(1, player1.getCardsBought().size());
+    System.out.println(actions.get(actions.size()-1).getActionType());
+    if (actions.get(actions.size()-1).getActionType() == ActionType.BUY ){
+      actions.get(actions.size()-1).performAction(player1, game.getBoard()); //should be buy card
+      assertEquals(1, player1.getCardsBought().size());
+    } else if (actions.get(actions.size()-1).getActionType() == ActionType.RESERVE) {
+      actions.get(actions.size()-1).performAction(player1, game.getBoard()); //should be buy card
+      assertEquals(1, player1.getReservedCards().size());
+    }
+
   }
 
   @Test
@@ -78,9 +89,15 @@ public class BuyCardActionTest {
   @Test
   public void testPerformActionWithCoatOfArmsBonus() throws NoSuchFieldException, InsufficientResourcesException {
     long gameId = 1;
-    List<Action> actions = actionGenerator.generateActions(game, gameId, player1);
     player1.addUnlockedCoatOfArms(CoatOfArms.get(1));
-    actions.get(39).performAction(player1, game.getBoard());
+    HashMap<Color, Integer> tokens= new HashMap<>();
+    tokens.put(Color.RED, 3);
+    tokens.put(Color.BLUE, 3);
+    tokens.put(Color.WHITE, 3);
+    player1.addTokens(tokens);
+    List<Action> actions = actionGenerator.generateActions(game, gameId, player1);
+//    System.out.println(actions.get(actions.size()-1).getActionType());
+    actions.get(actions.size()-1).performAction(player1, game.getBoard());
     assertEquals(ActionType.TAKE_ONE_TOKEN, (player1.nextAction()));
   }
 

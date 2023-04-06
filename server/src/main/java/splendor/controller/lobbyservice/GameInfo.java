@@ -30,6 +30,11 @@ public class GameInfo {
     this.savegame = savegame;
   }
 
+  /**
+   * Getter for players.
+   *
+   * @return array of Players
+   */
   public Player[] getPlayers() {
     return players;
   }

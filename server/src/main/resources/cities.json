@@ -1,7 +1,7 @@
 {
   "cities": [{
     "id": 1,
-    "cards": {
+    "cost": {
       "red": 4,
       "brown": 3
     },
@@ -9,7 +9,7 @@
   },
     {
       "id": 2,
-      "cards": {
+      "cost": {
         "blue": 4,
         "white": 3
       },
@@ -17,24 +17,25 @@
     },
     {
       "id": 3,
+      "cost": {},
       "prestige_points": 17
     }, {
       "id": 4,
-      "cards": {
+      "cost": {
         "brown": 4,
         "green": 3
       },
       "prestige_points": 13
     }, {
       "id": 5,
-      "cards": {
+      "cost": {
         "red": 3,
         "white": 4
       },
-      "prestige_points": 3
+      "prestige_points": 13
     }, {
       "id": 6,
-      "cards": {
+      "cost": {
         "brown": 1,
         "green": 1,
         "red": 1,
@@ -44,31 +45,17 @@
       "prestige_points": 16
     }, {
       "id": 7,
-      "cards": {
+      "cost": {
         "brown": 3,
         "red": 3,
         "white": 3,
         "blue": 3
       },
       "prestige_points": 11
-    }, {
+    },
+    {
       "id": 8,
-      "cards": {
-        "any": 6
-      },
-      "prestige_points": 12
-    },
-    {
-      "id": 9,
-      "cards": {
-        "green": 4,
-        "any": 4
-      },
-      "prestige_points": 12
-    },
-    {
-      "id": 10,
-      "cards": {
+      "cost": {
         "brown": 2,
         "green": 1,
         "red": 2,
@@ -78,8 +65,8 @@
       "prestige_points": 14
     },
     {
-      "id": 11,
-      "cards": {
+      "id": 9,
+      "cost": {
         "brown": 3,
         "green": 3,
         "red": 3,
@@ -88,23 +75,16 @@
       "prestige_points": 11
     },
     {
-      "id": 12,
-      "cards": {
-        "any": 5
-      },
-      "prestige_points": 15
-    },
-    {
-      "id": 13,
-      "cards": {
+      "id": 10,
+      "cost": {
         "green": 4,
         "blue": 3
       },
       "prestige_points": 13
     },
     {
-      "id": 14,
-      "cards": {
+      "id": 11,
+      "cost": {
         "brown": 2,
         "green": 2,
         "red": 2,
@@ -112,6 +92,16 @@
         "white": 2
       },
       "prestige_points": 13
+    },
+    {
+      "id": 12,
+      "cost": {
+        "green": 1,
+        "red": 1,
+        "blue": 1,
+        "white": 1
+      },
+      "prestige_points": 14
     }
   ],
   "deckSize": 3

@@ -14,7 +14,7 @@ public class GameServiceParameters {
   private String lobbyServiceLocation;
 
   @Value("${gameservice.display.name}")
-  private String gameServiceDsiplayName;
+  private String gameServiceDisplayName;
 
   @Value("${gameservice.name}")
   private String gameServiceName;
@@ -55,7 +55,7 @@ public class GameServiceParameters {
     map.put("maxSessionPlayers", Integer.toString(maxPlayers));
     map.put("minSessionPlayers", Integer.toString(minPlayers));
     map.put("name", gameServiceName);
-    map.put("displayName", gameServiceDsiplayName);
+    map.put("displayName", gameServiceDisplayName);
     map.put("webSupport", Boolean.toString(webSupport));
     return new Gson().toJson(map);
   }
@@ -71,10 +71,12 @@ public class GameServiceParameters {
 
   /**
    * Change the name to handle multiple game modes.
+   *
+   * @param name the name to give to the game service and game service display
    */
   public void setName(String name) {
     this.gameServiceName = name;
-    this.gameServiceDsiplayName = name;
+    this.gameServiceDisplayName = name;
   }
 
   /**
@@ -91,8 +93,8 @@ public class GameServiceParameters {
    *
    * @return The name
    */
-  public String getGameServiceDsiplayName() {
-    return gameServiceDsiplayName;
+  public String getGameServiceDisplayName() {
+    return gameServiceDisplayName;
   }
 
   /**

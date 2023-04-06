@@ -117,7 +117,7 @@ def back_button_event() -> None:
 # Class for a session listing. A session listing is the game info and interaction buttons
 # associated with an existing session in the session list
 class SessionListing:
-    def __init__(self, authenticator, session_id : str, session_info, index : int, full_screen, game_type: str = "Splendor") -> None:
+    def __init__(self, authenticator, session_id : str, session_info, index : int, full_screen) -> None:
         self.session_id = session_id
         # Access relevant information about the session
         self.creator = session_info["creator"] # str playername
@@ -126,6 +126,7 @@ class SessionListing:
         self.launched = session_info["launched"] # boolean
         self.plr_list = session_info["players"] # list of str playernames
         self.savegame = session_info["savegameid"] # str
+        self.game_type = session_info["gameParameters"]["name"] # str
         if "created" in session_info.keys():
             self.created = session_info["created"]
         else:
@@ -140,7 +141,6 @@ class SessionListing:
         # page_number is the page this listing is in
         self.page_number = index // MAX_SESSIONS_PER_PAGE
         self.full_screen = full_screen
-        self.game_type = game_type
 
         # Rects associated with this session listing in the session list
         # TODO: Generate here and link to click events
@@ -236,7 +236,7 @@ class SessionListing:
         session(self.authenticator, self.full_screen)
 
 # Takes sessions json and outputs a list of pygame objects to be blitted
-def generate_session_list_buttons(authenticator,sessions_json, full_screen, game_type) -> List[SessionListing]:
+def generate_session_list_buttons(authenticator,sessions_json, full_screen) -> List[SessionListing]:
     if len(get_games(sessions_json)) == 0:
         # if there are no sessions return empty list
         return []
@@ -246,7 +246,7 @@ def generate_session_list_buttons(authenticator,sessions_json, full_screen, game
     # it will handle the buttons, information, and events
     for index,session in enumerate(sessions_json):
         # enumerate keeps track of the index, to be used for positioning and paging
-        new_session = SessionListing(authenticator,session,sessions_json[session],index, full_screen, game_type)
+        new_session = SessionListing(authenticator,session,sessions_json[session],index, full_screen)
         session_list.append(new_session)
     
     return session_list
@@ -308,7 +308,7 @@ def session(authenticator :Authenticator, full_screen: pygame.Surface) -> int:
             return game_type
 
         sessions_json = get_session.get_all_sessions(authenticator)
-        session_list = generate_session_list_buttons(authenticator,sessions_json, full_screen, parse_type())
+        session_list = generate_session_list_buttons(authenticator,sessions_json, full_screen)
         # This is the list of buttons that should be visible. We need to draw them.
         clickable_buttons :List[Button] = []
 

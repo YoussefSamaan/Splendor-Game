@@ -17,6 +17,9 @@ public class CityDeck implements CityDeckI {
 
   private final City[] cities = new City[deckSize];
 
+  /**
+   * create a city deck with cities.
+   */
   public CityDeck() {
     addCitiesToDeck();
   }

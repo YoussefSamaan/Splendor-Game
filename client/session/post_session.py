@@ -9,10 +9,11 @@ from config.config import LOBBY_SERVICE_URL
 
 
 def create_session(username, access_token, game_type: str, savegame: str = ""):
+    print(game_type)
     url = f"{LOBBY_SERVICE_URL}/api/sessions?access_token={access_token}"
     data = {
         "creator": username,
-        "game": "Splendor",
+        "game": game_type,
         "savegame": savegame,
     }
     header = {
@@ -26,7 +27,6 @@ def create_session(username, access_token, game_type: str, savegame: str = ""):
 def launch_session(access_token, session):
     url = f"{LOBBY_SERVICE_URL}/api/sessions/{session}?access_token={access_token}"
     response = requests.post(url)
-    print(response)
     if response.status_code == 200:
         print("SUCCESSS!!!!!!!")
         print(response.content)

@@ -20,7 +20,7 @@ import splendor.model.game.player.Player;
 
 
 public class BoardTest {
-	
+
 	static Player player1 = new Player("Wassim", "Blue");
 	static Player player2 = new Player("Youssef", "Red");
 	static Player player3 = new Player("Felicia", "Green");
@@ -28,8 +28,8 @@ public class BoardTest {
 	static Player player5 = new Player("Kevin", "White");
 	static Player player6 = new Player("Rui", "Yellow");
 	static Board testBoard;
-	
-	
+
+
 	@BeforeAll
 	static void setUp() throws Exception {
 	}
@@ -50,6 +50,10 @@ public class BoardTest {
 		for (Color color : bonus.keySet()) {
 			inventoryBonuses.put(color, bonus.get(color));
 		}
+	}
+
+	private void setPlayerPrestigePoints(Player player, int prestige) {
+		player.addPrestigePoints(prestige);
 	}
 
 	private Inventory getPlayerInventory(Player player) throws NoSuchFieldException {
@@ -139,19 +143,19 @@ public class BoardTest {
 		new Board(player1,player2);
 		Assertions.assertTrue(true);
 	}
-	
+
 	@Test
 	void initBoardWithThreePlayers() {
 		new Board(player1,player2,player3);
 		Assertions.assertTrue(true);
 	}
-	
+
 	@Test
 	void initBoardWithFourPlayers() {
 		new Board(player1,player2,player3,player4);
 		Assertions.assertTrue(true);
 	}
-	
+
 	@Test
 	void initBoardWithFivePlayers() {
 		Assertions.assertThrows(IllegalArgumentException.class, () -> {
@@ -159,7 +163,7 @@ public class BoardTest {
 		});
 		Assertions.assertTrue(true);
 	}
-	
+
 	@Test
 	void initBoardWithSixPlayers() {
 		 Assertions.assertThrows(IllegalArgumentException.class, () -> {
@@ -167,7 +171,7 @@ public class BoardTest {
 		});
 		Assertions.assertTrue(true);
 	}
-	
+
 	@Test
 	void initBoardWithDuplicatePlayers() {
 		 Assertions.assertThrows(IllegalArgumentException.class, () -> {
@@ -188,7 +192,7 @@ public class BoardTest {
 	void validateDecks() {
 		Assertions.assertEquals(SplendorDeck[].class,testBoard.getDecks().getClass());
 	}
-	
+
 	// TODO: TEST buyCard method
 
 	@Test
@@ -247,7 +251,7 @@ public class BoardTest {
 	@Test
 	void validAddToken(){
 		testBoard = new Board(player1,player2,player3,player4);
-		int player1_redToken = player1.getTokens().get(Color.RED);
+		int player1_redToken = player1.getTokens().getOrDefault(Color.RED, 0);
 		int testBoard_redToken = testBoard.getTokens().get(Color.RED);
 		testBoard.addTokens(player1.getTokens());
 		Assertions.assertTrue(testBoard.getTokens().get(Color.RED) == (player1_redToken + testBoard_redToken));
@@ -258,7 +262,7 @@ public class BoardTest {
 		testBoard = new Board(player1,player2,player3,player4);
 		Assertions.assertTrue(testBoard.isTurnPlayer(player1));
 	}
-	
+
 	@Test
 	void validateSecondTurn() {
 		testBoard = new Board(player1,player2,player3,player4);
@@ -394,27 +398,31 @@ public class BoardTest {
 		Assertions.assertEquals(numWinners, 2);
 	}
 
-//	@Test
-//	public void testBuyDevCardGivesBackTokens2() throws NoSuchFieldException {
-//		testBoard = new Board(player1, player2, player3, player4);
-//		resetTokenBank(testBoard);
-//		assert testBoard.getTokens().getOrDefault(Color.RED, 0) == 0;
-//		DevelopmentCard card1 = DevelopmentCard.get(1); // 2 blue 2 red cost
-//		HashMap<Color, Integer> tokens = new HashMap<>();
-//		tokens.put(Color.RED, 2);
-//		tokens.put(Color.BLUE, 2);
-//		try {
-//			setPlayerTokens(player1, tokens);
-//		} catch (NoSuchFieldException e) {
-//			e.printStackTrace();
-//		}
-//		try {
-//			testBoard.buyCard(player1, card1);
-//		} catch (InsufficientResourcesException e) {
-//			e.printStackTrace();
-//		}
-//		Assertions.assertEquals(2, (int) testBoard.getTokens().getOrDefault(Color.RED, 0));
-//	}
+	@Test
+	public void testBuyDevCardGivesBackTokens2() throws NoSuchFieldException {
+		Player player12 = new Player("Wassim", "Blue");
+		Player player22 = new Player("Youssef", "Red");
+		Player player32 = new Player("Felicia", "Green");
+		Player player42 = new Player("Jessie", "Brown");
+		Board testBoard2 = new Board("SplendorCities", player12, player22, player32, player42);
+		resetTokenBank(testBoard2);
+		assert testBoard2.getTokens().getOrDefault(Color.RED, 0) == 0;
+		DevelopmentCard card1 = DevelopmentCard.get(1); // 2 blue 2 red cost
+		HashMap<Color, Integer> tokens = new HashMap<>();
+		tokens.put(Color.RED, 2);
+		tokens.put(Color.BLUE, 2);
+		try {
+			setPlayerTokens(player12, tokens);
+		} catch (NoSuchFieldException e) {
+			e.printStackTrace();
+		}
+		try {
+			testBoard2.buyCard(player12, card1);
+		} catch (InsufficientResourcesException e) {
+			e.printStackTrace();
+		}
+		Assertions.assertEquals(2, (int) testBoard2.getTokens().getOrDefault(Color.RED, 0));
+	}
 
 	@Test
 	void validateRemoveCity() {
@@ -463,6 +471,7 @@ public class BoardTest {
 		bonus.put(Color.GREEN, 10);
 		bonus.put(Color.BLUE, 10);
 		bonus.put(Color.BROWN, 10);
+		setPlayerPrestigePoints(player1, 20);
 		try {
 			setPlayerBonus(player1, bonus);
 		} catch (NoSuchFieldException e) {
