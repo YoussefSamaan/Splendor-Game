@@ -14,8 +14,21 @@ import splendor.model.game.payment.CoatOfArms;
  * Interface for a splendor player. Can buy/reserve cards and nobles, and can take tokens.
  */
 public interface SplendorPlayer {
+  /**
+   * buy a card.
+   *
+   * @param card to buy.
+   * @return the color info.
+   * @throws InsufficientResourcesException if not enough resources.
+   */
   HashMap<Color, Integer> buyCard(DevelopmentCardI card) throws InsufficientResourcesException;
 
+  /**
+   * reserve a card.
+   *
+   * @param card to reserve.
+   * @param addGoldToken to add.
+   */
   void reserveCard(DevelopmentCardI card, boolean addGoldToken);
 
   /**
@@ -59,13 +72,38 @@ public interface SplendorPlayer {
    */
   HashMap<Color, Integer> getTokens();
 
+  /**
+   * get number of gold cards.
+   *
+   * @return num gold cards.
+   */
   int getNumGoldCards();
 
+  /**
+   * get reserved cards.
+   *
+   * @return list of cards.
+   */
   List<DevelopmentCardI> getReservedCards();
 
+  /**
+   * removes the card.
+   *
+   * @param card to remove.
+   */
   void removeReservedCard(DevelopmentCardI card);
 
+  /**
+   * get the bonuses.
+   *
+   * @return bonuses map.
+   */
   HashMap<Color, Integer> getBonuses();
 
+  /**
+   * Getter for coat of arms.
+   *
+   * @return the set of coat of arms.
+   */
   Set<CoatOfArms> getCoatOfArms();
 }

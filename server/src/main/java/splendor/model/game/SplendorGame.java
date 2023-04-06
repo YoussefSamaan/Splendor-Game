@@ -106,7 +106,6 @@ public class SplendorGame {
     } else {
       board.updateNobles(player);
     }
-
     if (player.nextAction() == null) {
       board.nextTurn();
     }
