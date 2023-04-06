@@ -113,7 +113,6 @@ def initialize_game(board_json):
     else: # normal game
         initialize_nobles(board_json)
     initialize_sidebar()
-    print(board_json)
 
 # Trade routes visual will be able to be accessed via a button
 # Not yet implemented
@@ -207,7 +206,6 @@ def update(authenticator, game_id):
     global has_initialized
     global action_manager
     board_json = server_manager.get_board(authenticator=authenticator, game_id=game_id)
-    print(board_json)
     if not has_initialized:
         has_initialized = True
         initialize_game(board_json)
@@ -444,7 +442,6 @@ def get_user_cascade_selection(card :Card):
     """
     dim_screen(DISPLAYSURF)
     action = card.get_user_cascade_selection(DISPLAYSURF)
-    print(action.value)
     global FLASH_MESSAGE, FLASH_TIMER, CURR_PLAYER, action_manager, cascade
     server_action_id = action_manager.get_card_action_id(card, Player.instance(id=CURR_PLAYER).name,
                                                          action)

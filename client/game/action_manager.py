@@ -35,7 +35,6 @@ class ActionManager:
         if player_name != self.last_updated_player:
             # Not player's turn
             return -1
-        print(self.actions)
         if action_type == Action.CASCADE:
             # Cascade is special
             return self.get_cascade_action_id(card)
@@ -60,8 +59,6 @@ class ActionManager:
 
 
     def get_strip_card_action_id(self, card: Card, payment_cards: List[int]) -> int:
-        print(card)
-        print(payment_cards)
         for action in self.actions:
             if "card" in action and "cardId" in action["card"] and action["card"]["cardId"] == card.get_id()\
                 and action["actionType"] == Action.BUY.value:

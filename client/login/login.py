@@ -37,6 +37,7 @@ def login(authenticator: Authenticator, full_screen: pygame.Surface):
     username_text = ""
 
     password_text = ""
+    password_hidden_text = ""
 
     username_input_rect = pygame.Rect((150, 350, 200, 35))  # pos_x, pos_y, width, height
     password_input_rect = pygame.Rect((150, 450, 200, 35))
@@ -118,6 +119,7 @@ def login(authenticator: Authenticator, full_screen: pygame.Surface):
                 if password_active:
                     if event.key == pygame.K_BACKSPACE:
                         password_text = password_text[:-1]
+                        password_hidden_text = password_hidden_text[:-1]
                     elif event.key == pygame.K_TAB:
                         # switch to username input
                         username_active = True
@@ -136,6 +138,7 @@ def login(authenticator: Authenticator, full_screen: pygame.Surface):
                         break
                     else:
                         password_text += event.unicode
+                        password_hidden_text += '*'
 
         screen.fill(GREY)
 
@@ -147,7 +150,7 @@ def login(authenticator: Authenticator, full_screen: pygame.Surface):
         username_text_surface = base_font.render(username_text, True, WHITE)
         screen.blit(username_text_surface, (username_input_rect.x + 5, username_input_rect.y + 5))
 
-        password_text_surface = base_font.render(password_text, True, WHITE)
+        password_text_surface = base_font.render(password_hidden_text, True, WHITE)
         screen.blit(password_text_surface, (password_input_rect.x + 5, password_input_rect.y + 5))
 
         screen.blit(login_text, (420, 625))
