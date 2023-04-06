@@ -34,7 +34,7 @@
 //
 //  @Test
 //  public void testGetType() {
-//    assertEquals(actionType, cardAction.getType());
+//    assertEquals(actionType, cardAction.getActionType());
 //  }
 //
 //  @Test
