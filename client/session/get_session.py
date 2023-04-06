@@ -13,18 +13,26 @@ GAME_TYPES = ["Splendor", "SplendorCities", "SplendorTraderoutes"]
 def get_all_sessions(authenticator):
   url = f"{LOBBY_SERVICE_URL}/api/sessions"
   sessions = requests.get(url).json()["sessions"]
-  # saved_sessions = get_saved_sessions(authenticator)
-  # for saved_session in saved_sessions:
-  #   # change the saved session json to match what we expect from the lobby service
-  #   saved_session["gameParameters"] = {}
-  #   saved_session["gameParameters"]["maxSessionPlayers"] = len(saved_session["players"])
-  #   saved_session["gameParameters"]["minSessionPlayers"] = len(saved_session["players"])
-  #   saved_session["launched"] = False
-  #   saved_session["creator"] = saved_session["players"][0]
-  #   # make the key the savegameid
-  #   sessions[saved_session["savegameid"]] = saved_session
+  saved_sessions = get_saved_sessions(authenticator)
+  for saved_session in saved_sessions:
+    if exists(sessions, saved_session["savegameid"]):
+      continue
+    # change the saved session json to match what we expect from the lobby service
+    saved_session["gameParameters"] = {}
+    saved_session["gameParameters"]["maxSessionPlayers"] = len(saved_session["players"])
+    saved_session["gameParameters"]["minSessionPlayers"] = len(saved_session["players"])
+    saved_session["launched"] = False
+    saved_session["creator"] = authenticator.username # so it can be launched
+    saved_session["created"] = False
+    # make the key the savegameid
+    sessions[saved_session["savegameid"]] = saved_session
   return sessions
 
+def exists(sessions, savegameid):
+  for session_id, session_json in sessions.items():
+    if session_json["savegameid"] == savegameid:
+      return True
+  return False
 
 def get_all_sessions_long_polling(hash_code):
   url = f"{LOBBY_SERVICE_URL}/api/sessions?hash={hash_code}"

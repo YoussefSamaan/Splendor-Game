@@ -117,7 +117,7 @@ def back_button_event() -> None:
 # Class for a session listing. A session listing is the game info and interaction buttons
 # associated with an existing session in the session list
 class SessionListing:
-    def __init__(self, authenticator, session_id : str, session_info, index : int, full_screen) -> None:
+    def __init__(self, authenticator, session_id : str, session_info, index : int, full_screen, game_type: str = "Splendor") -> None:
         self.session_id = session_id
         # Access relevant information about the session
         self.creator = session_info["creator"] # str playername
@@ -126,6 +126,11 @@ class SessionListing:
         self.launched = session_info["launched"] # boolean
         self.plr_list = session_info["players"] # list of str playernames
         self.savegame = session_info["savegameid"] # str
+        if "created" in session_info.keys():
+            self.created = session_info["created"]
+        else:
+            # If it's not there, then we got the session ftom the created ones
+            self.created = True
         self.authenticator = authenticator
         self.current_user = authenticator.username
         
@@ -135,6 +140,7 @@ class SessionListing:
         # page_number is the page this listing is in
         self.page_number = index // MAX_SESSIONS_PER_PAGE
         self.full_screen = full_screen
+        self.game_type = game_type
 
         # Rects associated with this session listing in the session list
         # TODO: Generate here and link to click events
@@ -175,6 +181,8 @@ class SessionListing:
                 self.green_button.set_text("Launch")
             elif self.current_user not in self.plr_list and len(self.plr_list) < self.max_plr:
                 self.green_button.set_text("Join")
+        elif not self.created and self.current_user == self.creator:
+            self.green_button.set_text("Load")
         else:
             self.green_button.set_text("Play")
             
@@ -186,7 +194,9 @@ class SessionListing:
             self.leave_sess()
     
     def greenButtonEvent(self):
-        if not self.launched:
+        if not self.created and self.current_user == self.creator:
+            self.create_saved_game()
+        elif not self.launched:
             # game is not yet launched; creator can launch, others can join
             if self.current_user == self.creator:
                 self.launch_sess()
@@ -195,6 +205,10 @@ class SessionListing:
         elif self.launched:
             return self.play_sess()
 
+    def create_saved_game(self) -> None:
+        print("Creating saved game ", self.savegame)
+        post_session.create_session(self.authenticator.username, self.authenticator.get_token(escape=True), self.game_type, self.savegame)
+
     # logged-in user is the creator and deletes the session
     def del_sess(self) -> None:
         delete_session.delete_session(self.authenticator.get_token(escape=True), self.session_id)
@@ -202,7 +216,7 @@ class SessionListing:
 
     # logged-in user is the creator and launches the session if there are enough players
     def launch_sess(self) -> None:
-        post_session.launch_session(self.authenticator.get_token(escape=True), self.session_id, self.savegame)
+        post_session.launch_session(self.authenticator.get_token(escape=True), self.session_id)
 
     # logged-in user is not the creator and joins the session
     def join_sess(self) -> None:
@@ -222,7 +236,7 @@ class SessionListing:
         session(self.authenticator, self.full_screen)
 
 # Takes sessions json and outputs a list of pygame objects to be blitted
-def generate_session_list_buttons(authenticator,sessions_json, full_screen) -> List[SessionListing]:
+def generate_session_list_buttons(authenticator,sessions_json, full_screen, game_type) -> List[SessionListing]:
     if len(get_games(sessions_json)) == 0:
         # if there are no sessions return empty list
         return []
@@ -232,7 +246,7 @@ def generate_session_list_buttons(authenticator,sessions_json, full_screen) -> L
     # it will handle the buttons, information, and events
     for index,session in enumerate(sessions_json):
         # enumerate keeps track of the index, to be used for positioning and paging
-        new_session = SessionListing(authenticator,session,sessions_json[session],index, full_screen)
+        new_session = SessionListing(authenticator,session,sessions_json[session],index, full_screen, game_type)
         session_list.append(new_session)
     
     return session_list
@@ -285,11 +299,6 @@ def session(authenticator :Authenticator, full_screen: pygame.Surface) -> int:
     while True:
         screen.fill(GREY)
 
-        sessions_json = get_session.get_all_sessions(authenticator)
-        session_list = generate_session_list_buttons(authenticator,sessions_json, full_screen)
-        # This is the list of buttons that should be visible. We need to draw them.
-        clickable_buttons :List[Button] = []
-
         def parse_type() -> str:
             game_type = "Splendor"
             if trade_toggle.active:
@@ -297,6 +306,12 @@ def session(authenticator :Authenticator, full_screen: pygame.Surface) -> int:
             if cities_toggle.active:
                 game_type += "Cities"
             return game_type
+
+        sessions_json = get_session.get_all_sessions(authenticator)
+        session_list = generate_session_list_buttons(authenticator,sessions_json, full_screen, parse_type())
+        # This is the list of buttons that should be visible. We need to draw them.
+        clickable_buttons :List[Button] = []
+
 
         clickable_buttons.append(back_rect)
         clickable_buttons.append(next_rect)
