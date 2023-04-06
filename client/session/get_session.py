@@ -26,12 +26,26 @@ def get_all_sessions(authenticator):
     saved_session["created"] = False
     # make the key the savegameid
     sessions[saved_session["savegameid"]] = saved_session
+  # remove session if it has a savegameid and the player is not in it
+  to_remove = [key for key, value in sessions.items() if value["savegameid"] != "" and not player_in_saved_session(authenticator, value, saved_sessions)]
+  for key in to_remove:
+    del sessions[key]
   return sessions
 
 def exists(sessions, savegameid):
   for session_id, session_json in sessions.items():
     if session_json["savegameid"] == savegameid:
       return True
+  return False
+
+def player_in_saved_session(authenticator, session, saved_sessions):
+  """
+  For each saved session, check if the player is in it.
+  Only call if session has a savegameid
+  """
+  for saved_session in saved_sessions:
+    if session["savegameid"] == saved_session["savegameid"]:
+      return authenticator.username in saved_session["players"]
   return False
 
 def get_all_sessions_long_polling(hash_code):
@@ -49,6 +63,9 @@ def get_session(session):
 
 
 def get_saved_sessions(authenticator):
+  """
+  Get all saved sessions for the current user
+  """
   sessions = []
   for game_type in GAME_TYPES:
       url = f"{LOBBY_SERVICE_URL}/api/gameservices/{game_type}/savegames?access_token={authenticator.get_token(escape=True)}"
