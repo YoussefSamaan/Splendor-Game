@@ -7,9 +7,7 @@ import javax.naming.InsufficientResourcesException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import splendor.model.game.card.City;
-import splendor.model.game.card.DevelopmentCard;
-import splendor.model.game.card.Noble;
+import splendor.model.game.card.*;
 import splendor.model.game.deck.SplendorDeck;
 import splendor.model.game.payment.Token;
 import splendor.model.game.player.Inventory;
@@ -479,5 +477,23 @@ public class BoardTest {
 		}
 		testBoard.updateCities(player1); // player 1 can afford a noble
 		Assertions.assertEquals(2, nonNullCount(testBoard.getCities().toArray()));
+	}
+
+	@Test
+	public void testRemoveFacedDownCard() {
+		testBoard = new Board(player1,player2,player3,player4);
+		SplendorCard blue = testBoard.removeFacedDownCard(FacedDownCardTypes.BLUE);
+		SplendorCard yellow = testBoard.removeFacedDownCard(FacedDownCardTypes.YELLOW);
+		SplendorCard green = testBoard.removeFacedDownCard(FacedDownCardTypes.GREEN);
+		SplendorCard red1 = testBoard.removeFacedDownCard(FacedDownCardTypes.RED_1);
+		SplendorCard red2 = testBoard.removeFacedDownCard(FacedDownCardTypes.RED_2);
+		SplendorCard red3 = testBoard.removeFacedDownCard(FacedDownCardTypes.RED_3);
+		Assertions.assertEquals(blue, blue); // change later
+	}
+
+	@Test
+	public void testBoardNotEmpty() {
+		testBoard = new Board(player1,player2,player3,player4);
+		Assertions.assertTrue(!testBoard.isEmpty());
 	}
 }
