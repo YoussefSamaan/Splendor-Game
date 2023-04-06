@@ -352,4 +352,8 @@ public class Player implements PlayerReadOnly, SplendorPlayer {
   public void removeNextAction(ActionType action) {
     this.nextActions.remove(action);
   }
+
+  public void addReserveNoble(Noble noble) {
+    this.inventory.addReservedNoble(noble);
+  }
 }
