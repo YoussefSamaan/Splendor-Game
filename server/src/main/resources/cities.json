@@ -51,15 +51,9 @@
         "blue": 3
       },
       "prestige_points": 11
-    }, {
-      "id": 8,
-      "cards": {
-        "any": 6
-      },
-      "prestige_points": 12
     },
     {
-      "id": 9,
+      "id": 8,
       "cards": {
         "green": 4,
         "any": 4
@@ -67,7 +61,7 @@
       "prestige_points": 12
     },
     {
-      "id": 10,
+      "id": 9,
       "cards": {
         "brown": 2,
         "green": 1,
@@ -78,7 +72,7 @@
       "prestige_points": 14
     },
     {
-      "id": 11,
+      "id": 10,
       "cards": {
         "brown": 3,
         "green": 3,
@@ -88,14 +82,14 @@
       "prestige_points": 11
     },
     {
-      "id": 12,
+      "id": 11,
       "cards": {
         "any": 5
       },
       "prestige_points": 15
     },
     {
-      "id": 13,
+      "id": 12,
       "cards": {
         "green": 4,
         "blue": 3
@@ -103,7 +97,7 @@
       "prestige_points": 13
     },
     {
-      "id": 14,
+      "id": 13,
       "cards": {
         "brown": 2,
         "green": 2,

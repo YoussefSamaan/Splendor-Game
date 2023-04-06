@@ -3,7 +3,7 @@ from game.action import Action
 from game.card import Card
 from game.noble import Noble
 from game.splendorToken import Token
-from typing import Dict
+from typing import Dict, List
 
 
 class ActionManager:
@@ -58,6 +58,24 @@ class ActionManager:
                 return action["actionId"]
         return -1
 
+
+    def get_strip_card_action_id(self, card: Card, payment_cards: List[int]) -> int:
+        print(card)
+        print(payment_cards)
+        for action in self.actions:
+            if "card" in action and "cardId" in action["card"] and action["card"]["cardId"] == card.get_id()\
+                and action["actionType"] == Action.BUY.value:
+                correct_action = True
+                if "cardPayment" in action:
+                    for payment_card in action["cardPayment"]:
+                        if payment_card["cardId"] in payment_cards:
+                            pass
+                        else:
+                            correct_action = False
+                
+                if correct_action:
+                    return action["actionId"]
+        return -1
     # def get_reserve_noble_action_id(self, noble : Noble) -> int:
     #     """ find which action id is for reserving a noble"""
     #     print("Getting reserve noble action id for noble: " + str(card.get_id()))

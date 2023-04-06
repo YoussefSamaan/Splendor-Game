@@ -10,6 +10,11 @@ package splendor.controller.lobbyservice;
  */
 public class LogicException extends Exception {
 
+  /**
+   * Logic Exception.
+   *
+   * @param cause custom exception
+   */
   public LogicException(String cause) {
     super(cause);
   }

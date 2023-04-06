@@ -276,6 +276,11 @@ public class SplendorController {
 
   /**
    * Deregister from LS.
+   *
+   * @param request the HttpServletRequest
+   * @param accessToken the access token
+   * @param username player username
+   * @return the ResponseEntity
    */
   @PostMapping("/api/deregister")
   public ResponseEntity deregister(@RequestParam("username") String username,

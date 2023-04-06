@@ -17,6 +17,8 @@ public class Authenticator {
 
   /**
    * Empty constructor.
+   *
+   * @param tokenHelper the tokenHelper, used as field for the constructor
    */
   public Authenticator(@Autowired TokenHelper tokenHelper) {
     this.tokenHelper = tokenHelper;
