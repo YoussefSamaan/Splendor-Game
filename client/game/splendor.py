@@ -516,8 +516,12 @@ def perform_action(obj, user, position, game_id, authenticator):
       set_flash_message('Game saved')
     elif selection == "lobby":
       print("going to lobby")
-      global EXIT
+      global EXIT, has_initialized
       EXIT = True
+      has_initialized = False
+      City.delete_all()
+      Noble.delete_all()
+    return
   if isinstance(obj, Player):
       Sidebar.instance().switch_player(obj)
       return

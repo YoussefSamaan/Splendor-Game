@@ -18,6 +18,11 @@ class Flyweight:
             self._flyweights[id] = self._decorated(id=id, *args, **kwargs)
             return self._flyweights[id]
 
+    def delete_all(self):
+        print("before delete: ", self._flyweights)
+        self._flyweights = {}
+        print("Reset flyweights: ", self._flyweights)
+
     def __call__(self):
         raise TypeError('Flyweights must be accessed through `instance()`.')
 

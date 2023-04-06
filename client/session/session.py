@@ -152,8 +152,18 @@ class SessionListing:
     
     # get a string of the game description, to be blitted in the box later
     def get_game_info(self) -> str:
-        return f"{self.session_id} / {self.creator} / {','.join(self.plr_list[1:])} [{len(self.plr_list)}/{self.min_plr}-{self.max_plr}]"
-    
+        return f"{self.creator} / {','.join(self.plr_list[1:])} [{len(self.plr_list)}/{self.min_plr}-{self.max_plr}]"
+    def get_game_info_game(self) -> str:
+        if self.savegame != "":
+            if self.game_type == "SplendorTraderoutes":
+                return f"S-{self.savegame} / SplendorTrade"
+            else:
+                return f"S-{self.savegame} / {self.game_type}"
+        else: #not a savedgame
+            if self.game_type == "SplendorTraderoutes":
+                return f"{self.session_id} / SplendorTrade"
+            else:
+                return f"{self.session_id} / {self.game_type}"
     def assign_buttons(self) -> None:
         red_rect_position = (DEL_RECT_INIT_X,DEL_RECT_INIT_Y+DEL_RECT_INCR_Y*self.index_order)
         red_rect = pygame.Rect(red_rect_position,DEL_RECT_SIZE)
@@ -169,8 +179,10 @@ class SessionListing:
     
     def display(self) -> None:
         game_info = self.get_game_info()
+        game_info_game = self.get_game_info_game()
         pygame.draw.rect(screen, LIGHT_GREY, self.game_info)
-        new_text(game_info, WHITE, GAME_RECT_INIT_X, GAME_RECT_INIT_Y+GAME_RECT_INCR_Y*self.index_order)
+        new_text(game_info, WHITE, GAME_RECT_INIT_X, GAME_RECT_INIT_Y+30+GAME_RECT_INCR_Y*self.index_order)
+        new_text(game_info_game, WHITE, GAME_RECT_INIT_X, GAME_RECT_INIT_Y+GAME_RECT_INCR_Y*self.index_order)
         # set text for buttons
         if self.current_user == self.creator and not self.launched:
             self.red_button.set_text("Delete")
@@ -285,16 +297,6 @@ def session(authenticator :Authenticator, full_screen: pygame.Surface) -> int:
 
     trade_toggle.activation = trade_toggle.toggle
     cities_toggle.activation = cities_toggle.toggle
-    
-    def trade_toggle_event() -> None:
-        trade_toggle.activation = trade_toggle.toggle
-        if trade_toggle.active:
-            cities_toggle.active = False
-    
-    def cities_toggle_event() -> None:
-        cities_toggle.activation = cities_toggle.toggle
-        if cities_toggle.active:
-            trade_toggle.active = False
 
     while True:
         screen.fill(GREY)

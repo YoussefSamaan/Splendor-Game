@@ -45,6 +45,9 @@ public class TakeCardAction extends CardAction {
         player.removeNextAction(ActionType.RESERVE_NOBLE);
       }
     }
+
+    player.updateReserveNobles();
+    player.updateCoatOfArms();
   }
 
   /**

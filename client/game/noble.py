@@ -18,7 +18,9 @@ class Noble:
     def __init__(self, id: int):
         self._id = id  # 1 -> 4
         self._image = pygame.image.load('../sprites/nobles/{}.png'.format(id))
+        print("Nobles flyweights: ", Noble.flyweights)
         self.slot = len(Noble.flyweights)  # The slot position of the noble
+        print("noble slot: ", self.slot)
         self.pos = self._default_position()
         self.isOnDisplay = True
 

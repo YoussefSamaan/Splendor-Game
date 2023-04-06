@@ -64,6 +64,7 @@ public class BuyCardActionTest {
     player1.addTokens(tokens);
     List<Action> actions = actionGenerator.generateActions(game, gameId, player1);
     System.out.println(actions.get(actions.size()-1).getActionType());
+    player1.getResources();
     if (actions.get(actions.size()-1).getActionType() == ActionType.BUY ){
       actions.get(actions.size()-1).performAction(player1, game.getBoard());
 //      assertEquals(1, player1.getCardsBought().size());

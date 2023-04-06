@@ -9,16 +9,17 @@ from flyweight import Flyweight
 
 @Flyweight
 class City:
-    x_MarginToBoardSizeRatio = 0.2
+    x_MarginToBoardSizeRatio = 0.05
     y_MarginToBoardSizeRatio = 0.07
     x_DistanceBetweenCardsToBoardWidthRatio = 1 / 30
-    x_ratio = 1 / 3.5  # ratio of card width to board width 
-    y_ratio = 1 / 7  # ratio of card height to board height
+    x_ratio = 1 / 4.5  # ratio of card width to board width 
+    y_ratio = 1 / 8  # ratio of card height to board height
 
     def __init__(self, id: int):
         self._id = id  # 1 -> 3
         self._image = pygame.image.load('../sprites/cities/{}.png'.format(id))
         self.slot = len(City.flyweights)  # The slot position of the city
+        print("city slot: ", self.slot)
         self.pos = self._default_position()
         self.isOnDisplay = True
 

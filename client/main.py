@@ -4,6 +4,8 @@ from login import login
 from session import session
 import pygame
 from pygame.locals import *
+from game.noble import Noble
+from game.city import City
 
 if __name__ == '__main__':
     pygame.init()
