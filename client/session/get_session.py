@@ -28,6 +28,10 @@ def get_all_sessions(authenticator):
     sessions[saved_session["savegameid"]] = saved_session
   # remove session if it has a savegameid and the player is not in it
   to_remove = [key for key, value in sessions.items() if value["savegameid"] != "" and not player_in_saved_session(authenticator, value, saved_sessions)]
+  # remove session if it is launched, and the player is not in it
+  to_remove += [key for key, value in sessions.items() if value["launched"] and authenticator.username not in value["players"]]
+  # remove duplicate keys
+  to_remove = list(set(to_remove))
   for key in to_remove:
     del sessions[key]
   return sessions
