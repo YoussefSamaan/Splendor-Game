@@ -58,8 +58,8 @@ public class BuyCardActionTest {
   public void preformAction(){
     long gameId = 1;
     List<Action> actions = actionGenerator.generateActions(game, gameId, player1);
-    System.out.println(actions.get(50));
-    actions.get(50).performAction(player1, game.getBoard()); //should be buy card
+    System.out.println(actions.get(actions.size()-1));
+    actions.get(actions.size()-1).performAction(player1, game.getBoard()); //should be buy card
     assertEquals(1, player1.getCardsBought().size());
   }
 
