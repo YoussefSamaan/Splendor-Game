@@ -75,6 +75,8 @@ def get_saved_sessions(authenticator):
       url = f"{LOBBY_SERVICE_URL}/api/gameservices/{game_type}/savegames?access_token={authenticator.get_token(escape=True)}"
       username = authenticator.username
       response = requests.get(url)
+      if response.status_code != 200:
+        continue
       for session in response.json():
         if username in session["players"]:
           sessions.append(session)

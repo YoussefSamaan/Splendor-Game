@@ -39,6 +39,7 @@ has_initialized = False
 cascade = False
 TRADING_POST_ENABLED = False 
 CITIES_ENABLED = False
+global EXIT
 EXIT = False
 DISPLAYSURF = pygame.display.set_mode((WIDTH, HEIGHT), pygame.FULLSCREEN)
 MINIMIZED = False
@@ -459,6 +460,7 @@ def perform_action(obj, user, position, game_id, authenticator):
       server_manager.save_game(authenticator, game_id)
       set_flash_message('Game saved')
     elif selection == "lobby":
+      print("going to lobby")
       global EXIT
       EXIT = True
   if isinstance(obj, Player):
@@ -489,12 +491,8 @@ def perform_action(obj, user, position, game_id, authenticator):
                     and action["actionType"] == Action.RESERVE_NOBLE.value:
                   
                     action_manager.perform_action(obj.get_id())
-        
-    #elif isinstance(obj, City):
-        #pass
-    # players shouldn't click on nobles
-        # obj.take_noble(Sidebar.instance(), Player.instance(id=CURR_PLAYER))
-        # set_flash_message('Took a noble')
+  else:
+    set_flash_message('Not your turn', color=RED)
 
 class CardMenuAction(Enum):
     CLONE = 1
@@ -882,6 +880,8 @@ def play(authenticator, game_id, screen):
     DISPLAYSURF = screen
     last_update = pygame.time.get_ticks() # force update on first loop
     global action_manager, MINIMIZED
+    global EXIT
+    EXIT = False
     action_manager = ActionManager(authenticator=authenticator, game_id=game_id)
     update(authenticator, game_id)
     logged_in_user = authenticator.username
@@ -929,7 +929,6 @@ def play(authenticator, game_id, screen):
                     check_sidebar_clone(logged_in_user, position)
                     obj = get_clicked_object(position)
                     perform_action(obj, logged_in_user, position, game_id, authenticator)
-                    global EXIT
                     if EXIT:
                         return
                     with threading.Lock():
