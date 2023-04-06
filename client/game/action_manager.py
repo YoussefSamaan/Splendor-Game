@@ -38,7 +38,7 @@ class ActionManager:
         if action_type == Action.CASCADE:
             # Cascade is special
             return self.get_cascade_action_id(card)
-        elif action_type == Action.RESERVE_NOBLE:
+        elif action_type == Action.TAKE_NOBLE:
             # Reserve is special
             return self.get_reserve_noble_action_id(card)
         elif action_type == Action.DISCARD:
@@ -73,16 +73,17 @@ class ActionManager:
                 if correct_action:
                     return action["actionId"]
         return -1
-    # def get_reserve_noble_action_id(self, noble : Noble) -> int:
-    #     """ find which action id is for reserving a noble"""
-    #     print("Getting reserve noble action id for noble: " + str(card.get_id()))
-    #     for action in self.actions:
-    #         if "card" in action and "cardId" in action["card"] and action["card"]["cardId"] == card.get_id()\
-    #             and action["actionType"] == Action.RESERVE_NOBLE.value:
-    #             print("Found reserve noble action id: " + str(action["actionId"]))
-    #             return action["actionId"]
-    #     print("Action not found")
-    #     return -1
+    
+    def get_reserve_noble_action_id(self, noble : Noble) -> int:
+        """ find which action id is for reserving a noble"""
+        print("Getting reserve noble action id for noble: " + str(noble.get_id()))
+        for action in self.actions:
+            if "card" in action and "cardId" in action["card"] and action["card"]["cardId"] == noble.get_id()\
+                and action["actionType"] == Action.TAKE_NOBLE.value:
+                print("Found reserve noble action id: " + str(action["actionId"]))
+                return action["actionId"]
+        print("Action not found")
+        return -1
     
     def get_buy_reserved_card_action_id(self, card: Card) -> int:
         """ find which action id is for buying a reserved card"""
@@ -137,7 +138,7 @@ class ActionManager:
             # Not player's turn
             return False
         for action in self.actions:
-            if "actionType" in action and action["actionType"] == Action.RESERVE_NOBLE.value:
+            if "actionType" in action and action["actionType"] == Action.TAKE_NOBLE.value:
                 print("has unlocked reserve")
                 return True
         return False
