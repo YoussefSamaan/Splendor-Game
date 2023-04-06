@@ -87,8 +87,16 @@ class IndividualTokenSelection:
         self.incrementButton.display(DISPLAYSURF)
         self.decrementButton.display(DISPLAYSURF)
 
+def initialize_game_type(board_json):
+    global TRADING_POST_ENABLED
+    global CITIES_ENABLED
+    if board_json['gameType'] == 'SplendorTraderoute':
+        TRADING_POST_ENABLED = True
+    elif board_json['gameType'] == 'SplendorCities':
+        CITIES_ENABLED = True
 
 def initialize_game(board_json):
+    initialize_game_type(board_json)
     pygame.display.set_mode((WIDTH, HEIGHT), pygame.FULLSCREEN)
     initialize_board()
     initialize_cards()
