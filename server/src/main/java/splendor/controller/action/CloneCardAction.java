@@ -38,5 +38,7 @@ public class CloneCardAction extends CardAction {
   @Override
   public void performAction(Player player, Board board) {
     player.addCard((DevelopmentCardI) this.getCard());
+    player.updateCoatOfArms();
+    player.updateReserveNobles();
   }
 }

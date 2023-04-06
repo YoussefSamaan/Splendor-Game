@@ -208,5 +208,6 @@ public class BuyCardAction extends CardAction {
     }
 
     player.updateReserveNobles();
+    player.updateCoatOfArms();
   }
 }
