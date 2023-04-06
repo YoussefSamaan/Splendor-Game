@@ -154,7 +154,7 @@ class SessionListing:
     def get_game_info(self) -> str:
         return f"{self.creator} / {','.join(self.plr_list[1:])} [{len(self.plr_list)}/{self.min_plr}-{self.max_plr}]"
     def get_game_info_game(self) -> str:
-        if self.game_type == "SplendorTraderoute":
+        if self.game_type == "SplendorTraderoutes":
             return f"{self.session_id} / SplendorTrade"
         else:
             return f"{self.session_id} / {self.game_type}"
