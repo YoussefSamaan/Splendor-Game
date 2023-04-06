@@ -43,7 +43,6 @@ global EXIT
 EXIT = False
 DISPLAYSURF = pygame.display.set_mode((WIDTH, HEIGHT), pygame.FULLSCREEN)
 MINIMIZED = False
-is_won = False
 
 class IndividualTokenSelection:
     def __init__(self, token: Token, x_pos: int, y_pos: int) -> None:
@@ -158,27 +157,26 @@ def show_persistent_message(color=GREEN):
 
     flash_right_side(DISPLAYSURF, PERSISTENT_MESSAGE, color=color, opacity=255)
 
-def check_if_won():
+def check_if_won(board_json):
     # checks checkGameEnd in Board
-    # temp fake list of players
-    # TODO get the actual list of players from backend 
-    global is_won
-    lst = [Player.instance(id=0), Player.instance(id=1)] 
-    if is_won:
+    lst = board_json["winners"]
+    
+    if Player.instance(id=CURR_PLAYER).name in lst and len(lst) == 1:
         dim_screen(DISPLAYSURF)
-        if Player.instance(id=CURR_PLAYER) in lst and len(lst) == 1:
-            show_persistent_message("You won!", GREEN)
-            pygame.display.update()
+        show_persistent_message("You won!", GREEN)
+        pygame.display.update()
 
-            return
-        elif Player.instance(id=CURR_PLAYER) in lst and len(lst) > 1:
-            show_persistent_message("You tied!", GREEN)
-            pygame.display.update()
-            return
-        else:
-            show_persistent_message("You lost!", RED)
-            pygame.display.update()
-            return
+        return
+    elif Player.instance(id=CURR_PLAYER).name in lst and len(lst) > 1:
+        dim_screen(DISPLAYSURF)
+        show_persistent_message("You tied!", GREEN)
+        pygame.display.update()
+        return
+    elif len(lst) > 0:
+        show_persistent_message("You lost!", RED)
+        dim_screen(DISPLAYSURF)
+        pygame.display.update()
+        return
 
 def set_flash_message(text, color=GREEN, timer=5):
     global FLASH_MESSAGE, FLASH_TIMER, FLASH_START, FLASH_COLOR
@@ -215,6 +213,11 @@ def update(authenticator, game_id):
     print(action_manager.actions)
     # TODO: add cascading buy for cards]
     # if we need to cascade, we don't chance players
+    if check_if_won(board_json):
+        for _ in pygame.event.get():
+            #end game if click anything
+            global EXIT
+            EXIT = True
     check_cascade()
     check_clone()
     if not CITIES_ENABLED:
@@ -923,11 +926,6 @@ def play(authenticator, game_id, screen):
     logged_in_user = authenticator.username
     display_everything(logged_in_user)
     while True:
-        if check_if_won():
-            for event in pygame.event.get():
-                #end game if click anything
-                pygame.quit()
-                sys.exit()
         if pygame.time.get_ticks() - last_update > 2000:
             last_update = pygame.time.get_ticks()
             # await async_update(authenticator, game_id)
