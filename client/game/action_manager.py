@@ -206,6 +206,9 @@ class ActionManager:
             if "tokens" in action and action["tokens"] == color_key_dict\
                 and action["actionType"] == action_type.value:
                 return action["actionId"]
+            if "token" in action and action["token"] == color_key_dict\
+                and action["actionType"] == Action.TAKE_ONE_TOKEN.value:
+                return action["actionId"]
         return -2
     
     # get a list of all unique actions
