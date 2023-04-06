@@ -163,18 +163,24 @@ def check_if_won(board_json):
     
     if Player.instance(id=CURR_PLAYER).name in lst and len(lst) == 1:
         dim_screen(DISPLAYSURF)
-        show_persistent_message("You won!", GREEN)
+        global PERSISTENT_MESSAGE
+        PERSISTENT_MESSAGE = "You won!"
+        show_persistent_message()
         pygame.display.update()
 
         return
     elif Player.instance(id=CURR_PLAYER).name in lst and len(lst) > 1:
         dim_screen(DISPLAYSURF)
-        show_persistent_message("You tied!", GREEN)
+        global PERSISTENT_MESSAGE
+        PERSISTENT_MESSAGE = "You tied!"
+        show_persistent_message()
         pygame.display.update()
         return
     elif len(lst) > 0:
-        show_persistent_message("You lost!", RED)
         dim_screen(DISPLAYSURF)
+        global PERSISTENT_MESSAGE
+        PERSISTENT_MESSAGE = "You lost!"
+        show_persistent_message(RED)
         pygame.display.update()
         return
 
