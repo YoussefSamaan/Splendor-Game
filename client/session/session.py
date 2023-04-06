@@ -176,13 +176,13 @@ class SessionListing:
             self.red_button.set_text("Delete")
         elif self.current_user in self.plr_list and not self.launched:
             self.red_button.set_text("Leave")
-        if not self.launched:
+        if not self.created and self.current_user == self.creator:
+            self.green_button.set_text("Load")
+        elif not self.launched:
             if self.current_user == self.creator and len(self.plr_list) >= self.min_plr:
                 self.green_button.set_text("Launch")
             elif self.current_user not in self.plr_list and len(self.plr_list) < self.max_plr:
                 self.green_button.set_text("Join")
-        elif not self.created and self.current_user == self.creator:
-            self.green_button.set_text("Load")
         else:
             self.green_button.set_text("Play")
             
