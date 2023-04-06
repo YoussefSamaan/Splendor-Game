@@ -11,6 +11,8 @@ import java.util.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import splendor.model.game.card.DevelopmentCardDeserializer;
+import splendor.model.game.card.DevelopmentCardI;
 import splendor.model.game.deck.SplendorDeck;
 import splendor.model.game.deck.SplendorDeckDeserializer;
 
@@ -30,6 +32,7 @@ public class SaveGameManager {
   public SaveGameManager(@Value("${savegame.location}") String saveGamePath) {
     gson = new GsonBuilder()
         .registerTypeAdapter(SplendorDeck.class, new SplendorDeckDeserializer())
+        .registerTypeAdapter(DevelopmentCardI.class, new DevelopmentCardDeserializer())
         .create();
     this.saveGamePath = saveGamePath;
     // Create the savegame directory if it does not exist
@@ -47,7 +50,7 @@ public class SaveGameManager {
   public void saveGame(SplendorGame game) {
     String saveGameId = game.getGameInfo().getSavegame();
     logger.info("Saving game " + saveGameId);
-    String json = gson.toJson(game);
+    String json = new Gson().toJson(game);
     writeToFile(json, saveGameId);
   }
 
