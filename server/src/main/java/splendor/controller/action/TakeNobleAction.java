@@ -43,7 +43,8 @@ public class TakeNobleAction extends CardAction {
       player.addNoble((Noble) this.getCard());
       board.removeNoble((Noble) this.getCard());
     } else {
-      //add it to the reserve noble list
+      player.addReserveNoble((Noble) this.getCard());
+      board.removeNoble((Noble) this.getCard());
     }
   }
 
