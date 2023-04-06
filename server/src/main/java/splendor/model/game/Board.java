@@ -33,7 +33,7 @@ public class Board implements BroadcastContent {
   private final Player[] players;
   private int currentTurn;
   private final SplendorDeck[] decks = new SplendorDeck[6];
-
+  private GameType gameType;
   private NobleDeck nobleDeck;
   private CityDeck cityDeck;
 
@@ -86,8 +86,15 @@ public class Board implements BroadcastContent {
     }
     if (gameType.equals("Splendor") || gameType.equals("SplendorTraderoutes")) {
       this.nobleDeck = new NobleDeck(players.length); // create nobleDeck based on # players
+      if (gameType.equals("Splendor")) {
+        this.gameType = GameType.ORIENT;
+      } else {
+        this.gameType = GameType.TRADEROUTES;
+      }
     } else {
       this.cityDeck = new CityDeck();
+      this.gameType = GameType.CITIES;
+
     }
     currentTurn = 0;
     decks[0] = new Deck(Color.GREEN);

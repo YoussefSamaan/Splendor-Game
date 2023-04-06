@@ -9,6 +9,11 @@ package splendor.model;
  * @Date December 2020
  */
 public class ModelAccessException extends Exception {
+  /**
+   * ModelAccessException.
+   *
+   * @param cause string
+   */
   public ModelAccessException(String cause) {
     super(cause);
   }
