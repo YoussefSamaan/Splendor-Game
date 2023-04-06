@@ -172,7 +172,7 @@ class SessionListing:
         game_info = self.get_game_info()
         game_info_game = self.get_game_info_game()
         pygame.draw.rect(screen, LIGHT_GREY, self.game_info)
-        new_text(game_info, WHITE, GAME_RECT_INIT_X, GAME_RECT_INIT_Y+10+GAME_RECT_INCR_Y*self.index_order)
+        new_text(game_info, WHITE, GAME_RECT_INIT_X, GAME_RECT_INIT_Y+30+GAME_RECT_INCR_Y*self.index_order)
         new_text(game_info_game, WHITE, GAME_RECT_INIT_X, GAME_RECT_INIT_Y+GAME_RECT_INCR_Y*self.index_order)
         # set text for buttons
         if self.current_user == self.creator and not self.launched:
