@@ -59,6 +59,7 @@ public class Board implements BroadcastContent {
     }
     this.nobleDeck = new NobleDeck(players.length); // create nobleDeck based on # players
     this.cityDeck = new CityDeck();
+    this.gameType = GameType.ORIENT; // this way it won't be null
     currentTurn = 0;
     decks[0] = new Deck(Color.GREEN);
     decks[1] = new Deck(Color.YELLOW);
@@ -438,4 +439,6 @@ public class Board implements BroadcastContent {
   public List<String> getWinners() {
     return winners;
   }
+
+
 }
