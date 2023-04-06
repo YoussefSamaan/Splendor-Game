@@ -131,7 +131,7 @@ public class Inventory {
   public static Inventory getDemoInventory() {
     Inventory inventory = new Inventory();
     for (Color color : Color.tokenColors()) {
-      inventory.addTokens(Token.of(color), 10);
+      inventory.addTokens(Token.of(color), 0);
     }
     return inventory;
   }

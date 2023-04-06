@@ -247,7 +247,7 @@ public class BoardTest {
 	@Test
 	void validAddToken(){
 		testBoard = new Board(player1,player2,player3,player4);
-		int player1_redToken = player1.getTokens().get(Color.RED);
+		int player1_redToken = player1.getTokens().getOrDefault(Color.RED, 0);
 		int testBoard_redToken = testBoard.getTokens().get(Color.RED);
 		testBoard.addTokens(player1.getTokens());
 		Assertions.assertTrue(testBoard.getTokens().get(Color.RED) == (player1_redToken + testBoard_redToken));
