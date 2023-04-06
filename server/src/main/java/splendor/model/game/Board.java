@@ -33,13 +33,13 @@ public class Board implements BroadcastContent {
   private final Player[] players;
   private int currentTurn;
   private final SplendorDeck[] decks = new SplendorDeck[6];
-
+  private GameType gameType;
   private NobleDeck nobleDeck;
   private CityDeck cityDeck;
 
   private final TokenBank bank = new TokenBank(true);
 
-  private List<String> winners = new ArrayList<>(); // can have multiple winners in case of a tie
+  private List<String> winners = null; // can have multiple winners in case of a tie
 
   /**
    * Creates a new board.
@@ -72,6 +72,7 @@ public class Board implements BroadcastContent {
    * Creates a new board.
    *
    * @param players the players. Only 2-4 players are allowed.
+   * @param gameType the type of game (extension)
    */
   public Board(String gameType, Player... players) {
     if (players.length < 2 || players.length > 4) {
@@ -86,8 +87,15 @@ public class Board implements BroadcastContent {
     }
     if (gameType.equals("Splendor") || gameType.equals("SplendorTraderoutes")) {
       this.nobleDeck = new NobleDeck(players.length); // create nobleDeck based on # players
+      if (gameType.equals("Splendor")) {
+        this.gameType = GameType.ORIENT;
+      } else {
+        this.gameType = GameType.TRADEROUTES;
+      }
     } else {
       this.cityDeck = new CityDeck();
+      this.gameType = GameType.CITIES;
+
     }
     currentTurn = 0;
     decks[0] = new Deck(Color.GREEN);
@@ -112,6 +120,7 @@ public class Board implements BroadcastContent {
    *
    * @param player the player buying the card
    * @param card the card to buy
+   * @throws InsufficientResourcesException if not enough resources
    */
   public void buyCard(SplendorPlayer player, SplendorCard card)
       throws InsufficientResourcesException {
@@ -193,6 +202,9 @@ public class Board implements BroadcastContent {
   }
 
   private void checkGameEnd() {
+    if (winners != null) {
+      return;
+    }
     if (nobleDeck == null) { // in cities extension, the nobleDeck will be null
       List<Player> playersWithCities = new ArrayList<>();
       boolean gameEnd = false;
@@ -209,6 +221,7 @@ public class Board implements BroadcastContent {
       // Otherwise, if they have the same amount of points, then we add them as a tied winner.
       if (gameEnd) {
         Collections.sort(playersWithCities, new SortByDescendingPrestigePoints());
+        winners = new ArrayList<>(); // previously null
         for (int i = 0; i < playersWithCities.size(); i++) {
           winners.add(playersWithCities.get(i).getName()); // player with most prestige points
           if (i >= playersWithCities.size() - 1) {
@@ -221,8 +234,12 @@ public class Board implements BroadcastContent {
         }
       }
     } else { // not cities extension
+      boolean gameEnd = false;
       for (Player player : players) {
         if (player.getPrestigePoints() >= 15) {
+          if (winners == null) {
+            winners = new ArrayList<>(); // initialize
+          }
           winners.add(player.getName());
         }
       }
@@ -406,11 +423,18 @@ public class Board implements BroadcastContent {
 
   /**
    * Check if game is finished.
+   *
+   * @return finished if winners is not empty (if there are winners)
    */
   public boolean isFinished() {
     return winners != null;
   }
 
+  /**
+   * get the list of winners.
+   *
+   * @return list of winners.
+   */
   public List<String> getWinners() {
     return winners;
   }

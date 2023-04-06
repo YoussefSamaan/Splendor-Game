@@ -131,7 +131,7 @@ public class Inventory {
   public static Inventory getDemoInventory() {
     Inventory inventory = new Inventory();
     for (Color color : Color.tokenColors()) {
-      inventory.addTokens(Token.of(color), 10);
+      inventory.addTokens(Token.of(color), 0);
     }
     return inventory;
   }
@@ -294,12 +294,24 @@ public class Inventory {
 
   }
 
-
+  /**
+   * remove the reserved card from inventory.
+   *
+   * @param card to remove.
+   */
   public void removeReservedCard(DevelopmentCardI card) {
     this.reservedCards.remove(card);
   }
 
+  /**
+   * Get rid of the card bought and associated bonuses.
+   *
+   * @param card the card
+   */
   public void removeCardBought(DevelopmentCardI card) {
     this.boughtCards.remove(card);
+    for (Color c : Color.tokenColors()) {
+      this.discounts.replace(c, this.discounts.getOrDefault(c, 0) - card.getBonus().getBonus(c));
+    }
   }
 }

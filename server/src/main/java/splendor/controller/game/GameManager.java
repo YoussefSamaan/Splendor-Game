@@ -123,7 +123,13 @@ public class GameManager {
     }
     SplendorGame game = games.get(gameId);
     // FIXME: allow custom savegame names.
-    game.getGameInfo().setSavegame(Long.toString(gameId));
+    String savegame;
+    if (game.getGameInfo().getSavegame() == null || game.getGameInfo().getSavegame().isEmpty()) {
+      savegame = Long.toString(gameId);
+    } else {
+      savegame = game.getGameInfo().getSavegame();
+    }
+    game.getGameInfo().setSavegame(savegame);
     saveGameManager.saveGame(game);
   }
 

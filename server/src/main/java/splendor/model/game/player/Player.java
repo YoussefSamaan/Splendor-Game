@@ -277,7 +277,8 @@ public class Player implements PlayerReadOnly, SplendorPlayer {
    */
   public void removeTokens(HashMap<Color, Integer> tokens) {
     inventory.removeTokens(tokens);
-    inventory.removeGoldCards(tokens.get(Color.GOLD)); // removes any gold cards if needed
+    // removes any gold cards if needed
+    inventory.removeGoldCards(tokens.getOrDefault(Color.GOLD, 0));
   }
 
   /**
@@ -340,22 +341,48 @@ public class Player implements PlayerReadOnly, SplendorPlayer {
     this.prestigePoints += prestigePoints;
   }
 
+  /**
+   * Get the reserved cards.
+   *
+   * @return reserved cards.
+   */
   public List<DevelopmentCardI> getReservedCards() {
     return this.inventory.getReservedCards();
   }
 
+  /**
+   * remove the reserved card.
+   *
+   * @param card to remove.
+   */
   public void removeReservedCard(DevelopmentCardI card) {
     this.inventory.removeReservedCard(card);
   }
 
+  /**
+   * remove the bought cards.
+   *
+   * @param card bought.
+   */
   public void removeCardBought(DevelopmentCardI card) {
     this.inventory.removeCardBought(card);
   }
 
+  /**
+   * checks if nextActions contains this action.
+   *
+   * @param action to check for.
+   * @return boolean.
+   */
   public boolean containsNextAction(ActionType action) {
     return this.nextActions.contains(action);
   }
 
+  /**
+   * remove the action from the nextActions list.
+   *
+   * @param action to remove.
+   */
   public void removeNextAction(ActionType action) {
     this.nextActions.remove(action);
   }

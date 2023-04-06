@@ -49,7 +49,8 @@ public class SplendorGame {
   /**
    * Returns a player.
    *
-   * @return a player
+   * @param name the player name.
+   * @return a player.
    */
   public Player getPlayer(String name) {
     return Arrays.stream(gameInfo.getPlayers())
@@ -63,6 +64,7 @@ public class SplendorGame {
    *
    * @param player the player
    * @param card   the card
+   * @throws InsufficientResourcesException if not enough resources
    */
   public void buyCard(SplendorPlayer player, SplendorCard card)
       throws InsufficientResourcesException {
@@ -88,6 +90,7 @@ public class SplendorGame {
    * @param username   the username
    * @param actionData the action data
    * @post updates the turn
+   * @throws InsufficientResourcesException if not enough resources
    */
   public void performAction(Action action, String username, ActionData actionData)
       throws InsufficientResourcesException {

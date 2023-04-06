@@ -10,6 +10,7 @@ class Color(Enum):
     WHITE = (255, 255, 255)
     GOLD = (255, 215, 0)
     BLACK = (0, 0, 0)
+    GREY = (128, 128, 128)
 
     @classmethod
     def get_token_colors(cls):

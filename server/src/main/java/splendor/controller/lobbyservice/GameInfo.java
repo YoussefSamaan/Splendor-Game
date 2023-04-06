@@ -30,6 +30,11 @@ public class GameInfo {
     this.savegame = savegame;
   }
 
+  /**
+   * Getter for players.
+   *
+   * @return array of Players
+   */
   public Player[] getPlayers() {
     return players;
   }
@@ -80,6 +85,24 @@ public class GameInfo {
         + "\"gamename\":\"" + gameServer + "\""
         + ", \"players\":[" + playerList + "]"
         + ", \"savegameid\":\"" + savegame + "\""
+        + '}';
+  }
+
+  /**
+   * Get Json for save game resource.
+   * Example: {
+   *     "creator": "maex",
+   *     "game": "DummyGame1",
+   *     "savegame": "funnysavegameid42"
+   * }
+   *
+   * @return Json for save game resource
+   */
+  public String toJsonForSaveGameResource() {
+    return "{"
+        + "\"creator\":\"" + creator + "\""
+        + ", \"game\":\"" + gameServer + "\""
+        + ", \"savegame\":\"" + savegame + "\""
         + '}';
   }
 

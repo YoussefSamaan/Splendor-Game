@@ -34,7 +34,7 @@ public class ActionGenerator {
       // To check if the action was already generated for the player
       return gameActions.get(gameId);
     }
-    // TODO: ADD more actions
+
     if (player.nextAction() == null) {
       actions.addAll(TakeTokensAction.getLegalActions(game, player));
       actions.addAll(ReserveCardAction.getLegalActions(game, player));

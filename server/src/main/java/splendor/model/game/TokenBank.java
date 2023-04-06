@@ -43,8 +43,9 @@ public class TokenBank implements Bank<Token> {
    */
   @Override
   public void remove(Token element) {
-    assert contains(element);
-    tokens.replace(element.getColor(), tokens.get(element.getColor()) - 1);
+    if (contains(element)) {
+      tokens.replace(element.getColor(), tokens.get(element.getColor()) - 1);
+    }
   }
 
   /**

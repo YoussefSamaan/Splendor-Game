@@ -93,7 +93,7 @@ public class BuyCardAction extends CardAction {
     }
     // create different ways to pay for the card and send them back.
     for (int i = 0; i < cardsOfSameColor.size(); i++) {
-      for (int j = i; j < cardsOfSameColor.size(); j++) {
+      for (int j = i + 1; j < cardsOfSameColor.size(); j++) {
         List<DevelopmentCardI> cards = new ArrayList<>();
         cards.add(cardsOfSameColor.get(i));
         cards.add(cardsOfSameColor.get(j));
@@ -179,9 +179,14 @@ public class BuyCardAction extends CardAction {
   @Override
   public void performAction(Player player, Board board) {
     DevelopmentCardI card = (DevelopmentCardI) this.getCard();
-    player.addCard(card);
+    if (!card.getSpecialActions().contains(ActionType.CLONE_CARD)) {
+      player.addCard(card);
+    }
     board.removeCard(card);
     card.getSpecialActions().forEach(player::addNextAction); // add special actions to player
+    if (player.getCardsBought().size() == 0 && player.containsNextAction(ActionType.CLONE_CARD)) {
+      player.removeNextAction(ActionType.CLONE_CARD);
+    }
     if (board.getNobles() == null) {
       if (player.containsNextAction(ActionType.TAKE_NOBLE)) {
         player.removeNextAction(ActionType.TAKE_NOBLE);

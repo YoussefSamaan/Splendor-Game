@@ -18,6 +18,7 @@ import splendor.controller.helper.TokenHelper;
 @Component
 public class Registrator {
   private static final String REGISTRATION_RESOURCE = "/api/gameservices";
+  private static final String SESSION_RESOURCE = "/api/sessions";
   private static final String SAVEGAME_RESOURCE = "/savegames";
   private static final String[] GAME_MODES = {"Splendor", "SplendorCities", "SplendorTraderoutes"};
 

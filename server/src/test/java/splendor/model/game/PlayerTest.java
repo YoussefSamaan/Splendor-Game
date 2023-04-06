@@ -31,7 +31,7 @@ public class PlayerTest {
     @Test
     void removeTokenTest(){
         player3.removeTokens(player3.getTokens());
-        int num_red_token_after_removal = player3.getTokens().get(Color.RED);
+        int num_red_token_after_removal = player3.getTokens().getOrDefault(Color.RED, 0);
         Assertions.assertTrue(  num_red_token_after_removal == 0);
     }
 

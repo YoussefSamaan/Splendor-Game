@@ -1,7 +1,7 @@
 import requests
 
 from config import config
-
+from time import time
 
 # This class is responsible for authenticating the user, and storing the token and refresh token
 class Authenticator:
@@ -9,6 +9,8 @@ class Authenticator:
         self.username = None
         self.token = None
         self.refresh_token = None
+        # Time since last refresh
+        self.last_refresh = time()
 
     def authenticate(self, username, password):
         url = config.LOBBY_SERVICE_URL + '/oauth/token'
@@ -40,6 +42,10 @@ class Authenticator:
         return False
 
     def get_token(self, escape=False):
+        # Refresh the token if it is older than 5 minutes
+        if time() - self.last_refresh > 300:
+            self.refresh()
+            self.last_refresh = time()
         if escape:
             return self.token.replace('+', "%2B")
 

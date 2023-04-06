@@ -1,8 +1,9 @@
 from game import server_manager
 from game.action import Action
 from game.card import Card
+from game.noble import Noble
 from game.splendorToken import Token
-from typing import Dict
+from typing import Dict, List
 
 
 class ActionManager:
@@ -44,7 +45,7 @@ class ActionManager:
         elif action_type == Action.DISCARD:
             # Discard is special
             return self.get_discard_action_id(card)
-        elif action_type == Action.CLONE:
+        elif action_type == Action.CLONE_CARD:
             # Clone is special
             return self.get_clone_action_id(card)
         elif action_type == Action.BUY_RESERVED_CARD:
@@ -57,16 +58,34 @@ class ActionManager:
                 return action["actionId"]
         return -1
 
-    def get_reserve_noble_action_id(self, card: Card) -> int:
-        """ find which action id is for reserving a noble"""
-        print("Getting reserve noble action id for card: " + str(card.get_id()))
+
+    def get_strip_card_action_id(self, card: Card, payment_cards: List[int]) -> int:
+        print(card)
+        print(payment_cards)
         for action in self.actions:
             if "card" in action and "cardId" in action["card"] and action["card"]["cardId"] == card.get_id()\
-                and action["actionType"] == Action.RESERVE_NOBLE.value:
-                print("Found reserve noble action id: " + str(action["actionId"]))
-                return action["actionId"]
-        print("Action not found")
+                and action["actionType"] == Action.BUY.value:
+                correct_action = True
+                if "cardPayment" in action:
+                    for payment_card in action["cardPayment"]:
+                        if payment_card["cardId"] in payment_cards:
+                            pass
+                        else:
+                            correct_action = False
+                
+                if correct_action:
+                    return action["actionId"]
         return -1
+    # def get_reserve_noble_action_id(self, noble : Noble) -> int:
+    #     """ find which action id is for reserving a noble"""
+    #     print("Getting reserve noble action id for noble: " + str(card.get_id()))
+    #     for action in self.actions:
+    #         if "card" in action and "cardId" in action["card"] and action["card"]["cardId"] == card.get_id()\
+    #             and action["actionType"] == Action.RESERVE_NOBLE.value:
+    #             print("Found reserve noble action id: " + str(action["actionId"]))
+    #             return action["actionId"]
+    #     print("Action not found")
+    #     return -1
     
     def get_buy_reserved_card_action_id(self, card: Card) -> int:
         """ find which action id is for buying a reserved card"""
@@ -95,7 +114,7 @@ class ActionManager:
         print("Getting clone action id for card: " + str(card.get_id()))
         for action in self.actions:
             if "card" in action and "cardId" in action["card"] and action["card"]["cardId"] == card.get_id()\
-                and action["actionType"] == Action.CLONE.value:
+                and action["actionType"] == Action.CLONE_CARD.value:
                 print("Found clone action id: " + str(action["actionId"]))
                 return action["actionId"]
         print("Action not found")
@@ -143,7 +162,7 @@ class ActionManager:
             # Not player's turn
             return False
         for action in self.actions:
-            if "actionType" in action and action["actionType"] == Action.CLONE.value:
+            if "actionType" in action and action["actionType"] == Action.CLONE_CARD.value:
                 print("has unlocked clone")
                 return True
         return False

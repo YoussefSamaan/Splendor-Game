@@ -50,6 +50,7 @@ def button(text, width, height, color, border_radius=10):
     :param width: the width of the button
     :param height: the height of the button
     :param color: the color of the button
+    :param border_radius: the border radius of the button
     :return: the button
     """
     # create a transparent surface

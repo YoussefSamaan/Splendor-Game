@@ -17,14 +17,13 @@ from city import *
 from splendorToken import Token
 from color import Color
 from enum import Enum
+from menu import Menu
 
 os.chdir(os.path.dirname(
     os.path.abspath(__file__)))  # to make image imports start from current directory
 WIDTH, HEIGHT = GetSystemMetrics(0), GetSystemMetrics(1)
 FPS = 60
 FPSCLOCK = pygame.time.Clock()
-pygame.init()
-DISPLAYSURF = pygame.display.set_mode((WIDTH, HEIGHT), pygame.FULLSCREEN)
 pygame.display.set_caption('Splendor')
 fullScreen = True
 DECKS = [BlueDeck, RedDeck3, YellowDeck, RedDeck2, GreenDeck, RedDeck1]
@@ -40,6 +39,21 @@ has_initialized = False
 cascade = False
 TRADING_POST_ENABLED = False 
 CITIES_ENABLED = False
+global EXIT
+EXIT = False
+DISPLAYSURF = pygame.display.set_mode((WIDTH, HEIGHT), pygame.FULLSCREEN)
+MINIMIZED = False
+
+
+class WIN_TYPE(Enum):
+    WIN = 1
+    TIE = 2
+    LOSE = 3
+    NOTHING = 0
+    def __eq__(self, other):
+        return self.value == other.value
+
+IS_WON = WIN_TYPE.NOTHING
 
 class IndividualTokenSelection:
     def __init__(self, token: Token, x_pos: int, y_pos: int) -> None:
@@ -73,12 +87,21 @@ class IndividualTokenSelection:
         self.incrementButton.display(DISPLAYSURF)
         self.decrementButton.display(DISPLAYSURF)
 
+def initialize_game_type(board_json):
+    global TRADING_POST_ENABLED
+    global CITIES_ENABLED
+    if board_json['gameType'] == 'SplendorTraderoute':
+        TRADING_POST_ENABLED = True
+    elif board_json['gameType'] == 'SplendorCities':
+        CITIES_ENABLED = True
 
 def initialize_game(board_json):
+    initialize_game_type(board_json)
     pygame.display.set_mode((WIDTH, HEIGHT), pygame.FULLSCREEN)
     initialize_board()
     initialize_cards()
     initialize_tokens()
+    initialize_menu()
     
     initialize_players(board_json)
     if TRADING_POST_ENABLED:
@@ -118,6 +141,8 @@ def initialize_board():
 def initialize_sidebar():
     Sidebar.instance(WIDTH, HEIGHT)
 
+def initialize_menu():
+    Menu.instance(WIDTH, HEIGHT)
 
 def initialize_cards():
     BlueDeck.instance()
@@ -151,29 +176,32 @@ def show_persistent_message(color=GREEN):
 
     flash_right_side(DISPLAYSURF, PERSISTENT_MESSAGE, color=color, opacity=255)
 
+def check_if_won(board_json,username):
+    # checks checkGameEnd in Board
+    global IS_WON
+    if "winners" in board_json:
+        print("found winners")
+        lst = board_json["winners"]
+
+        if username in lst and len(lst) == 1:
+            print("player won")
+            IS_WON = WIN_TYPE.WIN
+
+        elif username in lst and len(lst) > 1:
+            IS_WON = WIN_TYPE.TIE
+        elif len(lst) > 0:
+                
+            IS_WON = WIN_TYPE.LOSE
+        else:
+            print("win type nothing")
+            IS_WON = WIN_TYPE.NOTHING
+    else:
+        IS_WON = WIN_TYPE.NOTHING
 
 def set_flash_message(text, color=GREEN, timer=5):
     global FLASH_MESSAGE, FLASH_TIMER, FLASH_START, FLASH_COLOR
     FLASH_MESSAGE, FLASH_TIMER, FLASH_START = text, timer, pygame.time.get_ticks()
     FLASH_COLOR = color
-
-async def async_update(authenticator, game_id):
-    global has_initialized
-    global action_manager
-    board_json = await server_manager.get_board_async(authenticator=authenticator, game_id=game_id)
-
-    if not has_initialized:
-        has_initialized = True
-        initialize_game(board_json)
-    action_manager.update(Player.instance(id=CURR_PLAYER).name)
-    check_cascade()
-    update_turn_player(board_json)
-    update_players(board_json)
-    update_decks(board_json)
-    update_tokens(board_json)
-    update_nobles(board_json)
-    TradeRoute.instance().update(board_json)
-
 
 def update(authenticator, game_id):
     global has_initialized
@@ -183,9 +211,12 @@ def update(authenticator, game_id):
         has_initialized = True
         initialize_game(board_json)
     global action_manager
+    check_if_won(board_json,authenticator.username)
     action_manager.update(Player.instance(id=CURR_PLAYER).name)
+    print(action_manager.actions)
     # TODO: add cascading buy for cards]
     # if we need to cascade, we don't chance players
+
     check_cascade()
     check_clone()
     if not CITIES_ENABLED:
@@ -204,6 +235,7 @@ def update(authenticator, game_id):
         #update_cities(board_json)
     else:
         update_nobles(board_json)
+
 def check_clone():
     """checks if the card has a clone effect. if so, display card menu with clone action so player can choose what to clone"""
     global action_manager, PERSISTENT_MESSAGE
@@ -278,6 +310,9 @@ def update_players(board_json):
 
 
 def display_everything(current_user):
+    global MINIMIZED
+    if MINIMIZED:
+        return
     # reset the display and re-display everything
     DISPLAYSURF.fill((0, 0, 0))
     display_sidebar()
@@ -285,6 +320,7 @@ def display_everything(current_user):
     display_board()
     display_decks()
     display_tokens()
+    display_menu()
     if CITIES_ENABLED:
         pass
         #display_cities()
@@ -296,6 +332,9 @@ def display_everything(current_user):
     show_flash_message()  # last so it's on top
     show_persistent_message()
     pygame.display.update()
+
+def display_menu():
+  Menu.instance().display(DISPLAYSURF)
 
 def display_trade_routes():
     if TRADING_POST_ENABLED:
@@ -336,6 +375,8 @@ def display_players(logged_in_player_username):
 def get_clicked_object(pos):
     board = Board.instance()
     sidebar = Sidebar.instance()
+    if Menu.instance().is_clicked(pos):
+        return Menu.instance()
     for i in range(NUM_PLAYERS):
         temp_player = Player.instance(id=i)
         if temp_player.is_clicked(pos, WIDTH, HEIGHT, NUM_PLAYERS):
@@ -365,8 +406,17 @@ def get_user_card_selection(card :Card):
     dim_screen(DISPLAYSURF)
     action = card.get_user_selection(DISPLAYSURF)
     global FLASH_MESSAGE, FLASH_TIMER, CURR_PLAYER, action_manager
+
+    # special case for non-token buys; change the flow to the card menu ui
+    STRIP_CARD_IDS = [115,116,117,119,120]
+    if card.get_id() in STRIP_CARD_IDS and action == Action.BUY:
+        print("found stripping")
+        card_menu = CardMenu(list(Player.instance(id=CURR_PLAYER).cards_bought.keys()), CardMenuAction.DISCARD, card)
+        card_menu.display()
+        return
+    
     server_action_id = action_manager.get_card_action_id(card, Player.instance(id=CURR_PLAYER).name,
-                                                         action)
+                                                            action)
     if server_action_id == 0:
         return
     if server_action_id <= -1:
@@ -416,39 +466,66 @@ def check_sidebar_reserve(user, position):
             print(list(Player.instance(id=CURR_PLAYER).reserved_cards.keys()))
             card_menu = CardMenu(list(Player.instance(id=CURR_PLAYER).reserved_cards.keys()), CardMenuAction.RESERVED)
             card_menu.display()
-def perform_action(obj, user, position):
-    if obj is None:
-        return
+
+def check_sidebar_clone(user, position):
     global CURR_PLAYER
     global action_manager
-    # make sure it's the current user's turn, otherwise cannot take cards
-    if user == Player.instance(id=CURR_PLAYER).name:
+    if user == Player.instance(id=CURR_PLAYER).name and Sidebar.instance().current_player.name == user:
         action_manager.update(Player.instance(id=CURR_PLAYER).name)
-        
-        if isinstance(obj, Card):
-            global cascade
-            if cascade:
-                get_user_cascade_selection(obj)
-            else:
-                get_user_card_selection(obj)
-        elif isinstance(obj, Token):
-            # opens token selection menu
-            get_token_selection()
-            
-        elif isinstance(obj, Noble):
-            pass
-        #elif isinstance(obj, City):
-            #pass
-        # players shouldn't click on nobles
-            # obj.take_noble(Sidebar.instance(), Player.instance(id=CURR_PLAYER))
-            # set_flash_message('Took a noble')
-       
-        elif isinstance(obj, Player):
-            Sidebar.instance().switch_player(obj)
+        if Sidebar.instance().is_clicked_owned_cards(position):
+            print("=== clicked bought cards")
+            if check_clone():
+                print("=== preparing to clone")
+                print(list(Player.instance(id=CURR_PLAYER).cards_bought.keys()))
+                card_menu = CardMenu(list(Player.instance(id=CURR_PLAYER).cards_bought.keys()), CardMenuAction.CLONE)
+                card_menu.display()
 
-    # When it's not the user's turn, still allow switching between sidebars
-    elif isinstance(obj, Player):
-        Sidebar.instance().switch_player(obj)
+def perform_action(obj, user, position, game_id, authenticator):
+  if obj is None:
+      return
+  global CURR_PLAYER
+  global action_manager
+
+  # Check menuand sidebar  not matter the turn
+  if isinstance(obj, Menu):
+    selection = Menu.instance().get_menu_selection(DISPLAYSURF)
+    if selection == "save":
+      server_manager.save_game(authenticator, game_id)
+      set_flash_message('Game saved')
+    elif selection == "lobby":
+      print("going to lobby")
+      global EXIT
+      EXIT = True
+  if isinstance(obj, Player):
+      Sidebar.instance().switch_player(obj)
+      return
+  # make sure it's the current user's turn, otherwise cannot take cards
+  if user == Player.instance(id=CURR_PLAYER).name:
+    action_manager.update(Player.instance(id=CURR_PLAYER).name)
+    
+    if isinstance(obj, Card):
+        global cascade
+        if cascade:
+            get_user_cascade_selection(obj)
+        else:
+            get_user_card_selection(obj)
+    elif isinstance(obj, Token):
+        # opens token selection menu
+        get_token_selection()
+        
+    elif isinstance(obj, Noble):
+        # check if the player is currently in the reserve noble phase
+        
+        if action_manager.has_unlocked_reserve_noble(Player.instance(id=CURR_PLAYER).name):
+            print("=-=-=-=preparing to reserve a noble")
+            #  find noble in the json
+            for action in action_manager.actions:
+                if "card" in action and "cardId" in action["card"] and action["card"]["cardId"] == obj.get_id()\
+                    and action["actionType"] == Action.RESERVE_NOBLE.value:
+                  
+                    action_manager.perform_action(obj.get_id())
+  else:
+    set_flash_message('Not your turn', color=RED)
 
 class CardMenuAction(Enum):
     CLONE = 1
@@ -456,17 +533,17 @@ class CardMenuAction(Enum):
     DISCARD = 3
 class CardMenu:
     """generic menu that displays all the cards that a player owns or reserved, for cloning, discarding and buying"""
-    def __init__(self, cards : List[Card], action : CardMenuAction):
+    def __init__(self, cards : List[Card], action : CardMenuAction, card_to_buy: Card = None):
         global action_manager
         # action could be buy a reserved, clone, discard functions
         selection_box, selection_box_rect = get_selection_box(DISPLAYSURF, 1, 0.6)
         self.selection_box = selection_box
         self.selection_box_rect = selection_box_rect
-        self.highlighted_box = (None, None, None) #(x, y, Card)
-        self.highlighted_box2 = (None, None, None)
+        self.highlighted_box = (None, None, None, None) #(x, y, Card), for drawing a highlight around the card selected
+        self.highlighted_box2 = (None, None, None, None) # this is the second highlighted box, for cloning
         self.menu = pygame.Surface((WIDTH, HEIGHT))
-        self.menu.fill((0, 0, 0))
-        self.menu.set_alpha(200)
+        self.menu.fill((50, 50, 50))
+        #self.menu.set_alpha(200)
         self.menu_rect = self.menu.get_rect()
         self.menu_rect.center = (WIDTH / 2, HEIGHT / 2)
         self.confirm = Button(pygame.Rect(WIDTH/2,HEIGHT*7/10,90,55), None, text="Confirm")
@@ -480,12 +557,13 @@ class CardMenu:
         self.current_card_mapping = {} # maps the card to the coords that is clicked on it
         self.card_selected = None # the card that the user has selected
         self.card_selected2 = None # the second card that the user has selected
+        self.card_to_buy = card_to_buy # in case of stripping, the card we want to buy
 
-    def create_send_action(self, card):
+    def create_send_action(self, card, payment_cards=None):
         def reserved_action(card):
             self.send_action = action_manager.perform_action(action_manager.get_buy_reserved_card_action_id(card))
-        def discard_action(card):
-            self.send_action = action_manager.perform_action(action_manager.get_discard_action_id(card))
+        def discard_action(card, payment_cards):
+            self.send_action = action_manager.perform_action(action_manager.get_strip_card_action_id(card,payment_cards))
         def clone_action(card):
             self.send_action = action_manager.perform_action(action_manager.get_clone_action_id(card))
 
@@ -494,7 +572,7 @@ class CardMenu:
         elif self.action == CardMenuAction.RESERVED:
             return reserved_action(card)
         elif self.action == CardMenuAction.DISCARD:
-            return discard_action(card)
+            return discard_action(card, payment_cards)
 
 
     def display(self):
@@ -510,17 +588,22 @@ class CardMenu:
         write_on(DISPLAYSURF, self.prev_page.text, center=self.prev_page.rectangle.center,color=WHITE)
         #write_on(DISPLAYSURF, "Page " + str(self.current_page + 1) + "/" + str(math.ceil(len(self.cards) / 5)), WIDTH/2, HEIGHT*3/10 - 20, size=30)
         # draw the cards, we will draw them the same size as on the board
+        if len(self.cards) == 0:
+            # if there are no cards, abort
+            return 
         card_width, card_height = self.cards[0].get_card_size(Board.instance())
-        self.draw_border_to_card(self.highlighted_box[2])
-        if self.card_selected2 is not None:
-            self.draw_border_to_card2(self.highlighted_box2[2])
-        for i in range(self.current_page * 6, min(len(self.cards), (self.current_page + 1) * 6)):
-            # draw_for_sidebar(self, screen, x, y):
-            self.cards[i].draw_for_sidebar(DISPLAYSURF,WIDTH/7 + i*(card_width+55),HEIGHT*3/10 )
-            self.current_card_mapping[self.cards[i]] = (WIDTH/7 + i*(card_width+55), HEIGHT*3/10, i)
-        pygame.display.update()
+
         # wait for user to click on something or leave
         while True:
+            if self.card_selected is not None:
+                self.draw_border_to_card(self.highlighted_box[3])
+            if self.card_selected2 is not None:
+                self.draw_border_to_card2(self.highlighted_box2[3])
+            for i in range(self.current_page * 6, min(len(self.cards), (self.current_page + 1) * 6)):
+                # draw_for_sidebar(self, screen, x, y):
+                self.cards[i].draw_for_sidebar(DISPLAYSURF,WIDTH/7 + i*(card_width+55),HEIGHT*3/10 )
+                self.current_card_mapping[self.cards[i]] = (WIDTH/7 + i*(card_width+55), HEIGHT*3/10, i)
+            pygame.display.update()
             for event in pygame.event.get():
                 if event.type == QUIT:
                     pygame.quit()
@@ -528,17 +611,47 @@ class CardMenu:
                 elif event.type == MOUSEBUTTONUP:
                     card = self.check_if_clicked_card(pygame.mouse.get_pos())
                     if card:
-                        self.add_border_to_card(card) # visually indicate this card is chosen
-                        self.card_selected = card
+                        if card == self.card_selected:
+                            self.card_selected = None
+                            self.remove_border_to_card()
+                            continue
+                        elif self.card_selected is not None:
+                            self.remove_border_to_card()
+                            self.card_selected = card
+                            pygame.display.update()
+                            self.add_border_to_card(card)
+                            continue
+                        else:
+                            self.add_border_to_card(card) # visually indicate this card is chosen
+                            self.card_selected = card
                         if self.action == CardMenuAction.DISCARD and self.card_selected is not None:
                             # if the first card is selected, then the second card is selected
-                            self.card_selected2 = card
-                            self.add_border_to_card2(card)
-                        
+                            if card == self.card_selected2:
+                                # deselect the second card 
+                                self.card_selected2 = None
+                                self.remove_border_to_card2()
+                                continue
+                            elif self.card_selected2 is not None:
+                                # there's already such a card selected but it's different
+                                self.remove_border_to_card2() # remove prev card
+                                self.card_selected2 = card
+                                pygame.display.update()
+                                self.add_border_to_card2(card) # add new card 
+                                continue
+                            else: 
+                                self.card_selected2 = card
+                                self.add_border_to_card2(card)
+                                continue
+                    
                     elif self.confirm.rectangle.collidepoint(pygame.mouse.get_pos()):
                         if self.card_selected is None:
                             return # if the user clicks confirm without selecting a card, just close the menu
-                        return self.create_send_action(self.card_selected)
+
+                        if self.action == CardMenuAction.DISCARD:
+                            self.create_send_action(self.card_to_buy,[self.card_selected.get_id(),self.card_selected2.get_id()])
+                        else:
+                            self.create_send_action(self.card_selected)
+                        return 
                     elif self.next_page.rectangle.collidepoint(pygame.mouse.get_pos()):
                         # increments current page up to the max page
                         self.current_page = min(self.current_page + 1, len(self.cards) // 6)
@@ -548,37 +661,71 @@ class CardMenu:
                     else:
                         if self.action != CardMenuAction.RESERVED:
                             self.card_selected = None # deselect the card but doesn't close since cloning and stripping is forced
+                        elif self.selection_box_rect.collidepoint(pygame.mouse.get_pos()):
+                            continue # do nothing if the user clicks inside the menu
                         else: # reserve cards can be closed
                             self.card_selected = None
                             return # if the user clicks outside the menu, just close it
             pygame.display.update()
             FPSCLOCK.tick(FPS)
+    def remove_border_to_card(self):
+        if not self.highlighted_box[0] and not self.highlighted_box[1]:
+            return
+        card_width, card_height = self.cards[0].get_card_size(Board.instance())
+        x_start = self.highlighted_box[0]
+        y_start = self.highlighted_box[1]
+        self.highlighted_box = (None, None, None, None)
+        
+        pygame.draw.rect(DISPLAYSURF, (50, 50, 50), (x_start-10, y_start-10, card_width+55+20, card_height+55+20))
+    def remove_border_to_card2(self):
+        
+        if not self.highlighted_box[0] and not self.highlighted_box[1]:
+            return
+        card_width, card_height = self.cards[0].get_card_size(Board.instance())
+        x_start = self.highlighted_box[0]
+        y_start = self.highlighted_box[1]
+        self.highlighted_box2 = (None, None, None, None)
+        
+        pygame.draw.rect(DISPLAYSURF, (50, 50, 50), (x_start-10, y_start-10, card_width+55+20, card_height+55+20))
     def add_border_to_card2(self, card):
 
         self.highlighted_box2 = (self.current_card_mapping[card][0], self.current_card_mapping[card][1], self.current_card_mapping[card][2], card)
 
     def add_border_to_card(self, card):
-        # width height index, card
+        """visually highlights this card"""
+        
         self.highlighted_box = (self.current_card_mapping[card][0], self.current_card_mapping[card][1], self.current_card_mapping[card][2], card)
 
-    def draw_border_to_card(self, card):
-        if not self.highlighted_box[0] or not self.highlighted_box[1]:
+    def draw_border_to_card(self, card : Card):
+        if not self.highlighted_box[0] and not self.highlighted_box[1]:
             return
         card_width, card_height = self.cards[0].get_card_size(Board.instance())
         x_start = self.highlighted_box[0]
         y_start = self.highlighted_box[1]
         #card = 
-        pygame.draw.rect(DISPLAYSURF, RED, (x_start, y_start, card_width+20, card_height+20), 10)
-        card_index = self.current_card_mapping[card][2]
-        #card.draw_for_sidebar(DISPLAYSURF,WIDTH/7 + card_index*(card_width),HEIGHT*3/10 ) # card is on top of the border
-        pygame.display.update()
+        pygame.draw.rect(DISPLAYSURF, RED, (x_start-10, y_start-10, card_width+55+20, card_height+55+20))
+        #card_index = self.current_card_mapping[card][2]
+        #card.draw_for_sidebar(DISPLAYSURF,WIDTH/7 + card_index*(card_width+55),HEIGHT*3/10 ) # card is on top of the border
+        #pygame.display.update()
+
+    def draw_border_to_card2(self, card : Card):
+        if not self.highlighted_box2[0] or not self.highlighted_box2[1]:
+            return
+        card_width, card_height = self.cards[0].get_card_size(Board.instance())
+        x_start = self.highlighted_box2[0]
+        y_start = self.highlighted_box2[1]
+        #card = 
+        pygame.draw.rect(DISPLAYSURF, RED, (x_start-10, y_start-10, card_width+55+20, card_height+55+20))
+        #card_index = self.current_card_mapping[card][2]
+        #card.draw_for_sidebar(DISPLAYSURF,WIDTH/7 + card_index*(card_width+55),HEIGHT*3/10 ) # card is on top of the border
+        #pygame.display.update()
 
     def check_if_clicked_card(self, mouse_pos):
         for card in self.current_card_mapping:
             x_start = self.current_card_mapping[card][0]
             y_start = self.current_card_mapping[card][1]
-            x_end = x_start + Card.get_card_size(Board.instance())[0]
-            y_end = y_start + Card.get_card_size(Board.instance())[1]
+            x_end = x_start + Card.get_card_size(Board.instance())[0] * 1.5
+            y_end = y_start + Card.get_card_size(Board.instance())[1] * 1.5
             if x_start <= mouse_pos[0] <= x_end and y_start <= mouse_pos[1] <= y_end:
                 return card
         return False
@@ -766,15 +913,51 @@ def check_toggle(mouse_pos):
     page_num = sidebar.is_clicked_toggle(mouse_pos)
     sidebar.toggle(page_num)
 
-def play(authenticator, game_id):
-    last_update = pygame.time.get_ticks()  # force update on first loop
-    global action_manager
+def play(authenticator, game_id, screen):
+    """Main game loop"""
+    DISPLAYSURF = screen
+    last_update = pygame.time.get_ticks() # force update on first loop
+    global action_manager, MINIMIZED
+    global EXIT
+    global PERSISTENT_MESSAGE
+    EXIT = False
     action_manager = ActionManager(authenticator=authenticator, game_id=game_id)
     update(authenticator, game_id)
     logged_in_user = authenticator.username
+    display_everything(logged_in_user)
     while True:
-        # update every 5 seconds on a separate thread
-        authenticator.refresh()
+        print(IS_WON)
+        if IS_WON != WIN_TYPE.NOTHING:
+            
+            if IS_WON == WIN_TYPE.WIN:
+                dim_screen(DISPLAYSURF)
+
+                PERSISTENT_MESSAGE = "You won!"
+                show_persistent_message()
+                pygame.display.update()
+                while True:
+                    for event in pygame.event.get():
+                        if event.type == MOUSEBUTTONDOWN or event.type == KEYDOWN:
+                            return
+            elif IS_WON == WIN_TYPE.TIE:
+                dim_screen(DISPLAYSURF)
+                PERSISTENT_MESSAGE = "You tied!"
+                show_persistent_message()
+                pygame.display.update()
+                while True:
+                    for event in pygame.event.get():
+                        if event.type == MOUSEBUTTONDOWN or event.type == KEYDOWN:
+                            return
+            elif IS_WON == WIN_TYPE.LOSE:
+                dim_screen(DISPLAYSURF)
+                PERSISTENT_MESSAGE = "You lost!"
+                show_persistent_message()
+                pygame.display.update()
+                while True:
+                    for event in pygame.event.get():
+                        if event.type == MOUSEBUTTONDOWN or event.type == KEYDOWN:
+                            return
+
         if pygame.time.get_ticks() - last_update > 2000:
             last_update = pygame.time.get_ticks()
             # await async_update(authenticator, game_id)
@@ -785,16 +968,19 @@ def play(authenticator, game_id):
             if event.type == QUIT:
                 pygame.quit()
                 sys.exit()
+            
+            elif event.type == pygame.VIDEORESIZE:   
+                print("MAXIMIZED")          
+                MINIMIZED = False
             elif event.type == KEYDOWN:
                 if event.key == K_ESCAPE:
                     pygame.quit()
                     sys.exit()
-                if event.key == K_m:
-                    # minimize the window
-                    # FIXME: Is there a better way to do this?
-                    pygame.display.set_mode((1, 1))
-                if event.key == K_f:
-                    pygame.display.set_mode((WIDTH, HEIGHT), pygame.FULLSCREEN)
+                # if event.key == K_m:
+                #     # minimize the window
+                #     # FIXME: Is there a better way to do this?
+                #     MINIMIZED = True
+                #     pygame.display.iconify()
                 if event.key == K_UP:
                     Sidebar.instance().scroll_sidebar(50)
                 if event.key == K_DOWN:
@@ -811,8 +997,11 @@ def play(authenticator, game_id):
                     if TRADING_POST_ENABLED:
                         TradeRoute.instance().check_click(position,DISPLAYSURF)
                     check_sidebar_reserve(logged_in_user, position)
+                    check_sidebar_clone(logged_in_user, position)
                     obj = get_clicked_object(position)
-                    perform_action(obj, logged_in_user, position)
+                    perform_action(obj, logged_in_user, position, game_id, authenticator)
+                    if EXIT:
+                        return
                     with threading.Lock():
                         threading.Thread(target=update, args=(authenticator, game_id)).start()
 

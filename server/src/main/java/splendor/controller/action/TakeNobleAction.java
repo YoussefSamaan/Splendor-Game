@@ -24,10 +24,11 @@ public class TakeNobleAction extends CardAction {
    * Creates a new card action.
    *
    * @param card the card
+   * @param actionType the action type
    */
-  protected TakeNobleAction(SplendorCard card) {
+  protected TakeNobleAction(ActionType actionType, SplendorCard card) {
 
-    super(ActionType.TAKE_NOBLE, card);
+    super(actionType, card);
   }
 
   /**
@@ -63,12 +64,12 @@ public class TakeNobleAction extends CardAction {
 
     if (all) {
       for (Noble n : nobles) {
-        actions.add(new TakeNobleAction(n));
+        actions.add(new TakeNobleAction(ActionType.TAKE_NOBLE, n));
       }
     } else {
       for (Noble n : nobles) {
         if (TakeNobleAction.canAfford(cards, n.getCost())) {
-          actions.add(new TakeNobleAction(n));
+          actions.add(new TakeNobleAction(ActionType.RESERVE_NOBLE, n));
         }
       }
     }
