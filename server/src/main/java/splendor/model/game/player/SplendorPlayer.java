@@ -6,7 +6,6 @@ import java.util.Set;
 import javax.naming.InsufficientResourcesException;
 import splendor.controller.action.ActionType;
 import splendor.model.game.Color;
-import splendor.model.game.SplendorGame;
 import splendor.model.game.card.DevelopmentCardI;
 import splendor.model.game.card.SplendorCard;
 import splendor.model.game.payment.CoatOfArms;
@@ -18,8 +17,6 @@ public interface SplendorPlayer {
   HashMap<Color, Integer> buyCard(DevelopmentCardI card) throws InsufficientResourcesException;
 
   void reserveCard(DevelopmentCardI card, boolean addGoldToken);
-
-  void takeToken(Color color, SplendorGame game);
 
   /**
    * Checks if player has enough resources to buy a card.

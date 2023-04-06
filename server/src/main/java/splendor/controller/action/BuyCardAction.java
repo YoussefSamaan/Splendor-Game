@@ -206,5 +206,7 @@ public class BuyCardAction extends CardAction {
     if (player.getCoatOfArms().contains(CoatOfArms.get(1))) {
       player.addNextAction(ActionType.TAKE_ONE_TOKEN);
     }
+
+    player.updateReserveNobles();
   }
 }

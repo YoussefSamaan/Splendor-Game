@@ -68,7 +68,6 @@ public class Inventory {
    */
   public void addNoble(Noble noble) {
     nobles.add(noble);
-    addBonus(Collections.singletonList(noble), this.discounts);
   }
 
   /**

@@ -8,7 +8,6 @@ import java.util.Set;
 import javax.naming.InsufficientResourcesException;
 import splendor.controller.action.ActionType;
 import splendor.model.game.Color;
-import splendor.model.game.SplendorGame;
 import splendor.model.game.card.City;
 import splendor.model.game.card.DevelopmentCardI;
 import splendor.model.game.card.Noble;
@@ -28,6 +27,7 @@ public class Player implements PlayerReadOnly, SplendorPlayer {
   private final List<ActionType> nextActions;
 
   private final Set<CoatOfArms> coatOfArms = new HashSet<>();
+  private List<Noble> reservedNobles = new ArrayList<>();
 
   /**
    * Creates a new player.
@@ -119,17 +119,6 @@ public class Player implements PlayerReadOnly, SplendorPlayer {
     if (addGoldToken) {
       inventory.addTokens(Token.of(Color.GOLD), 1);
     }
-  }
-
-  /**
-   * The player takes a token.
-   *
-   * @param color the colour of the token taken
-   * @param game the game where this action takes place.
-   */
-  @Override
-  public void takeToken(Color color, SplendorGame game) {
-
   }
 
   /**
@@ -355,5 +344,16 @@ public class Player implements PlayerReadOnly, SplendorPlayer {
 
   public void addReserveNoble(Noble noble) {
     this.inventory.addReservedNoble(noble);
+    this.reservedNobles.add(noble);
+  }
+
+  public void updateReserveNobles() {
+    List<Noble> nobles = this.reservedNobles;
+    for (Noble n : nobles) {
+      if (n.getCost().isAffordable(this.getBonuses())) {
+        this.prestigePoints += n.getPrestigePoints();
+        this.reservedNobles.remove(n);
+      }
+    }
   }
 }
