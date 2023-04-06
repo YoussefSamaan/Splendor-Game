@@ -191,37 +191,37 @@ public class Player implements PlayerReadOnly, SplendorPlayer {
     // if player does not meet requirements and has the coat, then we remove it
     if (!(bonusMap.getOrDefault(Color.RED, 0) >= 3
             && bonusMap.getOrDefault(Color.WHITE, 0) >= 1)) {
-      CoatOfArms coat_to_remove = CoatOfArms.get(1);
-      if (this.coatOfArms.contains(coat_to_remove)) {
-        this.coatOfArms.remove(coat_to_remove);
+      CoatOfArms coatToRemove = CoatOfArms.get(1);
+      if (this.coatOfArms.contains(coatToRemove)) {
+        this.coatOfArms.remove(coatToRemove);
       }
     }
     if (!(bonusMap.getOrDefault(Color.WHITE, 0) >= 2)) {
-      CoatOfArms coat_to_remove = CoatOfArms.get(2);
-      if (this.coatOfArms.contains(coat_to_remove)) {
-        this.coatOfArms.remove(coat_to_remove);
+      CoatOfArms coatToRemove = CoatOfArms.get(2);
+      if (this.coatOfArms.contains(coatToRemove)) {
+        this.coatOfArms.remove(coatToRemove);
       }
     }
     if (!(bonusMap.getOrDefault(Color.BLUE, 0) >= 3
             && bonusMap.getOrDefault(Color.BROWN, 0) >= 1)) {
-      CoatOfArms coat_to_remove = CoatOfArms.get(3);
-      if (this.coatOfArms.contains(coat_to_remove)) {
-        this.coatOfArms.remove(coat_to_remove);
+      CoatOfArms coatToRemove = CoatOfArms.get(3);
+      if (this.coatOfArms.contains(coatToRemove)) {
+        this.coatOfArms.remove(coatToRemove);
       }
     }
     if (!(bonusMap.getOrDefault(Color.GREEN, 0) >= 5
             && this.getNoblesCount() >= 1)) {
-      CoatOfArms coat_to_remove = CoatOfArms.get(4);
-      if (this.coatOfArms.contains(coat_to_remove)) {
-        this.coatOfArms.remove(coat_to_remove);
+      CoatOfArms coatToRemove = CoatOfArms.get(4);
+      if (this.coatOfArms.contains(coatToRemove)) {
+        this.coatOfArms.remove(coatToRemove);
         // remove prestige points previously awarded
         this.removePrestigePoints(5);
       }
     }
     if (!(bonusMap.getOrDefault(Color.BROWN, 0) >= 3)) {
-      CoatOfArms coat_to_remove = CoatOfArms.get(5);
-      if (this.coatOfArms.contains(coat_to_remove)) {
-        this.coatOfArms.remove(coat_to_remove);
+      CoatOfArms coatToRemove = CoatOfArms.get(5);
+      if (this.coatOfArms.contains(coatToRemove)) {
+        this.coatOfArms.remove(coatToRemove);
         // remove prestige points previously awarded
         int pp = this.getCoatOfArms().size();
         this.removePrestigePoints(pp);
