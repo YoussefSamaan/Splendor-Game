@@ -152,8 +152,9 @@ class SessionListing:
     
     # get a string of the game description, to be blitted in the box later
     def get_game_info(self) -> str:
-        return f"{self.session_id} / {self.game_type} / {self.creator} \n {','.join(self.plr_list[1:])} [{len(self.plr_list)}/{self.min_plr}-{self.max_plr}]"
-    
+        return f"{self.creator} / {','.join(self.plr_list[1:])} [{len(self.plr_list)}/{self.min_plr}-{self.max_plr}]"
+    def get_game_info_game(self) -> str:
+        return f"{self.session_id} / {self.game_type}"
     def assign_buttons(self) -> None:
         red_rect_position = (DEL_RECT_INIT_X,DEL_RECT_INIT_Y+DEL_RECT_INCR_Y*self.index_order)
         red_rect = pygame.Rect(red_rect_position,DEL_RECT_SIZE)
@@ -169,8 +170,10 @@ class SessionListing:
     
     def display(self) -> None:
         game_info = self.get_game_info()
+        game_info_game = self.get_game_info_game()
         pygame.draw.rect(screen, LIGHT_GREY, self.game_info)
-        new_text(game_info, WHITE, GAME_RECT_INIT_X, GAME_RECT_INIT_Y+GAME_RECT_INCR_Y*self.index_order)
+        new_text(game_info, WHITE, GAME_RECT_INIT_X, GAME_RECT_INIT_Y+10+GAME_RECT_INCR_Y*self.index_order)
+        new_text(game_info_game, WHITE, GAME_RECT_INIT_X, GAME_RECT_INIT_Y+GAME_RECT_INCR_Y*self.index_order)
         # set text for buttons
         if self.current_user == self.creator and not self.launched:
             self.red_button.set_text("Delete")
