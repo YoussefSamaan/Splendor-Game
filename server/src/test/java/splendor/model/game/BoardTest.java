@@ -376,18 +376,23 @@ public class BoardTest {
 		Assertions.assertTrue(testBoard.getWinners().get(0).equals("Wassim"));
 	}
 
-//	@Test
-//	public void testGameEndsCityTwoWinners() {
-//		testBoard = new Board("SplendorCities", player1, player2, player3, player4);
-//		player1.addCity(City.get(1));
-//		player2.addCity(City.get(2));
-//		testBoard.nextTurn(); // turn 0 -> 1. This function calls checkGameEnd()
-//		testBoard.nextTurn(); // 1->2
-//		testBoard.nextTurn(); // 2->3
-//		testBoard.nextTurn(); // 3->4
-//		testBoard.getWinners();
-//		Assertions.assertEquals(testBoard.getWinners().size(), 2);
-//	}
+	@Test
+	public void testGameEndsCityTwoWinners() {
+		Player player11 = new Player("Wassim", "Blue");
+		Player player21 = new Player("Youssef", "Red");
+		Player player31 = new Player("Felicia", "Green");
+		Player player41 = new Player("Jessie", "Brown");
+		Board testBoard1 = new Board("SplendorCities", player11, player21, player31, player41);
+		player11.addCity(City.get(2));
+		player21.addCity(City.get(1));
+		testBoard1.nextTurn(); // turn 0 -> 1. This function calls checkGameEnd()
+		testBoard1.nextTurn(); // 1->2
+		testBoard1.nextTurn(); // 2->3
+		testBoard1.nextTurn(); // 3->4
+		int numWinners = testBoard1.getWinners().size();
+
+		Assertions.assertEquals(numWinners, 2);
+	}
 
 //	@Test
 //	public void testBuyDevCardGivesBackTokens2() throws NoSuchFieldException {
