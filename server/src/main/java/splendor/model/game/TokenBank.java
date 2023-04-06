@@ -2,7 +2,6 @@ package splendor.model.game;
 
 import java.util.HashMap;
 import splendor.model.game.payment.Token;
-import splendor.model.game.player.Player;
 
 /**
  * The bank of tokens on the board.
@@ -44,11 +43,9 @@ public class TokenBank implements Bank<Token> {
    */
   @Override
   public void remove(Token element) {
-//    assert contains(element);
-//    tokens.replace(element.getColor(), tokens.get(element.getColor()) - 1);
-
-    if (contains(element)){
-    tokens.replace(element.getColor(), tokens.get(element.getColor()) - 1);}
+    if (contains(element)) {
+      tokens.replace(element.getColor(), tokens.get(element.getColor()) - 1);
+    }
   }
 
   /**
