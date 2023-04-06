@@ -28,6 +28,13 @@ public class Cost implements Iterable<Color> {
   }
 
   /**
+   * Update prestige points.
+   */
+  public void updatePrestigePoints(int prestigePoints) {
+    this.prestigePoints = prestigePoints;
+  }
+
+  /**
    * Returns the value of the cost for the given color. If no cost exists for the given color,
    * 0 is returned.
    *
@@ -69,6 +76,15 @@ public class Cost implements Iterable<Color> {
     }
 
     return true;
+  }
+
+  /**
+   * Checks isAffordable with prestige points.
+   *
+   * @param resources a Cost to add
+   */
+  public boolean isAffordable(HashMap<Color, Integer> resources, int prestigePoints) {
+    return prestigePoints >= this.prestigePoints && isAffordable(resources);
   }
 
   /**

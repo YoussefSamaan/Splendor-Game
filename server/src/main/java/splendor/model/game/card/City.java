@@ -14,6 +14,8 @@ public class City extends AbstractCard {
    */
   private City(int cardId) {
     super(cardId);
+    // add prestige points to the cost
+    this.getCost().updatePrestigePoints(this.getPrestigePoints());
   }
 
   /**

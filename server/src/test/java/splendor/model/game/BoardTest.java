@@ -52,6 +52,10 @@ public class BoardTest {
 		}
 	}
 
+	private void setPlayerPrestigePoints(Player player, int prestige) {
+		player.addPrestigePoints(prestige);
+	}
+
 	private Inventory getPlayerInventory(Player player) throws NoSuchFieldException {
 		Field inventory = player.getClass().getDeclaredField("inventory");
 		inventory.setAccessible(true);
@@ -467,6 +471,7 @@ public class BoardTest {
 		bonus.put(Color.GREEN, 10);
 		bonus.put(Color.BLUE, 10);
 		bonus.put(Color.BROWN, 10);
+		setPlayerPrestigePoints(player1, 20);
 		try {
 			setPlayerBonus(player1, bonus);
 		} catch (NoSuchFieldException e) {
