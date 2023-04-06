@@ -157,7 +157,7 @@ public class Player implements PlayerReadOnly, SplendorPlayer {
    */
   public void removeOldestNextAction() {
     if (nextActions != null && nextActions.size() > 0) {
-      nextActions.remove(nextActions.size()-1);
+      nextActions.remove(nextActions.size() - 1);
     }
   }
 
