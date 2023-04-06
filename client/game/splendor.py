@@ -159,30 +159,22 @@ def show_persistent_message(color=GREEN):
 
 def check_if_won(board_json):
     # checks checkGameEnd in Board
-    lst = board_json["winners"]
-    
-    if Player.instance(id=CURR_PLAYER).name in lst and len(lst) == 1:
-        dim_screen(DISPLAYSURF)
-        global PERSISTENT_MESSAGE
-        PERSISTENT_MESSAGE = "You won!"
-        show_persistent_message()
-        pygame.display.update()
+    if "winners" in board_json:
+        lst = board_json["winners"]
 
-        return
-    elif Player.instance(id=CURR_PLAYER).name in lst and len(lst) > 1:
-        dim_screen(DISPLAYSURF)
-        global PERSISTENT_MESSAGE
-        PERSISTENT_MESSAGE = "You tied!"
-        show_persistent_message()
-        pygame.display.update()
-        return
-    elif len(lst) > 0:
-        dim_screen(DISPLAYSURF)
-        global PERSISTENT_MESSAGE
-        PERSISTENT_MESSAGE = "You lost!"
-        show_persistent_message(RED)
-        pygame.display.update()
-        return
+        if Player.instance(id=CURR_PLAYER).name in lst and len(lst) == 1:
+
+            return 1
+        elif Player.instance(id=CURR_PLAYER).name in lst and len(lst) > 1:
+
+            return 2
+        elif len(lst) > 0:
+                
+            return 3
+        elif len(lst) == 0:
+
+            return 0
+    return 0
 
 def set_flash_message(text, color=GREEN, timer=5):
     global FLASH_MESSAGE, FLASH_TIMER, FLASH_START, FLASH_COLOR
@@ -215,15 +207,44 @@ def update(authenticator, game_id):
         has_initialized = True
         initialize_game(board_json)
     global action_manager
+    global PERSISTENT_MESSAGE
     action_manager.update(Player.instance(id=CURR_PLAYER).name)
     print(action_manager.actions)
     # TODO: add cascading buy for cards]
     # if we need to cascade, we don't chance players
-    if check_if_won(board_json):
+    temp = check_if_won(board_json)
+    if temp == 1:
+        dim_screen(DISPLAYSURF)
+
+        PERSISTENT_MESSAGE = "You won!"
+        show_persistent_message()
+        pygame.display.update()
         for _ in pygame.event.get():
+            
             #end game if click anything
             global EXIT
             EXIT = True
+    elif temp == 2:
+        dim_screen(DISPLAYSURF)
+        PERSISTENT_MESSAGE = "You tied!"
+        show_persistent_message()
+        pygame.display.update()
+        for _ in pygame.event.get():
+            
+            #end game if click anything
+            global EXIT
+            EXIT = True
+    elif temp == 3:
+        dim_screen(DISPLAYSURF)
+        PERSISTENT_MESSAGE = "You lost!"
+        show_persistent_message()
+        pygame.display.update()
+        for _ in pygame.event.get():
+            
+            #end game if click anything
+            global EXIT
+            EXIT = True
+            
     check_cascade()
     check_clone()
     if not CITIES_ENABLED:
