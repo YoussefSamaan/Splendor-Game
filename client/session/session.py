@@ -25,7 +25,7 @@ pygame.init()
 pygame.display.set_caption('Splendor')
 base_font = pygame.font.Font(None, 28)  # font, size
 clock = pygame.time.Clock()
-screen = pygame.display.set_mode((WIDTH, HEIGHT))  # , pygame.FULLSCREEN
+screen = pygame.Surface((WIDTH, HEIGHT))
 
 splendor_text = pygame.image.load('../sprites/splendor-title.png')
 splendor_text = pygame.transform.scale(splendor_text, (500, 200))
@@ -88,6 +88,11 @@ class Button:
     def set_text(self, text):
         self.text = text
 
+    def get_rectangle(self, screen, full_screen):
+        difference_width = (full_screen.get_width() - screen.get_width()) / 2
+        difference_height = (full_screen.get_height() - screen.get_height()) / 2
+        return pygame.Rect(self.rectangle.x + difference_width, self.rectangle.y + difference_height, self.rectangle.width, self.rectangle.height)
+
 class ToggleButton (Button):
     def __init__(self, rectangle : pygame.Rect, on_click_event : Callable[[None], None], color: Tuple[int,int,int] = RED, text: str = "") -> None:
         super().__init__(rectangle, on_click_event, color, text)
@@ -112,7 +117,7 @@ def back_button_event() -> None:
 # Class for a session listing. A session listing is the game info and interaction buttons
 # associated with an existing session in the session list
 class SessionListing:
-    def __init__(self, authenticator, session_id : str, session_info, index : int) -> None:
+    def __init__(self, authenticator, session_id : str, session_info, index : int, full_screen, game_type: str = "Splendor") -> None:
         self.session_id = session_id
         # Access relevant information about the session
         self.creator = session_info["creator"] # str playername
@@ -121,6 +126,11 @@ class SessionListing:
         self.launched = session_info["launched"] # boolean
         self.plr_list = session_info["players"] # list of str playernames
         self.savegame = session_info["savegameid"] # str
+        if "created" in session_info.keys():
+            self.created = session_info["created"]
+        else:
+            # If it's not there, then we got the session ftom the created ones
+            self.created = True
         self.authenticator = authenticator
         self.current_user = authenticator.username
         
@@ -129,6 +139,8 @@ class SessionListing:
         self.index_order = index % MAX_SESSIONS_PER_PAGE
         # page_number is the page this listing is in
         self.page_number = index // MAX_SESSIONS_PER_PAGE
+        self.full_screen = full_screen
+        self.game_type = game_type
 
         # Rects associated with this session listing in the session list
         # TODO: Generate here and link to click events
@@ -169,6 +181,8 @@ class SessionListing:
                 self.green_button.set_text("Launch")
             elif self.current_user not in self.plr_list and len(self.plr_list) < self.max_plr:
                 self.green_button.set_text("Join")
+        elif not self.created and self.current_user == self.creator:
+            self.green_button.set_text("Load")
         else:
             self.green_button.set_text("Play")
             
@@ -180,7 +194,9 @@ class SessionListing:
             self.leave_sess()
     
     def greenButtonEvent(self):
-        if not self.launched:
+        if not self.created and self.current_user == self.creator:
+            self.create_saved_game()
+        elif not self.launched:
             # game is not yet launched; creator can launch, others can join
             if self.current_user == self.creator:
                 self.launch_sess()
@@ -189,10 +205,14 @@ class SessionListing:
         elif self.launched:
             return self.play_sess()
 
+    def create_saved_game(self) -> None:
+        print("Creating saved game ", self.savegame)
+        post_session.create_session(self.authenticator.username, self.authenticator.get_token(escape=True), self.game_type, self.savegame)
+
     # logged-in user is the creator and deletes the session
     def del_sess(self) -> None:
         delete_session.delete_session(self.authenticator.get_token(escape=True), self.session_id)
-        session(self.authenticator)
+        session(self.authenticator, self.full_screen)
 
     # logged-in user is the creator and launches the session if there are enough players
     def launch_sess(self) -> None:
@@ -203,7 +223,7 @@ class SessionListing:
             
         put_session.add_player(self.authenticator.get_token(escape=True), self.session_id, self.authenticator.username)
 
-        session(self.authenticator)
+        session(self.authenticator, self.full_screen)
 
     # logged-in user starts playing in the session
     def play_sess(self) -> None:
@@ -213,10 +233,10 @@ class SessionListing:
     # logged-in user leaves the session
     def leave_sess(self) -> None:
         delete_session.remove_player(self.authenticator.get_token(escape=True), self.session_id, self.authenticator.username)
-        session(self.authenticator)
+        session(self.authenticator, self.full_screen)
 
 # Takes sessions json and outputs a list of pygame objects to be blitted
-def generate_session_list_buttons(authenticator,sessions_json) -> List[SessionListing]:
+def generate_session_list_buttons(authenticator,sessions_json, full_screen, game_type) -> List[SessionListing]:
     if len(get_games(sessions_json)) == 0:
         # if there are no sessions return empty list
         return []
@@ -226,12 +246,19 @@ def generate_session_list_buttons(authenticator,sessions_json) -> List[SessionLi
     # it will handle the buttons, information, and events
     for index,session in enumerate(sessions_json):
         # enumerate keeps track of the index, to be used for positioning and paging
-        new_session = SessionListing(authenticator,session,sessions_json[session],index)
+        new_session = SessionListing(authenticator,session,sessions_json[session],index, full_screen, game_type)
         session_list.append(new_session)
     
     return session_list
 
-def session(authenticator :Authenticator) -> int:
+def session(authenticator :Authenticator, full_screen: pygame.Surface) -> int:
+    # set up the screen  
+    full_screen.fill(GREY)
+    # center the screen on the full screen
+    screen_rect = screen.get_rect()
+    full_screen_rect = full_screen.get_rect()
+    screen_rect.center = full_screen_rect.center
+    full_screen.blit(screen, screen_rect)
 
     # current_page: 0-indexed
     # functions for the pagination buttons
@@ -272,11 +299,6 @@ def session(authenticator :Authenticator) -> int:
     while True:
         screen.fill(GREY)
 
-        sessions_json = get_session.get_all_sessions().json()["sessions"]
-        session_list = generate_session_list_buttons(authenticator,sessions_json)
-        # This is the list of buttons that should be visible. We need to draw them.
-        clickable_buttons :List[Button] = []
-
         def parse_type() -> str:
             game_type = "Splendor"
             if trade_toggle.active:
@@ -284,6 +306,12 @@ def session(authenticator :Authenticator) -> int:
             if cities_toggle.active:
                 game_type += "Cities"
             return game_type
+
+        sessions_json = get_session.get_all_sessions(authenticator)
+        session_list = generate_session_list_buttons(authenticator,sessions_json, full_screen, parse_type())
+        # This is the list of buttons that should be visible. We need to draw them.
+        clickable_buttons :List[Button] = []
+
 
         clickable_buttons.append(back_rect)
         clickable_buttons.append(next_rect)
@@ -311,7 +339,7 @@ def session(authenticator :Authenticator) -> int:
             new_text(button.text, WHITE, button.rectangle.x + 10, button.rectangle.y + 10)
 
         # writing text on buttons
-        new_text("Back", WHITE, 85, 125)
+        new_text("Exit", WHITE, 85, 125)
         new_text("Next", WHITE, 625, 665)
         new_text("Previous", WHITE, 150, 665)
         new_text("Create", WHITE, 625, 125)
@@ -325,10 +353,11 @@ def session(authenticator :Authenticator) -> int:
                 clicked_position = pygame.mouse.get_pos()
 
                 for button in clickable_buttons:
-                    if button.rectangle.collidepoint(clicked_position):
+                    if button.get_rectangle(screen, full_screen).collidepoint(clicked_position):
                         button_return = button.activation()
                         if not (button_return is None):
                             return button_return
 
+        full_screen.blit(screen, screen_rect)
         pygame.display.flip()
         clock.tick(FPS)
