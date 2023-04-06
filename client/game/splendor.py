@@ -44,6 +44,16 @@ EXIT = False
 DISPLAYSURF = pygame.display.set_mode((WIDTH, HEIGHT), pygame.FULLSCREEN)
 MINIMIZED = False
 
+
+class WIN_TYPE(Enum):
+    WIN = 1
+    TIE = 2
+    LOSE = 3
+    NOTHING = 0
+    def __eq__(self, other):
+        return self.value == other.value
+IS_WON = WIN_TYPE.NOTHING
+
 class IndividualTokenSelection:
     def __init__(self, token: Token, x_pos: int, y_pos: int) -> None:
         self.x_pos = x_pos
@@ -159,22 +169,23 @@ def show_persistent_message(color=GREEN):
 
 def check_if_won(board_json):
     # checks checkGameEnd in Board
+    global IS_WON
     if "winners" in board_json:
         lst = board_json["winners"]
 
         if Player.instance(id=CURR_PLAYER).name in lst and len(lst) == 1:
 
-            return 1
+            IS_WON = WIN_TYPE.WIN
         elif Player.instance(id=CURR_PLAYER).name in lst and len(lst) > 1:
 
-            return 2
+            IS_WON = WIN_TYPE.TIE
         elif len(lst) > 0:
                 
-            return 3
-        elif len(lst) == 0:
+            IS_WON = WIN_TYPE.LOSE
+        else:
 
-            return 0
-    return 0
+            IS_WON = WIN_TYPE.NOTHING
+    IS_WON = WIN_TYPE.NOTHING
 
 def set_flash_message(text, color=GREEN, timer=5):
     global FLASH_MESSAGE, FLASH_TIMER, FLASH_START, FLASH_COLOR
@@ -207,44 +218,12 @@ def update(authenticator, game_id):
         has_initialized = True
         initialize_game(board_json)
     global action_manager
-    global PERSISTENT_MESSAGE
+    check_if_won(board_json)
     action_manager.update(Player.instance(id=CURR_PLAYER).name)
     print(action_manager.actions)
     # TODO: add cascading buy for cards]
     # if we need to cascade, we don't chance players
-    temp = check_if_won(board_json)
-    if temp == 1:
-        dim_screen(DISPLAYSURF)
 
-        PERSISTENT_MESSAGE = "You won!"
-        show_persistent_message()
-        pygame.display.update()
-        for _ in pygame.event.get():
-            
-            #end game if click anything
-            global EXIT
-            EXIT = True
-    elif temp == 2:
-        dim_screen(DISPLAYSURF)
-        PERSISTENT_MESSAGE = "You tied!"
-        show_persistent_message()
-        pygame.display.update()
-        for _ in pygame.event.get():
-            
-            #end game if click anything
-            global EXIT
-            EXIT = True
-    elif temp == 3:
-        dim_screen(DISPLAYSURF)
-        PERSISTENT_MESSAGE = "You lost!"
-        show_persistent_message()
-        pygame.display.update()
-        for _ in pygame.event.get():
-            
-            #end game if click anything
-            global EXIT
-            EXIT = True
-            
     check_cascade()
     check_clone()
     if not CITIES_ENABLED:
@@ -947,11 +926,50 @@ def play(authenticator, game_id, screen):
     last_update = pygame.time.get_ticks() # force update on first loop
     global action_manager, MINIMIZED
     global EXIT
+    global PERSISTENT_MESSAGE
     EXIT = False
     action_manager = ActionManager(authenticator=authenticator, game_id=game_id)
     update(authenticator, game_id)
     logged_in_user = authenticator.username
     display_everything(logged_in_user)
+    if IS_WON != WIN_TYPE.NOTHING:
+        
+        
+        if IS_WON == WIN_TYPE.WIN:
+            dim_screen(DISPLAYSURF)
+
+            PERSISTENT_MESSAGE = "You won!"
+            show_persistent_message()
+            pygame.display.update()
+            while True:
+                for _ in pygame.event.get():
+                    
+                    #end game if click anything
+
+                    EXIT = True
+        elif IS_WON == WIN_TYPE.TIE:
+            dim_screen(DISPLAYSURF)
+            PERSISTENT_MESSAGE = "You tied!"
+            show_persistent_message()
+            pygame.display.update()
+            while True:
+
+                for _ in pygame.event.get():
+                    
+                    #end game if click anything
+
+                    EXIT = True
+        elif IS_WON == WIN_TYPE.LOSE:
+            dim_screen(DISPLAYSURF)
+            PERSISTENT_MESSAGE = "You lost!"
+            show_persistent_message()
+            pygame.display.update()
+            while True:
+
+                for _ in pygame.event.get():
+                    
+                    #end game if click anything
+                    EXIT = True
     while True:
         if pygame.time.get_ticks() - last_update > 2000:
             last_update = pygame.time.get_ticks()
