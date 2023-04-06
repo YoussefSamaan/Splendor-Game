@@ -26,7 +26,6 @@ public class Player implements PlayerReadOnly, SplendorPlayer {
   private int prestigePoints = 0;
 
   private final List<ActionType> nextActions;
-
   private final Set<CoatOfArms> coatOfArms = new HashSet<>();
 
   /**
@@ -171,6 +170,54 @@ public class Player implements PlayerReadOnly, SplendorPlayer {
       return null;
     } else {
       return nextActions.get(nextActions.size() - 1);
+    }
+  }
+
+  /**
+   * We remove the player's coat of arms if the player previously unlocked a coat of arms
+   * that they do not meet the requirements for anymore.
+   */
+  public void updateCoatOfArms() {
+    HashMap<Color, Integer> bonusMap = this.getBonuses();
+
+    // if player does not meet requirements and has the coat, then we remove it
+    if (!(bonusMap.getOrDefault(Color.RED, 0) >= 3
+            && bonusMap.getOrDefault(Color.WHITE, 0) >= 1)) {
+      CoatOfArms coatToRemove = CoatOfArms.get(1);
+      if (this.coatOfArms.contains(coatToRemove)) {
+        this.coatOfArms.remove(coatToRemove);
+      }
+    }
+    if (!(bonusMap.getOrDefault(Color.WHITE, 0) >= 2)) {
+      CoatOfArms coatToRemove = CoatOfArms.get(2);
+      if (this.coatOfArms.contains(coatToRemove)) {
+        this.coatOfArms.remove(coatToRemove);
+      }
+    }
+    if (!(bonusMap.getOrDefault(Color.BLUE, 0) >= 3
+            && bonusMap.getOrDefault(Color.BROWN, 0) >= 1)) {
+      CoatOfArms coatToRemove = CoatOfArms.get(3);
+      if (this.coatOfArms.contains(coatToRemove)) {
+        this.coatOfArms.remove(coatToRemove);
+      }
+    }
+    if (!(bonusMap.getOrDefault(Color.GREEN, 0) >= 5
+            && this.getNoblesCount() >= 1)) {
+      CoatOfArms coatToRemove = CoatOfArms.get(4);
+      if (this.coatOfArms.contains(coatToRemove)) {
+        this.coatOfArms.remove(coatToRemove);
+        // remove prestige points previously awarded
+        this.removePrestigePoints(5);
+      }
+    }
+    if (!(bonusMap.getOrDefault(Color.BROWN, 0) >= 3)) {
+      CoatOfArms coatToRemove = CoatOfArms.get(5);
+      if (this.coatOfArms.contains(coatToRemove)) {
+        this.coatOfArms.remove(coatToRemove);
+        // remove prestige points previously awarded
+        int pp = this.getCoatOfArms().size();
+        this.removePrestigePoints(pp);
+      }
     }
   }
 
@@ -332,6 +379,16 @@ public class Player implements PlayerReadOnly, SplendorPlayer {
   public void addPrestigePoints(int prestigePoints) {
     this.prestigePoints += prestigePoints;
   }
+
+  /**
+   * remove prestige points from the player.
+   *
+   * @param prestigePoints the number of prestige points to remove
+   */
+  public void removePrestigePoints(int prestigePoints) {
+    this.prestigePoints -= prestigePoints;
+  }
+
 
   /**
    * Get the reserved cards.
