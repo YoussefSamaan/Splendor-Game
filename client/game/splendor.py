@@ -400,8 +400,17 @@ def get_user_card_selection(card :Card):
     dim_screen(DISPLAYSURF)
     action = card.get_user_selection(DISPLAYSURF)
     global FLASH_MESSAGE, FLASH_TIMER, CURR_PLAYER, action_manager
+
+    # special case for non-token buys; change the flow to the card menu ui
+    STRIP_CARD_IDS = [115,116,117,119,120]
+    if card.get_id() in STRIP_CARD_IDS and action == Action.BUY:
+        print("found stripping")
+        card_menu = CardMenu(list(Player.instance(id=CURR_PLAYER).cards_bought.keys()), CardMenuAction.DISCARD, card)
+        card_menu.display()
+        return
+    
     server_action_id = action_manager.get_card_action_id(card, Player.instance(id=CURR_PLAYER).name,
-                                                         action)
+                                                            action)
     if server_action_id == 0:
         return
     if server_action_id <= -1:
@@ -521,7 +530,7 @@ class CardMenuAction(Enum):
     DISCARD = 3
 class CardMenu:
     """generic menu that displays all the cards that a player owns or reserved, for cloning, discarding and buying"""
-    def __init__(self, cards : List[Card], action : CardMenuAction):
+    def __init__(self, cards : List[Card], action : CardMenuAction, card_to_buy: Card = None):
         global action_manager
         # action could be buy a reserved, clone, discard functions
         selection_box, selection_box_rect = get_selection_box(DISPLAYSURF, 1, 0.6)
@@ -545,12 +554,13 @@ class CardMenu:
         self.current_card_mapping = {} # maps the card to the coords that is clicked on it
         self.card_selected = None # the card that the user has selected
         self.card_selected2 = None # the second card that the user has selected
+        self.card_to_buy = card_to_buy # in case of stripping, the card we want to buy
 
-    def create_send_action(self, card):
+    def create_send_action(self, card, payment_cards=None):
         def reserved_action(card):
             self.send_action = action_manager.perform_action(action_manager.get_buy_reserved_card_action_id(card))
-        def discard_action(card):
-            self.send_action = action_manager.perform_action(action_manager.get_discard_action_id(card))
+        def discard_action(card, payment_cards):
+            self.send_action = action_manager.perform_action(action_manager.get_strip_card_action_id(card,payment_cards))
         def clone_action(card):
             self.send_action = action_manager.perform_action(action_manager.get_clone_action_id(card))
 
@@ -559,7 +569,7 @@ class CardMenu:
         elif self.action == CardMenuAction.RESERVED:
             return reserved_action(card)
         elif self.action == CardMenuAction.DISCARD:
-            return discard_action(card)
+            return discard_action(card, payment_cards)
 
 
     def display(self):
@@ -633,7 +643,11 @@ class CardMenu:
                     elif self.confirm.rectangle.collidepoint(pygame.mouse.get_pos()):
                         if self.card_selected is None:
                             return # if the user clicks confirm without selecting a card, just close the menu
-                        self.create_send_action(self.card_selected)
+
+                        if self.action == CardMenuAction.DISCARD:
+                            self.create_send_action(self.card_to_buy,[self.card_selected.get_id(),self.card_selected2.get_id()])
+                        else:
+                            self.create_send_action(self.card_selected)
                         return 
                     elif self.next_page.rectangle.collidepoint(pygame.mouse.get_pos()):
                         # increments current page up to the max page
