@@ -157,16 +157,8 @@ public class Player implements PlayerReadOnly, SplendorPlayer {
    */
   public void removeOldestNextAction() {
     if (nextActions != null && nextActions.size() > 0) {
-      nextActions.remove(0);
+      nextActions.remove(nextActions.size()-1);
     }
-  }
-
-  /**
-   * resets the next actions so game is not stuck in a loop.
-   *
-   */
-  public void resetNextActions() {
-    nextActions.clear();
   }
 
   /**
