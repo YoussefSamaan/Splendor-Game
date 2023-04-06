@@ -163,6 +163,17 @@ class ActionManager:
                 print("has unlocked clone")
                 return True
         return False
+    
+    def has_unlocked_return_token(self, player_name: str) -> bool:
+        print("Checking return token")
+        if player_name != self.last_updated_player:
+            # Not player's turn
+            return False
+        for action in self.actions:
+            if "actionType" in action and action["actionType"] == Action.RETURN_TOKENS.value:
+                print("has unlocked return tokens")
+                return True
+        return False
 
     def has_unlocked_cascade(self, player_name: str) -> bool:
         print("Checking cascade")
@@ -196,6 +207,14 @@ class ActionManager:
                 and action["actionType"] == action_type.value:
                 return action["actionId"]
         return -2
+    
+    # get a list of all unique actions
+    def get_unique_actions(self):
+        action_names_list = []
+        for action in self.actions:
+            if "actionType" in action and (not (action["actionType"] in action_names_list)):
+                action_names_list.append(action["actionType"])
+        return action_names_list
     
     def get_actions_json(self):
         print(self.actions)
