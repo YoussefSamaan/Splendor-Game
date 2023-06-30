@@ -90,7 +90,7 @@ This project follows the best practices of the [Google's Checkstyle Configuratio
 
 ## Authors
 
- * [Youssef Samaan](https://github.com/YoussefSamaan2)
+ * [Youssef Samaan](https://github.com/YoussefSamaan)
  * [Kevin Yu](https://github.com/iveykun)
  * [Wassim Wazzi](https://github.com/wassimwazzi)
  * [Rui Cong Su](https://github.com/a-lil-birb)
